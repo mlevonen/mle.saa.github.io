@@ -26,7 +26,7 @@ function tempColor(t){
  return '#d73027';
 }
 
-fetch('http://localhost:8002/api/observations')
+fetch('https://fmi-saa-backend.onrender.com/api/observations')
 .then(r=>r.json())
 .then(fc=>{
  console.log('OBS FEATURES:',fc.features.length);
@@ -41,7 +41,7 @@ fetch('http://localhost:8002/api/observations')
  });
 });
 
-fetch('http://localhost:8002/api/forecast')
+fetch('https://fmi-saa-backend.onrender.com/api/forecast')
 .then(r=>r.json())
 .then(fc=>{
  console.log('FC FEATURES:',fc.features.length);
