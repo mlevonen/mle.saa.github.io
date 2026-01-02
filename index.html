@@ -27,19 +27,13 @@ function tempColor(t){
 }
 
 fetch('https://fmi-saa-backend.onrender.com/api/observations')
-.then(r=>r.json())
-.then(fc=>{
- console.log('OBS FEATURES:',fc.features.length);
- fc.features.forEach(f=>{
-  var c=f.geometry.coordinates;
-  var p=f.properties;
-  L.circleMarker([c[1],c[0]],{
-   radius:7,fillColor:tempColor(p.t2m),
-   fillOpacity:0.85,color:'#333'
-  }).bindPopup(`<b>${p.name}</b><br>Lämpö: ${p.t2m} °C<br>Tuuli: ${p.ws} m/s`)
-    .addTo(map);
- });
-});
+  .then(r => r.json())
+  .then(data => {
+    console.log("FULL OBS RESPONSE:", data);
+    console.log("FEATURES ARRAY:", data.features);
+    console.log("FEATURE COUNT:", data.features.length);
+  })
+  .catch(err => console.error("OBS FETCH ERROR:", err));
 
 fetch('https://fmi-saa-backend.onrender.com/api/forecast')
 .then(r=>r.json())
