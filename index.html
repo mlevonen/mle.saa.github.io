@@ -17,63 +17,47 @@ html,body{margin:0;height:100%}
 <script>
 console.log("SCRIPT STARTED");
 
-// 1. Alustetaan kartta
-const map = L.map("map").setView([60, 25], 6);
-console.log("MAP CREATED", map);
+// 1. Käytetään eri nimeä muuttujalle kuin div-elementin ID
+const myMap = L.map("map").setView([60, 25], 6);
+console.log("MAP CREATED", myMap);
 
-// 2. Lisätään taustakartta
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: '&copy; OpenStreetMap contributors'
-}).addTo(map);
+    attribution: '&copy; OpenStreetMap'
+}).addTo(myMap);
 
-// 3. Haetaan data
 fetch("observations.json")
-  .then(r => {
-    if (!r.ok) throw new Error("HTTP error " + r.status);
-    return r.json();
-  })
+  .then(r => r.json())
   .then(data => {
     console.log("GEOJSON LOADED", data);
 
-    // Luodaan GeoJSON-kerros
     const geoJsonLayer = L.geoJSON(data, {
       pointToLayer: function (feature, latlng) {
-        // Luodaan ympyrä jokaiselle pisteelle
         return L.circleMarker(latlng, {
           radius: 6,
           fillColor: "#ff4400",
           color: "#000",
           weight: 1,
-          opacity: 1,
           fillOpacity: 0.8
         });
       },
       onEachFeature: function (feature, layer) {
         if (feature.properties) {
-          const p = feature.properties;
-          layer.bindPopup(`
-            <strong>${p.name || 'Sääasema'}</strong><br>
-            Lämpötila: ${p.t2m ?? '?'} °C<br>
-            Tuuli: ${p.ws ?? '?'} m/s
-          `);
+          layer.bindPopup(`Asema: ${feature.properties.name}<br>T: ${feature.properties.t2m} °C`);
         }
       }
     });
 
-    // TÄRKEÄ: Lisätään kerros karttaan
-    geoJsonLayer.addTo(map);
-    console.log("LAYER ADDED TO MAP");
-
-    // Säädetään näkymä kattamaan kaikki pisteet
+    // 2. Viitataan uuteen muuttujan nimeen
+    geoJsonLayer.addTo(myMap);
+    
     const bounds = geoJsonLayer.getBounds();
     if (bounds.isValid()) {
-      map.fitBounds(bounds);
+      myMap.fitBounds(bounds);
     }
   })
-  .catch(err => {
-    console.error("FETCH ERROR:", err.message);
-  });
+  .catch(err => console.error("FETCH ERROR:", err));
 </script>
+
 
 
 </body>
