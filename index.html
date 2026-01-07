@@ -15,14 +15,23 @@ html,body{margin:0;height:100%}
 <div id="map"></div>
 
 <script>
+console.log("SCRIPT STARTED");
+
+const map = L.map("map").setView([60, 25], 6);
+console.log("MAP CREATED", map);
+
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
+console.log("TILE LAYER ADDED");
+
 fetch("observations.json")
   .then(r => r.json())
   .then(data => {
     console.log("GEOJSON LOADED", data);
-
+    
+    // Uusi, korjattu tapa käsitellä pisteitä
     const layer = L.geoJSON(data, {
-      // Käytetään ympyröitä markkereiden sijaan (varmempi toimivuus)
       pointToLayer: function (feature, latlng) {
+        // Käytetään ympyrämarkkeria markkerikuvan sijaan
         return L.circleMarker(latlng, {
           radius: 8,
           fillColor: "#ff7800",
@@ -32,7 +41,6 @@ fetch("observations.json")
           fillOpacity: 0.8
         });
       },
-      // Lisätään tietolaatikko, joka näyttää JSON-datasi kentät
       onEachFeature: function (feature, layer) {
         if (feature.properties) {
           const p = feature.properties;
@@ -46,16 +54,17 @@ fetch("observations.json")
     });
 
     layer.addTo(map);
+
+    console.log("LAYER ADDED", layer);
     
-    // Zoomataan automaattisesti kattamaan kaikki havainnot
-    if (data.features.length > 0) {
+    // Zoomataan automaattisesti kattamaan kaikki havainnot, jos dataa on
+    if (layer.getBounds().isValid()) {
       map.fitBounds(layer.getBounds());
     }
+
   })
   .catch(err => console.error("FETCH ERROR", err));
-
 </script>
-
 
 </body>
 </html>
