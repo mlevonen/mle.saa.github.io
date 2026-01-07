@@ -15,43 +15,32 @@ html,body{margin:0;height:100%}
 <div id="map"></div>
 
 <script>
-const map = L.map('map').setView([64.5, 26], 5);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+console.log("SCRIPT STARTED");
 
-function tempColor(t){
- if(t==null||isNaN(t))return '#999';
- if(t<=-20)return '#08306b';
- if(t<=-10)return '#2171b5';
- if(t<=0)return '#6baed6';
- if(t<=10)return '#fee08b';
- if(t<=20)return '#fdae61';
- return '#d73027';
-}
+const map = L.map("map").setView([60, 25], 6);
+console.log("MAP CREATED", map);
 
-fetch('observations.json')
-.then(r => r.json())
-.then(data => {
-  console.log("OBS FEATURES:", data.features.length);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
+console.log("TILE LAYER ADDED");
 
-  data.features.forEach(f => {
-    const [lon, lat] = f.geometry.coordinates;
-    const p = f.properties;
+fetch("observations.json")
+  .then(r => {
+    console.log("FETCH RESPONSE", r);
+    return r.json();
+  })
+  .then(data => {
+    console.log("GEOJSON LOADED", data);
+    console.log("FEATURE COUNT", data.features.length);
 
-    L.circleMarker([lat, lon], {
-      radius: 7,
-      color: '#333',
-      fillColor: tempColor(p.t2m),
-      fillOpacity: 0.85
-    })
-    .bindPopup(
-      `<b>${p.name}</b><br>
-       Lämpötila: ${p.t2m ?? '-'} °C<br>
-       Tuuli: ${p.ws ?? '-'} m/s`
-    )
-    .addTo(map);
-  });
-});
+    const layer = L.geoJSON(data);
+    layer.addTo(map);
+
+    console.log("LAYER ADDED", layer);
+    map.fitBounds(layer.getBounds());
+  })
+  .catch(err => console.error("FETCH ERROR", err));
 </script>
+
 
 </body>
 </html>
