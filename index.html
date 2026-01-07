@@ -2,18 +2,20 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>FMI Sääkartta</title>
-<link rel="stylesheet" href="leaflet.css">
-<script src="leaflet.js"></script>
+<title>FMI Sääkartta – Havainnot</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 html,body{margin:0;height:100%}
 #map{height:100%;width:100%}
 </style>
 </head>
 <body>
+
 <div id="map"></div>
+
 <script>
-var map=L.map('map').setView([64.5,26],5);
+const map = L.map('map').setView([64.5, 26], 5);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
 function tempColor(t){
@@ -26,29 +28,30 @@ function tempColor(t){
  return '#d73027';
 }
 
-fetch('https://fmi-saa-backend.onrender.com/api/observations')
-  .then(r => r.json())
-  .then(data => {
-    console.log("FULL OBS RESPONSE:", data);
-    console.log("FEATURES ARRAY:", data.features);
-    console.log("FEATURE COUNT:", data.features.length);
-  })
-  .catch(err => console.error("OBS FETCH ERROR:", err));
+fetch('observations.json')
+.then(r => r.json())
+.then(data => {
+  console.log("OBS FEATURES:", data.features.length);
 
-fetch('https://fmi-saa-backend.onrender.com/api/forecast')
-.then(r=>r.json())
-.then(fc=>{
- console.log('FC FEATURES:',fc.features.length);
- fc.features.forEach((f,i)=>{
-  if(i%6!==0)return;
-  var c=f.geometry.coordinates;
-  var t=f.properties.t2m;
-  L.circleMarker([c[1],c[0]],{
-   radius:4,fillColor:tempColor(t),
-   fillOpacity:0.4,color:'none'
-  }).addTo(map);
- });
+  data.features.forEach(f => {
+    const [lon, lat] = f.geometry.coordinates;
+    const p = f.properties;
+
+    L.circleMarker([lat, lon], {
+      radius: 7,
+      color: '#333',
+      fillColor: tempColor(p.t2m),
+      fillOpacity: 0.85
+    })
+    .bindPopup(
+      `<b>${p.name}</b><br>
+       Lämpötila: ${p.t2m ?? '-'} °C<br>
+       Tuuli: ${p.ws ?? '-'} m/s`
+    )
+    .addTo(map);
+  });
 });
 </script>
+
 </body>
 </html>
