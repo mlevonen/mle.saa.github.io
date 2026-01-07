@@ -17,24 +17,31 @@ html,body{margin:0;height:100%}
 <script>
 console.log("SCRIPT STARTED");
 
+// 1. Alustetaan kartta
 const map = L.map("map").setView([60, 25], 6);
 console.log("MAP CREATED", map);
 
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
-console.log("TILE LAYER ADDED");
+// 2. Lisätään taustakartta
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
 
+// 3. Haetaan data
 fetch("observations.json")
-  .then(r => r.json())
+  .then(r => {
+    if (!r.ok) throw new Error("HTTP error " + r.status);
+    return r.json();
+  })
   .then(data => {
     console.log("GEOJSON LOADED", data);
-    
-    // Uusi, korjattu tapa käsitellä pisteitä
-    const layer = L.geoJSON(data, {
+
+    // Luodaan GeoJSON-kerros
+    const geoJsonLayer = L.geoJSON(data, {
       pointToLayer: function (feature, latlng) {
-        // Käytetään ympyrämarkkeria markkerikuvan sijaan
+        // Luodaan ympyrä jokaiselle pisteelle
         return L.circleMarker(latlng, {
-          radius: 8,
-          fillColor: "#ff7800",
+          radius: 6,
+          fillColor: "#ff4400",
           color: "#000",
           weight: 1,
           opacity: 1,
@@ -45,26 +52,29 @@ fetch("observations.json")
         if (feature.properties) {
           const p = feature.properties;
           layer.bindPopup(`
-            <strong>${p.name}</strong><br>
-            Lämpötila: ${p.t2m} °C<br>
-            Tuuli: ${p.ws} m/s
+            <strong>${p.name || 'Sääasema'}</strong><br>
+            Lämpötila: ${p.t2m ?? '?'} °C<br>
+            Tuuli: ${p.ws ?? '?'} m/s
           `);
         }
       }
     });
 
-    layer.addTo(map);
+    // TÄRKEÄ: Lisätään kerros karttaan
+    geoJsonLayer.addTo(map);
+    console.log("LAYER ADDED TO MAP");
 
-    console.log("LAYER ADDED", layer);
-    
-    // Zoomataan automaattisesti kattamaan kaikki havainnot, jos dataa on
-    if (layer.getBounds().isValid()) {
-      map.fitBounds(layer.getBounds());
+    // Säädetään näkymä kattamaan kaikki pisteet
+    const bounds = geoJsonLayer.getBounds();
+    if (bounds.isValid()) {
+      map.fitBounds(bounds);
     }
-
   })
-  .catch(err => console.error("FETCH ERROR", err));
+  .catch(err => {
+    console.error("FETCH ERROR:", err.message);
+  });
 </script>
+
 
 </body>
 </html>
