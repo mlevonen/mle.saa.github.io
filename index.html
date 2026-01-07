@@ -17,47 +17,29 @@ html,body{margin:0;height:100%}
 <script>
 console.log("SCRIPT STARTED");
 
-// 1. Käytetään eri nimeä muuttujalle kuin div-elementin ID
-const myMap = L.map("map").setView([60, 25], 6);
-console.log("MAP CREATED", myMap);
+const map = L.map("map").setView([60, 25], 6);
+console.log("MAP CREATED", map);
 
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: '&copy; OpenStreetMap'
-}).addTo(myMap);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
+console.log("TILE LAYER ADDED");
 
 fetch("observations.json")
-  .then(r => r.json())
+  .then(r => {
+    console.log("FETCH RESPONSE", r);
+    return r.json();
+  })
   .then(data => {
     console.log("GEOJSON LOADED", data);
+    console.log("FEATURE COUNT", data.features.length);
 
-    const geoJsonLayer = L.geoJSON(data, {
-      pointToLayer: function (feature, latlng) {
-        return L.circleMarker(latlng, {
-          radius: 6,
-          fillColor: "#ff4400",
-          color: "#000",
-          weight: 1,
-          fillOpacity: 0.8
-        });
-      },
-      onEachFeature: function (feature, layer) {
-        if (feature.properties) {
-          layer.bindPopup(`Asema: ${feature.properties.name}<br>T: ${feature.properties.t2m} °C`);
-        }
-      }
-    });
+    const layer = L.geoJSON(data);
+    layer.addTo(map);
 
-    // 2. Viitataan uuteen muuttujan nimeen
-    geoJsonLayer.addTo(myMap);
-    
-    const bounds = geoJsonLayer.getBounds();
-    if (bounds.isValid()) {
-      myMap.fitBounds(bounds);
-    }
+    console.log("LAYER ADDED", layer);
+    map.fitBounds(layer.getBounds());
   })
-  .catch(err => console.error("FETCH ERROR:", err));
+  .catch(err => console.error("FETCH ERROR", err));
 </script>
-
 
 
 </body>
