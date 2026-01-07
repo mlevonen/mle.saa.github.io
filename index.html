@@ -1,60 +1,48 @@
 <!DOCTYPE html>
-<html lang="fi">
+<html>
 <head>
 <meta charset="utf-8">
-<title>FMI Sääkartta</title>
-
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-/>
+<title>FMI Sääkartta – Havainnot</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <style>
-html, body { margin: 0; height: 100%; }
-#map { height: 100%; width: 100%; }
+html,body{margin:0;height:100%}
+#map{height:100%;width:100%}
 </style>
 </head>
-
 <body>
+
 <div id="map"></div>
 
 <script>
-const map = L.map("map").setView([64.5, 26], 5);
+console.log("SCRIPT STARTED");
 
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  attribution: "© OpenStreetMap"
-}).addTo(map);
+const map = L.map("map").setView([60, 25], 6);
+console.log("MAP CREATED", map);
+
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
+console.log("TILE LAYER ADDED");
 
 fetch("observations.json")
-  .then(r => r.json())
-  .then(geojson => {
-    console.log("FULL GEOJSON:", geojson);
-    console.log("FEATURE COUNT:", geojson.features.length);
-
-    const layer = L.geoJSON(geojson, {
-      pointToLayer: (feature, latlng) => {
-        return L.circleMarker(latlng, {
-          radius: 5,
-          fillColor: "#ff3333",
-          color: "#000",
-          weight: 1,
-          fillOpacity: 0.8
-        });
-      },
-      onEachFeature: (feature, layer) => {
-        const p = feature.properties;
-        layer.bindPopup(
-          `<b>${p.name}</b><br>
-           Lämpötila: ${p.t2m} °C<br>
-           Tuuli: ${p.ws} m/s`
-        );
-      }
-    }).addTo(map);
-
-    map.fitBounds(layer.getBounds());
+  .then(r => {
+    console.log("FETCH RESPONSE", r);
+    return r.json();
   })
-  .catch(err => console.error("FETCH ERROR:", err));
+  .then(data => {
+    console.log("GEOJSON LOADED", data);
+    console.log("FEATURE COUNT", data.features.length);
+
+    const layer = L.geoJSON(data).addTo(map);
+    console.log("LAYER ADDED", layer);
+
+    // 🔧 TÄRKEÄ KORJAUS: odota hetki ennen fitBoundsia
+    setTimeout(() => {
+      map.fitBounds(layer.getBounds(), { padding: [20, 20] });
+      console.log("BOUNDS FITTED");
+    }, 100);
+  })
+  .catch(err => console.error("FETCH ERROR", err));
 </script>
+
 </body>
 </html>
