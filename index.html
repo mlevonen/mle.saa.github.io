@@ -47,45 +47,46 @@ function tempColor(t) {
   return "#d73027";
 }
 
-// ==========================
-// HAVAINNOT
-// ==========================
+// =====================
+// HAVAINNOT – TUULINUOLET
+// =====================
 fetch("observations.json")
   .then(r => r.json())
   .then(data => {
     console.log("OBS FEATURES", data.features.length);
 
-    obsLayer = L.geoJSON(data, {
-      pointToLayer: (feature, latlng) => {
-        const t = feature.properties.t2m;
-        return L.circleMarker(latlng, {
-          radius: 6,
-          fillColor: tempColor(t),
-          fillOpacity: 0.85,
-          color: "#333",
-          weight: 1
-        });
-      },
-      onEachFeature: (feature, layer) => {
-        const p = feature.properties;
-        layer.bindPopup(`
-          <strong>${p.station}</strong><br>
-          🌡 ${p.t2m ?? "–"} °C<br>
-          💨 ${p.ws ?? "–"} m/s
-        `);
-      }
+    obsLayer = L.layerGroup();
+
+    data.features.forEach(f => {
+      const p = f.properties;
+      const [lon, lat] = f.geometry.coordinates;
+
+      const speed = p.ws ?? 0; // m/s
+      const length = Math.min(20, speed * 3); // nuolen pituus
+
+      // Nuoli (toistaiseksi ylöspäin)
+      const arrow = L.polyline([
+        [lat, lon],
+        [lat + length * 0.001, lon]
+      ], {
+        color: "#000",
+        weight: 2
+      });
+
+      arrow.bindPopup(`
+        <strong>${p.station}</strong><br>
+        🌡 ${p.t2m ?? "–"} °C<br>
+        💨 ${speed} m/s
+      `);
+
+      arrow.addTo(obsLayer);
     });
 
     obsLayer.addTo(map);
-
-    // zoom vain jos layerissä on pisteitä
-    if (obsLayer.getLayers().length > 0) {
-      map.fitBounds(obsLayer.getBounds());
-    }
-
-    tryAddLayerControl();
+    map.fitBounds(obsLayer.getBounds());
   })
   .catch(err => console.error("OBS FETCH ERROR", err));
+
 
 // ==========================
 // ENNUSTE
