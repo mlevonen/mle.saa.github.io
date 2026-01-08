@@ -80,15 +80,27 @@ fetch("observations.json")
         icon: windArrowIcon(p.wd, tempColor(p.t2m))
       });
 
-      marker.bindPopup(`
-        <strong>${p.station}</strong><br>
-        🌡 ${p.t2m ?? "–"} °C<br>
-        💨 ${p.ws ?? "–"} m/s<br>
-        🧭 ${p.wd ?? "–"} °
-      `);
+marker.bindPopup(() => {
+  const temp = (p.t2m !== null && !isNaN(p.t2m))
+    ? `${p.t2m.toFixed(1)} °C`
+    : "–";
 
-      marker.addTo(obsLayer);
-    });
+  const ws = (p.ws !== null && !isNaN(p.ws))
+    ? `${p.ws.toFixed(1)} m/s`
+    : "–";
+
+  const wd = (p.wd !== null && !isNaN(p.wd))
+    ? `${Math.round(p.wd)}°`
+    : "–";
+
+  return `
+    <strong>${p.station}</strong><br>
+    🌡 ${temp}<br>
+    💨 ${ws}<br>
+    🧭 ${wd}
+  `;
+});
+
 
     // zoomataan vain jos pisteitä on
     if (obsLayer.getLayers().length > 0) {
