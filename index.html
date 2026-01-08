@@ -55,16 +55,15 @@ fetch("observations.json")
   .then(data => {
     console.log("OBS FEATURES", data.features.length);
 
-    obsLayer = L.layerGroup();
+    obsLayer = L.featureGroup(); // <-- TÄRKEÄ MUUTOS
 
     data.features.forEach(f => {
       const p = f.properties;
       const [lon, lat] = f.geometry.coordinates;
 
-      const speed = p.ws ?? 0; // m/s
-      const length = Math.min(20, speed * 3); // nuolen pituus
+      const speed = p.ws ?? 0;
+      const length = Math.min(20, speed * 3);
 
-      // Nuoli (toistaiseksi ylöspäin)
       const arrow = L.polyline([
         [lat, lon],
         [lat + length * 0.001, lon]
