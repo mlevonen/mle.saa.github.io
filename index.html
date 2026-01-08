@@ -21,7 +21,9 @@ const map = L.map("map").setView([60, 25], 6);
 
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
 
-// Lämpötilan väriskaala
+// ==========================
+// Värit lämpötilalle
+// ==========================
 function tempColor(t) {
   if (t == null || isNaN(t)) return "#999";
   if (t <= -20) return "#08306b";
@@ -32,71 +34,80 @@ function tempColor(t) {
   return "#d73027";
 }
 
+// ==========================
+// HAVAINTOLAYER (nuolet)
+// ==========================
+const obsLayer = L.layerGroup().addTo(map);
+
 fetch("observations.json")
   .then(r => r.json())
   .then(data => {
-    console.log("FEATURE COUNT", data.features.length);
+    console.log("OBS FEATURES", data.features.length);
 
-    const layer = L.geoJSON(data, {
-
-      // 🔵 Määritellään pisteen ulkonäkö
+    L.geoJSON(data, {
       pointToLayer: (feature, latlng) => {
         const p = feature.properties;
+        const ws = p.ws ?? 0;
 
-        return L.circleMarker(latlng, {
-          radius: Math.max(4, (p.ws ?? 1) * 1.2),
-          fillColor: tempColor(p.t2m),
-          fillOpacity: 0.7,
-          color: "#000",
-          weight: 0.5
+        return L.marker(latlng, {
+          icon: L.divIcon({
+            className: "wind-arrow",
+            html: `
+              <div style="
+                transform: rotate(0deg);
+                font-size: ${Math.max(14, ws * 2)}px;
+                color: ${tempColor(p.t2m)};
+              ">▲</div>
+            `
+          })
         });
       },
 
-      // 🟡 Popup-sisältö
       onEachFeature: (feature, layer) => {
         const p = feature.properties;
-
         layer.bindPopup(`
-          <strong>${p.station || "Sääasema"}</strong><br>
+          <strong>${p.station}</strong><br>
           🌡 ${p.t2m ?? "–"} °C<br>
           💨 ${p.ws ?? "–"} m/s
         `);
       }
-    });
+    }).addTo(obsLayer);
 
-    layer.addTo(map);
-    map.fitBounds(layer.getBounds());
-  })
-  .catch(err => console.error("FETCH ERROR", err));
+    map.fitBounds(obsLayer.getBounds());
+  });
 
-/* ======================
-   LÄMPÖTILALEGENDa
-   ====================== */
-const legend = L.control({ position: "bottomright" });
+// ==========================
+// ENNUSTELAYER
+// ==========================
+const fcLayer = L.layerGroup();
 
-legend.onAdd = function () {
-  const div = L.DomUtil.create("div", "info legend");
-  div.style.background = "white";
-  div.style.padding = "8px";
-  div.style.fontSize = "12px";
-  div.style.lineHeight = "18px";
+fetch("forecast.json")
+  .then(r => r.json())
+  .then(data => {
+    console.log("FC FEATURES", data.features.length);
 
-  const grades = [-20, -10, 0, 10, 20];
+    L.geoJSON(data, {
+      pointToLayer: (feature, latlng) => {
+        const t = feature.properties.t2m;
+        return L.circleMarker(latlng, {
+          radius: 3,
+          fillColor: tempColor(t),
+          fillOpacity: 0.4,
+          color: "none"
+        });
+      }
+    }).addTo(fcLayer);
+  });
 
-  div.innerHTML += "<b>Lämpötila °C</b><br>";
-
-  for (let i = 0; i < grades.length; i++) {
-    div.innerHTML +=
-      '<i style="background:' + tempColor(grades[i] + 1) + 
-      ';width:12px;height:12px;display:inline-block;margin-right:6px"></i>' +
-      grades[i] + (grades[i + 1] ? "&ndash;" + grades[i + 1] + "<br>" : "+");
-  }
-
-  return div;
-};
-
-legend.addTo(map);
+// ==========================
+// Layer toggle
+// ==========================
+L.control.layers(null, {
+  "Havainnot (tuuli)": obsLayer,
+  "Ennuste (lämpötila)": fcLayer
+}).addTo(map);
 </script>
+
 
 
 </body>
