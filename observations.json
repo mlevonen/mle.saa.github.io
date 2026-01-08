@@ -1,6 +1,6 @@
 {
   "type": "FeatureCollection",
-  "generated": "2026-01-08T19:46:54.952556Z",
+  "generated": "2026-01-08T20:07:15.135945Z",
   "features": [
     {
       "type": "Feature",
@@ -14,8 +14,8 @@
       "properties": {
         "station": "Kumlinge kirkonkylä",
         "t2m": null,
-        "ws": 6.4,
-        "wd": 110.0
+        "ws": 5.5,
+        "wd": 107.0
       }
     },
     {
@@ -30,8 +30,8 @@
       "properties": {
         "station": "Hanko Russarö",
         "t2m": null,
-        "ws": 9.0,
-        "wd": 57.0
+        "ws": 9.5,
+        "wd": 62.0
       }
     },
     {
@@ -46,8 +46,8 @@
       "properties": {
         "station": "Turku Rajakari",
         "t2m": null,
-        "ws": 6.3,
-        "wd": 87.0
+        "ws": 7.0,
+        "wd": 90.0
       }
     },
     {
@@ -62,8 +62,8 @@
       "properties": {
         "station": "Helsinki Harmaja",
         "t2m": null,
-        "ws": 7.7,
-        "wd": 36.0
+        "ws": 7.1,
+        "wd": 34.0
       }
     },
     {
@@ -78,8 +78,8 @@
       "properties": {
         "station": "Porvoo Emäsalo",
         "t2m": null,
-        "ws": 6.4,
-        "wd": 41.0
+        "ws": 5.7,
+        "wd": 48.0
       }
     },
     {
@@ -94,7 +94,7 @@
       "properties": {
         "station": "Kustavi Isokari",
         "t2m": null,
-        "ws": 10.9,
+        "ws": 10.2,
         "wd": 108.0
       }
     },
@@ -110,8 +110,8 @@
       "properties": {
         "station": "Rauma Kylmäpihlaja",
         "t2m": null,
-        "ws": 8.5,
-        "wd": 108.0
+        "ws": 7.5,
+        "wd": 101.0
       }
     },
     {
@@ -142,7 +142,7 @@
       "properties": {
         "station": "Korsnäs Bredskäret",
         "t2m": null,
-        "ws": 6.3,
+        "ws": 6.5,
         "wd": 123.0
       }
     },
@@ -158,8 +158,8 @@
       "properties": {
         "station": "Pietarsaari Kallan",
         "t2m": null,
-        "ws": 9.0,
-        "wd": 113.0
+        "ws": 8.8,
+        "wd": 112.0
       }
     },
     {
@@ -174,8 +174,8 @@
       "properties": {
         "station": "Kokkola Tankar",
         "t2m": null,
-        "ws": 6.8,
-        "wd": 117.0
+        "ws": 6.2,
+        "wd": 113.0
       }
     },
     {
@@ -190,8 +190,8 @@
       "properties": {
         "station": "Hailuoto Marjaniemi",
         "t2m": null,
-        "ws": 7.3,
-        "wd": 133.0
+        "ws": 6.2,
+        "wd": 131.0
       }
     },
     {
@@ -206,8 +206,8 @@
       "properties": {
         "station": "Oulu Vihreäsaari satama",
         "t2m": null,
-        "ws": 1.2,
-        "wd": 128.0
+        "ws": 1.1,
+        "wd": 125.0
       }
     },
     {
@@ -221,9 +221,9 @@
       },
       "properties": {
         "station": "Sodankylä Tähtelä",
-        "t2m": -37.1,
-        "ws": 0.8,
-        "wd": 26.0
+        "t2m": -37.2,
+        "ws": 0.9,
+        "wd": 320.0
       }
     },
     {
@@ -237,9 +237,9 @@
       },
       "properties": {
         "station": "Rovaniemi Apukka",
-        "t2m": -31.3,
-        "ws": 1.2,
-        "wd": 343.0
+        "t2m": -31.5,
+        "ws": 1.3,
+        "wd": 317.0
       }
     },
     {
@@ -255,7 +255,7 @@
         "station": "Muonio Sammaltunturi",
         "t2m": -15.5,
         "ws": 4.4,
-        "wd": 278.0
+        "wd": 285.0
       }
     },
     {
@@ -301,9 +301,9 @@
       },
       "properties": {
         "station": "Pyhtää lentokenttä",
-        "t2m": -18.5,
-        "ws": 1.5,
-        "wd": 19.0
+        "t2m": -18.3,
+        "ws": 2.0,
+        "wd": 14.0
       }
     },
     {
@@ -318,8 +318,8 @@
       "properties": {
         "station": "Maarianhamina Lotsberget",
         "t2m": null,
-        "ws": 7.3,
-        "wd": 121.0
+        "ws": 6.2,
+        "wd": 126.0
       }
     },
     {
@@ -335,7 +335,7 @@
         "station": "Inkoo Jakobramsjö",
         "t2m": null,
         "ws": 4.5,
-        "wd": 28.0
+        "wd": 19.0
       }
     },
     {
@@ -349,9 +349,9 @@
       },
       "properties": {
         "station": "Helsinki Vuosaari satama",
-        "t2m": -15.7,
-        "ws": 5.6,
-        "wd": 39.0
+        "t2m": -16.0,
+        "ws": 5.4,
+        "wd": 32.0
       }
     },
     {
@@ -365,9 +365,9 @@
       },
       "properties": {
         "station": "Maarianhamina Länsisatama",
-        "t2m": -3.4,
-        "ws": 3.9,
-        "wd": 107.0
+        "t2m": -3.7,
+        "ws": 3.1,
+        "wd": 109.0
       }
     },
     {
@@ -381,9 +381,9 @@
       },
       "properties": {
         "station": "Lumparland Långnäs satama",
-        "t2m": -1.9,
-        "ws": 8.0,
-        "wd": 154.0
+        "t2m": -2.0,
+        "ws": 7.6,
+        "wd": 148.0
       }
     }
   ]
