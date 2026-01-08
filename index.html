@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>FMI Sääkartta – Ennuste</title>
+<title>FMI Sääkartta – Havainnot</title>
 
 <link rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -23,8 +23,6 @@ html, body { margin: 0; height: 100%; }
 <div id="map"></div>
 
 <script>
-console.log("SCRIPT STARTED");
-
 // ==========================
 // Kartta
 // ==========================
@@ -48,15 +46,15 @@ function tempColor(t) {
 }
 
 // ==========================
-// Tuulinuoli (SVG)
+// Tuulinuoli
 // ==========================
 function windArrowIcon(dir, color) {
   const rot = (dir ?? 0) - 180;
   return L.divIcon({
     className: "",
-    iconSize: [26, 26],
+    iconSize: [24, 24],
     html: `
-      <svg width="26" height="26" viewBox="0 0 100 100"
+      <svg width="24" height="24" viewBox="0 0 100 100"
            style="transform: rotate(${rot}deg)">
         <polygon points="50,0 90,100 50,75 10,100"
                  fill="${color}" />
@@ -66,92 +64,72 @@ function windArrowIcon(dir, color) {
 }
 
 // ==========================
-// Lämpötilakäyrä (SVG)
+// YKSINKERTAINEN lämpötilagraafi
 // ==========================
-function temperatureChart(rows) {
-  const w = 180;
-  const h = 60;
+function temperatureChart(values) {
+  if (values.length < 2) return "<em>Ei graafia</em>";
 
-  const values = rows
-    .map(r => r.t2m)
-    .filter(v => v !== null && !isNaN(v));
-
-  if (values.length < 2) {
-    return "<em>Ei riittävästi ennustetta</em>";
-  }
-
+  const w = 160, h = 50;
   const min = Math.min(...values);
   const max = Math.max(...values);
-  const range = max - min || 1;
+  const r = max - min || 1;
 
-  let path = "";
-
+  let d = "";
   values.forEach((v, i) => {
     const x = (i / (values.length - 1)) * w;
-    const y = h - ((v - min) / range) * h;
-    path += (i === 0 ? "M" : "L") + x + "," + y;
+    const y = h - ((v - min) / r) * h;
+    d += (i === 0 ? "M" : "L") + x + "," + y;
   });
 
   return `
-    <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
-      <path d="${path}"
-            fill="none"
-            stroke="#d73027"
-            stroke-width="2"/>
-      <text x="4" y="12" font-size="10">${min.toFixed(1)}°</text>
-      <text x="4" y="${h - 4}" font-size="10">${max.toFixed(1)}°</text>
+    <svg width="${w}" height="${h}">
+      <path d="${d}" stroke="#d73027" stroke-width="2" fill="none"/>
     </svg>
   `;
 }
 
 // ==========================
-// Ennusteiden haku
+// HAVAINNOT
 // ==========================
-fetch("forecast.json")
+fetch("observations.json")
   .then(r => r.json())
   .then(data => {
 
-    console.log("FC FEATURES", data.features.length);
+    console.log("OBS FEATURES", data.features.length);
 
-    // ==========================
-    // Ryhmittely kaupungeittain
-    // ==========================
-    const byCity = {};
+    // ryhmittely ASEMITTAIN
+    const byStation = {};
 
     data.features.forEach(f => {
       const p = f.properties;
-      if (!byCity[p.city]) {
-        byCity[p.city] = {
+      if (!byStation[p.station]) {
+        byStation[p.station] = {
           coords: f.geometry.coordinates,
-          rows: []
+          temps: [],
+          first: p
         };
       }
-      byCity[p.city].rows.push(p);
+      if (p.t2m !== null && !isNaN(p.t2m)) {
+        byStation[p.station].temps.push(p.t2m);
+      }
     });
 
     const layer = L.layerGroup().addTo(map);
 
-    // ==========================
-    // Markerit + popupit
-    // ==========================
-    Object.entries(byCity).forEach(([city, data]) => {
-      const [lon, lat] = data.coords;
-
-      // aikajärjestys
-      data.rows.sort((a, b) => a.time.localeCompare(b.time));
-
-      const first = data.rows[0];
+    Object.entries(byStation).forEach(([station, s]) => {
+      const [lon, lat] = s.coords;
 
       const marker = L.marker([lat, lon], {
-        icon: windArrowIcon(first.wd, tempColor(first.t2m))
+        icon: windArrowIcon(s.first.wd, tempColor(s.first.t2m))
       });
 
-      const popupHtml = `
-        <div class="popup-title">${city}</div>
-        ${temperatureChart(data.rows)}
-      `;
+      marker.bindPopup(`
+        <div class="popup-title">${station}</div>
+        🌡 ${s.first.t2m ?? "–"} °C<br>
+        💨 ${s.first.ws ?? "–"} m/s<br><br>
+        ${temperatureChart(s.temps)}
+      `);
 
-      marker.bindPopup(popupHtml);
       marker.addTo(layer);
     });
 
@@ -159,7 +137,7 @@ fetch("forecast.json")
       map.fitBounds(layer.getBounds(), { padding: [30, 30] });
     }
   })
-  .catch(err => console.error("FORECAST FETCH ERROR", err));
+  .catch(err => console.error("OBS FETCH ERROR", err));
 </script>
 
 </body>
