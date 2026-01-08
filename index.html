@@ -35,24 +35,16 @@ function tempColor(t) {
 }
 
 
+let obsLayer;
+let forecastLayer;
+
 // =====================
 // HAVAINNOT
 // =====================
 fetch("observations.json")
   .then(r => r.json())
   .then(data => {
-    console.log("OBS FEATURES", data.features.length);
-
-    const obsLayer = L.geoJSON(data, {
-      pointToLayer: (feature, latlng) => {
-        return L.circleMarker(latlng, {
-          radius: 6,
-          fillColor: "#ff5722",
-          color: "#000",
-          weight: 1,
-          fillOpacity: 0.8
-        });
-      },
+    obsLayer = L.geoJSON(data, {
       onEachFeature: (feature, featureLayer) => {
         const p = feature.properties;
         featureLayer.bindPopup(`
@@ -64,11 +56,9 @@ fetch("observations.json")
     });
 
     obsLayer.addTo(map);
-
-    // ✅ toimii nyt
     map.fitBounds(obsLayer.getBounds());
-  })
-  .catch(err => console.error("OBS FETCH ERROR", err));
+  });
+
 
 // =====================
 // ENNUSTE
