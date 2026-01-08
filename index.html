@@ -21,17 +21,43 @@ const map = L.map("map").setView([60, 25], 6);
 
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
 
+// Lämpötilan väriskaala
+function tempColor(t) {
+  if (t == null || isNaN(t)) return "#999";
+  if (t <= -20) return "#08306b";
+  if (t <= -10) return "#2171b5";
+  if (t <= 0)   return "#6baed6";
+  if (t <= 10)  return "#fee08b";
+  if (t <= 20)  return "#fdae61";
+  return "#d73027";
+}
+
 fetch("observations.json")
   .then(r => r.json())
   .then(data => {
     console.log("FEATURE COUNT", data.features.length);
 
     const layer = L.geoJSON(data, {
+
+      // 🔵 Määritellään pisteen ulkonäkö
+      pointToLayer: (feature, latlng) => {
+        const p = feature.properties;
+
+        return L.circleMarker(latlng, {
+          radius: Math.max(4, (p.ws ?? 1) * 1.2),
+          fillColor: tempColor(p.t2m),
+          fillOpacity: 0.7,
+          color: "#000",
+          weight: 0.5
+        });
+      },
+
+      // 🟡 Popup-sisältö
       onEachFeature: (feature, layer) => {
         const p = feature.properties;
 
         layer.bindPopup(`
-          <strong>${p.station}</strong><br>
+          <strong>${p.station || "Sääasema"}</strong><br>
           🌡 ${p.t2m ?? "–"} °C<br>
           💨 ${p.ws ?? "–"} m/s
         `);
@@ -42,6 +68,36 @@ fetch("observations.json")
     map.fitBounds(layer.getBounds());
   })
   .catch(err => console.error("FETCH ERROR", err));
+</script>
+
+<script>
+/* ======================
+   LÄMPÖTILALEGENDa
+   ====================== */
+const legend = L.control({ position: "bottomright" });
+
+legend.onAdd = function () {
+  const div = L.DomUtil.create("div", "info legend");
+  div.style.background = "white";
+  div.style.padding = "8px";
+  div.style.fontSize = "12px";
+  div.style.lineHeight = "18px";
+
+  const grades = [-20, -10, 0, 10, 20];
+
+  div.innerHTML += "<b>Lämpötila °C</b><br>";
+
+  for (let i = 0; i < grades.length; i++) {
+    div.innerHTML +=
+      '<i style="background:' + tempColor(grades[i] + 1) + 
+      ';width:12px;height:12px;display:inline-block;margin-right:6px"></i>' +
+      grades[i] + (grades[i + 1] ? "&ndash;" + grades[i + 1] + "<br>" : "+");
+  }
+
+  return div;
+};
+
+legend.addTo(map);
 </script>
 
 
