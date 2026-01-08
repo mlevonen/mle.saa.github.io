@@ -29,9 +29,20 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 // ==========================
-// Havainnot layer
+// Layerit
 // ==========================
-const obsLayer = L.layerGroup().addTo(map);
+const obsLayer = L.layerGroup();
+const fcLayer  = L.layerGroup();
+
+obsLayer.addTo(map); // oletuksena päällä
+
+// ==========================
+// Layer toggle
+// ==========================
+L.control.layers(null, {
+  "Havainnot (tuuli)": obsLayer,
+  "Ennuste (lämpötila)": fcLayer
+}).addTo(map);
 
 // ==========================
 // Lämpötilavärit
@@ -65,7 +76,7 @@ function windArrowIcon(dir, color) {
 }
 
 // ==========================
-// Havaintojen haku
+// HAVAINNOT
 // ==========================
 fetch("observations.json")
   .then(r => r.json())
@@ -80,26 +91,12 @@ fetch("observations.json")
         icon: windArrowIcon(p.wd, tempColor(p.t2m))
       });
 
-      marker.bindPopup(() => {
-        const temp = (p.t2m !== null && !isNaN(p.t2m))
-          ? `${p.t2m.toFixed(1)} °C`
-          : "–";
-
-        const ws = (p.ws !== null && !isNaN(p.ws))
-          ? `${p.ws.toFixed(1)} m/s`
-          : "–";
-
-        const wd = (p.wd !== null && !isNaN(p.wd))
-          ? `${Math.round(p.wd)}°`
-          : "–";
-
-        return `
-          <strong>${p.station}</strong><br>
-          🌡 ${temp}<br>
-          💨 ${ws}<br>
-          🧭 ${wd}
-        `;
-      });
+      marker.bindPopup(`
+        <strong>${p.station}</strong><br>
+        🌡 ${p.t2m ?? "–"} °C<br>
+        💨 ${p.ws ?? "–"} m/s<br>
+        🧭 ${p.wd ?? "–"} °
+      `);
 
       marker.addTo(obsLayer);
     });
@@ -109,6 +106,37 @@ fetch("observations.json")
     }
   })
   .catch(err => console.error("OBS FETCH ERROR", err));
+
+// ==========================
+// ENNUSTE
+// ==========================
+fetch("forecast.json")
+  .then(r => r.json())
+  .then(fc => {
+    console.log("FC FEATURES", fc.features.length);
+
+    fc.features.forEach(f => {
+      const [lon, lat] = f.geometry.coordinates;
+      const p = f.properties;
+
+      const m = L.circleMarker([lat, lon], {
+        radius: 5,
+        color: "#333",
+        weight: 1,
+        fillColor: tempColor(p.t2m),
+        fillOpacity: 0.7
+      });
+
+      m.bindPopup(`
+        <strong>${p.city}</strong><br>
+        🌡 ${p.t2m ?? "–"} °C<br>
+        💨 ${p.ws ?? "–"} m/s
+      `);
+
+      m.addTo(fcLayer);
+    });
+  })
+  .catch(err => console.error("FC FETCH ERROR", err));
 </script>
 
 </body>
