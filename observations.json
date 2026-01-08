@@ -1,6 +1,6 @@
 {
   "type": "FeatureCollection",
-  "generated": "2026-01-07T21:08:32.059786Z",
+  "generated": "2026-01-08T17:09:30.563206Z",
   "features": [
     {
       "type": "Feature",
@@ -13,8 +13,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -9.3,
-        "ws": 3.2
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -28,8 +29,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -7.9,
-        "ws": 2.2
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -43,8 +45,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -0.4,
-        "ws": 9.0
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -58,8 +61,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": 0.7,
-        "ws": 8.3
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -73,8 +77,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -9.5,
-        "ws": 1.9
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -88,8 +93,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": 0.3,
-        "ws": 7.9
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -103,8 +109,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -4.6,
-        "ws": 5.0
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -118,8 +125,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -2.6,
-        "ws": 6.9
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -133,8 +141,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -4.0,
-        "ws": 8.9
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -148,8 +157,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -8.0,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -163,8 +173,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -4.3,
-        "ws": 8.7
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -178,8 +189,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -5.9,
-        "ws": 5.1
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -193,8 +205,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -6.2,
-        "ws": 7.9
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -208,8 +221,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -7.5,
-        "ws": 4.2
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -223,8 +237,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -7.6,
-        "ws": 2.9
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -238,8 +253,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -6.5,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -253,8 +269,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -10.8,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -268,8 +285,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -11.8,
-        "ws": 3.2
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -283,8 +301,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -12.2,
-        "ws": 1.4
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -298,8 +317,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -6.9,
-        "ws": 5.1
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -313,8 +333,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -10.5,
-        "ws": 2.9
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -328,8 +349,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -12.8,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -343,8 +365,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -21.0,
-        "ws": 0.4
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -358,8 +381,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -7.9,
-        "ws": 5.6
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -373,8 +397,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -7.8,
-        "ws": 6.7
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -388,8 +413,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -10.4,
-        "ws": 3.5
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -403,8 +429,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -14.6,
-        "ws": 1.1
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -418,8 +445,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -4.3,
-        "ws": 6.0
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -433,8 +461,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -8.2,
-        "ws": 5.6
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -448,8 +477,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -11.9,
-        "ws": 2.5
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -463,8 +493,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -8.4,
-        "ws": 3.8
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -478,8 +509,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -7.3,
-        "ws": 5.3
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -493,8 +525,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -6.6,
-        "ws": 5.6
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -508,8 +541,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -8.3,
-        "ws": 4.8
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -523,8 +557,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -5.6,
-        "ws": 11.1
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -538,8 +573,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -7.6,
-        "ws": 10.5
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -553,8 +589,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -8.6,
-        "ws": 4.9
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -568,8 +605,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -8.3,
-        "ws": 3.0
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -583,8 +621,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -12.9,
-        "ws": 3.5
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -598,8 +637,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -10.5,
-        "ws": 2.4
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -613,8 +653,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -10.7,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -628,8 +669,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -12.5,
-        "ws": 2.5
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -643,8 +685,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -18.0,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -658,8 +701,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -13.6,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -673,8 +717,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -13.0,
-        "ws": 2.0
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -688,8 +733,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -12.6,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -703,8 +749,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -14.1,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -718,8 +765,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -14.0,
-        "ws": 2.9
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -733,8 +781,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -9.7,
-        "ws": 4.7
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -748,8 +797,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -8.4,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -763,8 +813,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -9.9,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -778,8 +829,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -9.7,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -793,8 +845,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -9.9,
-        "ws": 3.0
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -808,8 +861,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -11.9,
-        "ws": 3.3
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -823,8 +877,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -12.9,
-        "ws": 1.3
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -838,8 +893,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -12.4,
-        "ws": 5.5
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -853,8 +909,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -12.5,
-        "ws": 3.3
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -868,8 +925,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -9.3,
-        "ws": 8.7
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -883,8 +941,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -8.1,
-        "ws": 6.4
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -898,8 +957,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -11.6,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -913,8 +973,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -10.7,
-        "ws": 2.5
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -928,8 +989,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -10.2,
-        "ws": 2.4
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -943,8 +1005,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -17.1,
-        "ws": 1.1
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -958,8 +1021,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -11.0,
-        "ws": 3.6
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -973,8 +1037,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -16.1,
-        "ws": 1.4
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -988,8 +1053,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -15.5,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1003,8 +1069,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -15.0,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1018,8 +1085,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -14.5,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1033,8 +1101,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -12.3,
-        "ws": 1.7
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1048,8 +1117,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -14.2,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1063,8 +1133,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -15.3,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1078,8 +1149,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -14.7,
-        "ws": 1.5
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1093,8 +1165,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -14.4,
-        "ws": 3.3
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1108,8 +1181,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -12.9,
-        "ws": 4.1
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1123,8 +1197,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -13.4,
-        "ws": 4.0
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1138,8 +1213,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -12.6,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1153,8 +1229,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -13.9,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1168,8 +1245,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -13.8,
-        "ws": 2.5
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1183,8 +1261,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -9.7,
-        "ws": 6.7
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1198,8 +1277,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -11.5,
-        "ws": 7.1
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1213,8 +1293,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -10.0,
-        "ws": 8.0
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1228,8 +1309,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -13.3,
-        "ws": 3.5
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1243,8 +1325,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -14.8,
-        "ws": 1.5
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1258,8 +1341,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -15.6,
-        "ws": 1.9
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1273,8 +1357,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -16.9,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1288,8 +1373,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -16.9,
-        "ws": 2.0
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1303,8 +1389,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -14.8,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1318,8 +1405,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -15.7,
-        "ws": 3.8
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1333,8 +1421,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -15.3,
-        "ws": 0.7
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1348,8 +1437,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -14.9,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1363,8 +1453,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -14.8,
-        "ws": 1.0
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1378,8 +1469,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -16.9,
-        "ws": 2.0
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1393,8 +1485,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -14.0,
-        "ws": 4.1
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1408,8 +1501,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -14.9,
-        "ws": 0.9
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1423,8 +1517,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -17.9,
-        "ws": 2.9
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1438,8 +1533,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -14.0,
-        "ws": 3.7
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1453,8 +1549,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -17.2,
-        "ws": 1.6
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1468,8 +1565,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -13.8,
-        "ws": 3.7
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1483,8 +1581,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -13.7,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1498,8 +1597,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -17.1,
-        "ws": 2.1
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1513,8 +1613,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -14.8,
-        "ws": 3.8
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1528,8 +1629,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -13.1,
-        "ws": 5.7
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1543,8 +1645,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -12.8,
-        "ws": 6.1
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1558,8 +1661,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -14.8,
-        "ws": 1.6
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1573,8 +1677,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -12.3,
-        "ws": 4.4
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1588,8 +1693,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -14.9,
-        "ws": 2.4
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1603,8 +1709,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -17.1,
-        "ws": 1.6
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1618,8 +1725,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -21.0,
-        "ws": 2.1
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1633,8 +1741,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -17.5,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1648,8 +1757,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -18.5,
-        "ws": 2.1
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1663,8 +1773,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -20.1,
-        "ws": 3.7
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1678,8 +1789,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -17.1,
-        "ws": 3.6
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1693,8 +1805,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -19.9,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1708,8 +1821,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -21.7,
-        "ws": 1.4
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1723,8 +1837,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -22.8,
-        "ws": 1.2
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1738,8 +1853,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -13.5,
-        "ws": 5.0
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1753,8 +1869,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -20.2,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1768,8 +1885,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -17.2,
-        "ws": 2.2
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1783,8 +1901,25 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -20.4,
-        "ws": 2.8
+        "t2m": null,
+        "ws": null,
+        "wd": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.40695,
+          64.66589
+        ]
+      },
+      "properties": {
+        "station": "Tuntematon asema",
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1798,8 +1933,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -20.6,
-        "ws": 2.7
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1813,8 +1949,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -20.4,
-        "ws": 2.3
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1828,8 +1965,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -20.4,
-        "ws": 2.4
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1843,8 +1981,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -19.3,
-        "ws": 2.6
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1858,8 +1997,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -23.2,
-        "ws": 2.6
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1873,8 +2013,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -25.5,
-        "ws": 2.0
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1888,8 +2029,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -23.0,
-        "ws": 3.4
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1903,8 +2045,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -24.8,
-        "ws": 2.5
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1918,8 +2061,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -22.7,
-        "ws": 4.8
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1933,8 +2077,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -24.4,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1948,8 +2093,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -23.2,
-        "ws": 1.8
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1963,8 +2109,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -26.9,
-        "ws": 1.4
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1978,8 +2125,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -24.5,
-        "ws": 2.0
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -1993,8 +2141,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -36.2,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2008,8 +2157,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -15.9,
-        "ws": 10.6
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2023,8 +2173,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -23.9,
-        "ws": 3.8
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2038,8 +2189,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -34.3,
-        "ws": 0.8
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2053,8 +2205,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -29.5,
-        "ws": 2.5
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2068,8 +2221,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -23.2,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2083,8 +2237,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -28.2,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2098,8 +2253,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -36.6,
-        "ws": 1.8
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2113,8 +2269,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -33.1,
-        "ws": 0.9
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2128,8 +2285,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -17.1,
-        "ws": 2.6
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2143,8 +2301,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -33.8,
-        "ws": 0.6
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2158,8 +2317,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -37.1,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2173,8 +2333,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -17.8,
-        "ws": 8.5
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2188,8 +2349,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -36.0,
-        "ws": 0.5
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2203,8 +2365,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -34.9,
-        "ws": 1.9
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2218,8 +2381,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -27.0,
-        "ws": 1.6
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2233,8 +2397,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -15.6,
-        "ws": 4.8
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2248,8 +2413,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -16.6,
-        "ws": 3.8
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2263,8 +2429,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -27.0,
-        "ws": 1.3
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2278,8 +2445,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -33.7,
-        "ws": 0.7
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2293,8 +2461,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -28.0,
-        "ws": 1.9
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2308,8 +2477,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -33.3,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2323,8 +2493,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -34.5,
-        "ws": 2.1
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2338,8 +2509,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -37.5,
-        "ws": 2.1
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2353,8 +2525,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -35.3,
-        "ws": 0.6
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2368,8 +2541,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -32.3,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2383,8 +2557,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -17.7,
-        "ws": 5.1
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2398,8 +2573,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -34.0,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2413,8 +2589,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -21.2,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2428,8 +2605,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -27.1,
-        "ws": 1.5
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2443,8 +2621,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -16.5,
-        "ws": 6.1
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2458,8 +2637,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -25.2,
-        "ws": 1.7
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2473,8 +2653,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -27.7,
-        "ws": 1.5
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2488,8 +2669,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -34.6,
-        "ws": 3.0
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2503,8 +2685,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -33.8,
-        "ws": 3.6
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2518,8 +2701,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -29.0,
-        "ws": 0.7
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2533,8 +2717,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -33.8,
-        "ws": 1.8
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2548,8 +2733,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -33.2,
-        "ws": 1.6
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2563,8 +2749,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -31.9,
-        "ws": 1.2
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2578,8 +2765,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -13.3,
-        "ws": 1.6
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2593,8 +2781,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -9.6,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2608,8 +2797,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -6.5,
-        "ws": 6.5
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2623,8 +2813,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -8.7,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2638,8 +2829,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -33.6,
-        "ws": 1.1
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2653,8 +2845,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -14.2,
-        "ws": 1.3
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2668,8 +2861,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -24.9,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2683,8 +2877,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -20.6,
-        "ws": 8.5
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2698,8 +2893,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -29.3,
-        "ws": 0.5
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2714,7 +2910,8 @@
       "properties": {
         "station": "Tuntematon asema",
         "t2m": null,
-        "ws": 5.5
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2728,8 +2925,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -40.0,
-        "ws": 0.8
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2743,8 +2941,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -8.8,
-        "ws": 4.4
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2758,8 +2957,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -21.0,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2773,8 +2973,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -8.5,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2788,8 +2989,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -19.1,
-        "ws": 2.2
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2803,8 +3005,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -33.6,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2818,8 +3021,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -32.6,
-        "ws": null
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2833,8 +3037,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -15.2,
-        "ws": 2.0
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2848,8 +3053,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -22.6,
-        "ws": 6.4
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2863,8 +3069,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -15.7,
-        "ws": 1.0
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2878,8 +3085,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -12.2,
-        "ws": 4.1
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2893,8 +3101,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -9.1,
-        "ws": 4.3
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2908,8 +3117,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -5.3,
-        "ws": 4.0
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2923,8 +3133,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -2.0,
-        "ws": 3.8
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2938,8 +3149,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -33.3,
-        "ws": 1.3
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2953,8 +3165,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -11.9,
-        "ws": 3.5
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2968,8 +3181,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -14.5,
-        "ws": 0.9
+        "t2m": null,
+        "ws": null,
+        "wd": null
       }
     },
     {
@@ -2983,8 +3197,9 @@
       },
       "properties": {
         "station": "Tuntematon asema",
-        "t2m": -12.2,
-        "ws": 3.7
+        "t2m": null,
+        "ws": 3.2,
+        "wd": null
       }
     }
   ]
