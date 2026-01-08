@@ -2,12 +2,14 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>FMI Sääkartta – Havainnot</title>
+<title>FMI Sääkartta – Havainnot ja ennuste</title>
+
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <style>
-html,body{margin:0;height:100%}
-#map{height:100%;width:100%}
+html, body { margin: 0; height: 100%; }
+#map { height: 100%; width: 100%; }
 </style>
 </head>
 <body>
@@ -15,18 +17,25 @@ html,body{margin:0;height:100%}
 <div id="map"></div>
 
 <script>
-
 console.log("SCRIPT STARTED");
 
-let obsLayer;
-let forecastLayer;
-
-const map = L.map("map").setView([60, 25], 6);
-
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
+// ==========================
+// GLOBAALIT LAYER-MUUTTUJAT
+// ==========================
+let obsLayer = null;
+let fcLayer  = null;
 
 // ==========================
-// Värit lämpötilalle
+// KARTTA
+// ==========================
+const map = L.map("map").setView([60, 25], 6);
+
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution: "&copy; OpenStreetMap"
+}).addTo(map);
+
+// ==========================
+// LÄMPÖTILAN VÄRIT
 // ==========================
 function tempColor(t) {
   if (t == null || isNaN(t)) return "#999";
@@ -38,19 +47,28 @@ function tempColor(t) {
   return "#d73027";
 }
 
-
-
-
-// =====================
+// ==========================
 // HAVAINNOT
-// =====================
+// ==========================
 fetch("observations.json")
   .then(r => r.json())
   .then(data => {
+    console.log("OBS FEATURES", data.features.length);
+
     obsLayer = L.geoJSON(data, {
-      onEachFeature: (feature, featureLayer) => {
+      pointToLayer: (feature, latlng) => {
+        const t = feature.properties.t2m;
+        return L.circleMarker(latlng, {
+          radius: 6,
+          fillColor: tempColor(t),
+          fillOpacity: 0.85,
+          color: "#333",
+          weight: 1
+        });
+      },
+      onEachFeature: (feature, layer) => {
         const p = feature.properties;
-        featureLayer.bindPopup(`
+        layer.bindPopup(`
           <strong>${p.station}</strong><br>
           🌡 ${p.t2m ?? "–"} °C<br>
           💨 ${p.ws ?? "–"} m/s
@@ -59,12 +77,19 @@ fetch("observations.json")
     });
 
     obsLayer.addTo(map);
-    map.fitBounds(obsLayer.getBounds());
-  });
 
-// =====================
+    // zoom vain jos layerissä on pisteitä
+    if (obsLayer.getLayers().length > 0) {
+      map.fitBounds(obsLayer.getBounds());
+    }
+
+    tryAddLayerControl();
+  })
+  .catch(err => console.error("OBS FETCH ERROR", err));
+
+// ==========================
 // ENNUSTE
-// =====================
+// ==========================
 fetch("forecast.json")
   .then(r => r.json())
   .then(fc => {
@@ -72,10 +97,12 @@ fetch("forecast.json")
 
     fcLayer = L.geoJSON(fc, {
       pointToLayer: (feature, latlng) => {
+        const t = feature.properties.t2m;
         return L.circleMarker(latlng, {
           radius: 5,
-          fillOpacity: 0.7,
-          color: "#333",
+          fillColor: tempColor(t),
+          fillOpacity: 0.6,
+          color: "#000",
           weight: 1
         });
       },
@@ -90,20 +117,28 @@ fetch("forecast.json")
     });
 
     fcLayer.addTo(map);
+    tryAddLayerControl();
   })
   .catch(err => console.error("FC FETCH ERROR", err));
 
+// ==========================
+// LAYER CONTROL (lisätään vain kerran)
+// ==========================
+let layerControlAdded = false;
 
-// ==========================
-// Layer toggle
-// ==========================
-L.control.layers(null, {
-  "Havainnot (tuuli)": obsLayer,
-  "Ennuste (lämpötila)": fcLayer
-}).addTo(map);
+function tryAddLayerControl() {
+  if (layerControlAdded) return;
+  if (!obsLayer || !fcLayer) return;
+
+  L.control.layers(null, {
+    "Havainnot": obsLayer,
+    "Ennuste": fcLayer
+  }, { collapsed: false }).addTo(map);
+
+  layerControlAdded = true;
+  console.log("LAYER CONTROL ADDED");
+}
 </script>
-
-
 
 </body>
 </html>
