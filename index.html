@@ -50,7 +50,7 @@ function tempColor(t) {
 // TUULINUOLI (SVG)
 // ==========================
 function windArrowIcon(dir, color) {
-  const rot = (dir ?? 0) - 180; // FMI: mistä tuulee → mihin
+  const rot = (dir ?? 0) - 180;
   return L.divIcon({
     className: "",
     iconSize: [24, 24],
@@ -80,29 +80,30 @@ fetch("observations.json")
         icon: windArrowIcon(p.wd, tempColor(p.t2m))
       });
 
-marker.bindPopup(() => {
-  const temp = (p.t2m !== null && !isNaN(p.t2m))
-    ? `${p.t2m.toFixed(1)} °C`
-    : "–";
+      marker.bindPopup(() => {
+        const temp = (p.t2m !== null && !isNaN(p.t2m))
+          ? `${p.t2m.toFixed(1)} °C`
+          : "–";
 
-  const ws = (p.ws !== null && !isNaN(p.ws))
-    ? `${p.ws.toFixed(1)} m/s`
-    : "–";
+        const ws = (p.ws !== null && !isNaN(p.ws))
+          ? `${p.ws.toFixed(1)} m/s`
+          : "–";
 
-  const wd = (p.wd !== null && !isNaN(p.wd))
-    ? `${Math.round(p.wd)}°`
-    : "–";
+        const wd = (p.wd !== null && !isNaN(p.wd))
+          ? `${Math.round(p.wd)}°`
+          : "–";
 
-  return `
-    <strong>${p.station}</strong><br>
-    🌡 ${temp}<br>
-    💨 ${ws}<br>
-    🧭 ${wd}
-  `;
-});
+        return `
+          <strong>${p.station}</strong><br>
+          🌡 ${temp}<br>
+          💨 ${ws}<br>
+          🧭 ${wd}
+        `;
+      });
 
+      marker.addTo(obsLayer);
+    });
 
-    // zoomataan vain jos pisteitä on
     if (obsLayer.getLayers().length > 0) {
       map.fitBounds(obsLayer.getBounds(), { padding: [30, 30] });
     }
