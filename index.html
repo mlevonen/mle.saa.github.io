@@ -12,16 +12,9 @@
 html, body { margin: 0; height: 100%; }
 #map { height: 100%; width: 100%; }
 
-.popup-table {
-  font-size: 12px;
-  border-collapse: collapse;
-}
-.popup-table td {
-  padding: 2px 6px;
-  white-space: nowrap;
-}
-.popup-table tr:nth-child(even) {
-  background: #f2f2f2;
+.popup-title {
+  font-weight: bold;
+  margin-bottom: 6px;
 }
 </style>
 </head>
@@ -73,6 +66,45 @@ function windArrowIcon(dir, color) {
 }
 
 // ==========================
+// Lämpötilakäyrä (SVG)
+// ==========================
+function temperatureChart(rows) {
+  const w = 180;
+  const h = 60;
+
+  const values = rows
+    .map(r => r.t2m)
+    .filter(v => v !== null && !isNaN(v));
+
+  if (values.length < 2) {
+    return "<em>Ei riittävästi ennustetta</em>";
+  }
+
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const range = max - min || 1;
+
+  let path = "";
+
+  values.forEach((v, i) => {
+    const x = (i / (values.length - 1)) * w;
+    const y = h - ((v - min) / range) * h;
+    path += (i === 0 ? "M" : "L") + x + "," + y;
+  });
+
+  return `
+    <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+      <path d="${path}"
+            fill="none"
+            stroke="#d73027"
+            stroke-width="2"/>
+      <text x="4" y="12" font-size="10">${min.toFixed(1)}°</text>
+      <text x="4" y="${h - 4}" font-size="10">${max.toFixed(1)}°</text>
+    </svg>
+  `;
+}
+
+// ==========================
 // Ennusteiden haku
 // ==========================
 fetch("forecast.json")
@@ -82,7 +114,7 @@ fetch("forecast.json")
     console.log("FC FEATURES", data.features.length);
 
     // ==========================
-    // Ryhmitellään kaupungeittain
+    // Ryhmittely kaupungeittain
     // ==========================
     const byCity = {};
 
@@ -105,7 +137,7 @@ fetch("forecast.json")
     Object.entries(byCity).forEach(([city, data]) => {
       const [lon, lat] = data.coords;
 
-      // järjestetään aika
+      // aikajärjestys
       data.rows.sort((a, b) => a.time.localeCompare(b.time));
 
       const first = data.rows[0];
@@ -114,30 +146,18 @@ fetch("forecast.json")
         icon: windArrowIcon(first.wd, tempColor(first.t2m))
       });
 
-      // popup-taulukko
-      let html = `<strong>${city}</strong><br><br>`;
-      html += `<table class="popup-table">`;
+      const popupHtml = `
+        <div class="popup-title">${city}</div>
+        ${temperatureChart(data.rows)}
+      `;
 
-      data.rows.forEach(r => {
-        const t = new Date(r.time);
-        const hh = t.getUTCHours().toString().padStart(2, "0");
-        html += `
-          <tr>
-            <td>${t.toISOString().slice(0,10)} ${hh}:00</td>
-            <td>🌡 ${r.t2m ?? "–"}°C</td>
-            <td>💨 ${r.ws ?? "–"} m/s</td>
-            <td>🧭 ${r.wd ?? "–"}°</td>
-          </tr>
-        `;
-      });
-
-      html += "</table>";
-
-      marker.bindPopup(html);
+      marker.bindPopup(popupHtml);
       marker.addTo(layer);
     });
 
-    map.fitBounds(layer.getBounds(), { padding: [30, 30] });
+    if (layer.getLayers().length > 0) {
+      map.fitBounds(layer.getBounds(), { padding: [30, 30] });
+    }
   })
   .catch(err => console.error("FORECAST FETCH ERROR", err));
 </script>
