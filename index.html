@@ -53,9 +53,9 @@ fetch("observations.json")
           fillOpacity: 0.8
         });
       },
-      onEachFeature: (feature, layer) => {
+      onEachFeature: (feature, featureLayer) => {
         const p = feature.properties;
-        layer.bindPopup(`
+        featureLayer.bindPopup(`
           <strong>${p.station}</strong><br>
           🌡 ${p.t2m ?? "–"} °C<br>
           💨 ${p.ws ?? "–"} m/s
@@ -65,16 +65,14 @@ fetch("observations.json")
 
     obsLayer.addTo(map);
 
-    // 🔥 TÄMÄ TOIMII NYT
+    // ✅ toimii nyt
     map.fitBounds(obsLayer.getBounds());
   })
   .catch(err => console.error("OBS FETCH ERROR", err));
 
-
-// ==========================
-// ENNUSTELAYER
-// ==========================
-
+// =====================
+// ENNUSTE
+// =====================
 fetch("forecast.json")
   .then(r => r.json())
   .then(data => {
@@ -90,9 +88,9 @@ fetch("forecast.json")
           fillOpacity: 0.6
         });
       },
-      onEachFeature: (feature, layer) => {
+      onEachFeature: (feature, featureLayer) => {
         const p = feature.properties;
-        layer.bindPopup(`
+        featureLayer.bindPopup(`
           <strong>${p.city}</strong><br>
           🌡 ${p.t2m ?? "–"} °C<br>
           💨 ${p.ws ? p.ws.toFixed(1) : "–"} m/s
@@ -103,6 +101,7 @@ fetch("forecast.json")
     forecastLayer.addTo(map);
   })
   .catch(err => console.error("FORECAST FETCH ERROR", err));
+
 
 
 // ==========================
