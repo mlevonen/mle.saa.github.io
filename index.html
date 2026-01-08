@@ -2,14 +2,27 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>FMI Sääkartta – Havainnot ja ennuste</title>
+<title>FMI Sääkartta – Ennuste</title>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <style>
 html, body { margin: 0; height: 100%; }
 #map { height: 100%; width: 100%; }
+
+.popup-table {
+  font-size: 12px;
+  border-collapse: collapse;
+}
+.popup-table td {
+  padding: 2px 6px;
+  white-space: nowrap;
+}
+.popup-table tr:nth-child(even) {
+  background: #f2f2f2;
+}
 </style>
 </head>
 <body>
@@ -29,22 +42,6 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 // ==========================
-// Layerit
-// ==========================
-const obsLayer = L.layerGroup();
-const fcLayer  = L.layerGroup();
-
-obsLayer.addTo(map); // oletuksena päällä
-
-// ==========================
-// Layer toggle
-// ==========================
-L.control.layers(null, {
-  "Havainnot (tuuli)": obsLayer,
-  "Ennuste (lämpötila)": fcLayer
-}).addTo(map);
-
-// ==========================
 // Lämpötilavärit
 // ==========================
 function tempColor(t) {
@@ -58,15 +55,15 @@ function tempColor(t) {
 }
 
 // ==========================
-// TUULINUOLI (SVG)
+// Tuulinuoli (SVG)
 // ==========================
 function windArrowIcon(dir, color) {
   const rot = (dir ?? 0) - 180;
   return L.divIcon({
     className: "",
-    iconSize: [24, 24],
+    iconSize: [26, 26],
     html: `
-      <svg width="24" height="24" viewBox="0 0 100 100"
+      <svg width="26" height="26" viewBox="0 0 100 100"
            style="transform: rotate(${rot}deg)">
         <polygon points="50,0 90,100 50,75 10,100"
                  fill="${color}" />
@@ -76,67 +73,73 @@ function windArrowIcon(dir, color) {
 }
 
 // ==========================
-// HAVAINNOT
-// ==========================
-fetch("observations.json")
-  .then(r => r.json())
-  .then(data => {
-    console.log("OBS FEATURES", data.features.length);
-
-    data.features.forEach(f => {
-      const [lon, lat] = f.geometry.coordinates;
-      const p = f.properties;
-
-      const marker = L.marker([lat, lon], {
-        icon: windArrowIcon(p.wd, tempColor(p.t2m))
-      });
-
-      marker.bindPopup(`
-        <strong>${p.station}</strong><br>
-        🌡 ${p.t2m ?? "–"} °C<br>
-        💨 ${p.ws ?? "–"} m/s<br>
-        🧭 ${p.wd ?? "–"} °
-      `);
-
-      marker.addTo(obsLayer);
-    });
-
-    if (obsLayer.getLayers().length > 0) {
-      map.fitBounds(obsLayer.getBounds(), { padding: [30, 30] });
-    }
-  })
-  .catch(err => console.error("OBS FETCH ERROR", err));
-
-// ==========================
-// ENNUSTE
+// Ennusteiden haku
 // ==========================
 fetch("forecast.json")
   .then(r => r.json())
-  .then(fc => {
-    console.log("FC FEATURES", fc.features.length);
+  .then(data => {
 
-    fc.features.forEach(f => {
-      const [lon, lat] = f.geometry.coordinates;
+    console.log("FC FEATURES", data.features.length);
+
+    // ==========================
+    // Ryhmitellään kaupungeittain
+    // ==========================
+    const byCity = {};
+
+    data.features.forEach(f => {
       const p = f.properties;
+      if (!byCity[p.city]) {
+        byCity[p.city] = {
+          coords: f.geometry.coordinates,
+          rows: []
+        };
+      }
+      byCity[p.city].rows.push(p);
+    });
 
-      const m = L.circleMarker([lat, lon], {
-        radius: 5,
-        color: "#333",
-        weight: 1,
-        fillColor: tempColor(p.t2m),
-        fillOpacity: 0.7
+    const layer = L.layerGroup().addTo(map);
+
+    // ==========================
+    // Markerit + popupit
+    // ==========================
+    Object.entries(byCity).forEach(([city, data]) => {
+      const [lon, lat] = data.coords;
+
+      // järjestetään aika
+      data.rows.sort((a, b) => a.time.localeCompare(b.time));
+
+      const first = data.rows[0];
+
+      const marker = L.marker([lat, lon], {
+        icon: windArrowIcon(first.wd, tempColor(first.t2m))
       });
 
-      m.bindPopup(`
-        <strong>${p.city}</strong><br>
-        🌡 ${p.t2m ?? "–"} °C<br>
-        💨 ${p.ws ?? "–"} m/s
-      `);
+      // popup-taulukko
+      let html = `<strong>${city}</strong><br><br>`;
+      html += `<table class="popup-table">`;
 
-      m.addTo(fcLayer);
+      data.rows.forEach(r => {
+        const t = new Date(r.time);
+        const hh = t.getUTCHours().toString().padStart(2, "0");
+        html += `
+          <tr>
+            <td>${t.toISOString().slice(0,10)} ${hh}:00</td>
+            <td>🌡 ${r.t2m ?? "–"}°C</td>
+            <td>💨 ${r.ws ?? "–"} m/s</td>
+            <td>🧭 ${r.wd ?? "–"}°</td>
+          </tr>
+        `;
+      });
+
+      html += "</table>";
+
+      marker.bindPopup(html);
+      marker.addTo(layer);
     });
+
+    map.fitBounds(layer.getBounds(), { padding: [30, 30] });
   })
-  .catch(err => console.error("FC FETCH ERROR", err));
+  .catch(err => console.error("FORECAST FETCH ERROR", err));
 </script>
 
 </body>
