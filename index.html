@@ -34,35 +34,25 @@ function tempColor(t) {
   return "#d73027";
 }
 
-// ==========================
-// HAVAINTOLAYER (nuolet)
-// ==========================
-const obsLayer = L.layerGroup().addTo(map);
 
+// =====================
+// HAVAINNOT
+// =====================
 fetch("observations.json")
   .then(r => r.json())
   .then(data => {
     console.log("OBS FEATURES", data.features.length);
 
-    L.geoJSON(data, {
+    const obsLayer = L.geoJSON(data, {
       pointToLayer: (feature, latlng) => {
-        const p = feature.properties;
-        const ws = p.ws ?? 0;
-
-        return L.marker(latlng, {
-          icon: L.divIcon({
-            className: "wind-arrow",
-            html: `
-              <div style="
-                transform: rotate(0deg);
-                font-size: ${Math.max(14, ws * 2)}px;
-                color: ${tempColor(p.t2m)};
-              ">▲</div>
-            `
-          })
+        return L.circleMarker(latlng, {
+          radius: 6,
+          fillColor: "#ff5722",
+          color: "#000",
+          weight: 1,
+          fillOpacity: 0.8
         });
       },
-
       onEachFeature: (feature, layer) => {
         const p = feature.properties;
         layer.bindPopup(`
@@ -71,33 +61,49 @@ fetch("observations.json")
           💨 ${p.ws ?? "–"} m/s
         `);
       }
-    }).addTo(obsLayer);
+    });
 
+    obsLayer.addTo(map);
+
+    // 🔥 TÄMÄ TOIMII NYT
     map.fitBounds(obsLayer.getBounds());
-  });
+  })
+  .catch(err => console.error("OBS FETCH ERROR", err));
+
 
 // ==========================
 // ENNUSTELAYER
 // ==========================
-const fcLayer = L.layerGroup();
 
 fetch("forecast.json")
   .then(r => r.json())
   .then(data => {
     console.log("FC FEATURES", data.features.length);
 
-    L.geoJSON(data, {
+    const forecastLayer = L.geoJSON(data, {
       pointToLayer: (feature, latlng) => {
-        const t = feature.properties.t2m;
         return L.circleMarker(latlng, {
-          radius: 3,
-          fillColor: tempColor(t),
-          fillOpacity: 0.4,
-          color: "none"
+          radius: 4,
+          fillColor: "#2196f3",
+          color: "#000",
+          weight: 1,
+          fillOpacity: 0.6
         });
+      },
+      onEachFeature: (feature, layer) => {
+        const p = feature.properties;
+        layer.bindPopup(`
+          <strong>${p.city}</strong><br>
+          🌡 ${p.t2m ?? "–"} °C<br>
+          💨 ${p.ws ? p.ws.toFixed(1) : "–"} m/s
+        `);
       }
-    }).addTo(fcLayer);
-  });
+    });
+
+    forecastLayer.addTo(map);
+  })
+  .catch(err => console.error("FORECAST FETCH ERROR", err));
+
 
 // ==========================
 // Layer toggle
