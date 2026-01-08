@@ -19,17 +19,22 @@ html, body { margin: 0; height: 100%; }
 <script>
 console.log("SCRIPT STARTED");
 
+// ==========================
+// Kartta
+// ==========================
 const map = L.map("map").setView([60, 25], 6);
 
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  attribution: "© OpenStreetMap"
+  attribution: "&copy; OpenStreetMap"
 }).addTo(map);
 
-let obsLayer = null;
-let fcLayer  = null;
+// ==========================
+// Havainnot layer
+// ==========================
+const obsLayer = L.layerGroup().addTo(map);
 
 // ==========================
-// Lämpötilan väri
+// Lämpötilavärit
 // ==========================
 function tempColor(t) {
   if (t == null || isNaN(t)) return "#999";
@@ -44,107 +49,53 @@ function tempColor(t) {
 // ==========================
 // TUULINUOLI (SVG)
 // ==========================
-function windArrowMarker(latlng, speed, direction) {
-  if (direction == null || isNaN(direction)) {
-    return L.circleMarker(latlng, {
-      radius: 4,
-      color: "#333",
-      fillOpacity: 0.6
-    });
-  }
-
-  const size = Math.max(10, Math.min(30, speed * 2));
-
-  const arrow = `
-    <svg width="${size}" height="${size}" viewBox="0 0 100 100"
-         style="transform: rotate(${direction}deg)">
-      <polygon points="50,0 90,100 50,75 10,100"
-               fill="#222"/>
-    </svg>
-  `;
-
-  return L.marker(latlng, {
-    icon: L.divIcon({
-      html: arrow,
-      className: "",
-      iconSize: [size, size],
-      iconAnchor: [size/2, size/2]
-    })
+function windArrowIcon(dir, color) {
+  const rot = (dir ?? 0) - 180; // FMI: mistä tuulee → mihin
+  return L.divIcon({
+    className: "",
+    iconSize: [24, 24],
+    html: `
+      <svg width="24" height="24" viewBox="0 0 100 100"
+           style="transform: rotate(${rot}deg)">
+        <polygon points="50,0 90,100 50,75 10,100"
+                 fill="${color}" />
+      </svg>
+    `
   });
 }
 
-// =====================
-// HAVAINNOT (TUULI)
-// =====================
+// ==========================
+// Havaintojen haku
+// ==========================
 fetch("observations.json")
   .then(r => r.json())
   .then(data => {
     console.log("OBS FEATURES", data.features.length);
 
-    obsLayer = L.layerGroup();
-
     data.features.forEach(f => {
       const [lon, lat] = f.geometry.coordinates;
       const p = f.properties;
 
-      const marker = windArrowMarker(
-        [lat, lon],
-        p.ws,
-        p.wd       // 🔥 TUULENSUUNTA ASTEINA
-      );
+      const marker = L.marker([lat, lon], {
+        icon: windArrowIcon(p.wd, tempColor(p.t2m))
+      });
 
       marker.bindPopup(`
         <strong>${p.station}</strong><br>
         🌡 ${p.t2m ?? "–"} °C<br>
         💨 ${p.ws ?? "–"} m/s<br>
-        🧭 ${p.wd ?? "–"}°
+        🧭 ${p.wd ?? "–"} °
       `);
 
       marker.addTo(obsLayer);
     });
 
-    obsLayer.addTo(map);
-    map.fitBounds(obsLayer.getBounds());
+    // zoomataan vain jos pisteitä on
+    if (obsLayer.getLayers().length > 0) {
+      map.fitBounds(obsLayer.getBounds(), { padding: [30, 30] });
+    }
   })
   .catch(err => console.error("OBS FETCH ERROR", err));
-
-// =====================
-// ENNUSTE (PISTEET)
-// =====================
-fetch("forecast.json")
-  .then(r => r.json())
-  .then(fc => {
-    console.log("FC FEATURES", fc.features.length);
-
-    fcLayer = L.geoJSON(fc, {
-      pointToLayer: (feature, latlng) =>
-        L.circleMarker(latlng, {
-          radius: 6,
-          fillColor: tempColor(feature.properties.t2m),
-          fillOpacity: 0.7,
-          color: "#333",
-          weight: 1
-        }),
-
-      onEachFeature: (feature, layer) => {
-        const p = feature.properties;
-        layer.bindPopup(`
-          <strong>${p.city}</strong><br>
-          🌡 ${p.t2m ?? "–"} °C<br>
-          💨 ${p.ws ?? "–"} m/s
-        `);
-      }
-    });
-
-    fcLayer.addTo(map);
-
-    // Layer switcher lisätään vasta kun molemmat on olemassa
-    L.control.layers(null, {
-      "Havainnot (tuuli)": obsLayer,
-      "Ennuste (lämpötila)": fcLayer
-    }).addTo(map);
-  })
-  .catch(err => console.error("FC FETCH ERROR", err));
 </script>
 
 </body>
