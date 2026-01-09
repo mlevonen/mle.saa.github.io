@@ -38,6 +38,8 @@ html, body { margin: 0; height: 100%; }
 <div id="map"></div>
 
 <script>
+console.log("SCRIPT START");
+
 // ==========================
 // Kartta
 // ==========================
@@ -272,7 +274,6 @@ new Chart(document.getElementById(chartIdWind), {
   }
 });
 
-
       marker.addTo(layer);
     });
 
@@ -281,6 +282,8 @@ new Chart(document.getElementById(chartIdWind), {
     }
   })
   .catch(err => console.error("OBS FETCH ERROR", err));
+  console.log("SCRIPT END");
+
 </script>
 
 </body>
