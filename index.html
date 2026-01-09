@@ -143,78 +143,49 @@ async function fetchTimeSeriesREST(lat, lon, params) {
 }
 
 // ==========================
-// Popup → graafi + tuulinuoli
+// DEBUG popup – näytä RAW JSON
 // ==========================
 map.on("popupopen", async e => {
-  const canvas = e.popup.getElement().querySelector("canvas");
-  if (!canvas) return;
+  const popupEl = e.popup.getElement();
+  if (!popupEl) return;
 
-  const lat = canvas.dataset.lat;
-  const lon = canvas.dataset.lon;
+  const lat = popupEl.querySelector("canvas")?.dataset.lat;
+  const lon = popupEl.querySelector("canvas")?.dataset.lon;
+
+  popupEl.innerHTML = `
+    <div class="popup-title">FMI DEBUG</div>
+    <div>Ladataan dataa…</div>
+  `;
 
   try {
-    // Lämpötila
     const tempJson = await fetchTimeSeriesREST(lat, lon, {
       param: "temperature"
     });
 
-    // Tuulensuunta
-    const windJson = await fetchTimeSeriesREST(lat, lon, {
-      param: "winddirection"
-    });
-
-    // 🔧 OIKEA FMI REST -rakenne
-    const series = tempJson.temperature;
-
-    if (!series || series.length === 0) {
-      canvas.replaceWith("Ei havaintodataa saatavilla");
-      return;
-    }
-
-    const temps = series.map(p => ({
-      t: new Date(p.time),
-      v: p.value
-    }));
-
-    const latestWind =
-      windJson.winddirection?.at(-1)?.value ?? null;
-
-    // Tuulinuoli otsikkoon
-    if (latestWind !== null) {
-      e.popup.getElement()
-        .querySelector(".popup-title")
-        .insertAdjacentHTML(
-          "beforeend",
-          ` <span style="display:inline-block;transform:rotate(${latestWind + 180}deg)">➤</span>`
-        );
-    }
-
-    new Chart(canvas.getContext("2d"), {
-      type: "line",
-      data: {
-        labels: temps.map(d =>
-          d.t.toLocaleTimeString("fi-FI", { hour: "2-digit" })
-        ),
-        datasets: [{
-          data: temps.map(d => d.v),
-          borderColor: "blue",
-          tension: 0.3
-        }]
-      },
-      options: {
-        responsive: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          y: { title: { display: true, text: "°C" } }
-        }
-      }
-    });
+    // 🔍 Näytä koko vastaus popupissa
+    popupEl.innerHTML = `
+      <div class="popup-title">FMI DEBUG – RAW JSON</div>
+      <pre style="
+        max-height: 300px;
+        overflow: auto;
+        background: #111;
+        color: #0f0;
+        padding: 8px;
+        font-size: 11px;
+      ">
+${JSON.stringify(tempJson, null, 2)}
+      </pre>
+    `;
 
   } catch (err) {
     console.error(err);
-    canvas.replaceWith("Virhe FMI-datan haussa");
+    popupEl.innerHTML = `
+      <div class="popup-title">Virhe</div>
+      <pre>${err.message}</pre>
+    `;
   }
 });
+
 
 </script>
 
