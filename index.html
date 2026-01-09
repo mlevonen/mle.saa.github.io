@@ -11,6 +11,9 @@
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1"></script>
+
+
 <style>
 html, body { margin: 0; height: 100%; }
 #map { height: 100%; width: 100%; }
@@ -134,13 +137,13 @@ async function fetchTimeSeries(lat, lon, parameter) {
 // ==========================
 async function fetchTimeSeriesREST(lat, lon, params) {
   const now = new Date();
-  const start = new Date(now.getTime() - 6 * 3600_000).toISOString();
-  const end   = now.toISOString();
+  const past = new Date(now.getTime() - 6 * 3600_000).toISOString();
+  const future = new Date(now.getTime() + 6 * 3600_000).toISOString();
 
   const urlParams = new URLSearchParams({
     latlon: `${Number(lat)},${Number(lon)}`,
-    starttime: start,
-    endtime: end,
+    starttime: past,
+    endtime: future,
     format: "json",
     ...params
   });
@@ -149,15 +152,23 @@ async function fetchTimeSeriesREST(lat, lon, params) {
   console.log("FMI REST REQUEST:", url);
 
   const res = await fetch(url);
-  if (!res.ok) {
-    throw new Error("FMI REST fetch failed");
-  }
+  if (!res.ok) throw new Error("FMI REST fetch failed");
 
   return res.json();
 }
 
+
+function splitPastFuture(values) {
+  const mid = Math.floor(values.length / 2);
+  return {
+    past: values.slice(0, mid),
+    future: values.slice(mid)
+  };
+}
+
+
 // ==========================
-// Popup → erilliset graafit
+// Popup → lämpötila + tuuli (havainto + ennuste)
 // ==========================
 map.on("popupopen", async e => {
   const popupEl = e.popup.getElement();
@@ -170,62 +181,96 @@ map.on("popupopen", async e => {
   const lon = canvases[0].dataset.lon;
 
   try {
-    // --- Hae data ---
+    // --- DATA ---
     const tempJson = await fetchTimeSeriesREST(lat, lon, {
       param: "temperature"
     });
-
     const windSpeedJson = await fetchTimeSeriesREST(lat, lon, {
       param: "windspeedms"
     });
-
     const windDirJson = await fetchTimeSeriesREST(lat, lon, {
       param: "winddirection"
     });
 
-    // --- Lämpötila ---
+    // --- LÄMPÖTILA ---
     if (Array.isArray(tempJson) && tempJson.length > 0) {
-      const temps = tempJson.map(p => p.temperature);
+const values = tempJson.map(p => p.temperature);
+const nowIndex = Math.floor(values.length / 2);
 
-      const tempCanvas = popupEl.querySelector('canvas[data-type="temp"]');
+const tempCanvas = popupEl.querySelector('canvas[data-type="temp"]');
 
-      new Chart(tempCanvas.getContext("2d"), {
-        type: "line",
-        data: {
-          labels: temps.map((_, i) => i),
-          datasets: [{
-            label: "°C",
-            data: temps,
-            borderColor: "blue",
-            tension: 0.3
-          }]
-        },
-        options: {
-          responsive: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            y: { title: { display: true, text: "°C" } }
+
+new Chart(tempCanvas.getContext("2d"), {
+  type: "line",
+  data: {
+    labels: values.map((_, i) => i),
+    datasets: [
+      {
+        label: "Havainto",
+        data: values,
+        borderColor: "blue",
+        tension: 0.3
+      }
+    ]
+  },
+  options: {
+    responsive: false,
+    plugins: {
+      legend: { display: false },
+      annotation: {
+        annotations: {
+          nowLine: {
+            type: "line",
+            xMin: nowIndex,
+            xMax: nowIndex,
+            borderColor: "black",
+            borderWidth: 2,
+            label: {
+              display: true,
+              content: "NYT",
+              position: "start"
+            }
           }
         }
-      });
+      }
+    },
+    scales: {
+      y: {
+        title: { display: true, text: "°C" }
+      }
+    }
+  }
+});
     }
 
-    // --- Tuulen nopeus ---
+    // --- TUULI ---
     if (Array.isArray(windSpeedJson) && windSpeedJson.length > 0) {
-      const speeds = windSpeedJson.map(p => p.windspeedms);
+      const values = windSpeedJson.map(p => p.windspeedms);
+      const nowIndex = Math.floor(values.length / 2);
+
+      const { past, future } = splitPastFuture(values);
 
       const windCanvas = popupEl.querySelector('canvas[data-type="wind"]');
 
       new Chart(windCanvas.getContext("2d"), {
         type: "line",
         data: {
-          labels: speeds.map((_, i) => i),
-          datasets: [{
-            label: "m/s",
-            data: speeds,
-            borderColor: "green",
-            tension: 0.3
-          }]
+          labels: values.map((_, i) => i),
+          datasets: [
+            {
+              label: "Havainto",
+              data: [...past, ...Array(future.length).fill(null)],
+              borderColor: "green",
+              tension: 0.3
+            },
+            {
+              label: "Ennuste",
+              data: [...Array(past.length).fill(null), ...future],
+              borderColor: "red",
+              borderDash: [6, 4],
+              tension: 0.3
+            }
+          ]
         },
         options: {
           responsive: false,
@@ -237,7 +282,7 @@ map.on("popupopen", async e => {
       });
     }
 
-    // --- Tuulensuunta nuolena otsikkoon ---
+    // --- TUULENSUUNTA ---
     const latestDir =
       Array.isArray(windDirJson)
         ? windDirJson.at(-1)?.winddirection
