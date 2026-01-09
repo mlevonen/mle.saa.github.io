@@ -50,57 +50,6 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 // ==========================
-// Värit lämpötilalle
-// ==========================
-function tempColor(t) {
-  if (t == null || isNaN(t)) return "#999";
-  if (t <= -20) return "#08306b";
-  if (t <= -10) return "#2171b5";
-  if (t <= 0)   return "#6baed6";
-  if (t <= 10)  return "#fee08b";
-  if (t <= 20)  return "#fdae61";
-  return "#d73027";
-}
-
-// ==========================
-// Tuulinuoli
-// ==========================
-function windArrowIcon(dir, color) {
-  const rot = (dir ?? 0) - 180;
-  return L.divIcon({
-    className: "",
-    iconSize: [26, 26],
-    html: `
-      <svg width="26" height="26" viewBox="0 0 100 100"
-           style="transform: rotate(${rot}deg)">
-        <polygon points="50,0 90,100 50,75 10,100"
-                 fill="${color}" />
-      </svg>
-    `
-  });
-}
-
-
-// ==========================
-// Harvennus: max 1 piste / 30 min
-// ==========================
-function downsampleByMinutes(rows, minutes = 30) {
-  const result = [];
-  let last = null;
-
-  rows.forEach(r => {
-    const t = new Date(r.time).getTime();
-    if (!last || (t - last) >= minutes * 60 * 1000) {
-      result.push(r);
-      last = t;
-    }
-  });
-
-  return result;
-}
-
-
-// ==========================
 // HAVAINNOT
 // ==========================
 fetch("observations.json")
@@ -109,49 +58,38 @@ fetch("observations.json")
 
     console.log("OBS FEATURES", data.features.length);
 
-    // ==========================
-    // Ryhmittely asemittain
-    // ==========================
     const byStation = {};
 
     data.features.forEach(f => {
       const p = f.properties;
-      const key = p.station;
-
-      if (!byStation[key]) {
-        byStation[key] = {
+      if (!byStation[p.station]) {
+        byStation[p.station] = {
           coords: f.geometry.coordinates,
           rows: []
         };
       }
-
-      byStation[key].rows.push(p);
+      byStation[p.station].rows.push(p);
     });
 
-    // ==========================
-    // Leaflet layer
-    // ==========================
     const layer = L.featureGroup().addTo(map);
 
     Object.entries(byStation).forEach(([station, s]) => {
       const [lon, lat] = s.coords;
 
-      // aikajärjestys
       s.rows.sort((a, b) => a.time.localeCompare(b.time));
-
       const latest = s.rows[s.rows.length - 1];
 
       const marker = L.marker([lat, lon], {
         icon: windArrowIcon(latest.wd, tempColor(latest.t2m))
       });
 
-      const chartIdTemp = "temp_" + station.replace(/\s+/g, "_");
-      const chartIdWind = "wind_" + station.replace(/\s+/g, "_");
+      const chartIdTemp = "temp_" + station.replace(/\W+/g, "_");
+      const chartIdWind = "wind_" + station.replace(/\W+/g, "_");
 
       marker.bindPopup(`
         <div class="popup-title">${station}</div>
         <div>
-          🌡 Nyt: ${latest.t2m ?? "–"} °C &nbsp;
+          🌡 ${latest.t2m ?? "–"} °C &nbsp;
           💨 ${latest.ws ?? "–"} m/s
         </div>
         <canvas id="${chartIdTemp}" class="popup-chart"></canvas>
@@ -159,110 +97,14 @@ fetch("observations.json")
       `);
 
       marker.on("popupopen", () => {
-        // tänne Chart.js -koodi (lämpö + tuuli)
+        const rows = downsampleByMinutes(s.rows, 30);
+        const nowTs = Date.now();
+
+        const past = rows.filter(r => new Date(r.time).getTime() <= nowTs);
+        const future = rows.filter(r => new Date(r.time).getTime() > nowTs);
+
+        // 👉 TÄHÄN Chart.js -koodi (lämpö + tuuli)
       });
-
-      marker.addTo(layer);
-    });
-
-    if (layer.getLayers().length > 0) {
-      map.fitBounds(layer.getBounds(), { padding: [30, 30] });
-    }
-
-  })
-  .catch(err => console.error("OBS FETCH ERROR", err));
-
-const rows = downsampleByMinutes(s.rows, 30);
-
-// aikajako: mennyt / tuleva
-const nowTs = Date.now();
-
-const past = rows.filter(r => new Date(r.time).getTime() <= nowTs);
-const future = rows.filter(r => new Date(r.time).getTime() > nowTs);
-
-// yhteiset aikaleimat
-const timesPast = past.map(r => new Date(r.time));
-const timesFuture = future.map(r => new Date(r.time));
-
-const tempsPast = past.map(r => r.t2m);
-const tempsFuture = future.map(r => r.t2m);
-
-const windsPast = past.map(r => r.ws);
-const windsFuture = future.map(r => r.ws);
-
-const now = new Date();
-
-
-        // -------- LÄMPÖTILA --------
-new Chart(document.getElementById(chartIdTemp), {
-  type: "line",
-  data: {
-    datasets: [
-      {
-        label: "Mennyt",
-        data: timesPast.map((t, i) => ({ x: t, y: tempsPast[i] })),
-        borderColor: "#2c7fb8",
-        tension: 0.3,
-        pointRadius: 3,
-        spanGaps: true
-      },
-      {
-        label: "Tuleva",
-        data: timesFuture.map((t, i) => ({ x: t, y: tempsFuture[i] })),
-        borderColor: "#d73027",
-        borderDash: [6, 4],
-        tension: 0.3,
-        pointRadius: 3,
-        spanGaps: true
-      }
-    ]
-  },
-  options: {
-    responsive: true,
-    plugins: {
-      legend: { display: false }
-    },
-    scales: {
-      x: { type: "time", time: { unit: "hour" } },
-      y: { title: { display: true, text: "°C" } }
-    }
-  }
-});
-
-
-        // -------- TUULI --------
-new Chart(document.getElementById(chartIdWind), {
-  type: "line",
-  data: {
-    datasets: [
-      {
-        label: "Mennyt tuuli",
-        data: timesPast.map((t, i) => ({ x: t, y: windsPast[i] })),
-        borderColor: "#74add1",
-        tension: 0.3,
-        pointRadius: 3
-      },
-      {
-        label: "Tuleva tuuli",
-        data: timesFuture.map((t, i) => ({ x: t, y: windsFuture[i] })),
-        borderColor: "#f46d43",
-        borderDash: [6,4],
-        tension: 0.3,
-        pointRadius: 3
-      }
-    ]
-  },
-  options: {
-    responsive: true,
-    plugins: {
-      legend: { display: false },
-    },
-    scales: {
-      x: { type: "time", time: { unit: "hour" } },
-      y: { title: { display: true, text: "m/s" } }
-    }
-  }
-});
 
       marker.addTo(layer);
     });
@@ -270,10 +112,11 @@ new Chart(document.getElementById(chartIdWind), {
     if (layer.getLayers().length > 0) {
       map.fitBounds(layer.getBounds(), { padding: [30,30] });
     }
+
   })
   .catch(err => console.error("OBS FETCH ERROR", err));
-  console.log("SCRIPT END");
 
+console.log("SCRIPT END");
 </script>
 
 </body>
