@@ -82,15 +82,16 @@ fetch("stations.json")
 // ==========================
 async function fetchTimeSeries(lat, lon, parameter) {
   const now = new Date();
-  const start = new Date(now - 6 * 3600_000).toISOString();
-  const end   = new Date(now + 1 * 3600_000).toISOString();
+
+  const start = new Date(now.getTime() - 6 * 3600_000).toISOString();
+  const end   = now.toISOString(); // EI tulevaisuutta!
 
   const params = new URLSearchParams({
     service: "WFS",
     version: "2.0.0",
     request: "GetFeature",
     storedquery_id: "fmi::observations::weather::timevaluepair",
-    latlon: `${lat},${lon}`,
+    latlon: `${Number(lat)},${Number(lon)}`,
     parameters: parameter,
     starttime: start,
     endtime: end,
@@ -98,9 +99,20 @@ async function fetchTimeSeries(lat, lon, parameter) {
     outputFormat: "application/json"
   });
 
-  const res = await fetch(`${FMI_WFS}?${params}`);
-  return res.json();
+  const url = `${FMI_WFS}?${params}`;
+  console.log("FMI REQUEST:", url);
+
+  const res = await fetch(url);
+  const text = await res.text();
+
+  if (!res.ok || text.startsWith("<")) {
+    console.error("FMI RAW RESPONSE:", text);
+    return null;
+  }
+
+  return JSON.parse(text);
 }
+
 
 // ==========================
 // Popup → graafi + tuulinuoli
@@ -113,14 +125,49 @@ map.on("popupopen", async e => {
   const lon = canvas.dataset.lon;
 
   const tempData = await fetchTimeSeries(lat, lon, "temperature");
-  const windDir  = await fetchTimeSeries(lat, lon, "winddirection");
+  const windData = await fetchTimeSeries(lat, lon, "winddirection");
+
+  if (!tempData || tempData.features.length === 0) {
+    canvas.replaceWith("Ei havaintodataa saatavilla");
+    return;
+  }
 
   const temps = tempData.features.map(f => ({
     t: new Date(f.properties.time),
     v: f.properties.temperature
   }));
 
-  const latestWind = windDir.features.at(-1)?.properties.winddirection ?? 0;
+  const latestWind =
+    windData?.features.at(-1)?.properties.winddirection ?? null;
+
+  if (latestWind !== null) {
+    e.popup.getElement()
+      .querySelector(".popup-title")
+      .insertAdjacentHTML(
+        "beforeend",
+        ` <span style="display:inline-block;transform:rotate(${latestWind + 180}deg)">➤</span>`
+      );
+  }
+
+  new Chart(canvas.getContext("2d"), {
+    type: "line",
+    data: {
+      labels: temps.map(d =>
+        d.t.toLocaleTimeString("fi-FI", { hour: "2-digit" })
+      ),
+      datasets: [{
+        data: temps.map(d => d.v),
+        borderColor: "blue",
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: false,
+      plugins: { legend: { display: false } },
+      scales: { y: { title: { display: true, text: "°C" } } }
+    }
+  });
+});
 
   // Tuulinuoli otsikkoon
   e.popup.getElement().querySelector(".popup-title").innerHTML +=
