@@ -143,46 +143,56 @@ async function fetchTimeSeriesREST(lat, lon, params) {
 }
 
 // ==========================
-// DEBUG popup – näytä RAW JSON
+// Popup → graafi (indeksipohjainen)
 // ==========================
 map.on("popupopen", async e => {
-  const popupEl = e.popup.getElement();
-  if (!popupEl) return;
+  const canvas = e.popup.getElement().querySelector("canvas");
+  if (!canvas) return;
 
-  const lat = popupEl.querySelector("canvas")?.dataset.lat;
-  const lon = popupEl.querySelector("canvas")?.dataset.lon;
-
-  popupEl.innerHTML = `
-    <div class="popup-title">FMI DEBUG</div>
-    <div>Ladataan dataa…</div>
-  `;
+  const lat = canvas.dataset.lat;
+  const lon = canvas.dataset.lon;
 
   try {
     const tempJson = await fetchTimeSeriesREST(lat, lon, {
       param: "temperature"
     });
 
-    // 🔍 Näytä koko vastaus popupissa
-    popupEl.innerHTML = `
-      <div class="popup-title">FMI DEBUG – RAW JSON</div>
-      <pre style="
-        max-height: 300px;
-        overflow: auto;
-        background: #111;
-        color: #0f0;
-        padding: 8px;
-        font-size: 11px;
-      ">
-${JSON.stringify(tempJson, null, 2)}
-      </pre>
-    `;
+    // 🔧 FMI REST – todellinen muoto
+    if (!Array.isArray(tempJson) || tempJson.length === 0) {
+      canvas.replaceWith("Ei havaintodataa saatavilla");
+      return;
+    }
+
+    const values = tempJson.map(p => p.temperature);
+
+    new Chart(canvas.getContext("2d"), {
+      type: "line",
+      data: {
+        labels: values.map((_, i) => i), // 0,1,2,...
+        datasets: [{
+          label: "Lämpötila (°C)",
+          data: values,
+          borderColor: "blue",
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: {
+            title: { display: true, text: "Aika (indeksi)" }
+          },
+          y: {
+            title: { display: true, text: "°C" }
+          }
+        }
+      }
+    });
 
   } catch (err) {
     console.error(err);
-    popupEl.innerHTML = `
-      <div class="popup-title">Virhe</div>
-      <pre>${err.message}</pre>
-    `;
+    canvas.replaceWith("Virhe FMI-datan haussa");
   }
 });
 
