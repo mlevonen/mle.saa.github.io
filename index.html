@@ -221,21 +221,7 @@ new Chart(document.getElementById(chartIdTemp), {
     responsive: true,
     plugins: {
       legend: { display: false },
-      annotation: {
-        annotations: {
-          nowLine: {
-            type: "line",
-            xMin: now,
-            xMax: now,
-            borderColor: "black",
-            borderWidth: 2,
-            label: {
-              content: "Nyt",
-              enabled: true,
-              position: "top"
-            }
-          }
-        }
+
       }
     },
     scales: {
@@ -272,17 +258,6 @@ new Chart(document.getElementById(chartIdWind), {
     responsive: true,
     plugins: {
       legend: { display: false },
-      annotation: {
-        annotations: {
-          nowLine: {
-            type: "line",
-            xMin: now,
-            xMax: now,
-            borderColor: "black",
-            borderWidth: 2
-          }
-        }
-      }
     },
     scales: {
       x: { type: "time", time: { unit: "hour" } },
