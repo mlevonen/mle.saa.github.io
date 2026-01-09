@@ -1,0 +1,38 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "101004",
+        "name": "Helsinki Kaisaniemi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [24.94, 60.17]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "101009",
+        "name": "Espoo Tapiola"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [24.78, 60.18]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "100968",
+        "name": "Tampere Härmälä"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [23.76, 61.47]
+      }
+    }
+  ]
+}
