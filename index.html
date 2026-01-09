@@ -170,27 +170,6 @@ map.on("popupopen", async e => {
   });
 });
 
-  // Tuulinuoli otsikkoon
-  e.popup.getElement().querySelector(".popup-title").innerHTML +=
-    ` <span style="display:inline-block;transform:rotate(${latestWind + 180}deg)">➤</span>`;
-
-  new Chart(canvas.getContext("2d"), {
-    type: "line",
-    data: {
-      labels: temps.map(d => d.t.toLocaleTimeString("fi-FI", { hour: "2-digit" })),
-      datasets: [{
-        data: temps.map(d => d.v),
-        borderColor: "blue",
-        tension: 0.3
-      }]
-    },
-    options: {
-      responsive: false,
-      plugins: { legend: { display: false } },
-      scales: { y: { title: { display: true, text: "°C" } } }
-    }
-  });
-});
 </script>
 
 </body>
