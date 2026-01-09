@@ -51,7 +51,6 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 // ==========================
 // HAVAINNOT
 // ==========================
-<script>
 fetch("observations.json")
   .then(r => r.json())
   .then(data => {
@@ -68,13 +67,18 @@ fetch("observations.json")
 
       L.circleMarker([lat, lon], {
         radius: 4,
-        color: "red"
+        color: "red",
+        fillOpacity: 0.7
       }).addTo(layer);
     });
 
-    map.fitBounds(layer.getBounds());
+    if (layer.getLayers().length > 0) {
+      map.fitBounds(layer.getBounds(), { padding: [30, 30] });
+    }
   })
-  .catch(err => console.error(err));
+  .catch(err => console.error("OBS ERROR", err));
+
+console.log("SCRIPT END");
 </script>
 
 
