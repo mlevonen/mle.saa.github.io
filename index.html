@@ -78,6 +78,26 @@ function windArrowIcon(dir, color) {
   });
 }
 
+
+// ==========================
+// Harvennus: max 1 piste / 30 min
+// ==========================
+function downsampleByMinutes(rows, minutes = 30) {
+  const result = [];
+  let last = null;
+
+  rows.forEach(r => {
+    const t = new Date(r.time).getTime();
+    if (!last || (t - last) >= minutes * 60 * 1000) {
+      result.push(r);
+      last = t;
+    }
+  });
+
+  return result;
+}
+
+
 // ==========================
 // HAVAINNOT
 // ==========================
@@ -130,82 +150,128 @@ fetch("observations.json")
       `);
 
       marker.on("popupopen", () => {
-        const times = s.rows.map(r => new Date(r.time));
-        const temps = s.rows.map(r => r.t2m);
-        const winds = s.rows.map(r => r.ws);
+// ==========================
+// Harvennettu data
+// ==========================
+const rows = downsampleByMinutes(s.rows, 30);
 
-        const now = new Date();
+// aikajako: mennyt / tuleva
+const nowTs = Date.now();
+
+const past = rows.filter(r => new Date(r.time).getTime() <= nowTs);
+const future = rows.filter(r => new Date(r.time).getTime() > nowTs);
+
+// yhteiset aikaleimat
+const timesPast = past.map(r => new Date(r.time));
+const timesFuture = future.map(r => new Date(r.time));
+
+const tempsPast = past.map(r => r.t2m);
+const tempsFuture = future.map(r => r.t2m);
+
+const windsPast = past.map(r => r.ws);
+const windsFuture = future.map(r => r.ws);
+
+const now = new Date();
+
 
         // -------- LÄMPÖTILA --------
-        new Chart(document.getElementById(chartIdTemp), {
-          type: "line",
-          data: {
-            labels: times,
-            datasets: [{
-              label: "Lämpötila (°C)",
-              data: temps,
-              borderColor: "#d73027",
-              pointRadius: 0,
-              spanGaps: true
-            }]
-          },
-          options: {
-            responsive: true,
-            scales: {
-              x: { type: "time", time: { unit: "hour" } }
-            },
-            plugins: {
-              legend: { display: false },
-              annotation: {
-                annotations: {
-                  nowLine: {
-                    type: "line",
-                    xMin: now,
-                    xMax: now,
-                    borderColor: "black",
-                    borderWidth: 2
-                  }
-                }
-              }
+new Chart(document.getElementById(chartIdTemp), {
+  type: "line",
+  data: {
+    datasets: [
+      {
+        label: "Mennyt",
+        data: timesPast.map((t, i) => ({ x: t, y: tempsPast[i] })),
+        borderColor: "#2c7fb8",
+        tension: 0.3,
+        pointRadius: 3,
+        spanGaps: true
+      },
+      {
+        label: "Tuleva",
+        data: timesFuture.map((t, i) => ({ x: t, y: tempsFuture[i] })),
+        borderColor: "#d73027",
+        borderDash: [6,4],
+        tension: 0.3,
+        pointRadius: 3,
+        spanGaps: true
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      annotation: {
+        annotations: {
+          nowLine: {
+            type: "line",
+            xMin: now,
+            xMax: now,
+            borderColor: "black",
+            borderWidth: 2,
+            label: {
+              content: "Nyt",
+              enabled: true,
+              position: "top"
             }
           }
-        });
+        }
+      }
+    },
+    scales: {
+      x: { type: "time", time: { unit: "hour" } },
+      y: { title: { display: true, text: "°C" } }
+    }
+  }
+});
+
 
         // -------- TUULI --------
-        new Chart(document.getElementById(chartIdWind), {
-          type: "line",
-          data: {
-            labels: times,
-            datasets: [{
-              label: "Tuuli (m/s)",
-              data: winds,
-              borderColor: "#1f77b4",
-              pointRadius: 0,
-              spanGaps: true
-            }]
-          },
-          options: {
-            responsive: true,
-            scales: {
-              x: { type: "time", time: { unit: "hour" } }
-            },
-            plugins: {
-              legend: { display: false },
-              annotation: {
-                annotations: {
-                  nowLine: {
-                    type: "line",
-                    xMin: now,
-                    xMax: now,
-                    borderColor: "black",
-                    borderWidth: 2
-                  }
-                }
-              }
-            }
+new Chart(document.getElementById(chartIdWind), {
+  type: "line",
+  data: {
+    datasets: [
+      {
+        label: "Mennyt tuuli",
+        data: timesPast.map((t, i) => ({ x: t, y: windsPast[i] })),
+        borderColor: "#74add1",
+        tension: 0.3,
+        pointRadius: 3
+      },
+      {
+        label: "Tuleva tuuli",
+        data: timesFuture.map((t, i) => ({ x: t, y: windsFuture[i] })),
+        borderColor: "#f46d43",
+        borderDash: [6,4],
+        tension: 0.3,
+        pointRadius: 3
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      annotation: {
+        annotations: {
+          nowLine: {
+            type: "line",
+            xMin: now,
+            xMax: now,
+            borderColor: "black",
+            borderWidth: 2
           }
-        });
-      });
+        }
+      }
+    },
+    scales: {
+      x: { type: "time", time: { unit: "hour" } },
+      y: { title: { display: true, text: "m/s" } }
+    }
+  }
+});
+
 
       marker.addTo(layer);
     });
