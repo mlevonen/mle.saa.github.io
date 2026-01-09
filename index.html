@@ -89,29 +89,63 @@ function temperatureChart(values) {
 }
 
 // ==========================
+// LIITTYY GRAAFIIN
+// ==========================
+
+
+function tempSparkline(values) {
+  const w = 180, h = 50, pad = 5;
+
+  const clean = values.filter(v => v !== null && !isNaN(v));
+  if (clean.length < 2) return "<em>Ei graafia</em>";
+
+  const min = Math.min(...clean);
+  const max = Math.max(...clean);
+  const scaleX = (i) => pad + i * (w - 2*pad) / (values.length - 1);
+  const scaleY = (v) =>
+    h - pad - (v - min) * (h - 2*pad) / (max - min || 1);
+
+  let path = "";
+  values.forEach((v, i) => {
+    if (v == null || isNaN(v)) return;
+    path += `${path ? "L" : "M"}${scaleX(i)},${scaleY(v)} `;
+  });
+
+  return `
+    <svg width="${w}" height="${h}">
+      <path d="${path}" fill="none" stroke="#d73027" stroke-width="2"/>
+      <text x="4" y="12" font-size="10">${min.toFixed(1)}°</text>
+      <text x="4" y="${h-4}" font-size="10">${max.toFixed(1)}°</text>
+    </svg>
+  `;
+}
+
+
+
+// ==========================
 // HAVAINNOT
 // ==========================
 fetch("observations.json")
   .then(r => r.json())
   .then(data => {
-
     console.log("OBS FEATURES", data.features.length);
 
-    // ryhmittely ASEMITTAIN
+    // ==========================
+    // Ryhmittely aseman mukaan
+    // ==========================
     const byStation = {};
 
     data.features.forEach(f => {
       const p = f.properties;
-      if (!byStation[p.station]) {
-        byStation[p.station] = {
+      const key = p.station;
+
+      if (!byStation[key]) {
+        byStation[key] = {
           coords: f.geometry.coordinates,
-          temps: [],
-          first: p
+          rows: []
         };
       }
-      if (p.t2m !== null && !isNaN(p.t2m)) {
-        byStation[p.station].temps.push(p.t2m);
-      }
+      byStation[key].rows.push(p);
     });
 
     const layer = L.layerGroup().addTo(map);
@@ -119,25 +153,34 @@ fetch("observations.json")
     Object.entries(byStation).forEach(([station, s]) => {
       const [lon, lat] = s.coords;
 
+      // aikajärjestys
+      s.rows.sort((a, b) => a.time.localeCompare(b.time));
+
+      const temps = s.rows.map(r => r.t2m);
+      const latest = s.rows[s.rows.length - 1];
+
       const marker = L.marker([lat, lon], {
-        icon: windArrowIcon(s.first.wd, tempColor(s.first.t2m))
+        icon: windArrowIcon(latest.wd, tempColor(latest.t2m))
       });
 
+      const graph = tempSparkline(temps);
+
       marker.bindPopup(`
-        <div class="popup-title">${station}</div>
-        🌡 ${s.first.t2m ?? "–"} °C<br>
-        💨 ${s.first.ws ?? "–"} m/s<br><br>
-        ${temperatureChart(s.temps)}
+        <strong>${station}</strong><br>
+        🌡 Nyt: ${latest.t2m ?? "–"} °C<br>
+        💨 ${latest.ws ?? "–"} m/s<br><br>
+        ${graph}
       `);
 
       marker.addTo(layer);
     });
 
     if (layer.getLayers().length > 0) {
-      map.fitBounds(layer.getBounds(), { padding: [30, 30] });
+      map.fitBounds(layer.getBounds(), { padding: [30,30] });
     }
   })
   .catch(err => console.error("OBS FETCH ERROR", err));
+
 </script>
 
 </body>
