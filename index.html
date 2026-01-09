@@ -17,6 +17,20 @@ html, body { margin: 0; height: 100%; }
   margin-bottom: 6px;
 }
 </style>
+<style>
+.leaflet-popup-content {
+  width: 420px !important;
+}
+
+.popup-chart {
+  width: 400px;
+  height: 200px;
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
 </head>
 <body>
 
@@ -33,7 +47,7 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 // ==========================
-// Lämpötilavärit
+// Värit lämpötilalle
 // ==========================
 function tempColor(t) {
   if (t == null || isNaN(t)) return "#999";
@@ -52,9 +66,9 @@ function windArrowIcon(dir, color) {
   const rot = (dir ?? 0) - 180;
   return L.divIcon({
     className: "",
-    iconSize: [24, 24],
+    iconSize: [26, 26],
     html: `
-      <svg width="24" height="24" viewBox="0 0 100 100"
+      <svg width="26" height="26" viewBox="0 0 100 100"
            style="transform: rotate(${rot}deg)">
         <polygon points="50,0 90,100 50,75 10,100"
                  fill="${color}" />
@@ -64,74 +78,16 @@ function windArrowIcon(dir, color) {
 }
 
 // ==========================
-// YKSINKERTAINEN lämpötilagraafi
-// ==========================
-function temperatureChart(values) {
-  if (values.length < 2) return "<em>Ei graafia</em>";
-
-  const w = 160, h = 50;
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const r = max - min || 1;
-
-  let d = "";
-  values.forEach((v, i) => {
-    const x = (i / (values.length - 1)) * w;
-    const y = h - ((v - min) / r) * h;
-    d += (i === 0 ? "M" : "L") + x + "," + y;
-  });
-
-  return `
-    <svg width="${w}" height="${h}">
-      <path d="${d}" stroke="#d73027" stroke-width="2" fill="none"/>
-    </svg>
-  `;
-}
-
-// ==========================
-// LIITTYY GRAAFIIN
-// ==========================
-
-
-function tempSparkline(values) {
-  const w = 180, h = 50, pad = 5;
-
-  const clean = values.filter(v => v !== null && !isNaN(v));
-  if (clean.length < 2) return "<em>Ei graafia</em>";
-
-  const min = Math.min(...clean);
-  const max = Math.max(...clean);
-  const scaleX = (i) => pad + i * (w - 2*pad) / (values.length - 1);
-  const scaleY = (v) =>
-    h - pad - (v - min) * (h - 2*pad) / (max - min || 1);
-
-  let path = "";
-  values.forEach((v, i) => {
-    if (v == null || isNaN(v)) return;
-    path += `${path ? "L" : "M"}${scaleX(i)},${scaleY(v)} `;
-  });
-
-  return `
-    <svg width="${w}" height="${h}">
-      <path d="${path}" fill="none" stroke="#d73027" stroke-width="2"/>
-      <text x="4" y="12" font-size="10">${min.toFixed(1)}°</text>
-      <text x="4" y="${h-4}" font-size="10">${max.toFixed(1)}°</text>
-    </svg>
-  `;
-}
-
-
-
-// ==========================
 // HAVAINNOT
 // ==========================
 fetch("observations.json")
   .then(r => r.json())
   .then(data => {
+
     console.log("OBS FEATURES", data.features.length);
 
     // ==========================
-    // Ryhmittely aseman mukaan
+    // Ryhmitellään asemittain
     // ==========================
     const byStation = {};
 
@@ -156,21 +112,99 @@ fetch("observations.json")
       // aikajärjestys
       s.rows.sort((a, b) => a.time.localeCompare(b.time));
 
-      const temps = s.rows.map(r => r.t2m);
       const latest = s.rows[s.rows.length - 1];
 
       const marker = L.marker([lat, lon], {
         icon: windArrowIcon(latest.wd, tempColor(latest.t2m))
       });
 
-      const graph = tempSparkline(temps);
+      const chartIdTemp = "temp_" + station.replace(/\s+/g, "_");
+      const chartIdWind = "wind_" + station.replace(/\s+/g, "_");
 
       marker.bindPopup(`
-        <strong>${station}</strong><br>
-        🌡 Nyt: ${latest.t2m ?? "–"} °C<br>
-        💨 ${latest.ws ?? "–"} m/s<br><br>
-        ${graph}
+        <div class="popup-title">${station}</div>
+        <div>🌡 Nyt: ${latest.t2m ?? "–"} °C &nbsp; 💨 ${latest.ws ?? "–"} m/s</div>
+        <canvas id="${chartIdTemp}" class="popup-chart"></canvas>
+        <canvas id="${chartIdWind}" class="popup-chart"></canvas>
       `);
+
+      marker.on("popupopen", () => {
+        const times = s.rows.map(r => new Date(r.time));
+        const temps = s.rows.map(r => r.t2m);
+        const winds = s.rows.map(r => r.ws);
+
+        const now = new Date();
+
+        // -------- LÄMPÖTILA --------
+        new Chart(document.getElementById(chartIdTemp), {
+          type: "line",
+          data: {
+            labels: times,
+            datasets: [{
+              label: "Lämpötila (°C)",
+              data: temps,
+              borderColor: "#d73027",
+              pointRadius: 0,
+              spanGaps: true
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              x: { type: "time", time: { unit: "hour" } }
+            },
+            plugins: {
+              legend: { display: false },
+              annotation: {
+                annotations: {
+                  nowLine: {
+                    type: "line",
+                    xMin: now,
+                    xMax: now,
+                    borderColor: "black",
+                    borderWidth: 2
+                  }
+                }
+              }
+            }
+          }
+        });
+
+        // -------- TUULI --------
+        new Chart(document.getElementById(chartIdWind), {
+          type: "line",
+          data: {
+            labels: times,
+            datasets: [{
+              label: "Tuuli (m/s)",
+              data: winds,
+              borderColor: "#1f77b4",
+              pointRadius: 0,
+              spanGaps: true
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              x: { type: "time", time: { unit: "hour" } }
+            },
+            plugins: {
+              legend: { display: false },
+              annotation: {
+                annotations: {
+                  nowLine: {
+                    type: "line",
+                    xMin: now,
+                    xMax: now,
+                    borderColor: "black",
+                    borderWidth: 2
+                  }
+                }
+              }
+            }
+          }
+        });
+      });
 
       marker.addTo(layer);
     });
@@ -180,7 +214,6 @@ fetch("observations.json")
     }
   })
   .catch(err => console.error("OBS FETCH ERROR", err));
-
 </script>
 
 </body>
