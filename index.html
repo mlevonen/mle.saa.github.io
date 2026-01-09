@@ -51,72 +51,32 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 // ==========================
 // HAVAINNOT
 // ==========================
+<script>
 fetch("observations.json")
   .then(r => r.json())
   .then(data => {
-
-    console.log("OBS FEATURES", data.features.length);
-
-    const byStation = {};
-
-    data.features.forEach(f => {
-      const p = f.properties;
-      if (!byStation[p.station]) {
-        byStation[p.station] = {
-          coords: f.geometry.coordinates,
-          rows: []
-        };
-      }
-      byStation[p.station].rows.push(p);
-    });
+    console.log("FEATURE COUNT:", data.features.length);
 
     const layer = L.featureGroup().addTo(map);
 
-    Object.entries(byStation).forEach(([station, s]) => {
-      const [lon, lat] = s.coords;
+    data.features.forEach(f => {
+      const c = f.geometry.coordinates;
+      if (!c || c.length !== 2) return;
 
-      s.rows.sort((a, b) => a.time.localeCompare(b.time));
-      const latest = s.rows[s.rows.length - 1];
+      const lat = c[1];
+      const lon = c[0];
 
-      const marker = L.marker([lat, lon], {
-        icon: windArrowIcon(latest.wd, tempColor(latest.t2m))
-      });
-
-      const chartIdTemp = "temp_" + station.replace(/\W+/g, "_");
-      const chartIdWind = "wind_" + station.replace(/\W+/g, "_");
-
-      marker.bindPopup(`
-        <div class="popup-title">${station}</div>
-        <div>
-          🌡 ${latest.t2m ?? "–"} °C &nbsp;
-          💨 ${latest.ws ?? "–"} m/s
-        </div>
-        <canvas id="${chartIdTemp}" class="popup-chart"></canvas>
-        <canvas id="${chartIdWind}" class="popup-chart"></canvas>
-      `);
-
-      marker.on("popupopen", () => {
-        const rows = downsampleByMinutes(s.rows, 30);
-        const nowTs = Date.now();
-
-        const past = rows.filter(r => new Date(r.time).getTime() <= nowTs);
-        const future = rows.filter(r => new Date(r.time).getTime() > nowTs);
-
-        // 👉 TÄHÄN Chart.js -koodi (lämpö + tuuli)
-      });
-
-      marker.addTo(layer);
+      L.circleMarker([lat, lon], {
+        radius: 4,
+        color: "red"
+      }).addTo(layer);
     });
 
-    if (layer.getLayers().length > 0) {
-      map.fitBounds(layer.getBounds(), { padding: [30,30] });
-    }
-
+    map.fitBounds(layer.getBounds());
   })
-  .catch(err => console.error("OBS FETCH ERROR", err));
-
-console.log("SCRIPT END");
+  .catch(err => console.error(err));
 </script>
+
 
 </body>
 </html>
