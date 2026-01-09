@@ -8,18 +8,20 @@
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
 html, body { margin: 0; height: 100%; }
 #map { height: 100%; width: 100%; }
 
+.leaflet-popup-content {
+  width: 420px !important;
+}
+
 .popup-title {
   font-weight: bold;
   margin-bottom: 6px;
-}
-</style>
-<style>
-.leaflet-popup-content {
-  width: 420px !important;
 }
 
 .popup-chart {
@@ -27,13 +29,9 @@ html, body { margin: 0; height: 100%; }
   height: 200px;
 }
 </style>
-
-
-
-
 </head>
-<body>
 
+<body>
 <div id="map"></div>
 
 <script>
@@ -49,12 +47,63 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 // ==========================
-// HAVAINNOT
+// FMI WFS
 // ==========================
-fetch("observations.json")
-  .then(r => r.json())
+const FMI_WFS = "https://opendata.fmi.fi/wfs";
+
+// ==========================
+// Hae viimeisimmät havainnot kartalle
+// ==========================
+async function loadFMIObservations() {
+  const params = new URLSearchParams({
+    service: "WFS",
+    version: "2.0.0",
+    request: "GetFeature",
+    storedquery_id: "fmi::observations::weather::simple",
+    parameters: "temperature",
+    time: "PT30M",
+    bbox: "18,59,32,71,EPSG:4326",
+    outputFormat: "application/json"
+  });
+
+  const res = await fetch(`${FMI_WFS}?${params}`);
+  return res.json();
+}
+
+// ==========================
+// Hae aikasarja (havainto / ennuste)
+// ==========================
+async function fetchTimeSeries({ lat, lon, storedquery, start, end }) {
+  const params = new URLSearchParams({
+    service: "WFS",
+    version: "2.0.0",
+    request: "GetFeature",
+    storedquery_id: storedquery,
+    latlon: `${lat},${lon}`,
+    parameters: "temperature",
+    starttime: start,
+    endtime: end,
+    timestep: "60",
+    outputFormat: "application/json"
+  });
+
+  const res = await fetch(`${FMI_WFS}?${params}`);
+  return res.json();
+}
+
+function parseFMI(geojson) {
+  return geojson.features.map(f => ({
+    time: new Date(f.properties.time),
+    value: f.properties.temperature
+  }));
+}
+
+// ==========================
+// Karttamerkit + popup
+// ==========================
+loadFMIObservations()
   .then(data => {
-    console.log("FEATURE COUNT:", data.features.length);
+    console.log("FMI FEATURES:", data.features.length);
 
     const layer = L.featureGroup().addTo(map);
 
@@ -64,23 +113,101 @@ fetch("observations.json")
 
       const lat = c[1];
       const lon = c[0];
+      const p = f.properties;
 
-      L.circleMarker([lat, lon], {
+      const marker = L.circleMarker([lat, lon], {
         radius: 4,
         color: "red",
         fillOpacity: 0.7
       }).addTo(layer);
+
+      marker.bindPopup(`
+        <div class="popup-title">${p.stationname}</div>
+        🌡 ${p.temperature} °C<br><br>
+        <canvas
+          class="popup-chart"
+          width="400"
+          height="200"
+          data-lat="${lat}"
+          data-lon="${lon}"
+        ></canvas>
+      `);
     });
 
     if (layer.getLayers().length > 0) {
       map.fitBounds(layer.getBounds(), { padding: [30, 30] });
     }
   })
-  .catch(err => console.error("OBS ERROR", err));
+  .catch(err => console.error("FMI ERROR", err));
+
+// ==========================
+// Popup → Chart.js aikasarja
+// ==========================
+map.on("popupopen", async e => {
+  const canvas = e.popup.getElement().querySelector("canvas");
+  if (!canvas) return;
+
+  const lat = canvas.dataset.lat;
+  const lon = canvas.dataset.lon;
+
+  const now = new Date();
+  const pastStart = new Date(now.getTime() - 6 * 3600_000).toISOString();
+  const futureEnd = new Date(now.getTime() + 12 * 3600_000).toISOString();
+
+  const [obs, fc] = await Promise.all([
+    fetchTimeSeries({
+      lat, lon,
+      storedquery: "fmi::observations::weather::timevaluepair",
+      start: pastStart,
+      end: now.toISOString()
+    }),
+    fetchTimeSeries({
+      lat, lon,
+      storedquery: "fmi::forecast::harmonie::surface::point::timevaluepair",
+      start: now.toISOString(),
+      end: futureEnd
+    })
+  ]);
+
+  const past = parseFMI(obs);
+  const future = parseFMI(fc);
+
+  new Chart(canvas.getContext("2d"), {
+    type: "line",
+    data: {
+      labels: [...past, ...future].map(d =>
+        d.time.toLocaleTimeString("fi-FI", { hour: "2-digit" })
+      ),
+      datasets: [
+        {
+          label: "Mennyt",
+          data: past.map(d => d.value),
+          borderColor: "blue",
+          tension: 0.3
+        },
+        {
+          label: "Ennuste",
+          data: [
+            ...Array(past.length).fill(null),
+            ...future.map(d => d.value)
+          ],
+          borderColor: "red",
+          borderDash: [5, 5],
+          tension: 0.3
+        }
+      ]
+    },
+    options: {
+      responsive: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { title: { display: true, text: "°C" } }
+      }
+    }
+  });
+});
 
 console.log("SCRIPT END");
 </script>
-
-
 </body>
 </html>
