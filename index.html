@@ -63,16 +63,30 @@ fetch("stations.json")
         fillOpacity: 0.7
       }).addTo(layer);
 
-      marker.bindPopup(`
-        <div class="popup-title">${name}</div>
-        <canvas
-          class="popup-chart"
-          width="400"
-          height="200"
-          data-lat="${lat}"
-          data-lon="${lon}"
-        ></canvas>
-      `);
+marker.bindPopup(`
+  <div class="popup-title">${name}</div>
+
+  <div><strong>Lämpötila</strong></div>
+  <canvas
+    class="popup-chart"
+    width="400"
+    height="160"
+    data-lat="${lat}"
+    data-lon="${lon}"
+    data-type="temp"
+  ></canvas>
+
+  <div style="margin-top:8px;"><strong>Tuuli</strong></div>
+  <canvas
+    class="popup-chart"
+    width="400"
+    height="160"
+    data-lat="${lat}"
+    data-lon="${lon}"
+    data-type="wind"
+  ></canvas>
+`);
+
     });
 
     map.fitBounds(layer.getBounds(), { padding: [30, 30] });
@@ -143,107 +157,110 @@ async function fetchTimeSeriesREST(lat, lon, params) {
 }
 
 // ==========================
-// Popup → lämpötila + tuuli
+// Popup → erilliset graafit
 // ==========================
 map.on("popupopen", async e => {
-  const canvas = e.popup.getElement().querySelector("canvas");
-  if (!canvas) return;
+  const popupEl = e.popup.getElement();
+  if (!popupEl) return;
 
-  const lat = canvas.dataset.lat;
-  const lon = canvas.dataset.lon;
+  const canvases = popupEl.querySelectorAll("canvas");
+  if (canvases.length === 0) return;
+
+  const lat = canvases[0].dataset.lat;
+  const lon = canvases[0].dataset.lon;
 
   try {
-    // Lämpötila
+    // --- Hae data ---
     const tempJson = await fetchTimeSeriesREST(lat, lon, {
       param: "temperature"
     });
 
-    // Tuulen nopeus
     const windSpeedJson = await fetchTimeSeriesREST(lat, lon, {
       param: "windspeedms"
     });
 
-    // Tuulensuunta
     const windDirJson = await fetchTimeSeriesREST(lat, lon, {
       param: "winddirection"
     });
 
     // --- Lämpötila ---
-    if (!Array.isArray(tempJson) || tempJson.length === 0) {
-      canvas.replaceWith("Ei havaintodataa saatavilla");
-      return;
+    if (Array.isArray(tempJson) && tempJson.length > 0) {
+      const temps = tempJson.map(p => p.temperature);
+
+      const tempCanvas = popupEl.querySelector('canvas[data-type="temp"]');
+
+      new Chart(tempCanvas.getContext("2d"), {
+        type: "line",
+        data: {
+          labels: temps.map((_, i) => i),
+          datasets: [{
+            label: "°C",
+            data: temps,
+            borderColor: "blue",
+            tension: 0.3
+          }]
+        },
+        options: {
+          responsive: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { title: { display: true, text: "°C" } }
+          }
+        }
+      });
     }
 
-    const temps = tempJson.map(p => p.temperature);
+    // --- Tuulen nopeus ---
+    if (Array.isArray(windSpeedJson) && windSpeedJson.length > 0) {
+      const speeds = windSpeedJson.map(p => p.windspeedms);
 
-    // --- Tuuli ---
-    const windSpeeds = Array.isArray(windSpeedJson)
-      ? windSpeedJson.map(p => p.windspeedms)
-      : [];
+      const windCanvas = popupEl.querySelector('canvas[data-type="wind"]');
 
-    const latestWindDir =
+      new Chart(windCanvas.getContext("2d"), {
+        type: "line",
+        data: {
+          labels: speeds.map((_, i) => i),
+          datasets: [{
+            label: "m/s",
+            data: speeds,
+            borderColor: "green",
+            tension: 0.3
+          }]
+        },
+        options: {
+          responsive: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { title: { display: true, text: "m/s" } }
+          }
+        }
+      });
+    }
+
+    // --- Tuulensuunta nuolena otsikkoon ---
+    const latestDir =
       Array.isArray(windDirJson)
         ? windDirJson.at(-1)?.winddirection
         : null;
 
-    // Tuulinuoli otsikkoon
-    if (latestWindDir !== null) {
-      const title = e.popup.getElement().querySelector(".popup-title");
+    if (latestDir !== null) {
+      const title = popupEl.querySelector(".popup-title");
       if (title && !title.dataset.windAdded) {
         title.dataset.windAdded = "1";
         title.insertAdjacentHTML(
           "beforeend",
           ` <span style="
               display:inline-block;
-              transform:rotate(${latestWindDir + 180}deg);
+              transform:rotate(${latestDir + 180}deg);
               font-size:18px;
             ">➤</span>`
         );
       }
     }
 
-    // --- Chart.js ---
-    new Chart(canvas.getContext("2d"), {
-      type: "line",
-      data: {
-        labels: temps.map((_, i) => i),
-        datasets: [
-          {
-            label: "Lämpötila (°C)",
-            data: temps,
-            borderColor: "blue",
-            tension: 0.3,
-            yAxisID: "yTemp"
-          },
-          {
-            label: "Tuulen nopeus (m/s)",
-            data: windSpeeds,
-            borderColor: "green",
-            tension: 0.3,
-            yAxisID: "yWind"
-          }
-        ]
-      },
-      options: {
-        responsive: false,
-        plugins: { legend: { display: true } },
-        scales: {
-          yTemp: {
-            position: "left",
-            title: { display: true, text: "°C" }
-          },
-          yWind: {
-            position: "right",
-            title: { display: true, text: "m/s" },
-            grid: { drawOnChartArea: false }
-          }
-        }
-      }
-    });
-
   } catch (err) {
     console.error(err);
-    canvas.replaceWith("Virhe FMI-datan haussa");
+    popupEl.innerHTML += `<div>Virhe FMI-datan haussa</div>`;
   }
 });
 
