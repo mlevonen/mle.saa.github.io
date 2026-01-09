@@ -35,95 +35,35 @@ html, body { margin: 0; height: 100%; }
 <div id="map"></div>
 
 <script>
-console.log("SCRIPT START");
-
-// ==========================
-// Kartta
-// ==========================
 const map = L.map("map").setView([60, 25], 6);
 
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "&copy; OpenStreetMap"
 }).addTo(map);
 
-// ==========================
-// FMI WFS
-// ==========================
 const FMI_WFS = "https://opendata.fmi.fi/wfs";
 
 // ==========================
-// Hae viimeisimmät havainnot kartalle
+// Asemat kartalle
 // ==========================
-async function loadFMIObservations() {
-  const params = new URLSearchParams({
-    service: "WFS",
-    version: "2.0.0",
-    request: "GetFeature",
-    storedquery_id: "fmi::observations::weather::simple",
-    parameters: "temperature",
-    time: "PT30M",
-    bbox: "18,59,32,71,EPSG:4326",
-    outputFormat: "application/json"
-  });
-
-  const res = await fetch(`${FMI_WFS}?${params}`);
-  return res.json();
-}
-
-// ==========================
-// Hae aikasarja (havainto / ennuste)
-// ==========================
-async function fetchTimeSeries({ lat, lon, storedquery, start, end }) {
-  const params = new URLSearchParams({
-    service: "WFS",
-    version: "2.0.0",
-    request: "GetFeature",
-    storedquery_id: storedquery,
-    latlon: `${lat},${lon}`,
-    parameters: "temperature",
-    starttime: start,
-    endtime: end,
-    timestep: "60",
-    outputFormat: "application/json"
-  });
-
-  const res = await fetch(`${FMI_WFS}?${params}`);
-  return res.json();
-}
-
-function parseFMI(geojson) {
-  return geojson.features.map(f => ({
-    time: new Date(f.properties.time),
-    value: f.properties.temperature
-  }));
-}
-
-// ==========================
-// Karttamerkit + popup
-// ==========================
-loadFMIObservations()
+fetch("stations.json")
+  .then(r => r.json())
   .then(data => {
-    console.log("FMI FEATURES:", data.features.length);
 
     const layer = L.featureGroup().addTo(map);
 
     data.features.forEach(f => {
-      const c = f.geometry.coordinates;
-      if (!c || c.length !== 2) return;
-
-      const lat = c[1];
-      const lon = c[0];
-      const p = f.properties;
+      const [lon, lat] = f.geometry.coordinates;
+      const { name } = f.properties;
 
       const marker = L.circleMarker([lat, lon], {
-        radius: 4,
-        color: "red",
+        radius: 5,
+        color: "blue",
         fillOpacity: 0.7
       }).addTo(layer);
 
       marker.bindPopup(`
-        <div class="popup-title">${p.stationname}</div>
-        🌡 ${p.temperature} °C<br><br>
+        <div class="popup-title">${name}</div>
         <canvas
           class="popup-chart"
           width="400"
@@ -134,14 +74,36 @@ loadFMIObservations()
       `);
     });
 
-    if (layer.getLayers().length > 0) {
-      map.fitBounds(layer.getBounds(), { padding: [30, 30] });
-    }
-  })
-  .catch(err => console.error("FMI ERROR", err));
+    map.fitBounds(layer.getBounds(), { padding: [30, 30] });
+  });
 
 // ==========================
-// Popup → Chart.js aikasarja
+// FMI aikasarja (JSON TUETTU)
+// ==========================
+async function fetchTimeSeries(lat, lon, parameter) {
+  const now = new Date();
+  const start = new Date(now - 6 * 3600_000).toISOString();
+  const end   = new Date(now + 1 * 3600_000).toISOString();
+
+  const params = new URLSearchParams({
+    service: "WFS",
+    version: "2.0.0",
+    request: "GetFeature",
+    storedquery_id: "fmi::observations::weather::timevaluepair",
+    latlon: `${lat},${lon}`,
+    parameters: parameter,
+    starttime: start,
+    endtime: end,
+    timestep: "60",
+    outputFormat: "application/json"
+  });
+
+  const res = await fetch(`${FMI_WFS}?${params}`);
+  return res.json();
+}
+
+// ==========================
+// Popup → graafi + tuulinuoli
 // ==========================
 map.on("popupopen", async e => {
   const canvas = e.popup.getElement().querySelector("canvas");
@@ -150,64 +112,38 @@ map.on("popupopen", async e => {
   const lat = canvas.dataset.lat;
   const lon = canvas.dataset.lon;
 
-  const now = new Date();
-  const pastStart = new Date(now.getTime() - 6 * 3600_000).toISOString();
-  const futureEnd = new Date(now.getTime() + 12 * 3600_000).toISOString();
+  const tempData = await fetchTimeSeries(lat, lon, "temperature");
+  const windDir  = await fetchTimeSeries(lat, lon, "winddirection");
 
-  const [obs, fc] = await Promise.all([
-    fetchTimeSeries({
-      lat, lon,
-      storedquery: "fmi::observations::weather::timevaluepair",
-      start: pastStart,
-      end: now.toISOString()
-    }),
-    fetchTimeSeries({
-      lat, lon,
-      storedquery: "fmi::forecast::harmonie::surface::point::timevaluepair",
-      start: now.toISOString(),
-      end: futureEnd
-    })
-  ]);
+  const temps = tempData.features.map(f => ({
+    t: new Date(f.properties.time),
+    v: f.properties.temperature
+  }));
 
-  const past = parseFMI(obs);
-  const future = parseFMI(fc);
+  const latestWind = windDir.features.at(-1)?.properties.winddirection ?? 0;
+
+  // Tuulinuoli otsikkoon
+  e.popup.getElement().querySelector(".popup-title").innerHTML +=
+    ` <span style="display:inline-block;transform:rotate(${latestWind + 180}deg)">➤</span>`;
 
   new Chart(canvas.getContext("2d"), {
     type: "line",
     data: {
-      labels: [...past, ...future].map(d =>
-        d.time.toLocaleTimeString("fi-FI", { hour: "2-digit" })
-      ),
-      datasets: [
-        {
-          label: "Mennyt",
-          data: past.map(d => d.value),
-          borderColor: "blue",
-          tension: 0.3
-        },
-        {
-          label: "Ennuste",
-          data: [
-            ...Array(past.length).fill(null),
-            ...future.map(d => d.value)
-          ],
-          borderColor: "red",
-          borderDash: [5, 5],
-          tension: 0.3
-        }
-      ]
+      labels: temps.map(d => d.t.toLocaleTimeString("fi-FI", { hour: "2-digit" })),
+      datasets: [{
+        data: temps.map(d => d.v),
+        borderColor: "blue",
+        tension: 0.3
+      }]
     },
     options: {
       responsive: false,
       plugins: { legend: { display: false } },
-      scales: {
-        y: { title: { display: true, text: "°C" } }
-      }
+      scales: { y: { title: { display: true, text: "°C" } } }
     }
   });
 });
-
-console.log("SCRIPT END");
 </script>
+
 </body>
 </html>
