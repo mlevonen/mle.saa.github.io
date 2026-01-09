@@ -116,8 +116,32 @@ async function fetchTimeSeries(lat, lon, parameter) {
 
 
 // ==========================
-// Popup → graafi + tuulinuoli
+// FMI TimeSeries REST API
 // ==========================
+async function fetchTimeSeriesREST(lat, lon, params) {
+  const now = new Date();
+  const start = new Date(now.getTime() - 6 * 3600_000).toISOString();
+  const end   = now.toISOString();
+
+  const urlParams = new URLSearchParams({
+    latlon: `${Number(lat)},${Number(lon)}`,
+    starttime: start,
+    endtime: end,
+    format: "json",
+    ...params
+  });
+
+  const url = `https://opendata.fmi.fi/timeseries?${urlParams}`;
+  console.log("FMI REST REQUEST:", url);
+
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error("FMI REST fetch failed");
+  }
+
+  return res.json();
+}
+
 // ==========================
 // Popup → graafi + tuulinuoli
 // ==========================
