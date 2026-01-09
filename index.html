@@ -143,7 +143,7 @@ async function fetchTimeSeriesREST(lat, lon, params) {
 }
 
 // ==========================
-// Popup → graafi (indeksipohjainen)
+// Popup → lämpötila + tuuli
 // ==========================
 map.on("popupopen", async e => {
   const canvas = e.popup.getElement().querySelector("canvas");
@@ -153,38 +153,89 @@ map.on("popupopen", async e => {
   const lon = canvas.dataset.lon;
 
   try {
+    // Lämpötila
     const tempJson = await fetchTimeSeriesREST(lat, lon, {
       param: "temperature"
     });
 
-    // 🔧 FMI REST – todellinen muoto
+    // Tuulen nopeus
+    const windSpeedJson = await fetchTimeSeriesREST(lat, lon, {
+      param: "windspeedms"
+    });
+
+    // Tuulensuunta
+    const windDirJson = await fetchTimeSeriesREST(lat, lon, {
+      param: "winddirection"
+    });
+
+    // --- Lämpötila ---
     if (!Array.isArray(tempJson) || tempJson.length === 0) {
       canvas.replaceWith("Ei havaintodataa saatavilla");
       return;
     }
 
-    const values = tempJson.map(p => p.temperature);
+    const temps = tempJson.map(p => p.temperature);
 
+    // --- Tuuli ---
+    const windSpeeds = Array.isArray(windSpeedJson)
+      ? windSpeedJson.map(p => p.windspeedms)
+      : [];
+
+    const latestWindDir =
+      Array.isArray(windDirJson)
+        ? windDirJson.at(-1)?.winddirection
+        : null;
+
+    // Tuulinuoli otsikkoon
+    if (latestWindDir !== null) {
+      const title = e.popup.getElement().querySelector(".popup-title");
+      if (title && !title.dataset.windAdded) {
+        title.dataset.windAdded = "1";
+        title.insertAdjacentHTML(
+          "beforeend",
+          ` <span style="
+              display:inline-block;
+              transform:rotate(${latestWindDir + 180}deg);
+              font-size:18px;
+            ">➤</span>`
+        );
+      }
+    }
+
+    // --- Chart.js ---
     new Chart(canvas.getContext("2d"), {
       type: "line",
       data: {
-        labels: values.map((_, i) => i), // 0,1,2,...
-        datasets: [{
-          label: "Lämpötila (°C)",
-          data: values,
-          borderColor: "blue",
-          tension: 0.3
-        }]
+        labels: temps.map((_, i) => i),
+        datasets: [
+          {
+            label: "Lämpötila (°C)",
+            data: temps,
+            borderColor: "blue",
+            tension: 0.3,
+            yAxisID: "yTemp"
+          },
+          {
+            label: "Tuulen nopeus (m/s)",
+            data: windSpeeds,
+            borderColor: "green",
+            tension: 0.3,
+            yAxisID: "yWind"
+          }
+        ]
       },
       options: {
         responsive: false,
-        plugins: { legend: { display: false } },
+        plugins: { legend: { display: true } },
         scales: {
-          x: {
-            title: { display: true, text: "Aika (indeksi)" }
-          },
-          y: {
+          yTemp: {
+            position: "left",
             title: { display: true, text: "°C" }
+          },
+          yWind: {
+            position: "right",
+            title: { display: true, text: "m/s" },
+            grid: { drawOnChartArea: false }
           }
         }
       }
