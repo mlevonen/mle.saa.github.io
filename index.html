@@ -1,51 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="fi">
 <head>
 <meta charset="utf-8">
-<title>FMI Sääkartta – Havainnot</title>
+<title>FMI Sääkartta – Havainnot ja ennuste</title>
 
-<link rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1"></script>
 
-
 <style>
-
 html, body { margin: 0; height: 100%; }
 #map { height: 100%; width: 100%; }
 
-.leaflet-popup-content {
-  width: 420px !important;
-}
+.leaflet-popup-content { width: 420px !important; }
 
-.popup-title {
-  font-weight: bold;
-  margin-bottom: 6px;
-}
+.popup-title { font-weight: bold; margin-bottom: 6px; }
 
-.popup-chart {
-  width: 400px;
-  height: 200px;
-}
-
+.popup-chart { width: 400px; height: 160px; }
 
 .wind-arrow {
   font-size: 18px;
   color: #333;
-  transform-origin: center center;
   pointer-events: none;
 }
-
-
-
-
-
-
 </style>
 </head>
 
@@ -55,445 +34,172 @@ html, body { margin: 0; height: 100%; }
 <script>
 "use strict";
 
+/* ==========================
+   Kartta
+========================== */
 const map = L.map("map").setView([60, 25], 6);
 
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "&copy; OpenStreetMap"
 }).addTo(map);
 
-const FMI_WFS = "https://opendata.fmi.fi/wfs";
-
-// ==========================
-// Asemat kartalle
-// ==========================
-fetch("stations.json")
-  .then(r => r.json())
-  .then(data => {
-
-    const layer = L.featureGroup().addTo(map);
-
-
-
-
-data.features.forEach(f => {
-  const [lon, lat] = f.geometry.coordinates;
-  const { name } = f.properties;
-
-  const marker = L.circleMarker([lat, lon], {
-    radius: 5,
-    color: "blue",
-    fillOpacity: 0.7
-  }).addTo(layer);
-
-  marker.bindPopup(`
-    <div class="popup-title">${name}</div>
-
-    <div><strong>Lämpötila</strong></div>
-    <canvas
-      class="popup-chart"
-      width="400"
-      height="160"
-      data-lat="${lat}"
-      data-lon="${lon}"
-      data-type="temp"
-    ></canvas>
-
-    <div style="margin-top:8px;"><strong>Tuuli</strong></div>
-    <canvas
-      class="popup-chart"
-      width="400"
-      height="160"
-      data-lat="${lat}"
-      data-lon="${lon}"
-      data-type="wind"
-    ></canvas>
-  `);
-
-});
-
-marker.on("popupopen", async e => {
-  const popupEl = e.popup.getElement();
-  if (!popupEl) return;
-
-  const canvases = popupEl.querySelectorAll("canvas");
-  if (canvases.length === 0) return;
-
-  const lat = canvases[0].dataset.lat;
-  const lon = canvases[0].dataset.lon;
-  const cacheKey = `${lat},${lon}`;
-
-  try {
-    let obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir;
-
-    if (popupCache[cacheKey]) {
-      console.log("CACHE HIT:", cacheKey);
-      ({
-        obsTemp,
-        fcTemp,
-        obsWindSpeed,
-        fcWindSpeed,
-        fcWindDir
-      } = popupCache[cacheKey]);
-    } else {
-      console.log("CACHE MISS:", cacheKey);
-
-      obsTemp = await fetchTimeSeriesREST(lat, lon, { param: "temperature" });
-      fcTemp  = await fetchForecastREST(lat, lon, { param: "temperature" });
-
-      obsWindSpeed = await fetchTimeSeriesREST(lat, lon, { param: "windspeedms" });
-      fcWindSpeed  = await fetchForecastREST(lat, lon, { param: "windspeedms" });
-      fcWindDir    = await fetchForecastREST(lat, lon, { param: "winddirection" });
-
-      popupCache[cacheKey] = {
-        obsTemp,
-        fcTemp,
-        obsWindSpeed,
-        fcWindSpeed,
-        fcWindDir
-      };
-    }
-
-    // ⬇️ graafit + tuulinuoli tähän (sama koodi kuin ennen)
-
-  } catch (err) {
-    console.error(err);
-    popupEl.innerHTML += `<div>Virhe FMI-datan haussa</div>`;
-  }
-});
-
-
-
-
-
-map.fitBounds(layer.getBounds(), { padding: [30, 30] });
-
-  });
-
-// ==========================
-// FMI aikasarja (JSON TUETTU)
-// ==========================
-async function fetchTimeSeries(lat, lon, parameter) {
-  const now = new Date();
-
-  const start = new Date(now.getTime() - 6 * 3600_000).toISOString();
-  const end   = now.toISOString(); // EI tulevaisuutta!
-
-  const params = new URLSearchParams({
-    service: "WFS",
-    version: "2.0.0",
-    request: "GetFeature",
-    storedquery_id: "fmi::observations::weather::timevaluepair",
-    latlon: `${Number(lat)},${Number(lon)}`,
-    parameters: parameter,
-    starttime: start,
-    endtime: end,
-    timestep: "60",
-    outputFormat: "application/json"
-  });
-
-  const url = `${FMI_WFS}?${params}`;
-  console.log("FMI REQUEST:", url);
-
-  const res = await fetch(url);
-  const text = await res.text();
-
-  if (!res.ok || text.startsWith("<")) {
-    console.error("FMI RAW RESPONSE:", text);
-    return null;
-  }
-
-  return JSON.parse(text);
-}
-
-
-// ==========================
-// FMI TimeSeries REST API
-// ==========================
-async function fetchTimeSeriesREST(lat, lon, params) {
-  const now = new Date();
-  const past = new Date(now.getTime() - 6 * 3600_000).toISOString();
-  const future = new Date(now.getTime() + 6 * 3600_000).toISOString();
-
-  const urlParams = new URLSearchParams({
-    latlon: `${Number(lat)},${Number(lon)}`,
-    starttime: past,
-    endtime: future,
-    format: "json",
-    ...params
-  });
-
-  const url = `https://opendata.fmi.fi/timeseries?${urlParams}`;
-  console.log("FMI REST REQUEST:", url);
-
-  const res = await fetch(url);
-  if (!res.ok) throw new Error("FMI REST fetch failed");
-
-  return res.json();
-}
-
-// ==========================
-// FMI ennuste (HARMONIE)
-// ==========================
-async function fetchForecastREST(lat, lon, params) {
-  const now = new Date();
-  const future = new Date(now.getTime() + 12 * 3600_000).toISOString();
-
-  const urlParams = new URLSearchParams({
-    latlon: `${Number(lat)},${Number(lon)}`,
-    starttime: now.toISOString(),
-    endtime: future,
-    format: "json",
-    source: "forecast",   // 🔴 TÄMÄ ON AVAIN
-    ...params
-  });
-
-  const url = `https://opendata.fmi.fi/timeseries?${urlParams}`;
-  console.log("FMI FORECAST REQUEST:", url);
-
-  const res = await fetch(url);
-  if (!res.ok) throw new Error("FMI forecast fetch failed");
-
-  return res.json();
-}
-
-
-
-function splitPastFuture(values) {
-  const mid = Math.floor(values.length / 2);
-  return {
-    past: values.slice(0, mid),
-    future: values.slice(mid)
-  };
-}
-
-
-// ==========================
-// Tuulinuolet kartalle
-// ==========================
+/* ==========================
+   Tuulinuolet kartalle
+========================== */
 const windArrowLayer = L.layerGroup().addTo(map);
 
 function addOrUpdateWindArrow(lat, lon, windDirDeg) {
   const key = `${lat},${lon}`;
 
-  // Poista vanha nuoli samasta paikasta
-  windArrowLayer.eachLayer(layer => {
-    if (layer.options._key === key) {
-      windArrowLayer.removeLayer(layer);
-    }
+  windArrowLayer.eachLayer(l => {
+    if (l.options._key === key) windArrowLayer.removeLayer(l);
   });
 
-  const arrowIcon = L.divIcon({
+  const icon = L.divIcon({
     className: "wind-arrow",
     html: "➤",
     iconSize: [20, 20],
     iconAnchor: [10, 10]
   });
 
-  const marker = L.marker([lat, lon], {
-    icon: arrowIcon,
-    rotationAngle: windDirDeg + 180,
-    rotationOrigin: "center center"
-  });
-
+  const marker = L.marker([lat, lon], { icon });
   marker.options._key = key;
+  marker.getElement()?.style.setProperty(
+    "transform",
+    `rotate(${windDirDeg + 180}deg)`
+  );
+
   marker.addTo(windArrowLayer);
 }
 
-// ==========================
-// Popup data cache
-// ==========================
+/* ==========================
+   FMI API
+========================== */
+async function fetchTimeSeriesREST(lat, lon, param) {
+  const now = new Date();
+  const past = new Date(now.getTime() - 6 * 3600_000).toISOString();
+
+  const url = `https://opendata.fmi.fi/timeseries?latlon=${lat},${lon}&starttime=${past}&endtime=${now.toISOString()}&param=${param}&format=json`;
+  return fetch(url).then(r => r.json());
+}
+
+async function fetchForecastREST(lat, lon, param) {
+  const now = new Date();
+  const future = new Date(now.getTime() + 12 * 3600_000).toISOString();
+
+  const url = `https://opendata.fmi.fi/timeseries?latlon=${lat},${lon}&starttime=${now.toISOString()}&endtime=${future}&param=${param}&source=forecast&format=json`;
+  return fetch(url).then(r => r.json());
+}
+
+/* ==========================
+   Popup cache
+========================== */
 const popupCache = {};
 
+/* ==========================
+   Asemat kartalle
+========================== */
+fetch("stations.json")
+  .then(r => r.json())
+  .then(data => {
+    const layer = L.featureGroup().addTo(map);
 
+    data.features.forEach(f => {
+      const [lon, lat] = f.geometry.coordinates;
+      const { name } = f.properties;
 
-// ==========================
-// Popup → lämpötila + tuuli (havainto + ennuste)
-// ==========================
+      const marker = L.circleMarker([lat, lon], {
+        radius: 5,
+        color: "blue",
+        fillOpacity: 0.7
+      }).addTo(layer);
 
+      marker.bindPopup(`
+        <div class="popup-title">${name}</div>
 
+        <div><strong>Lämpötila</strong></div>
+        <canvas class="popup-chart" data-type="temp" data-lat="${lat}" data-lon="${lon}"></canvas>
 
+        <div style="margin-top:6px;"><strong>Tuuli</strong></div>
+        <canvas class="popup-chart" data-type="wind" data-lat="${lat}" data-lon="${lon}"></canvas>
+      `);
 
+      marker.on("popupopen", async e => {
+        const popupEl = e.popup.getElement();
+        const canvases = popupEl.querySelectorAll("canvas");
+        const lat = canvases[0].dataset.lat;
+        const lon = canvases[0].dataset.lon;
+        const key = `${lat},${lon}`;
 
+        let obsTemp, fcTemp, obsWind, fcWind, fcDir;
 
+        if (popupCache[key]) {
+          console.log("CACHE HIT:", key);
+          ({ obsTemp, fcTemp, obsWind, fcWind, fcDir } = popupCache[key]);
+        } else {
+          console.log("CACHE MISS:", key);
+          obsTemp = await fetchTimeSeriesREST(lat, lon, "temperature");
+          fcTemp  = await fetchForecastREST(lat, lon, "temperature");
+          obsWind = await fetchTimeSeriesREST(lat, lon, "windspeedms");
+          fcWind  = await fetchForecastREST(lat, lon, "windspeedms");
+          fcDir   = await fetchForecastREST(lat, lon, "winddirection");
 
-
-
-
-
-
-
-
-
-
-// --- LÄMPÖTILA (havainto + oikea FMI-ennuste) ---
-if (
-  Array.isArray(obsTemp) && obsTemp.length > 0 &&
-  Array.isArray(fcTemp)  && fcTemp.length  > 0
-) {
-
-  const obsValues = obsTemp.map(p => p.temperature);
-  const fcValues  = fcTemp.map(p => p.temperature);
-
-  const nowIndex = obsValues.length;
-
-  const tempCanvas = popupEl.querySelector('canvas[data-type="temp"]');
-
-  new Chart(tempCanvas.getContext("2d"), {
-    type: "line",
-    data: {
-      labels: [
-        ...obsValues.map((_, i) => i),
-        ...fcValues.map((_, i) => i + obsValues.length)
-      ],
-      datasets: [
-        {
-          label: "Havainto",
-          data: [...obsValues, ...Array(fcValues.length).fill(null)],
-          borderColor: "blue",
-          tension: 0.3
-        },
-        {
-          label: "Ennuste",
-          data: [...Array(obsValues.length).fill(null), ...fcValues],
-          borderColor: "red",
-          borderDash: [6, 4],
-          tension: 0.3
+          popupCache[key] = { obsTemp, fcTemp, obsWind, fcWind, fcDir };
         }
-      ]
-    },
-    options: {
-      responsive: false,
-      plugins: {
-        legend: { display: false },
-        annotation: {
-          annotations: {
-            nowLine: {
-              type: "line",
-              xMin: nowIndex,
-              xMax: nowIndex,
-              borderColor: "black",
-              borderWidth: 2,
-              label: {
-                display: true,
-                content: "NYT",
-                position: "start"
-              }
-            }
+
+        /* --- Lämpötila --- */
+        new Chart(
+          popupEl.querySelector('canvas[data-type="temp"]'),
+          {
+            type: "line",
+            data: {
+              labels: [...obsTemp.map((_, i) => i), ...fcTemp.map((_, i) => i + obsTemp.length)],
+              datasets: [
+                {
+                  data: [...obsTemp.map(p => p.temperature), ...Array(fcTemp.length).fill(null)],
+                  borderColor: "blue"
+                },
+                {
+                  data: [...Array(obsTemp.length).fill(null), ...fcTemp.map(p => p.temperature)],
+                  borderColor: "red",
+                  borderDash: [6, 4]
+                }
+              ]
+            },
+            options: { plugins: { legend: { display: false } } }
           }
-        }
-      },
-      scales: {
-        y: { title: { display: true, text: "°C" } }
-      }
-    }
-  });
-}
+        );
 
-// --- TUULI (havainto + oikea FMI-ennuste) ---
-if (
-  Array.isArray(obsWindSpeed) && obsWindSpeed.length > 0 &&
-  Array.isArray(fcWindSpeed)  && fcWindSpeed.length  > 0
-) {
-
-  const obsValues = obsWindSpeed.map(p => p.windspeedms);
-  const fcValues  = fcWindSpeed.map(p => p.windspeedms);
-
-  const nowIndex = obsValues.length;
-
-  const windCanvas = popupEl.querySelector('canvas[data-type="wind"]');
-
-  new Chart(windCanvas.getContext("2d"), {
-    type: "line",
-    data: {
-      labels: [
-        ...obsValues.map((_, i) => i),
-        ...fcValues.map((_, i) => i + obsValues.length)
-      ],
-      datasets: [
-        {
-          label: "Havainto",
-          data: [...obsValues, ...Array(fcValues.length).fill(null)],
-          borderColor: "green",
-          tension: 0.3
-        },
-        {
-          label: "Ennuste",
-          data: [...Array(obsValues.length).fill(null), ...fcValues],
-          borderColor: "red",
-          borderDash: [6, 4],
-          tension: 0.3
-        }
-      ]
-    },
-    options: {
-      responsive: false,
-      plugins: {
-        legend: { display: false },
-        annotation: {
-          annotations: {
-            nowLine: {
-              type: "line",
-              xMin: nowIndex,
-              xMax: nowIndex,
-              borderColor: "black",
-              borderWidth: 2,
-              label: {
-                display: true,
-                content: "NYT",
-                position: "start"
-              }
-            }
+        /* --- Tuuli --- */
+        new Chart(
+          popupEl.querySelector('canvas[data-type="wind"]'),
+          {
+            type: "line",
+            data: {
+              labels: [...obsWind.map((_, i) => i), ...fcWind.map((_, i) => i + obsWind.length)],
+              datasets: [
+                {
+                  data: [...obsWind.map(p => p.windspeedms), ...Array(fcWind.length).fill(null)],
+                  borderColor: "green"
+                },
+                {
+                  data: [...Array(obsWind.length).fill(null), ...fcWind.map(p => p.windspeedms)],
+                  borderColor: "red",
+                  borderDash: [6, 4]
+                }
+              ]
+            },
+            options: { plugins: { legend: { display: false } } }
           }
-        }
-      },
-      scales: {
-        y: { title: { display: true, text: "m/s" } }
-      }
-    }
+        );
+
+        const latestDir = fcDir.at(-1)?.winddirection;
+        if (latestDir != null) addOrUpdateWindArrow(lat, lon, latestDir);
+      });
+    });
+
+    map.fitBounds(layer.getBounds(), { padding: [30, 30] });
   });
-}
-
-
-
-// --- TUULENSUUNTA (ennuste) ---
-const latestDir =
-  Array.isArray(fcWindDir)
-    ? fcWindDir.at(-1)?.winddirection
-    : null;
-
-if (latestDir !== null) {
-  const title = popupEl.querySelector(".popup-title");
-  if (title && !title.dataset.windAdded) {
-    title.dataset.windAdded = "1";
-    title.insertAdjacentHTML(
-      "beforeend",
-      ` <span style="
-          display:inline-block;
-          transform:rotate(${latestDir + 180}deg);
-          font-size:18px;
-        ">➤</span>`
-    );
-  }
-}
-
-// --- TUULINUOLI KARTALLE (ennusteesta) ---
-if (latestDir !== null) {
-  addOrUpdateWindArrow(lat, lon, latestDir);
-}
-
-
-
-
-
-
-  } catch (err) {
-    console.error(err);
-    popupEl.innerHTML += `<div>Virhe FMI-datan haussa</div>`;
-  }
-});
-
-
 </script>
-
 </body>
 </html>
