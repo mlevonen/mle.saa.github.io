@@ -104,6 +104,9 @@ marker.bindPopup(`
   ></canvas>
 `);
 
+marker.on("click", () => {
+  marker.closePopup();
+
     });
 
     map.fitBounds(layer.getBounds(), { padding: [30, 30] });
