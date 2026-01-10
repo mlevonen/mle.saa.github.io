@@ -209,10 +209,16 @@ map.on("popupopen", async e => {
   const lon = canvases[0].dataset.lon;
 
   try {
-    // --- DATA ---
-    const tempJson = await fetchTimeSeriesREST(lat, lon, {
-      param: "temperature"
-    });
+    // --- LÄMPÖTILA: havainto + ennuste ---
+	const obsTemp = await fetchTimeSeriesREST(lat, lon, {
+  	param: "temperature"
+});
+
+const fcTemp = await fetchForecastREST(lat, lon, {
+  param: "temperature"
+});
+
+
     const windSpeedJson = await fetchTimeSeriesREST(lat, lon, {
       param: "windspeedms"
     });
