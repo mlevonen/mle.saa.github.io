@@ -195,9 +195,18 @@ function splitPastFuture(values) {
 }
 
 
+
+// ==========================
+// Popup data cache
+// ==========================
+const popupCache = {};
+
+
+
 // ==========================
 // Popup → lämpötila + tuuli (havainto + ennuste)
 // ==========================
+
 map.on("popupopen", async e => {
   const popupEl = e.popup.getElement();
   if (!popupEl) return;
@@ -208,30 +217,56 @@ map.on("popupopen", async e => {
   const lat = canvases[0].dataset.lat;
   const lon = canvases[0].dataset.lon;
 
+const cacheKey = `${lat},${lon}`;
 
 
-  try {
-    // --- LÄMPÖTILA: havainto + ennuste ---
-	const obsTemp = await fetchTimeSeriesREST(lat, lon, {
-  	param: "temperature"
-});
+try {
 
-const fcTemp = await fetchForecastREST(lat, lon, {
-  param: "temperature"
-});
+  let obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir;
 
-// --- TUULI ---
-const obsWindSpeed = await fetchTimeSeriesREST(lat, lon, {
-  param: "windspeedms"
-});
+  if (popupCache[cacheKey]) {
+    console.log("CACHE HIT:", cacheKey);
 
-const fcWindSpeed = await fetchForecastREST(lat, lon, {
-  param: "windspeedms"
-});
+    ({
+      obsTemp,
+      fcTemp,
+      obsWindSpeed,
+      fcWindSpeed,
+      fcWindDir
+    } = popupCache[cacheKey]);
 
-const fcWindDir = await fetchForecastREST(lat, lon, {
-  param: "winddirection"
-});
+  } else {
+    console.log("CACHE MISS:", cacheKey);
+
+    obsTemp = await fetchTimeSeriesREST(lat, lon, {
+      param: "temperature"
+    });
+
+    fcTemp = await fetchForecastREST(lat, lon, {
+      param: "temperature"
+    });
+
+    obsWindSpeed = await fetchTimeSeriesREST(lat, lon, {
+      param: "windspeedms"
+    });
+
+    fcWindSpeed = await fetchForecastREST(lat, lon, {
+      param: "windspeedms"
+    });
+
+    fcWindDir = await fetchForecastREST(lat, lon, {
+      param: "winddirection"
+    });
+
+    // 🔐 TALLENNA CACHEEN
+    popupCache[cacheKey] = {
+      obsTemp,
+      fcTemp,
+      obsWindSpeed,
+      fcWindSpeed,
+      fcWindDir
+    };
+  }
 
 
 // --- LÄMPÖTILA (havainto + oikea FMI-ennuste) ---
