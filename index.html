@@ -202,11 +202,6 @@ map.on("popupopen", async e => {
   const popupEl = e.popup.getElement();
   if (!popupEl) return;
 
-  const canvases = popupEl.querySelectorAll("canvas");
-  if (canvases.length === 0) return;
-
-  const lat = canvases[0].dataset.lat;
-  const lon = canvases[0].dataset.lon;
 
   try {
     // --- LÄMPÖTILA: havainto + ennuste ---
@@ -382,6 +377,12 @@ if (latestDir !== null) {
     );
   }
 }
+
+  } catch (err) {
+    console.error(err);
+    popupEl.innerHTML += `<div>Virhe FMI-datan haussa</div>`;
+  }
+});
 
 
 </script>
