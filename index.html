@@ -38,7 +38,9 @@ html, body { margin: 0; height: 100%; }
   font-size: 18px;
   color: #333;
   transform-origin: center center;
+  pointer-events: none;
 }
+
 
 
 
@@ -107,9 +109,6 @@ data.features.forEach(f => {
     ></canvas>
   `);
 
-  marker.on("click", () => {
-    marker.closePopup();
-  });
 });
 
 map.fitBounds(layer.getBounds(), { padding: [30, 30] });
