@@ -159,6 +159,32 @@ async function fetchTimeSeriesREST(lat, lon, params) {
   return res.json();
 }
 
+// ==========================
+// FMI ennuste (HARMONIE)
+// ==========================
+async function fetchForecastREST(lat, lon, params) {
+  const now = new Date();
+  const future = new Date(now.getTime() + 12 * 3600_000).toISOString();
+
+  const urlParams = new URLSearchParams({
+    latlon: `${Number(lat)},${Number(lon)}`,
+    starttime: now.toISOString(),
+    endtime: future,
+    format: "json",
+    source: "forecast",   // 🔴 TÄMÄ ON AVAIN
+    ...params
+  });
+
+  const url = `https://opendata.fmi.fi/timeseries?${urlParams}`;
+  console.log("FMI FORECAST REQUEST:", url);
+
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("FMI forecast fetch failed");
+
+  return res.json();
+}
+
+
 
 function splitPastFuture(values) {
   const mid = Math.floor(values.length / 2);
@@ -194,29 +220,36 @@ map.on("popupopen", async e => {
       param: "winddirection"
     });
 
-// --- LÄMPÖTILA ---
-if (Array.isArray(tempJson) && tempJson.length > 0) {
+// --- LÄMPÖTILA (havainto + oikea FMI-ennuste) ---
+if (
+  Array.isArray(obsTemp) && obsTemp.length > 0 &&
+  Array.isArray(fcTemp)  && fcTemp.length  > 0
+) {
 
-  const values = tempJson.map(p => p.temperature);
-  const { past, future } = splitPastFuture(values); // 🔴 PUUTTUI
-  const nowIndex = Math.floor(values.length / 2);
+  const obsValues = obsTemp.map(p => p.temperature);
+  const fcValues  = fcTemp.map(p => p.temperature);
+
+  const nowIndex = obsValues.length;
 
   const tempCanvas = popupEl.querySelector('canvas[data-type="temp"]');
 
   new Chart(tempCanvas.getContext("2d"), {
     type: "line",
     data: {
-      labels: values.map((_, i) => i),
+      labels: [
+        ...obsValues.map((_, i) => i),
+        ...fcValues.map((_, i) => i + obsValues.length)
+      ],
       datasets: [
         {
           label: "Havainto",
-          data: [...past, ...Array(future.length).fill(null)],
+          data: [...obsValues, ...Array(fcValues.length).fill(null)],
           borderColor: "blue",
           tension: 0.3
         },
         {
           label: "Ennuste",
-          data: [...Array(past.length).fill(null), ...future],
+          data: [...Array(obsValues.length).fill(null), ...fcValues],
           borderColor: "red",
           borderDash: [6, 4],
           tension: 0.3
