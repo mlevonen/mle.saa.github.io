@@ -218,13 +218,19 @@ const fcTemp = await fetchForecastREST(lat, lon, {
   param: "temperature"
 });
 
+// --- TUULI ---
+const obsWindSpeed = await fetchTimeSeriesREST(lat, lon, {
+  param: "windspeedms"
+});
 
-    const windSpeedJson = await fetchTimeSeriesREST(lat, lon, {
-      param: "windspeedms"
-    });
-    const windDirJson = await fetchTimeSeriesREST(lat, lon, {
-      param: "winddirection"
-    });
+const fcWindSpeed = await fetchForecastREST(lat, lon, {
+  param: "windspeedms"
+});
+
+const fcWindDir = await fetchForecastREST(lat, lon, {
+  param: "winddirection"
+});
+
 
 // --- LÄMPÖTILA (havainto + oikea FMI-ennuste) ---
 if (
@@ -290,29 +296,36 @@ if (
   });
 }
 
-// --- TUULI ---
-if (Array.isArray(windSpeedJson) && windSpeedJson.length > 0) {
+// --- TUULI (havainto + oikea FMI-ennuste) ---
+if (
+  Array.isArray(obsWindSpeed) && obsWindSpeed.length > 0 &&
+  Array.isArray(fcWindSpeed)  && fcWindSpeed.length  > 0
+) {
 
-  const values = windSpeedJson.map(p => p.windspeedms);
-  const { past, future } = splitPastFuture(values);
-  const nowIndex = Math.floor(values.length / 2);
+  const obsValues = obsWindSpeed.map(p => p.windspeedms);
+  const fcValues  = fcWindSpeed.map(p => p.windspeedms);
+
+  const nowIndex = obsValues.length;
 
   const windCanvas = popupEl.querySelector('canvas[data-type="wind"]');
 
   new Chart(windCanvas.getContext("2d"), {
     type: "line",
     data: {
-      labels: values.map((_, i) => i),
+      labels: [
+        ...obsValues.map((_, i) => i),
+        ...fcValues.map((_, i) => i + obsValues.length)
+      ],
       datasets: [
         {
           label: "Havainto",
-          data: [...past, ...Array(future.length).fill(null)],
+          data: [...obsValues, ...Array(fcValues.length).fill(null)],
           borderColor: "green",
           tension: 0.3
         },
         {
           label: "Ennuste",
-          data: [...Array(past.length).fill(null), ...future],
+          data: [...Array(obsValues.length).fill(null), ...fcValues],
           borderColor: "red",
           borderDash: [6, 4],
           tension: 0.3
@@ -341,41 +354,34 @@ if (Array.isArray(windSpeedJson) && windSpeedJson.length > 0) {
         }
       },
       scales: {
-        y: {
-          title: { display: true, text: "m/s" }
-        }
+        y: { title: { display: true, text: "m/s" } }
       }
     }
   });
 }
 
 
-    // --- TUULENSUUNTA ---
-    const latestDir =
-      Array.isArray(windDirJson)
-        ? windDirJson.at(-1)?.winddirection
-        : null;
 
-    if (latestDir !== null) {
-      const title = popupEl.querySelector(".popup-title");
-      if (title && !title.dataset.windAdded) {
-        title.dataset.windAdded = "1";
-        title.insertAdjacentHTML(
-          "beforeend",
-          ` <span style="
-              display:inline-block;
-              transform:rotate(${latestDir + 180}deg);
-              font-size:18px;
-            ">➤</span>`
-        );
-      }
-    }
+// --- TUULENSUUNTA (ennuste) ---
+const latestDir =
+  Array.isArray(fcWindDir)
+    ? fcWindDir.at(-1)?.winddirection
+    : null;
 
-  } catch (err) {
-    console.error(err);
-    popupEl.innerHTML += `<div>Virhe FMI-datan haussa</div>`;
+if (latestDir !== null) {
+  const title = popupEl.querySelector(".popup-title");
+  if (title && !title.dataset.windAdded) {
+    title.dataset.windAdded = "1";
+    title.insertAdjacentHTML(
+      "beforeend",
+      ` <span style="
+          display:inline-block;
+          transform:rotate(${latestDir + 180}deg);
+          font-size:18px;
+        ">➤</span>`
+    );
   }
-});
+}
 
 
 </script>
