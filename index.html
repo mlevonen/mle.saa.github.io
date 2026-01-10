@@ -313,29 +313,6 @@ try {
 
 
 
-  // Poista vanha nuoli samasta paikasta
-  windArrowLayer.eachLayer(layer => {
-    if (layer.options._key === key) {
-      windArrowLayer.removeLayer(layer);
-    }
-  });
-
-  const arrowIcon = L.divIcon({
-    className: "wind-arrow",
-    html: "➤",
-    iconSize: [20, 20],
-    iconAnchor: [10, 10]
-  });
-
-  const marker = L.marker([lat, lon], {
-    icon: arrowIcon,
-    rotationAngle: windDirDeg + 180,
-    rotationOrigin: "center center"
-  });
-
-  marker.options._key = key;
-  marker.addTo(windArrowLayer);
-}
 
 
 
