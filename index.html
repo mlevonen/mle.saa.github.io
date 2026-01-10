@@ -192,64 +192,62 @@ map.on("popupopen", async e => {
       param: "winddirection"
     });
 
-    // --- LÄMPÖTILA ---
-    if (Array.isArray(tempJson) && tempJson.length > 0) {
-const values = tempJson.map(p => p.temperature);
-const nowIndex = Math.floor(values.length / 2);
+// --- LÄMPÖTILA ---
+if (Array.isArray(tempJson) && tempJson.length > 0) {
 
-const tempCanvas = popupEl.querySelector('canvas[data-type="temp"]');
+  const values = tempJson.map(p => p.temperature);
+  const { past, future } = splitPastFuture(values); // 🔴 PUUTTUI
+  const nowIndex = Math.floor(values.length / 2);
 
+  const tempCanvas = popupEl.querySelector('canvas[data-type="temp"]');
 
-new Chart(tempCanvas.getContext("2d"), {
-  type: "line",
-  data: {
-    labels: values.map((_, i) => i),
-datasets: [
-  {
-    label: "Havainto",
-    data: [...past, ...Array(future.length).fill(null)],
-    borderColor: "blue",
-    tension: 0.3
-  },
-  {
-    label: "Ennuste",
-    data: [...Array(past.length).fill(null), ...future],
-    borderColor: "red",
-    borderDash: [6, 4],
-    tension: 0.3
-  }
-]
-
-  },
-  options: {
-    responsive: false,
-    plugins: {
-      legend: { display: false },
-      annotation: {
-        annotations: {
-          nowLine: {
-            type: "line",
-            xMin: nowIndex,
-            xMax: nowIndex,
-            borderColor: "black",
-            borderWidth: 2,
-            label: {
-              display: true,
-              content: "NYT",
-              position: "start"
+  new Chart(tempCanvas.getContext("2d"), {
+    type: "line",
+    data: {
+      labels: values.map((_, i) => i),
+      datasets: [
+        {
+          label: "Havainto",
+          data: [...past, ...Array(future.length).fill(null)],
+          borderColor: "blue",
+          tension: 0.3
+        },
+        {
+          label: "Ennuste",
+          data: [...Array(past.length).fill(null), ...future],
+          borderColor: "red",
+          borderDash: [6, 4],
+          tension: 0.3
+        }
+      ]
+    },
+    options: {
+      responsive: false,
+      plugins: {
+        legend: { display: false },
+        annotation: {
+          annotations: {
+            nowLine: {
+              type: "line",
+              xMin: nowIndex,
+              xMax: nowIndex,
+              borderColor: "black",
+              borderWidth: 2,
+              label: {
+                display: true,
+                content: "NYT",
+                position: "start"
+              }
             }
           }
         }
-      }
-    },
-    scales: {
-      y: {
-        title: { display: true, text: "°C" }
+      },
+      scales: {
+        y: { title: { display: true, text: "°C" } }
       }
     }
-  }
-});
-    }
+  });
+}
 
     // --- TUULI ---
     if (Array.isArray(windSpeedJson) && windSpeedJson.length > 0) {
