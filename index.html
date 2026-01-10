@@ -32,6 +32,18 @@ html, body { margin: 0; height: 100%; }
   width: 400px;
   height: 200px;
 }
+
+
+.wind-arrow {
+  font-size: 18px;
+  color: #333;
+  transform-origin: center center;
+}
+
+
+
+
+
 </style>
 </head>
 
@@ -195,6 +207,12 @@ function splitPastFuture(values) {
 }
 
 
+// ==========================
+// Tuulinuolet kartalle
+// ==========================
+const windArrowLayer = L.layerGroup().addTo(map);
+
+
 
 // ==========================
 // Popup data cache
@@ -267,6 +285,36 @@ try {
       fcWindDir
     };
   }
+
+function addOrUpdateWindArrow(lat, lon, windDirDeg) {
+  const key = `${lat},${lon}`;
+
+  // Poista vanha nuoli samasta paikasta
+  windArrowLayer.eachLayer(layer => {
+    if (layer.options._key === key) {
+      windArrowLayer.removeLayer(layer);
+    }
+  });
+
+  const arrowIcon = L.divIcon({
+    className: "wind-arrow",
+    html: "➤",
+    iconSize: [20, 20],
+    iconAnchor: [10, 10]
+  });
+
+  const marker = L.marker([lat, lon], {
+    icon: arrowIcon,
+    rotationAngle: windDirDeg + 180,
+    rotationOrigin: "center center"
+  });
+
+  marker.options._key = key;
+  marker.addTo(windArrowLayer);
+}
+
+
+
 
 
 // --- LÄMPÖTILA (havainto + oikea FMI-ennuste) ---
@@ -425,6 +473,14 @@ if (latestDir !== null) {
     popupEl.innerHTML += `<div>Virhe FMI-datan haussa</div>`;
   }
 });
+
+// --- TUULINUOLI KARTALLE (ennusteesta) ---
+if (Array.isArray(fcWindDir) && fcWindDir.length > 0) {
+  const latestDir = fcWindDir.at(-1)?.winddirection;
+  if (latestDir !== null) {
+    addOrUpdateWindArrow(lat, lon, latestDir);
+  }
+}
 
 
 </script>
