@@ -204,14 +204,22 @@ new Chart(tempCanvas.getContext("2d"), {
   type: "line",
   data: {
     labels: values.map((_, i) => i),
-    datasets: [
-      {
-        label: "Havainto",
-        data: values,
-        borderColor: "blue",
-        tension: 0.3
-      }
-    ]
+datasets: [
+  {
+    label: "Havainto",
+    data: [...past, ...Array(future.length).fill(null)],
+    borderColor: "blue",
+    tension: 0.3
+  },
+  {
+    label: "Ennuste",
+    data: [...Array(past.length).fill(null), ...future],
+    borderColor: "red",
+    borderDash: [6, 4],
+    tension: 0.3
+  }
+]
+
   },
   options: {
     responsive: false,
@@ -245,10 +253,9 @@ new Chart(tempCanvas.getContext("2d"), {
 
     // --- TUULI ---
     if (Array.isArray(windSpeedJson) && windSpeedJson.length > 0) {
-      const values = windSpeedJson.map(p => p.windspeedms);
-      const nowIndex = Math.floor(values.length / 2);
-
-      const { past, future } = splitPastFuture(values);
+const values = windSpeedJson.map(p => p.windspeedms);
+const { past, future } = splitPastFuture(values);
+const nowIndex = Math.floor(values.length / 2);
 
       const windCanvas = popupEl.querySelector('canvas[data-type="wind"]');
 
@@ -272,15 +279,32 @@ new Chart(tempCanvas.getContext("2d"), {
             }
           ]
         },
-        options: {
-          responsive: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            y: { title: { display: true, text: "m/s" } }
+options: {
+  responsive: false,
+  plugins: {
+    legend: { display: false },
+    annotation: {
+      annotations: {
+        nowLine: {
+          type: "line",
+          xMin: nowIndex,
+          xMax: nowIndex,
+          borderColor: "black",
+          borderWidth: 2,
+          label: {
+            display: true,
+            content: "NYT",
+            position: "start"
           }
         }
-      });
+      }
     }
+  },
+  scales: {
+    y: { title: { display: true, text: "m/s" } }
+  }
+}
+
 
     // --- TUULENSUUNTA ---
     const latestDir =
