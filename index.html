@@ -15,6 +15,7 @@
 
 
 <style>
+
 html, body { margin: 0; height: 100%; }
 #map { height: 100%; width: 100%; }
 
@@ -39,6 +40,7 @@ html, body { margin: 0; height: 100%; }
 
 <script>
 "use strict";
+
 const map = L.map("map").setView([60, 25], 6);
 
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -249,60 +251,65 @@ if (Array.isArray(tempJson) && tempJson.length > 0) {
   });
 }
 
-    // --- TUULI ---
-    if (Array.isArray(windSpeedJson) && windSpeedJson.length > 0) {
-const values = windSpeedJson.map(p => p.windspeedms);
-const { past, future } = splitPastFuture(values);
-const nowIndex = Math.floor(values.length / 2);
+// --- TUULI ---
+if (Array.isArray(windSpeedJson) && windSpeedJson.length > 0) {
 
-      const windCanvas = popupEl.querySelector('canvas[data-type="wind"]');
+  const values = windSpeedJson.map(p => p.windspeedms);
+  const { past, future } = splitPastFuture(values);
+  const nowIndex = Math.floor(values.length / 2);
 
-      new Chart(windCanvas.getContext("2d"), {
-        type: "line",
-        data: {
-          labels: values.map((_, i) => i),
-          datasets: [
-            {
-              label: "Havainto",
-              data: [...past, ...Array(future.length).fill(null)],
-              borderColor: "green",
-              tension: 0.3
-            },
-            {
-              label: "Ennuste",
-              data: [...Array(past.length).fill(null), ...future],
-              borderColor: "red",
-              borderDash: [6, 4],
-              tension: 0.3
-            }
-          ]
+  const windCanvas = popupEl.querySelector('canvas[data-type="wind"]');
+
+  new Chart(windCanvas.getContext("2d"), {
+    type: "line",
+    data: {
+      labels: values.map((_, i) => i),
+      datasets: [
+        {
+          label: "Havainto",
+          data: [...past, ...Array(future.length).fill(null)],
+          borderColor: "green",
+          tension: 0.3
         },
-options: {
-  responsive: false,
-  plugins: {
-    legend: { display: false },
-    annotation: {
-      annotations: {
-        nowLine: {
-          type: "line",
-          xMin: nowIndex,
-          xMax: nowIndex,
-          borderColor: "black",
-          borderWidth: 2,
-          label: {
-            display: true,
-            content: "NYT",
-            position: "start"
+        {
+          label: "Ennuste",
+          data: [...Array(past.length).fill(null), ...future],
+          borderColor: "red",
+          borderDash: [6, 4],
+          tension: 0.3
+        }
+      ]
+    },
+    options: {
+      responsive: false,
+      plugins: {
+        legend: { display: false },
+        annotation: {
+          annotations: {
+            nowLine: {
+              type: "line",
+              xMin: nowIndex,
+              xMax: nowIndex,
+              borderColor: "black",
+              borderWidth: 2,
+              label: {
+                display: true,
+                content: "NYT",
+                position: "start"
+              }
+            }
           }
+        }
+      },
+      scales: {
+        y: {
+          title: { display: true, text: "m/s" }
         }
       }
     }
-  },
-  scales: {
-    y: { title: { display: true, text: "m/s" } }
-  }
+  });
 }
-}
+
 
     // --- TUULENSUUNTA ---
     const latestDir =
