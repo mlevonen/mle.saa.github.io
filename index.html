@@ -212,7 +212,8 @@ function splitPastFuture(values) {
 // ==========================
 const windArrowLayer = L.layerGroup().addTo(map);
 
-
+function addOrUpdateWindArrow(lat, lon, windDirDeg) {
+  const key = `${lat},${lon}`;
 
 // ==========================
 // Popup data cache
@@ -286,8 +287,7 @@ try {
     };
   }
 
-function addOrUpdateWindArrow(lat, lon, windDirDeg) {
-  const key = `${lat},${lon}`;
+
 
   // Poista vanha nuoli samasta paikasta
   windArrowLayer.eachLayer(layer => {
@@ -468,19 +468,21 @@ if (latestDir !== null) {
   }
 }
 
+// --- TUULINUOLI KARTALLE (ennusteesta) ---
+if (latestDir !== null) {
+  addOrUpdateWindArrow(lat, lon, latestDir);
+}
+
+
+
+
+
+
   } catch (err) {
     console.error(err);
     popupEl.innerHTML += `<div>Virhe FMI-datan haussa</div>`;
   }
 });
-
-// --- TUULINUOLI KARTALLE (ennusteesta) ---
-if (Array.isArray(fcWindDir) && fcWindDir.length > 0) {
-  const latestDir = fcWindDir.at(-1)?.winddirection;
-  if (latestDir !== null) {
-    addOrUpdateWindArrow(lat, lon, latestDir);
-  }
-}
 
 
 </script>
