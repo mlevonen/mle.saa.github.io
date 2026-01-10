@@ -70,47 +70,49 @@ fetch("stations.json")
 
     const layer = L.featureGroup().addTo(map);
 
-    data.features.forEach(f => {
-      const [lon, lat] = f.geometry.coordinates;
-      const { name } = f.properties;
 
-      const marker = L.circleMarker([lat, lon], {
-        radius: 5,
-        color: "blue",
-        fillOpacity: 0.7
-      }).addTo(layer);
 
-marker.bindPopup(`
-  <div class="popup-title">${name}</div>
 
-  <div><strong>Lämpötila</strong></div>
-  <canvas
-    class="popup-chart"
-    width="400"
-    height="160"
-    data-lat="${lat}"
-    data-lon="${lon}"
-    data-type="temp"
-  ></canvas>
+data.features.forEach(f => {
+  const [lon, lat] = f.geometry.coordinates;
+  const { name } = f.properties;
 
-  <div style="margin-top:8px;"><strong>Tuuli</strong></div>
-  <canvas
-    class="popup-chart"
-    width="400"
-    height="160"
-    data-lat="${lat}"
-    data-lon="${lon}"
-    data-type="wind"
-  ></canvas>
-`);
+  const marker = L.circleMarker([lat, lon], {
+    radius: 5,
+    color: "blue",
+    fillOpacity: 0.7
+  }).addTo(layer);
 
-marker.on("click", () => {
-  marker.closePopup();
+  marker.bindPopup(`
+    <div class="popup-title">${name}</div>
 
-    });
+    <div><strong>Lämpötila</strong></div>
+    <canvas
+      class="popup-chart"
+      width="400"
+      height="160"
+      data-lat="${lat}"
+      data-lon="${lon}"
+      data-type="temp"
+    ></canvas>
 
-    map.fitBounds(layer.getBounds(), { padding: [30, 30] });
+    <div style="margin-top:8px;"><strong>Tuuli</strong></div>
+    <canvas
+      class="popup-chart"
+      width="400"
+      height="160"
+      data-lat="${lat}"
+      data-lon="${lon}"
+      data-type="wind"
+    ></canvas>
+  `);
+
+  marker.on("click", () => {
+    marker.closePopup();
   });
+});
+
+map.fitBounds(layer.getBounds(), { padding: [30, 30] });
 
 // ==========================
 // FMI aikasarja (JSON TUETTU)
