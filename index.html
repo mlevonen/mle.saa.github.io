@@ -256,7 +256,7 @@ const popupCache = {};
 // Popup → lämpötila + tuuli (havainto + ennuste)
 // ==========================
 
-map.on("popupopen", async e => {
+marker.on("popupopen", async e => {
   const popupEl = e.popup.getElement();
   if (!popupEl) return;
 
@@ -265,47 +265,49 @@ map.on("popupopen", async e => {
 
   const lat = canvases[0].dataset.lat;
   const lon = canvases[0].dataset.lon;
+  const cacheKey = `${lat},${lon}`;
 
-const cacheKey = `${lat},${lon}`;
+  try {
+    let obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir;
+
+    if (popupCache[cacheKey]) {
+      console.log("CACHE HIT:", cacheKey);
+      ({
+        obsTemp,
+        fcTemp,
+        obsWindSpeed,
+        fcWindSpeed,
+        fcWindDir
+      } = popupCache[cacheKey]);
+    } else {
+      console.log("CACHE MISS:", cacheKey);
+
+      obsTemp = await fetchTimeSeriesREST(lat, lon, { param: "temperature" });
+      fcTemp  = await fetchForecastREST(lat, lon, { param: "temperature" });
+
+      obsWindSpeed = await fetchTimeSeriesREST(lat, lon, { param: "windspeedms" });
+      fcWindSpeed  = await fetchForecastREST(lat, lon, { param: "windspeedms" });
+      fcWindDir    = await fetchForecastREST(lat, lon, { param: "winddirection" });
+
+      popupCache[cacheKey] = {
+        obsTemp,
+        fcTemp,
+        obsWindSpeed,
+        fcWindSpeed,
+        fcWindDir
+      };
+    }
+
+    /* ⬇️ TÄSTÄ ALASPÄIN GRAAFI- JA NUOLIKOODI SELLAISENAAN ⬇️ */
+
+  } catch (err) {
+    console.error(err);
+    popupEl.innerHTML += `<div>Virhe FMI-datan haussa</div>`;
+  }
+});
 
 
-try {
 
-  let obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir;
-
-  if (popupCache[cacheKey]) {
-    console.log("CACHE HIT:", cacheKey);
-
-    ({
-      obsTemp,
-      fcTemp,
-      obsWindSpeed,
-      fcWindSpeed,
-      fcWindDir
-    } = popupCache[cacheKey]);
-
-  } else {
-    console.log("CACHE MISS:", cacheKey);
-
-    obsTemp = await fetchTimeSeriesREST(lat, lon, {
-      param: "temperature"
-    });
-
-    fcTemp = await fetchForecastREST(lat, lon, {
-      param: "temperature"
-    });
-
-    obsWindSpeed = await fetchTimeSeriesREST(lat, lon, {
-      param: "windspeedms"
-    });
-
-    fcWindSpeed = await fetchForecastREST(lat, lon, {
-      param: "windspeedms"
-    });
-
-    fcWindDir = await fetchForecastREST(lat, lon, {
-      param: "winddirection"
-    });
 
     // 🔐 TALLENNA CACHEEN
     popupCache[cacheKey] = {
