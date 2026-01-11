@@ -266,6 +266,43 @@ const windArrowPlugin = {
 
 Chart.register(windArrowPlugin);
 
+// TUULINUOLIPLUGIN
+
+const windArrowPlugin = {
+  id: "windArrowPlugin",
+
+  afterDatasetsDraw(chart) {
+    const ctx = chart.ctx;
+
+    chart.data.datasets.forEach((dataset, datasetIndex) => {
+      if (!dataset.windDirections) return;
+
+      const meta = chart.getDatasetMeta(datasetIndex);
+
+      meta.data.forEach((point, i) => {
+        const dir = dataset.windDirections[i];
+        if (dir == null) return;
+
+        const { x, y } = point.getProps(["x", "y"], true);
+
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate((dir + 180) * Math.PI / 180); // meteorologinen → piirtoon
+        ctx.fillStyle = "green";
+        ctx.font = "18px sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("➤", 0, 0);
+        ctx.restore();
+      });
+    });
+  }
+};
+
+
+
+
+
 
 
 // ==========================
@@ -446,19 +483,23 @@ datasets: [
 ]
 
         },
-        options: {
-          responsive: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: {
-              type: "time",
-              time: { unit: "hour", displayFormats: { hour: "HH" } }
-            },
-            y: {
-              title: { display: true, text: "m/s" }
-            }
-          }
-        }
+options: {
+  responsive: false,
+  plugins: {
+    legend: { display: false },
+    windArrowPlugin: true
+  },
+  scales: {
+    x: {
+      type: "time",
+      time: { unit: "hour", displayFormats: { hour: "HH" } }
+    },
+    y: {
+      title: { display: true, text: "m/s" }
+    }
+  }
+}
+
       });
     }
 
