@@ -296,10 +296,14 @@ if (
   const obsValues = obsTemp.map(p => p.temperature);
   const fcValues  = fcTemp.map(p => p.temperature);
 
-const obsLabels = buildHourlyLabels(obsValues.length, new Date().toISOString());
-const fcLabels  = buildHourlyLabels(fcValues.length, new Date(Date.now() + 3600_000).toISOString());
-
-
+  const obsLabels = buildHourlyLabels(
+    obsValues.length,
+    new Date().toISOString()
+  );
+  const fcLabels = buildHourlyLabels(
+    fcValues.length,
+    new Date(Date.now() + 3600_000).toISOString()
+  );
 
   const nowIndex = obsValues.length;
 
@@ -308,68 +312,65 @@ const fcLabels  = buildHourlyLabels(fcValues.length, new Date(Date.now() + 3600_
   new Chart(tempCanvas.getContext("2d"), {
     type: "line",
     data: {
-
-
-labels: [
-  ...obsLabels,
-  ...fcLabels
-],
-
-
-datasets: [
-  {
-    label: "Havainto",
-    data: [...obsValues, ...Array(fcValues.length).fill(null)],
-    borderColor: "blue",
-    tension: 0.45,
-    cubicInterpolationMode: "monotone",
-    spanGaps: true,
-    pointRadius: 2
-  },
-  {
-    label: "Ennuste",
-    data: [...Array(obsValues.length).fill(null), ...fcValues],
-    borderColor: "red",
-    borderDash: [6, 4],
-    tension: 0.45,
-    cubicInterpolationMode: "monotone",
-    spanGaps: true,
-    pointRadius: 0
-  }
-]
-
-      
+      labels: [
+        ...obsLabels,
+        ...fcLabels
+      ],
+      datasets: [
+        {
+          label: "Havainto",
+          data: [...obsValues, ...Array(fcValues.length).fill(null)],
+          borderColor: "blue",
+          tension: 0.45,
+          cubicInterpolationMode: "monotone",
+          spanGaps: true,
+          pointRadius: 2
+        },
+        {
+          label: "Ennuste",
+          data: [...Array(obsValues.length).fill(null), ...fcValues],
+          borderColor: "red",
+          borderDash: [6, 4],
+          tension: 0.45,
+          cubicInterpolationMode: "monotone",
+          spanGaps: true,
+          pointRadius: 0
+        }
+      ]
     },
-options: {
-  responsive: false,
-  elements: {
-    line: {
-      tension: 0.45
-    }
-  },
-  plugins: {
-    legend: { display: false },
-    annotation: {
-      annotations: {
-        nowLine: {
-          type: "line",
-          xMin: nowIndex,
-          xMax: nowIndex,
-          borderColor: "black",
-          borderWidth: 2,
-          label: {
-            display: true,
-            content: "NYT",
-            position: "start"
+    options: {
+      responsive: false,
+      elements: {
+        line: {
+          tension: 0.45
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        annotation: {
+          annotations: {
+            nowLine: {
+              type: "line",
+              xMin: nowIndex,
+              xMax: nowIndex,
+              borderColor: "black",
+              borderWidth: 2,
+              label: {
+                display: true,
+                content: "NYT",
+                position: "start"
+              }
+            }
           }
         }
+      },
+      scales: {
+        y: { title: { display: true, text: "°C" } }
       }
     }
-  },
-  scales: {
-    y: { title: { display: true, text: "°C" } }
-  }
-}
+  }); // 🔴 TÄMÄ PUUTTUI
+
+} // 🔴 TÄMÄ PUUTTUI
 
 // --- TUULI (havainto + oikea FMI-ennuste) ---
 if (
