@@ -232,6 +232,42 @@ const popupCache = {};
 
 </script>
 <script>
+
+// ==========================
+// Chart.js: tuulinuoli pointStyle
+// ==========================
+const windArrowPlugin = {
+  id: "windArrows",
+  afterDatasetDraw(chart, args) {
+    const { ctx } = chart;
+    const dataset = chart.data.datasets[args.index];
+    if (!dataset.windDirections) return;
+
+    const meta = chart.getDatasetMeta(args.index);
+
+    meta.data.forEach((point, i) => {
+      const dir = dataset.windDirections[i];
+      if (dir === null || dir === undefined) return;
+
+      ctx.save();
+      ctx.translate(point.x, point.y);
+      ctx.rotate((dir + 180) * Math.PI / 180);
+
+      ctx.fillStyle = dataset.borderColor;
+      ctx.font = "14px sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("➤", 0, 0);
+
+      ctx.restore();
+    });
+  }
+};
+
+Chart.register(windArrowPlugin);
+
+
+
 // ==========================
 // Popup → lämpötila + tuuli (havainto + ennuste)
 // ==========================
@@ -273,9 +309,10 @@ map.on("popupopen", async e => {
         param: "utctime,temperature"
       });
 
-      obsWindSpeed = await fetchTimeSeriesREST(lat, lon, {
-        param: "utctime,windspeedms"
-      });
+		obsWindSpeed = await fetchTimeSeriesREST(lat, lon, {
+		  param: "utctime,windspeedms,winddirection"
+		});
+
 
       fcWindSpeed = await fetchForecastREST(lat, lon, {
         param: "utctime,windspeedms"
@@ -368,10 +405,12 @@ map.on("popupopen", async e => {
     // ==========================
     if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
 
-      const obsWind = obsWindSpeed.map(p => ({
-        x: parseFmiUtc(p.utctime),
-        y: p.windspeedms
-      }));
+const obsWind = obsWindSpeed.map(p => ({
+  x: parseFmiUtc(p.utctime),
+  y: p.windspeedms,
+  dir: p.winddirection
+}));
+
 
       const fcWind = fcWindSpeed.map(p => ({
         x: parseFmiUtc(p.utctime),
@@ -388,13 +427,16 @@ map.on("popupopen", async e => {
         data: {
           datasets: [
             {
-              label: "Havainto",
-              data: obsWind,
-              borderColor: "green",
-              tension: 0.45,
-              cubicInterpolationMode: "monotone",
-              pointRadius: 2
-            },
+			{
+			  label: "Havainto",
+			  data: obsWind.map(p => ({ x: p.x, y: p.y })), // vain x,y
+			  borderColor: "green",
+			  showLine: false,     // ❗ ei viivaa
+			  pointRadius: 0,      // ❗ ei pisteitä
+			  windDirections: obsWind.map(p => p.dir) // ✅ TÄHÄN
+		},
+
+
             {
               label: "Ennuste",
               data: fcWind,
