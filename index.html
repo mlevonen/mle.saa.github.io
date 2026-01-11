@@ -293,107 +293,68 @@ if (
   Array.isArray(fcTemp)  && fcTemp.length  > 0
 ) {
 
-  const obsValues = obsTemp.map(p => p.temperature);
-  const fcValues  = fcTemp.map(p => p.temperature);
+  const obsPoints = obsTemp.map(p => ({
+    x: new Date(p.time),
+    y: p.temperature
+  }));
 
-  const obsLabels = buildHourlyLabels(
-    obsValues.length,
-    new Date().toISOString()
-  );
-  const fcLabels = buildHourlyLabels(
-    fcValues.length,
-    new Date(Date.now() + 3600_000).toISOString()
-  );
-
-const obsPoints = obsTemp.map(p => ({
-  x: new Date(p.time),
-  y: p.temperature
-}));
-
-const fcPoints = fcTemp.map(p => ({
-  x: new Date(p.time),
-  y: p.temperature
-}));
-
-
-
-
-
-  const nowIndex = obsValues.length;
+  const fcPoints = fcTemp.map(p => ({
+    x: new Date(p.time),
+    y: p.temperature
+  }));
 
   const tempCanvas = popupEl.querySelector('canvas[data-type="temp"]');
 
   new Chart(tempCanvas.getContext("2d"), {
     type: "line",
+
     data: {
-
-datasets: [
-  {
-    label: "Havainto",
-    data: obsPoints,
-    borderColor: "blue",
-    tension: 0.45,
-    cubicInterpolationMode: "monotone",
-    pointRadius: 2
-  },
-  {
-    label: "Ennuste",
-    data: fcPoints,
-    borderColor: "red",
-    borderDash: [6, 4],
-    tension: 0.45,
-    cubicInterpolationMode: "monotone",
-    pointRadius: 0
-  }
-]
-
-     
-      
+      datasets: [
+        {
+          label: "Havainto",
+          data: obsPoints,
+          borderColor: "blue",
+          tension: 0.45,
+          cubicInterpolationMode: "monotone",
+          pointRadius: 2
+        },
+        {
+          label: "Ennuste",
+          data: fcPoints,
+          borderColor: "red",
+          borderDash: [6, 4],
+          tension: 0.45,
+          cubicInterpolationMode: "monotone",
+          pointRadius: 0
+        }
+      ]
     },
+
     options: {
       responsive: false,
-      elements: {
-        line: {
-          tension: 0.45
-        }
-      },
+
       plugins: {
-        legend: { display: false },
-        annotation: {
-          annotations: {
-            nowLine: {
-              type: "line",
-              xMin: nowIndex,
-              xMax: nowIndex,
-              borderColor: "black",
-              borderWidth: 2,
-              label: {
-                display: true,
-                content: "NYT",
-                position: "start"
-              }
+        legend: { display: false }
+      },
+
+      scales: {
+        x: {
+          type: "time",
+          time: {
+            unit: "hour",
+            displayFormats: {
+              hour: "HH"
             }
           }
+        },
+        y: {
+          title: { display: true, text: "°C" }
         }
-      },
-      scales: {
-  x: {
-    type: "time",
-    time: {
-      unit: "hour",
-      displayFormats: {
-        hour: "HH"
       }
     }
-  },
-  y: {
-    title: { display: true, text: "°C" }
-  }
-}
+  });
 
-  }); // 🔴 TÄMÄ PUUTTUI
-
-} // 🔴 TÄMÄ PUUTTUI
+} // ← if-lohko sulkeutuu oikein
 
 // --- TUULI (havainto + oikea FMI-ennuste) ---
 if (
