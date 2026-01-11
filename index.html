@@ -286,6 +286,10 @@ try {
     };
   }
 
+// 🔍 DEBUG: katso mitä FMI oikeasti palauttaa
+console.log("obsTemp raw:", obsTemp.slice(0, 3));
+console.log("fcTemp raw:", fcTemp.slice(0, 3));
+
 
 // --- LÄMPÖTILA (havainto + oikea FMI-ennuste) ---
 if (
