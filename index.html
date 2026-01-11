@@ -257,11 +257,11 @@ try {
     console.log("CACHE MISS:", cacheKey);
 
     obsTemp = await fetchTimeSeriesREST(lat, lon, {
-      param: "temperature"
+      param: "utctime,temperature"
     });
 
     fcTemp = await fetchForecastREST(lat, lon, {
-      param: "temperature"
+      param: "utctime,temperature"
     });
 
     obsWindSpeed = await fetchTimeSeriesREST(lat, lon, {
@@ -298,14 +298,15 @@ if (
 ) {
 
 const obsPoints = obsTemp.map(p => ({
-  x: p.time,              // ← STRING, ei new Date()
+  x: new Date(p.utctime),
   y: p.temperature
 }));
 
 const fcPoints = fcTemp.map(p => ({
-  x: p.time,
+  x: new Date(p.utctime),
   y: p.temperature
 }));
+
 
 
   const tempCanvas = popupEl.querySelector('canvas[data-type="temp"]');
