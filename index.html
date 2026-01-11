@@ -201,6 +201,18 @@ function formatTimeLabel(isoString) {
   });
 }
 
+function buildHourlyLabels(count, endTimeISO) {
+  const end = new Date(endTimeISO);
+  return Array.from({ length: count }, (_, i) => {
+    const d = new Date(end.getTime() - (count - 1 - i) * 3600_000);
+    return d.toLocaleTimeString("fi-FI", {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+  });
+}
+
+
 
 // ==========================
 // Popup data cache
@@ -284,8 +296,8 @@ if (
   const obsValues = obsTemp.map(p => p.temperature);
   const fcValues  = fcTemp.map(p => p.temperature);
 
-const obsTimes = obsTemp.map(p => p.time);
-const fcTimes  = fcTemp.map(p => p.time);
+const obsLabels = buildHourlyLabels(obsValues.length, new Date().toISOString());
+const fcLabels  = buildHourlyLabels(fcValues.length, new Date(Date.now() + 3600_000).toISOString());
 
 
 
@@ -296,10 +308,13 @@ const fcTimes  = fcTemp.map(p => p.time);
   new Chart(tempCanvas.getContext("2d"), {
     type: "line",
     data: {
+
+
 labels: [
-  ...obsTimes.map(formatTimeLabel),
-  ...fcTimes.map(formatTimeLabel)
+  ...obsLabels,
+  ...fcLabels
 ],
+
 
       datasets: [
         {
