@@ -147,37 +147,95 @@ fetch("stations.json")
           popupCache[key] = { obsTemp, fcTemp, obsWind, fcWind, fcDir };
         }
 
-        /* --- Lämpötila --- */
-		const tempCanvas = popupEl.querySelector('canvas[data-type="temp"]');
+/* --- Lämpötila --- */
+const tempCanvas = popupEl.querySelector('canvas[data-type="temp"]');
 
-		const oldTempChart = Chart.getChart(tempCanvas);
-		if (oldTempChart) oldTempChart.destroy();
+const oldTempChart = Chart.getChart(tempCanvas);
+if (oldTempChart) oldTempChart.destroy();
 
-		new Chart(tempCanvas, {
-		  type: "line",
-		  data: {
-	    labels: [...],
-	    datasets: [...]
+const obsTempValues = obsTemp.map(p => p.temperature);
+const fcTempValues  = fcTemp.map(p => p.temperature);
+
+new Chart(tempCanvas, {
+  type: "line",
+  data: {
+    labels: [
+      ...obsTempValues.map((_, i) => i),
+      ...fcTempValues.map((_, i) => i + obsTempValues.length)
+    ],
+    datasets: [
+      {
+        label: "Havainto",
+        data: [...obsTempValues, ...Array(fcTempValues.length).fill(null)],
+        borderColor: "blue",
+        tension: 0.3
+      },
+      {
+        label: "Ennuste",
+        data: [...Array(obsTempValues.length).fill(null), ...fcTempValues],
+        borderColor: "red",
+        borderDash: [6, 4],
+        tension: 0.3
+      }
+    ]
   },
-		  options: { ... }
+  options: {
+    responsive: false,
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      y: {
+        title: { display: true, text: "°C" }
+      }
+    }
+  }
 });
 
+/* --- Tuuli --- */
+const windCanvas = popupEl.querySelector('canvas[data-type="wind"]');
 
-        /* --- Tuuli --- */
-		const windCanvas = popupEl.querySelector('canvas[data-type="wind"]');
+const oldWindChart = Chart.getChart(windCanvas);
+if (oldWindChart) oldWindChart.destroy();
 
-		const oldWindChart = Chart.getChart(windCanvas);
-		if (oldWindChart) oldWindChart.destroy();
+const obsWindValues = obsWind.map(p => p.windspeedms);
+const fcWindValues  = fcWind.map(p => p.windspeedms);
 
-		new Chart(windCanvas, {
-		  type: "line",
-		  data: {
-		    labels: [...],
-		    datasets: [...]
+new Chart(windCanvas, {
+  type: "line",
+  data: {
+    labels: [
+      ...obsWindValues.map((_, i) => i),
+      ...fcWindValues.map((_, i) => i + obsWindValues.length)
+    ],
+    datasets: [
+      {
+        label: "Havainto",
+        data: [...obsWindValues, ...Array(fcWindValues.length).fill(null)],
+        borderColor: "green",
+        tension: 0.3
+      },
+      {
+        label: "Ennuste",
+        data: [...Array(obsWindValues.length).fill(null), ...fcWindValues],
+        borderColor: "red",
+        borderDash: [6, 4],
+        tension: 0.3
+      }
+    ]
   },
-		  options: { ... }
+  options: {
+    responsive: false,
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      y: {
+        title: { display: true, text: "m/s" }
+      }
+    }
+  }
 });
-
 
     map.fitBounds(layer.getBounds(), { padding: [30, 30] });
   });
