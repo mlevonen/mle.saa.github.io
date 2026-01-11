@@ -148,55 +148,36 @@ fetch("stations.json")
         }
 
         /* --- Lämpötila --- */
-        new Chart(
-          popupEl.querySelector('canvas[data-type="temp"]'),
-          {
-            type: "line",
-            data: {
-              labels: [...obsTemp.map((_, i) => i), ...fcTemp.map((_, i) => i + obsTemp.length)],
-              datasets: [
-                {
-                  data: [...obsTemp.map(p => p.temperature), ...Array(fcTemp.length).fill(null)],
-                  borderColor: "blue"
-                },
-                {
-                  data: [...Array(obsTemp.length).fill(null), ...fcTemp.map(p => p.temperature)],
-                  borderColor: "red",
-                  borderDash: [6, 4]
-                }
-              ]
-            },
-            options: { plugins: { legend: { display: false } } }
-          }
-        );
+		const tempCanvas = popupEl.querySelector('canvas[data-type="temp"]');
+
+		const oldTempChart = Chart.getChart(tempCanvas);
+		if (oldTempChart) oldTempChart.destroy();
+
+		new Chart(tempCanvas, {
+		  type: "line",
+		  data: {
+	    labels: [...],
+	    datasets: [...]
+  },
+		  options: { ... }
+});
+
 
         /* --- Tuuli --- */
-        new Chart(
-          popupEl.querySelector('canvas[data-type="wind"]'),
-          {
-            type: "line",
-            data: {
-              labels: [...obsWind.map((_, i) => i), ...fcWind.map((_, i) => i + obsWind.length)],
-              datasets: [
-                {
-                  data: [...obsWind.map(p => p.windspeedms), ...Array(fcWind.length).fill(null)],
-                  borderColor: "green"
-                },
-                {
-                  data: [...Array(obsWind.length).fill(null), ...fcWind.map(p => p.windspeedms)],
-                  borderColor: "red",
-                  borderDash: [6, 4]
-                }
-              ]
-            },
-            options: { plugins: { legend: { display: false } } }
-          }
-        );
+		const windCanvas = popupEl.querySelector('canvas[data-type="wind"]');
 
-        const latestDir = fcDir.at(-1)?.winddirection;
-        if (latestDir != null) addOrUpdateWindArrow(lat, lon, latestDir);
-      });
-    });
+		const oldWindChart = Chart.getChart(windCanvas);
+		if (oldWindChart) oldWindChart.destroy();
+
+		new Chart(windCanvas, {
+		  type: "line",
+		  data: {
+		    labels: [...],
+		    datasets: [...]
+  },
+		  options: { ... }
+});
+
 
     map.fitBounds(layer.getBounds(), { padding: [30, 30] });
   });
