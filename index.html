@@ -314,26 +314,27 @@ if (
     data: {
       labels: [
         ...obsLabels,
+        obsLabels.at(-1), // sama hetki kuin viimeinen havainto
         ...fcLabels
       ],
       datasets: [
         {
-          label: "Havainto",
-          data: [...obsValues, ...Array(fcValues.length).fill(null)],
-          borderColor: "blue",
-          tension: 0.45,
-          cubicInterpolationMode: "monotone",
-          spanGaps: true,
-          pointRadius: 2
+    label: "Havainto",
+    data: obsValues,
+    borderColor: "blue",
+    tension: 0.45,
+    cubicInterpolationMode: "monotone",
+    pointRadius: 2
         },
         {
           label: "Ennuste",
-          data: [...Array(obsValues.length).fill(null), ...fcValues],
+          data: [
+          obsValues.at(-1), // viimeinen havainto → saumakohta
+           ...fcValues],
           borderColor: "red",
           borderDash: [6, 4],
           tension: 0.45,
           cubicInterpolationMode: "monotone",
-          spanGaps: true,
           pointRadius: 0
         }
       ]
