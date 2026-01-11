@@ -194,6 +194,12 @@ function splitPastFuture(values) {
   };
 }
 
+function formatTimeLabel(isoString) {
+  return new Date(isoString).toLocaleTimeString("fi-FI", {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
 
 
 // ==========================
@@ -278,6 +284,11 @@ if (
   const obsValues = obsTemp.map(p => p.temperature);
   const fcValues  = fcTemp.map(p => p.temperature);
 
+const obsTimes = obsTemp.map(p => p.time);
+const fcTimes  = fcTemp.map(p => p.time);
+
+
+
   const nowIndex = obsValues.length;
 
   const tempCanvas = popupEl.querySelector('canvas[data-type="temp"]');
@@ -285,10 +296,11 @@ if (
   new Chart(tempCanvas.getContext("2d"), {
     type: "line",
     data: {
-      labels: [
-        ...obsValues.map((_, i) => i),
-        ...fcValues.map((_, i) => i + obsValues.length)
-      ],
+labels: [
+  ...obsTimes.map(formatTimeLabel),
+  ...fcTimes.map(formatTimeLabel)
+],
+
       datasets: [
         {
           label: "Havainto",
