@@ -425,28 +425,26 @@ const obsWind = obsWindSpeed.map(p => ({
       new Chart(windCanvas, {
         type: "line",
         data: {
-          datasets: [
-            {
-			{
-			  label: "Havainto",
-			  data: obsWind.map(p => ({ x: p.x, y: p.y })), // vain x,y
-			  borderColor: "green",
-			  showLine: false,     // ❗ ei viivaa
-			  pointRadius: 0,      // ❗ ei pisteitä
-			  windDirections: obsWind.map(p => p.dir) // ✅ TÄHÄN
-		},
+datasets: [
+  {
+    label: "Havainto",
+    data: obsWind.map(p => ({ x: p.x, y: p.y })), // vain x,y
+    borderColor: "green",
+    showLine: false,     // ei viivaa
+    pointRadius: 0,      // ei pisteitä
+    windDirections: obsWind.map(p => p.dir) // ← OIKEA PAIKKA
+  },
+  {
+    label: "Ennuste",
+    data: fcWind,
+    borderColor: "red",
+    borderDash: [6, 4],
+    tension: 0.45,
+    cubicInterpolationMode: "monotone",
+    pointRadius: 0
+  }
+]
 
-
-            {
-              label: "Ennuste",
-              data: fcWind,
-              borderColor: "red",
-              borderDash: [6,4],
-              tension: 0.45,
-              cubicInterpolationMode: "monotone",
-              pointRadius: 0
-            }
-          ]
         },
         options: {
           responsive: false,
