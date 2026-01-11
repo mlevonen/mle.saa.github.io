@@ -305,6 +305,20 @@ if (
     new Date(Date.now() + 3600_000).toISOString()
   );
 
+const obsPoints = obsTemp.map(p => ({
+  x: new Date(p.time),
+  y: p.temperature
+}));
+
+const fcPoints = fcTemp.map(p => ({
+  x: new Date(p.time),
+  y: p.temperature
+}));
+
+
+
+
+
   const nowIndex = obsValues.length;
 
   const tempCanvas = popupEl.querySelector('canvas[data-type="temp"]');
@@ -312,15 +326,11 @@ if (
   new Chart(tempCanvas.getContext("2d"), {
     type: "line",
     data: {
-      labels: [
-        ...obsLabels,
-        obsLabels.at(-1), // sama hetki kuin viimeinen havainto
-        ...fcLabels
-      ],
+
 datasets: [
   {
     label: "Havainto",
-    data: obsValues,
+    data: obsPoints,
     borderColor: "blue",
     tension: 0.45,
     cubicInterpolationMode: "monotone",
@@ -328,19 +338,15 @@ datasets: [
   },
   {
     label: "Ennuste",
-    data: [
-      ...Array(obsValues.length - 1).fill(null),
-      obsValues.at(-1), // viimeinen havainto = sauma
-      ...fcValues
-    ],
+    data: fcPoints,
     borderColor: "red",
     borderDash: [6, 4],
     tension: 0.45,
     cubicInterpolationMode: "monotone",
-    pointRadius: 0,
-    spanGaps: true
+    pointRadius: 0
   }
 ]
+
      
       
     },
@@ -371,9 +377,20 @@ datasets: [
         }
       },
       scales: {
-        y: { title: { display: true, text: "°C" } }
+  x: {
+    type: "time",
+    time: {
+      unit: "hour",
+      displayFormats: {
+        hour: "HH"
       }
     }
+  },
+  y: {
+    title: { display: true, text: "°C" }
+  }
+}
+
   }); // 🔴 TÄMÄ PUUTTUI
 
 } // 🔴 TÄMÄ PUUTTUI
