@@ -233,37 +233,6 @@ const popupCache = {};
 </script>
 <script>
 
-// ==========================
-// Chart.js: tuulinuoli pointStyle
-// ==========================
-const windArrowPlugin = {
-  id: "windArrows",
-  afterDatasetDraw(chart, args) {
-    const { ctx } = chart;
-    const dataset = chart.data.datasets[args.index];
-    if (!dataset.windDirections) return;
-
-    const meta = chart.getDatasetMeta(args.index);
-
-    meta.data.forEach((point, i) => {
-      const dir = dataset.windDirections[i];
-      if (dir === null || dir === undefined) return;
-
-      ctx.save();
-      ctx.translate(point.x, point.y);
-      ctx.rotate((dir + 180) * Math.PI / 180);
-
-      ctx.fillStyle = dataset.borderColor;
-      ctx.font = "14px sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("➤", 0, 0);
-
-      ctx.restore();
-    });
-  }
-};
-
 
 
 // TUULINUOLIPLUGIN
