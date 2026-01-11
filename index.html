@@ -212,6 +212,17 @@ function buildHourlyLabels(count, endTimeISO) {
   });
 }
 
+function parseFmiUtc(s) {
+  // "20260111T130000" → "2026-01-11T13:00:00Z"
+  return new Date(
+    s.slice(0, 4) + "-" +
+    s.slice(4, 6) + "-" +
+    s.slice(6, 8) + "T" +
+    s.slice(9, 11) + ":" +
+    s.slice(11, 13) + ":" +
+    s.slice(13, 15) + "Z"
+  );
+}
 
 
 // ==========================
@@ -289,6 +300,7 @@ try {
 // 🔍 DEBUG: katso mitä FMI oikeasti palauttaa
 console.log("obsTemp raw:", obsTemp.slice(0, 3));
 console.log("fcTemp raw:", fcTemp.slice(0, 3));
+console.log(parseFmiUtc(obsTemp[0].utctime));
 
 
 // --- LÄMPÖTILA (havainto + oikea FMI-ennuste) ---
@@ -298,14 +310,16 @@ if (
 ) {
 
 const obsPoints = obsTemp.map(p => ({
-  x: new Date(p.utctime),
+  x: parseFmiUtc(p.utctime),
   y: p.temperature
 }));
 
+
 const fcPoints = fcTemp.map(p => ({
-  x: new Date(p.utctime),
+  x: parseFmiUtc(p.utctime),
   y: p.temperature
 }));
+
 
 
 
