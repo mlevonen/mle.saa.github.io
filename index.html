@@ -340,32 +340,35 @@ datasets: [
 
       
     },
-    options: {
-      responsive: false,
-      plugins: {
-        legend: { display: false },
-        annotation: {
-          annotations: {
-            nowLine: {
-              type: "line",
-              xMin: nowIndex,
-              xMax: nowIndex,
-              borderColor: "black",
-              borderWidth: 2,
-              label: {
-                display: true,
-                content: "NYT",
-                position: "start"
-              }
-            }
+options: {
+  responsive: false,
+  elements: {
+    line: {
+      tension: 0.45
+    }
+  },
+  plugins: {
+    legend: { display: false },
+    annotation: {
+      annotations: {
+        nowLine: {
+          type: "line",
+          xMin: nowIndex,
+          xMax: nowIndex,
+          borderColor: "black",
+          borderWidth: 2,
+          label: {
+            display: true,
+            content: "NYT",
+            position: "start"
           }
         }
-      },
-      scales: {
-        y: { title: { display: true, text: "°C" } }
       }
     }
-  });
+  },
+  scales: {
+    y: { title: { display: true, text: "°C" } }
+  }
 }
 
 // --- TUULI (havainto + oikea FMI-ennuste) ---
