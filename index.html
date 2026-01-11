@@ -293,15 +293,16 @@ if (
   Array.isArray(fcTemp)  && fcTemp.length  > 0
 ) {
 
-  const obsPoints = obsTemp.map(p => ({
-    x: new Date(p.time),
-    y: p.temperature
-  }));
+const obsPoints = obsTemp.map(p => ({
+  x: p.time,              // ← STRING, ei new Date()
+  y: p.temperature
+}));
 
-  const fcPoints = fcTemp.map(p => ({
-    x: new Date(p.time),
-    y: p.temperature
-  }));
+const fcPoints = fcTemp.map(p => ({
+  x: p.time,
+  y: p.temperature
+}));
+
 
   const tempCanvas = popupEl.querySelector('canvas[data-type="temp"]');
 
