@@ -124,6 +124,9 @@ fetch("stations.json")
         <canvas class="popup-chart" data-type="wind" data-lat="${lat}" data-lon="${lon}"></canvas>
       `);
 
+
+//POPUP AVATAAN
+
       marker.on("popupopen", async e => {
         const popupEl = e.popup.getElement();
         const canvases = popupEl.querySelectorAll("canvas");
@@ -235,6 +238,7 @@ new Chart(windCanvas, {
       }
     }
   }
+});
 });
 
     map.fitBounds(layer.getBounds(), { padding: [30, 30] });
