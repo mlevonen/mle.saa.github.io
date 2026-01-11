@@ -320,6 +320,7 @@ const fcPoints = fcTemp.map(p => ({
   y: p.temperature
 }));
 
+const nowUtc = new Date();
 
 
 
@@ -426,8 +427,8 @@ cubicInterpolationMode: "monotone",
           annotations: {
             nowLine: {
               type: "line",
-              xMin: nowIndex,
-              xMax: nowIndex,
+				xMin: nowUtc,
+				xMax: nowUtc,
               borderColor: "black",
               borderWidth: 2,
               label: {
