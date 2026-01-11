@@ -316,23 +316,29 @@ labels: [
 ],
 
 
-      datasets: [
-        {
-          label: "Havainto",
-          data: [...obsValues, ...Array(fcValues.length).fill(null)],
-          borderColor: "blue",
-tension: 0.45,
-cubicInterpolationMode: "monotone",
-pointRadius: 2
-        },
-        {
-          label: "Ennuste",
-          data: [...Array(obsValues.length).fill(null), ...fcValues],
-          borderColor: "red",
-          borderDash: [6, 4],
-          tension: 0.3
-        }
-      ]
+datasets: [
+  {
+    label: "Havainto",
+    data: [...obsValues, ...Array(fcValues.length).fill(null)],
+    borderColor: "blue",
+    tension: 0.45,
+    cubicInterpolationMode: "monotone",
+    spanGaps: true,
+    pointRadius: 2
+  },
+  {
+    label: "Ennuste",
+    data: [...Array(obsValues.length).fill(null), ...fcValues],
+    borderColor: "red",
+    borderDash: [6, 4],
+    tension: 0.45,
+    cubicInterpolationMode: "monotone",
+    spanGaps: true,
+    pointRadius: 0
+  }
+]
+
+      
     },
     options: {
       responsive: false,
