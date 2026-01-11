@@ -369,6 +369,10 @@ if (
   const obsValues = obsWindSpeed.map(p => p.windspeedms);
   const fcValues  = fcWindSpeed.map(p => p.windspeedms);
 
+const obsLabels = buildHourlyLabels(obsValues.length, new Date().toISOString());
+const fcLabels  = buildHourlyLabels(fcValues.length, new Date(Date.now() + 3600_000).toISOString());
+
+
   const nowIndex = obsValues.length;
 
   const windCanvas = popupEl.querySelector('canvas[data-type="wind"]');
@@ -376,10 +380,11 @@ if (
   new Chart(windCanvas.getContext("2d"), {
     type: "line",
     data: {
-      labels: [
-        ...obsValues.map((_, i) => i),
-        ...fcValues.map((_, i) => i + obsValues.length)
-      ],
+labels: [
+  ...obsLabels,
+  ...fcLabels
+],
+
       datasets: [
         {
           label: "Havainto",
