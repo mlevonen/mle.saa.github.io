@@ -367,6 +367,22 @@ map.on("popupopen", async e => {
       const oldTemp = Chart.getChart(tempCanvas);
       if (oldTemp) oldTemp.destroy();
 
+	const allTemps = [
+	  ...obsTemp.map(p => p.temperature),
+	  ...fcTemp.map(p => p.temperature)
+	];
+
+	const minTemp = Math.min(...allTemps);
+	const maxTemp = Math.max(...allTemps);
+
+	// marginaali asteikolle
+	const padding = 5;
+
+	const yMinTemp = Math.floor((minTemp - padding) / 5) * 5;
+	const yMaxTemp = Math.ceil((maxTemp + padding) / 5) * 5;
+
+
+
       new Chart(tempCanvas, {
         type: "line",
         data: {
@@ -398,10 +414,15 @@ map.on("popupopen", async e => {
               type: "time",
               time: { unit: "hour", displayFormats: { hour: "HH" } }
             },
-            y: {
-              title: { display: true, text: "°C" }
-            }
-          }
+			  y: {
+		    min: yMinTemp,
+		    max: yMaxTemp,
+		    ticks: {
+		      stepSize: 5
+		    },
+		    title: { display: true, text: "°C" }
+		  }
+		}
         }
       });
     }
