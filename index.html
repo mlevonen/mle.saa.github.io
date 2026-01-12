@@ -397,49 +397,46 @@ const yMaxTemp = Math.ceil((maxTemp + padding) / 5) * 5;
 
 
 
-      new Chart(tempCanvas, {
-        type: "line",
-        data: {
-          datasets: [
-            {
-              data: obsPoints,
-              borderColor: "blue",
-              tension: 0.45,
-              cubicInterpolationMode: "monotone"
-            },
-            {
-              data: fcPoints,
-              borderColor: "red",
-              borderDash: [6,4],
-              tension: 0.45,
-              cubicInterpolationMode: "monotone"
-            }
-          ]
-        },
-        options: {
-          responsive: false,
-scales: {
-  x: {
-    type: "time",
-    time: {
-      unit: "hour",
-      displayFormats: { hour: "HH" }
-    }
+new Chart(tempCanvas, {
+  type: "line",
+  data: {
+    datasets: [
+      {
+        data: obsPoints,
+        borderColor: "blue",
+        tension: 0.45,
+        cubicInterpolationMode: "monotone"
+      },
+      {
+        data: fcPoints,
+        borderColor: "red",
+        borderDash: [6,4],
+        tension: 0.45,
+        cubicInterpolationMode: "monotone"
+      }
+    ]
   },
-  y: {
-    min: yMinTemp,
-    max: yMaxTemp,
-    ticks: {
-      stepSize: 5
-    },
-    title: { display: true, text: "°C" }
-  }
-}
-
-      });
+  options: {
+    responsive: false,   // ← PILKKU TÄSSÄ
+    scales: {
+      x: {
+        type: "time",
+        time: {
+          unit: "hour",
+          displayFormats: { hour: "HH" }
+        }
+      },
+      y: {
+        min: yMinTemp,
+        max: yMaxTemp,
+        ticks: {
+          stepSize: 5
+        },
+        title: { display: true, text: "°C" }
+      }
     }
-
- 
+  }
+});
 
     // ==========================
     // TUULI GRAAFI (nopeus)
