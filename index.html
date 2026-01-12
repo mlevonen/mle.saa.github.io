@@ -388,10 +388,15 @@ map.on("popupopen", async e => {
     // ==========================
     if (Array.isArray(obsTemp) && Array.isArray(fcTemp)) {
 
-      const obsPoints = obsTemp.map(p => ({
-        x: parseFmiUtc(p.utctime),
-        y: p.temperature
-      }));
+const nowUtc = new Date();
+
+const obsPoints = obsTemp
+  .map(p => ({
+    x: parseFmiUtc(p.utctime),
+    y: p.temperature
+  }))
+  .filter(p => p.x <= nowUtc);   // ✅ EI havaintoja tulevaisuudessa
+
 
 const nowUtc = new Date();
 
