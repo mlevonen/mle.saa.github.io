@@ -375,68 +375,36 @@ map.on("popupopen", async e => {
       const oldTemp = Chart.getChart(tempCanvas);
       if (oldTemp) oldTemp.destroy();
 
-
-// --- Y-akselin skaalaus (lämpötila) ---
-const allTemps = [
-  ...obsPoints.map(p => p.y),
-  ...fcPoints.map(p => p.y)
-];
-
-// turva jos data puuttuu
-if (allTemps.length === 0) return;
-
-const minTemp = Math.min(...allTemps);
-const maxTemp = Math.max(...allTemps);
-
-// marginaali asteikolle
-const padding = 3; // °C
-
-// pyöristetään siististi viitosiin
-const yMinTemp = Math.floor((minTemp - padding) / 5) * 5;
-const yMaxTemp = Math.ceil((maxTemp + padding) / 5) * 5;
-
-
-
-new Chart(tempCanvas, {
-  type: "line",
-  data: {
-    datasets: [
-      {
-        data: obsPoints,
-        borderColor: "blue",
-        tension: 0.45,
-        cubicInterpolationMode: "monotone"
-      },
-      {
-        data: fcPoints,
-        borderColor: "red",
-        borderDash: [6,4],
-        tension: 0.45,
-        cubicInterpolationMode: "monotone"
-      }
-    ]
-  },
-  options: {
-    responsive: false,   // ← PILKKU TÄSSÄ
-    scales: {
-      x: {
-        type: "time",
-        time: {
-          unit: "hour",
-          displayFormats: { hour: "HH" }
-        }
-      },
-      y: {
-        min: yMinTemp,
-        max: yMaxTemp,
-        ticks: {
-          stepSize: 5
+      new Chart(tempCanvas, {
+        type: "line",
+        data: {
+          datasets: [
+            {
+              data: obsPoints,
+              borderColor: "blue",
+              tension: 0.45,
+              cubicInterpolationMode: "monotone"
+            },
+            {
+              data: fcPoints,
+              borderColor: "red",
+              borderDash: [6,4],
+              tension: 0.45,
+              cubicInterpolationMode: "monotone"
+            }
+          ]
         },
-        title: { display: true, text: "°C" }
-      }
+        options: {
+          responsive: false,
+          scales: {
+            x: { type: "time", time: { unit: "hour" } },
+            y: { title: { display: true, text: "°C" } }
+          }
+        }
+      });
     }
-  }
-});
+
+ 
 
     // ==========================
     // TUULI GRAAFI (nopeus)
