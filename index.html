@@ -272,6 +272,42 @@ id: "windArrowPlugin",
 Chart.register(windArrowPlugin);
 
 
+const temperatureBandsPlugin = {
+  id: "temperatureBands",
+
+  beforeDraw(chart) {
+    const { ctx, chartArea, scales } = chart;
+    const y = scales.y;
+
+    if (!y) return;
+
+    const bands = [
+      { from: -100, to: -15, color: "rgba(120,180,255,0.15)" },
+      { from: -15,  to: 0,   color: "rgba(160,200,255,0.15)" },
+      { from: 0,    to: 20,  color: "rgba(180,230,180,0.15)" },
+      { from: 20,   to: 100, color: "rgba(255,180,180,0.15)" }
+    ];
+
+    ctx.save();
+
+    bands.forEach(band => {
+      const yTop = y.getPixelForValue(band.to);
+      const yBottom = y.getPixelForValue(band.from);
+
+      ctx.fillStyle = band.color;
+      ctx.fillRect(
+        chartArea.left,
+        yTop,
+        chartArea.right - chartArea.left,
+        yBottom - yTop
+      );
+    });
+
+    ctx.restore();
+  }
+};
+
+Chart.register(temperatureBandsPlugin);
 
 
 // ==========================
@@ -348,7 +384,7 @@ map.on("popupopen", async e => {
     }
 
     // ==========================
-    // LÄMPÖTILA
+    // LÄMPÖTILA GRAAFI
     // ==========================
     if (Array.isArray(obsTemp) && Array.isArray(fcTemp)) {
 
@@ -409,6 +445,8 @@ map.on("popupopen", async e => {
         options: {
           responsive: false,
           plugins: { legend: { display: false } },
+        temperatureBands: true
+          
           scales: {
             x: {
               type: "time",
