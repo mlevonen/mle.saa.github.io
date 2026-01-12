@@ -388,14 +388,23 @@ map.on("popupopen", async e => {
     // ==========================
     if (Array.isArray(obsTemp) && Array.isArray(fcTemp)) {
 
-const nowUtc = new Date();
+
+const forecastStartUtc = parseFmiUtc(fcTemp[0].utctime);
+
+const OBS_TOLERANCE_MIN = 15;
+const obsCutoffUtc = new Date(
+  forecastStartUtc.getTime() + OBS_TOLERANCE_MIN * 60_000
+);
+
+
 
 const obsPoints = obsTemp
   .map(p => ({
     x: parseFmiUtc(p.utctime),
     y: p.temperature
   }))
-  .filter(p => p.x <= nowUtc);   // ✅ EI havaintoja tulevaisuudessa
+  .filter(p => p.x <= obsCutoffUtc);
+
 
 const fcPoints = fcTemp
   .map(p => ({
