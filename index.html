@@ -419,50 +419,55 @@ map.on("popupopen", async e => {
 
 
 
-      new Chart(tempCanvas, {
-        type: "line",
-        data: {
-          datasets: [
-            {
-              label: "Havainto",
-              data: obsPoints,
-              borderColor: "blue",
-              tension: 0.45,
-              cubicInterpolationMode: "monotone",
-              pointRadius: 2
-            },
-            {
-              label: "Ennuste",
-              data: fcPoints,
-              borderColor: "red",
-              borderDash: [6,4],
-              tension: 0.45,
-              cubicInterpolationMode: "monotone",
-              pointRadius: 0
-            }
-          ]
-        },
-        options: {
-          responsive: false,
-          plugins: { legend: { display: false } },
-        temperatureBands: true
-          
-          scales: {
-            x: {
-              type: "time",
-              time: { unit: "hour", displayFormats: { hour: "HH" } }
-            },
-			  y: {
-		    min: yMinTemp,
-		    max: yMaxTemp,
-		    ticks: {
-		      stepSize: 5
-		    },
-		    title: { display: true, text: "°C" }
-		  }
-		}
+new Chart(tempCanvas, {
+  type: "line",
+  data: {
+    datasets: [
+      {
+        label: "Havainto",
+        data: obsPoints,
+        borderColor: "blue",
+        tension: 0.45,
+        cubicInterpolationMode: "monotone",
+        pointRadius: 2
+      },
+      {
+        label: "Ennuste",
+        data: fcPoints,
+        borderColor: "red",
+        borderDash: [6, 4],
+        tension: 0.45,
+        cubicInterpolationMode: "monotone",
+        pointRadius: 0
+      }
+    ]
+  },
+  options: {
+    responsive: false,
+
+    plugins: {
+      legend: { display: false },
+      temperatureBands: true   // ✅ TÄMÄ KUULUU TÄNNE
+    },
+
+    scales: {
+      x: {
+        type: "time",
+        time: {
+          unit: "hour",
+          displayFormats: { hour: "HH" }
         }
-      });
+      },
+      y: {
+        min: yMinTemp,
+        max: yMaxTemp,
+        ticks: { stepSize: 5 },
+        title: { display: true, text: "°C" }
+      }
+    }
+  }
+});
+
     }
 
     // ==========================
