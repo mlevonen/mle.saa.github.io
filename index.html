@@ -393,10 +393,15 @@ map.on("popupopen", async e => {
         y: p.temperature
       }));
 
-      const fcPoints = fcTemp.map(p => ({
-        x: parseFmiUtc(p.utctime),
-        y: p.temperature
-      }));
+const nowUtc = new Date();
+
+const fcPoints = fcTemp
+  .map(p => ({
+    x: parseFmiUtc(p.utctime),
+    y: p.temperature
+  }))
+  .filter(p => p.x >= nowUtc);   // ✅ ennuste vain tulevaisuudesta
+
 
       const tempCanvas = popupEl.querySelector('canvas[data-type="temp"]');
 
@@ -471,7 +476,7 @@ new Chart(tempCanvas, {
     }
 
     // ==========================
-    // TUULI (nopeus)
+    // TUULI GRAAFI (nopeus)
     // ==========================
     if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
 
