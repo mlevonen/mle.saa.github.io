@@ -12,6 +12,59 @@
         "coordinates": [24.94, 60.17]
       }
     },
+
+
+{
+  "type": "Feature",
+  "geometry": { "type": "Point", "coordinates": [24.95, 60.15] },
+  "properties": { "name": "Helsinki Harmaja" }
+},
+{
+  "type": "Feature",
+  "geometry": { "type": "Point", "coordinates": [22.20, 60.45] },
+  "properties": { "name": "Utö" }
+},
+{
+  "type": "Feature",
+  "geometry": { "type": "Point", "coordinates": [21.38, 60.13] },
+  "properties": { "name": "Rauma Kylmäpihlaja" }
+},
+{
+  "type": "Feature",
+  "geometry": { "type": "Point", "coordinates": [23.10, 59.83] },
+  "properties": { "name": "Hanko Russarö" }
+},
+{
+  "type": "Feature",
+  "geometry": { "type": "Point", "coordinates": [24.55, 59.95] },
+  "properties": { "name": "Emäsalo" }
+},
+{
+  "type": "Feature",
+  "geometry": { "type": "Point", "coordinates": [21.07, 60.56] },
+  "properties": { "name": "Kökar" }
+},
+{
+  "type": "Feature",
+  "geometry": { "type": "Point", "coordinates": [25.67, 60.20] },
+  "properties": { "name": "Porvoo Kalbådagrund" }
+},
+{
+  "type": "Feature",
+  "geometry": { "type": "Point", "coordinates": [20.70, 60.20] },
+  "properties": { "name": "Märket" }
+},
+{
+  "type": "Feature",
+  "geometry": { "type": "Point", "coordinates": [26.80, 60.40] },
+  "properties": { "name": "Kotka Rankki" }
+},
+{
+  "type": "Feature",
+  "geometry": { "type": "Point", "coordinates": [21.47, 60.72] },
+  "properties": { "name": "Kustavi Isokari" }
+},
+
     {
       "type": "Feature",
       "properties": {
