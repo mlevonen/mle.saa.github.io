@@ -535,24 +535,33 @@ if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
 obsWind.sort((a, b) => a.x - b.x);
 fcWind.sort((a, b) => a.x - b.x);
 
+const obsWindInterp =
+  obsWind.length >= 2
+    ? interpolateTimeSeries(obsWind, 30)
+    : obsWind;
+
+const fcWindInterp =
+  fcWind.length >= 2
+    ? interpolateTimeSeries(fcWind, 30)
+    : fcWind;
 
 
-//const obsWindInterp =
-//  obsWind.length >= 2
-//    ? interpolateTimeSeries(obsWind, 30)
-//    : obsWind;
+const obsWindInterp =
+  obsWind.length >= 2
+    ? interpolateTimeSeries(obsWind, 30)
+    : obsWind;
 
-//const fcWindInterp =
-//  fcWind.length >= 2
-//    ? interpolateTimeSeries(fcWind, 30)
-//    : fcWind;
+const fcWindInterp =
+  fcWind.length >= 2
+    ? interpolateTimeSeries(fcWind, 30)
+    : fcWind;
 
 
 console.log("obsWind:", obsWind.length, obsWind.slice(0,2));
-console.log("obsWindInterp:", obsWindInterp.length);
+
 
 console.log("fcWind:", fcWind.length, fcWind.slice(0,2));
-console.log("fcWindInterp:", fcWindInterp.length);
+
 
 
 
