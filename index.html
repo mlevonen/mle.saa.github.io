@@ -319,7 +319,7 @@ map.on("popupopen", async e => {
   if (!popupEl) return;
 
   const canvases = popupEl.querySelectorAll("canvas");
-  if (canvases.length === 0) return;
+  if (!canvases.length) return;
 
   const lat = canvases[0].dataset.lat;
   const lon = canvases[0].dataset.lon;
@@ -328,167 +328,83 @@ map.on("popupopen", async e => {
   try {
     let obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir;
 
-    // ==========================
-    // Cache
-    // ==========================
     if (popupCache[cacheKey]) {
-      console.log("CACHE HIT:", cacheKey);
-      ({
-        obsTemp,
-        fcTemp,
-        obsWindSpeed,
-        fcWindSpeed,
-        fcWindDir
-      } = popupCache[cacheKey]);
+      ({ obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir } =
+        popupCache[cacheKey]);
     } else {
-      console.log("CACHE MISS:", cacheKey);
-
       obsTemp = await fetchTimeSeriesREST(lat, lon, {
         param: "utctime,temperature"
       });
-
       fcTemp = await fetchForecastREST(lat, lon, {
         param: "utctime,temperature"
       });
-
-		obsWindSpeed = await fetchTimeSeriesREST(lat, lon, {
-		  param: "utctime,windspeedms,winddirection"
-		});
-
-
+      obsWindSpeed = await fetchTimeSeriesREST(lat, lon, {
+        param: "utctime,windspeedms,winddirection"
+      });
       fcWindSpeed = await fetchForecastREST(lat, lon, {
         param: "utctime,windspeedms"
       });
-
       fcWindDir = await fetchForecastREST(lat, lon, {
-        param: "utctime,winddirection"
+        param: "winddirection"
       });
 
       popupCache[cacheKey] = {
-        obsTemp,
-        fcTemp,
-        obsWindSpeed,
-        fcWindSpeed,
-        fcWindDir
+        obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir
       };
     }
 
     // ==========================
-    // APU: FMI UTC → Date
+    // LÄMPÖTILA GRAAFI
     // ==========================
-    function parseFmiUtc(s) {
-      // esim 20260111T150000
-      return new Date(
-        `${s.slice(0,4)}-${s.slice(4,6)}-${s.slice(6,8)}T${s.slice(9,11)}:${s.slice(11,13)}:${s.slice(13,15)}Z`
+    if (Array.isArray(obsTemp) && Array.isArray(fcTemp)) {
+
+      const forecastStartUtc = parseFmiUtc(fcTemp[0].utctime);
+      const OBS_TOLERANCE_MIN = 15;
+      const obsCutoffUtc = new Date(
+        forecastStartUtc.getTime() + OBS_TOLERANCE_MIN * 60000
       );
-    }
 
- // ==========================
-// LÄMPÖTILA GRAAFI
-// ==========================
-console.log(
-  "Obs last:",
-  obsTemp.at(-1)?.utctime,
-  "Forecast first:",
-  fcTemp[0]?.utctime
-);
+      const obsPoints = obsTemp
+        .map(p => ({ x: parseFmiUtc(p.utctime), y: p.temperature }))
+        .filter(p => p.x <= obsCutoffUtc);
 
-
-
-
-
-if (Array.isArray(obsTemp) && Array.isArray(fcTemp)) {
-
-  const forecastStartUtc = parseFmiUtc(fcTemp[0].utctime);
-
-  const OBS_TOLERANCE_MIN = 15;
-  const obsCutoffUtc = new Date(
-    forecastStartUtc.getTime() + OBS_TOLERANCE_MIN * 60_000
-  );
-
-  const obsPoints = obsTemp
-    .map(p => ({
-      x: parseFmiUtc(p.utctime),
-      y: p.temperature
-    }))
-    .filter(p => p.x <= obsCutoffUtc);
-
-  const fcPoints = fcTemp.map(p => ({
-    x: parseFmiUtc(p.utctime),
-    y: p.temperature
-  }));
+      const fcPoints = fcTemp
+        .map(p => ({ x: parseFmiUtc(p.utctime), y: p.temperature }));
 
       const tempCanvas = popupEl.querySelector('canvas[data-type="temp"]');
-
       const oldTemp = Chart.getChart(tempCanvas);
       if (oldTemp) oldTemp.destroy();
 
-	const allTemps = [
-	  ...obsTemp.map(p => p.temperature),
-	  ...fcTemp.map(p => p.temperature)
-	];
-
-	const minTemp = Math.min(...allTemps);
-	const maxTemp = Math.max(...allTemps);
-
-	// marginaali asteikolle
-	const padding = 5;
-
-	const yMinTemp = Math.floor((minTemp - padding) / 5) * 5;
-	const yMaxTemp = Math.ceil((maxTemp + padding) / 5) * 5;
-
-
-
-new Chart(tempCanvas, {
-  type: "line",
-  data: {
-    datasets: [
-      {
-        label: "Havainto",
-        data: obsPoints,
-        borderColor: "blue",
-        tension: 0.45,
-        cubicInterpolationMode: "monotone",
-        pointRadius: 2
-      },
-      {
-        label: "Ennuste",
-        data: fcPoints,
-        borderColor: "red",
-        borderDash: [6, 4],
-        tension: 0.45,
-        cubicInterpolationMode: "monotone",
-        pointRadius: 0
-      }
-    ]
-  },
-  options: {
-    responsive: false,
-
-    plugins: {
-      legend: { display: false },
-      temperatureBands: true   // ✅ TÄMÄ KUULUU TÄNNE
-    },
-
-    scales: {
-      x: {
-        type: "time",
-        time: {
-          unit: "hour",
-          displayFormats: { hour: "HH" }
+      new Chart(tempCanvas, {
+        type: "line",
+        data: {
+          datasets: [
+            {
+              data: obsPoints,
+              borderColor: "blue",
+              tension: 0.45,
+              cubicInterpolationMode: "monotone"
+            },
+            {
+              data: fcPoints,
+              borderColor: "red",
+              borderDash: [6,4],
+              tension: 0.45,
+              cubicInterpolationMode: "monotone"
+            }
+          ]
+        },
+        options: {
+          responsive: false,
+          scales: {
+            x: { type: "time", time: { unit: "hour" } },
+            y: { title: { display: true, text: "°C" } }
+          }
         }
-      },
-      y: {
-        min: yMinTemp,
-        max: yMaxTemp,
-        ticks: { stepSize: 5 },
-        title: { display: true, text: "°C" }
-      }
+      });
     }
-  }
-});
 
-    }
+ 
 
     // ==========================
     // TUULI GRAAFI (nopeus)
