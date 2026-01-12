@@ -516,6 +516,12 @@ if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
 const obsWindInterp = interpolateTimeSeries(obsWind, 30);
 const fcWindInterp  = interpolateTimeSeries(fcWind, 30);
 
+console.log("obsWind:", obsWind.length, obsWind.slice(0,2));
+console.log("obsWindInterp:", obsWindInterp.length);
+
+console.log("fcWind:", fcWind.length, fcWind.slice(0,2));
+console.log("fcWindInterp:", fcWindInterp.length);
+
 
 
 
