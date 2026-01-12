@@ -397,9 +397,6 @@ const obsPoints = obsTemp
   }))
   .filter(p => p.x <= nowUtc);   // ✅ EI havaintoja tulevaisuudessa
 
-
-const nowUtc = new Date();
-
 const fcPoints = fcTemp
   .map(p => ({
     x: parseFmiUtc(p.utctime),
