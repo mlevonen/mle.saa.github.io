@@ -387,10 +387,6 @@ map.on("popupopen", async e => {
     // LÄMPÖTILA GRAAFI
     // ==========================
     
-console.log("Forecast starts:", forecastStartUtc.toISOString());
-console.log("Last obs:", obsPoints.at(-1)?.x.toISOString());
-    
-    
     if (Array.isArray(obsTemp) && Array.isArray(fcTemp)) {
 
 
