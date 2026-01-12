@@ -348,32 +348,36 @@ Chart.register(temperatureBandsPlugin);
 // ==========================
 // Popup → lämpötila + tuuli (havainto + ennuste)
 // ==========================
-
 map.on("popupopen", async e => {
+  const popupEl = e.popup.getElement();
+  if (!popupEl) return;
+
   try {
     console.log("POPUP TRY STARTED");
 
+    const canvases = popupEl.querySelectorAll("canvas");
+    if (!canvases.length) return;
 
-  const canvases = popupEl.querySelectorAll("canvas");
-  if (!canvases.length) return;
+    const lat = canvases[0].dataset.lat;
+    const lon = canvases[0].dataset.lon;
+    const cacheKey = `${lat},${lon}`;
 
-  const lat = canvases[0].dataset.lat;
-  const lon = canvases[0].dataset.lon;
-  const cacheKey = `${lat},${lon}`;
-
-  try {
     let obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir;
 
     if (popupCache[cacheKey]) {
+      console.log("CACHE HIT", cacheKey);
       ({ obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir } =
         popupCache[cacheKey]);
     } else {
+      console.log("CACHE MISS", cacheKey);
+
       obsTemp = await fetchTimeSeriesREST(lat, lon, {
         param: "utctime,temperature"
       });
       fcTemp = await fetchForecastREST(lat, lon, {
         param: "utctime,temperature"
       });
+
       obsWindSpeed = await fetchTimeSeriesREST(lat, lon, {
         param: "utctime,windspeedms,winddirection"
       });
@@ -385,16 +389,24 @@ map.on("popupopen", async e => {
       });
 
       popupCache[cacheKey] = {
-        obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir
+        obsTemp,
+        fcTemp,
+        obsWindSpeed,
+        fcWindSpeed,
+        fcWindDir
       };
     }
 
-console.log(popupCache[cacheKey] ? "CACHE HIT" : "CACHE MISS", cacheKey);
+    console.log("POPUP DATA OK", {
+      obsTemp: obsTemp?.length,
+      fcTemp: fcTemp?.length,
+      obsWindSpeed: obsWindSpeed?.length
+    });
 
-  } catch (err) {
-    console.error("Popup error:", err);
-  }
-});
+    // ⬇️ TÄHÄN tulee SEURAAVAKSI:
+    // - lämpötilagraafi
+    // - tuuligraafi
+    // - nuoliplugin
 
 
  // ==========================
@@ -638,6 +650,7 @@ new Chart(windCanvas, {
     popupEl.innerHTML += `<div>Virhe FMI-datan haussa</div>`;
   }
 });
+
 </script>
 
 </body>
