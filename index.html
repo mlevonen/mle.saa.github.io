@@ -386,6 +386,11 @@ map.on("popupopen", async e => {
     // ==========================
     // LÄMPÖTILA GRAAFI
     // ==========================
+    
+console.log("Forecast starts:", forecastStartUtc.toISOString());
+console.log("Last obs:", obsPoints.at(-1)?.x.toISOString());
+    
+    
     if (Array.isArray(obsTemp) && Array.isArray(fcTemp)) {
 
 
@@ -396,8 +401,6 @@ const obsCutoffUtc = new Date(
   forecastStartUtc.getTime() + OBS_TOLERANCE_MIN * 60_000
 );
 
-
-
 const obsPoints = obsTemp
   .map(p => ({
     x: parseFmiUtc(p.utctime),
@@ -405,14 +408,10 @@ const obsPoints = obsTemp
   }))
   .filter(p => p.x <= obsCutoffUtc);
 
-
-const fcPoints = fcTemp
-  .map(p => ({
-    x: parseFmiUtc(p.utctime),
-    y: p.temperature
-  }))
-  .filter(p => p.x >= nowUtc);   // ✅ ennuste vain tulevaisuudesta
-
+const fcPoints = fcTemp.map(p => ({
+  x: parseFmiUtc(p.utctime),
+  y: p.temperature
+}));
 
       const tempCanvas = popupEl.querySelector('canvas[data-type="temp"]');
 
