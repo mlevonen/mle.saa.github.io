@@ -238,8 +238,7 @@ const popupCache = {};
 // TUULINUOLIPLUGIN
 
 const windArrowPlugin = {
-id: "windArrowPlugin",
-
+  id: "windArrowPlugin",
   afterDatasetsDraw(chart) {
     const ctx = chart.ctx;
 
@@ -256,17 +255,20 @@ id: "windArrowPlugin",
 
         ctx.save();
         ctx.translate(x, y);
-        ctx.rotate((dir + 180) * Math.PI / 180); // meteorologinen → piirtoon
-        ctx.fillStyle = "green";
+        ctx.rotate((dir + 180) * Math.PI / 180);
+
+        ctx.fillStyle = dataset.borderColor || "#000"; // ✅ KORJAUS
         ctx.font = "18px sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText("➤", 0, 0);
+
         ctx.restore();
       });
     });
   }
 };
+
 
 
 Chart.register(windArrowPlugin);
@@ -498,24 +500,50 @@ const yMaxWind = Math.ceil((maxWind + 2) / 5) * 5;
 new Chart(windCanvas, {
   type: "line",
   data: {
-    datasets: [
-      {
-        label: "Havainto",
-        data: obsWind.map(p => ({ x: p.x, y: p.y })),
-        showLine: false,
-        pointRadius: 0,
-        borderColor: "green",
-        windDirections: obsWind.map(p => p.dir) // ← NUOLIINFO
-      },
-      {
-        label: "Ennuste",
-        data: fcWind.map(p => ({ x: p.x, y: p.y })),
-        showLine: false,
-        pointRadius: 0,
-        borderColor: "red",
-        windDirections: fcWind.map(p => p.dir) // ← NUOLIINFO
-      }
-    ]
+datasets: [
+
+  // --- HAVAINTO: ohut viiva ---
+  {
+    data: obsWind.map(p => ({ x: p.x, y: p.y })),
+    borderColor: "rgba(0,128,0,0.4)",
+    borderWidth: 1,
+    tension: 0.3,
+    pointRadius: 0,
+    showLine: true
+  },
+
+  // --- HAVAINTO: nuolet ---
+  {
+    data: obsWind.map(p => ({ x: p.x, y: p.y })),
+    showLine: false,
+    pointRadius: 0,
+    borderColor: "green",
+    windDirections: obsWind.map(p => p.dir)
+  },
+
+  // --- ENNUSTE: ohut viiva ---
+  {
+    data: fcWind.map(p => ({ x: p.x, y: p.y })),
+    borderColor: "rgba(255,0,0,0.4)",
+    borderWidth: 1,
+    borderDash: [4, 4],
+    tension: 0.3,
+    pointRadius: 0,
+    showLine: true
+  },
+
+  // --- ENNUSTE: nuolet ---
+  {
+    data: fcWind.map(p => ({ x: p.x, y: p.y })),
+    showLine: false,
+    pointRadius: 0,
+    borderColor: "red",
+    windDirections: fcWind.map(p => p.dir)
+  }
+]
+
+    
+    
   },
   options: {
     responsive: false,
