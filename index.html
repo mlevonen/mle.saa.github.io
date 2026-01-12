@@ -513,71 +513,55 @@ if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
     }))
     .filter(p => p.x > obsCutoffUtc);
 
+const obsWindInterp = interpolateTimeSeries(obsWind, 30);
+const fcWindInterp  = interpolateTimeSeries(fcWind, 30);
+
+
 
 
 const windCanvas = popupEl.querySelector('canvas[data-type="wind"]');
 const oldWind = Chart.getChart(windCanvas);
 if (oldWind) oldWind.destroy();
 
-const allWind = [
-  ...obsWindSpeed.map(p => p.windspeedms),
-  ...fcWindSpeed.map(p => p.windspeedms)
-];
+//const allWind = [
+//  ...obsWindSpeed.map(p => p.windspeedms),
+//  ...fcWindSpeed.map(p => p.windspeedms)
+//];
 
-const maxWind = Math.max(...allWind);
+//const maxWind = Math.max(...allWind);
 
 // pyöristetään seuraavaan 5 m/s
-const yMaxWind = Math.ceil((maxWind + 2) / 5) * 5;
+//const yMaxWind = Math.ceil((maxWind + 2) / 5) * 5;
 
 
 
 new Chart(windCanvas, {
   type: "line",
   data: {
-datasets: [
-
-  // --- HAVAINTO: ohut viiva ---
-  {
-    data: obsWind.map(p => ({ x: p.x, y: p.y })),
-    borderColor: "rgba(0,128,0,0.4)",
-    borderWidth: 1,
-    tension: 0.3,
-    pointRadius: 0,
-    showLine: true
-  },
-
-  // --- HAVAINTO: nuolet ---
-  {
-    data: obsWind.map(p => ({ x: p.x, y: p.y })),
-    showLine: false,
-    pointRadius: 0,
-    borderColor: "green",
-    windDirections: obsWind.map(p => p.dir)
-  },
-
-  // --- ENNUSTE: ohut viiva ---
-  {
-    data: fcWind.map(p => ({ x: p.x, y: p.y })),
-    borderColor: "rgba(255,0,0,0.4)",
-    borderWidth: 1,
-    borderDash: [4, 4],
-    tension: 0.3,
-    pointRadius: 0,
-    showLine: true
-  },
-
-  // --- ENNUSTE: nuolet ---
-  {
-    data: fcWind.map(p => ({ x: p.x, y: p.y })),
-    showLine: false,
-    pointRadius: 0,
-    borderColor: "red",
-    windDirections: fcWind.map(p => p.dir)
-  }
-]
-
-    
-    
+    datasets: [
+      {
+        label: "Havainto",
+        data: obsWindInterp.map(p => ({ x: p.x, y: p.y })),
+        showLine: true,                 // ✅ ohut tukiviiva
+        borderColor: "rgba(0,128,0,0.35)",
+        borderWidth: 1,
+        pointRadius: 0,
+        tension: 0.45,
+        cubicInterpolationMode: "monotone",
+        windDirections: obsWindInterp.map(p => p.dir)
+      },
+      {
+        label: "Ennuste",
+        data: fcWindInterp.map(p => ({ x: p.x, y: p.y })),
+        showLine: true,
+        borderColor: "rgba(220,0,0,0.35)",
+        borderWidth: 1,
+        pointRadius: 0,
+        tension: 0.45,
+        cubicInterpolationMode: "monotone",
+        windDirections: fcWindInterp.map(p => p.dir)
+      }
+    ]
   },
   options: {
     responsive: false,
@@ -595,17 +579,19 @@ datasets: [
       },
       y: {
         min: 0,
-        max: Math.ceil(Math.max(
-          ...obsWind.map(p => p.y),
-          ...fcWind.map(p => p.y)
-        ) / 5) * 5,
-        ticks: { stepSize: 2 },
-        title: { display: true, text: "m/s" }
+        max: 15,                     // ✅ KIINTEÄ ASTEIKKO
+        ticks: {
+          stepSize: 3
+        },
+        title: {
+          display: true,
+          text: "m/s"
+        }
       }
     }
   }
 });
-}
+
     // ==========================
     // TUULENSUUNTA (nuoli otsikkoon)
     // ==========================
