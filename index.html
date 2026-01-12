@@ -449,6 +449,20 @@ const obsWind = obsWindSpeed.map(p => ({
       const oldWind = Chart.getChart(windCanvas);
       if (oldWind) oldWind.destroy();
 
+		const allWind = [
+		  ...obsWindSpeed.map(p => p.windspeedms),
+		  ...fcWindSpeed.map(p => p.windspeedms)
+		];
+
+		const maxWind = Math.max(...allWind);
+
+		// pyöristetään seuraavaan 5 m/s
+		const yMaxWind = Math.ceil((maxWind + 2) / 5) * 5;
+
+
+
+
+
       new Chart(windCanvas, {
         type: "line",
         data: {
@@ -484,10 +498,15 @@ options: {
       type: "time",
       time: { unit: "hour", displayFormats: { hour: "HH" } }
     },
-    y: {
-      title: { display: true, text: "m/s" }
-    }
+  y: {
+    min: 0,
+    max: yMaxWind,
+    ticks: {
+      stepSize: 2
+    },
+    title: { display: true, text: "m/s" }
   }
+}
 }
 
       });
