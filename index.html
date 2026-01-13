@@ -574,7 +574,12 @@ if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
     },
     options: {
       responsive: false,
-      plugins: { legend: { display: false } windArrowPlugin: true },
+		plugins: {
+		  legend: { display: false },
+		  windArrowPlugin: true
+}
+}
+
       scales: {
         x: {
           type: "time",
