@@ -565,46 +565,72 @@ if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
       ? interpolateTimeSeries(rawFcWind, 30)
       : rawFcWind;
 
+// ==========================
+// YHDISTETTY TUULISARJA (havainto + ennuste)
+// ==========================
+const windSeries = [
+  ...obsWind.map(p => ({
+    x: p.x,
+    y: p.y,
+    dir: p.dir,
+    phase: "obs"
+  })),
+  ...fcWind.map(p => ({
+    x: p.x,
+    y: p.y,
+    dir: p.dir,
+    phase: "fc"
+  }))
+];
+
+
+
   const windCanvas = popupEl.querySelector('canvas[data-type="wind"]');
   const oldWind = Chart.getChart(windCanvas);
   if (oldWind) oldWind.destroy();
+
+
 
 new Chart(windCanvas, {
   type: "line",
   data: {
     datasets: [
       {
-        label: "Havainto",
-        data: obsWind.map(p => ({ x: p.x, y: p.y })),
-        showLine: true,
-        borderColor: "rgba(0,128,0,0.4)",
-        borderWidth: 2,
+        label: "Tuuli",
+        data: windSeries,
         pointRadius: 0,
         tension: 0.45,
         cubicInterpolationMode: "monotone",
-        windDirections: obsWind.map(p => p.dir)
-      },
-      {
-        label: "Ennuste",
-        data: fcWind.map(p => ({ x: p.x, y: p.y })),
-        showLine: true,
-        borderColor: "rgba(220,0,0,0.35)",
-        borderWidth: 2,
-        pointRadius: 0,
-        tension: 0.45,
-        cubicInterpolationMode: "monotone"
+
+        // ==========================
+        // TYYLIN VAIHTO HAVAINTO → ENNUSTE
+        // ==========================
+        segment: {
+          borderColor: ctx =>
+            ctx.p0.raw.phase === "fc"
+              ? "rgba(220,0,0,0.5)"
+              : "rgba(0,128,0,0.5)",
+
+          borderDash: ctx =>
+            ctx.p0.raw.phase === "fc"
+              ? [6, 4]
+              : []
+        },
+
+        // ==========================
+        // TUULENSUUNNAT NUOLIA VARTEN
+        // ==========================
+        windDirections: windSeries.map(p => p.dir)
       }
     ]
   },
 
   options: {
     responsive: false,
-
     plugins: {
       legend: { display: false },
       windArrowPlugin: true
     },
-
     scales: {
       x: {
         type: "time",
@@ -622,6 +648,7 @@ new Chart(windCanvas, {
     }
   }
 });
+
 
 
     // ==========================
