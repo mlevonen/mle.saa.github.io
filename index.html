@@ -545,55 +545,60 @@ if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
   const oldWind = Chart.getChart(windCanvas);
   if (oldWind) oldWind.destroy();
 
-  new Chart(windCanvas, {
-    type: "line",
-    data: {
-      datasets: [
-		{
-		  label: "Havainto",
-		  data: obsWind.map(p => ({ x: p.x, y: p.y })),
-		  showLine: true,
-		  borderColor: "rgba(0,128,0,0.4)",
-		  borderWidth: 2,
-		  pointRadius: 0,
-		  tension: 0.45,
-		  cubicInterpolationMode: "monotone",
-		  windDirections: obsWind.map(p => p.dir) // ✅ NUOLET
-		},
+new Chart(windCanvas, {
+  type: "line",
+  data: {
+    datasets: [
+      {
+        label: "Havainto",
+        data: obsWind.map(p => ({ x: p.x, y: p.y })),
+        showLine: true,
+        borderColor: "rgba(0,128,0,0.4)",
+        borderWidth: 2,
+        pointRadius: 0,
+        tension: 0.45,
+        cubicInterpolationMode: "monotone",
+        windDirections: obsWind.map(p => p.dir)
+      },
+      {
+        label: "Ennuste",
+        data: fcWind.map(p => ({ x: p.x, y: p.y })),
+        showLine: true,
+        borderColor: "rgba(220,0,0,0.35)",
+        borderWidth: 2,
+        pointRadius: 0,
+        tension: 0.45,
+        cubicInterpolationMode: "monotone"
+      }
+    ]
+  },
 
-        {
-          label: "Ennuste",
-          data: fcWind.map(p => ({ x: p.x, y: p.y })),
-          borderColor: "rgba(220,0,0,0.35)",
-          borderWidth: 2,
-          pointRadius: 0,
-          tension: 0.45,
-          cubicInterpolationMode: "monotone"
-        }
-      ]
+  options: {
+    responsive: false,
+
+    plugins: {
+      legend: { display: false },
+      windArrowPlugin: true
     },
-		options: {
-		  responsive: false,
-		  plugins: {
-		    legend: { display: false },
-		    windArrowPlugin: true
-		  }
-		}
-      scales: {
-        x: {
-          type: "time",
-          time: { unit: "hour", displayFormats: { hour: "HH" } }
-        },
-        y: {
-          min: 0,
-          max: 15,
-          ticks: { stepSize: 3 },
-          title: { display: true, text: "m/s" }
+
+    scales: {
+      x: {
+        type: "time",
+        time: {
+          unit: "hour",
+          displayFormats: { hour: "HH" }
         }
+      },
+      y: {
+        min: 0,
+        max: 15,
+        ticks: { stepSize: 3 },
+        title: { display: true, text: "m/s" }
       }
     }
-  });
-}
+  }
+});
+
 
     // ==========================
     // TUULENSUUNTA (nuoli otsikkoon)
