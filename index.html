@@ -599,33 +599,25 @@ new Chart(windCanvas, {
       {
         label: "Tuuli",
         data: windSeries,
-        pointRadius:0,
-        tension:0.45,
+        pointRadius: 0,
+        tension: 0.45,
         cubicInterpolationMode: "monotone",
-		spanGaps: true,
-        // ==========================
-        // TYYLIN VAIHTO HAVAINTO → ENNUSTE
-        // ==========================
+        spanGaps: true,
         segment: {
           borderColor: ctx =>
             ctx.p0.raw.phase === "fc"
               ? "rgba(220,0,0,0.5)"
               : "rgba(0,128,0,0.5)",
-
           borderDash: ctx =>
             ctx.p0.raw.phase === "fc"
               ? [6, 4]
               : []
         },
-
-        // ==========================
-        // TUULENSUUNNAT NUOLIA VARTEN
-        // ==========================
         windDirections: windSeries.map(p => p.dir)
       }
     ]
   },
-
+  
   options: {
     responsive: false,
     plugins: {
@@ -649,7 +641,7 @@ new Chart(windCanvas, {
     }
   }
 });
-}
+
 
 
     // ==========================
