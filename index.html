@@ -6,6 +6,7 @@
 
 <link rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="icon" href="data:,">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <!-- Chart.js -->
@@ -601,7 +602,7 @@ new Chart(windCanvas, {
         pointRadius: 0,
         tension: 0.45,
         cubicInterpolationMode: "monotone",
-
+		spanGaps: true,
         // ==========================
         // TYYLIN VAIHTO HAVAINTO → ENNUSTE
         // ==========================
