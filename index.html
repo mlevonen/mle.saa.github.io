@@ -224,39 +224,6 @@ function parseFmiUtc(s) {
   );
 }
 
-function interpolateTimeSeries(points, stepMinutes = 30) {
-  if (points.length < 2) return points;
-
-  const result = [];
-
-  for (let i = 0; i < points.length - 1; i++) {
-    const p1 = points[i];
-    const p2 = points[i + 1];
-
-    result.push(p1);
-
-    const dt = p2.x - p1.x;
-    const steps = Math.floor(dt / (stepMinutes * 60_000));
-
-    for (let s = 1; s < steps; s++) {
-      const t = p1.x.getTime() + s * stepMinutes * 60_000;
-      const ratio = (t - p1.x) / dt;
-
-      result.push({
-        x: new Date(t),
-        y: p1.y + ratio * (p2.y - p1.y),
-        _interpolated: true
-      });
-    }
-  }
-
-  result.push(points.at(-1));
-  return result;
-}
-
-
-
-
 
 // ==========================
 // Popup data cache
@@ -348,36 +315,31 @@ Chart.register(temperatureBandsPlugin);
 // ==========================
 // Popup → lämpötila + tuuli (havainto + ennuste)
 // ==========================
+
 map.on("popupopen", async e => {
   const popupEl = e.popup.getElement();
   if (!popupEl) return;
 
+  const canvases = popupEl.querySelectorAll("canvas");
+  if (!canvases.length) return;
+
+  const lat = canvases[0].dataset.lat;
+  const lon = canvases[0].dataset.lon;
+  const cacheKey = `${lat},${lon}`;
+
   try {
-    console.log("POPUP TRY STARTED");
-
-    const canvases = popupEl.querySelectorAll("canvas");
-    if (!canvases.length) return;
-
-    const lat = canvases[0].dataset.lat;
-    const lon = canvases[0].dataset.lon;
-    const cacheKey = `${lat},${lon}`;
-
     let obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir;
 
     if (popupCache[cacheKey]) {
-      console.log("CACHE HIT", cacheKey);
       ({ obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir } =
         popupCache[cacheKey]);
     } else {
-      console.log("CACHE MISS", cacheKey);
-
       obsTemp = await fetchTimeSeriesREST(lat, lon, {
         param: "utctime,temperature"
       });
       fcTemp = await fetchForecastREST(lat, lon, {
         param: "utctime,temperature"
       });
-
       obsWindSpeed = await fetchTimeSeriesREST(lat, lon, {
         param: "utctime,windspeedms,winddirection"
       });
@@ -389,24 +351,11 @@ map.on("popupopen", async e => {
       });
 
       popupCache[cacheKey] = {
-        obsTemp,
-        fcTemp,
-        obsWindSpeed,
-        fcWindSpeed,
-        fcWindDir
+        obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir
       };
     }
 
-    console.log("POPUP DATA OK", {
-      obsTemp: obsTemp?.length,
-      fcTemp: fcTemp?.length,
-      obsWindSpeed: obsWindSpeed?.length
-    });
-
-    // ⬇️ TÄHÄN tulee SEURAAVAKSI:
-    // - lämpötilagraafi
-    // - tuuligraafi
-    // - nuoliplugin
+console.log(popupCache[cacheKey] ? "CACHE HIT" : "CACHE MISS", cacheKey);
 
 
  // ==========================
@@ -421,20 +370,19 @@ if (Array.isArray(obsTemp) && Array.isArray(fcTemp)) {
     nowUtc.getTime() + OBS_TOLERANCE_MIN * 60_000
   );
 
-const rawObsPoints = obsTemp.map(p => ({
-  x: parseFmiUtc(p.utctime),
-  y: p.temperature
-}));
+  const obsPoints = obsTemp
+    .map(p => ({
+      x: parseFmiUtc(p.utctime),
+      y: p.temperature
+    }))
+    .filter(p => p.x <= obsCutoffUtc);
 
-const rawFcPoints = fcTemp.map(p => ({
-  x: parseFmiUtc(p.utctime),
-  y: p.temperature
-}));
-
-const obsPoints = interpolateTimeSeries(rawObsPoints, 30);
-const fcPoints  = interpolateTimeSeries(rawFcPoints, 30);
-
-
+  const fcPoints = fcTemp
+    .map(p => ({
+      x: parseFmiUtc(p.utctime),
+      y: p.temperature
+    }))
+    .filter(p => p.x > obsCutoffUtc);
 
   const tempCanvas = popupEl.querySelector('canvas[data-type="temp"]');
   const oldTemp = Chart.getChart(tempCanvas);
@@ -532,83 +480,70 @@ if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
     .filter(p => p.x > obsCutoffUtc);
 
 
-obsWind.sort((a, b) => a.x - b.x);
-fcWind.sort((a, b) => a.x - b.x);
-
-const obsWindInterp =
-  obsWind.length >= 2
-    ? interpolateTimeSeries(obsWind, 30)
-    : obsWind;
-
-const fcWindInterp =
-  fcWind.length >= 2
-    ? interpolateTimeSeries(fcWind, 30)
-    : fcWind;
-
-
-//const obsWindInterp =
-  obsWind.length >= 2
-    ? interpolateTimeSeries(obsWind, 30)
-    : obsWind;
-
-//const fcWindInterp =
-  fcWind.length >= 2
-    ? interpolateTimeSeries(fcWind, 30)
-    : fcWind;
-
-
-console.log("obsWind:", obsWind.length, obsWind.slice(0,2));
-
-
-console.log("fcWind:", fcWind.length, fcWind.slice(0,2));
-
-
-
-
 
 const windCanvas = popupEl.querySelector('canvas[data-type="wind"]');
 const oldWind = Chart.getChart(windCanvas);
 if (oldWind) oldWind.destroy();
 
-//const allWind = [
-//  ...obsWindSpeed.map(p => p.windspeedms),
-//  ...fcWindSpeed.map(p => p.windspeedms)
-//];
+const allWind = [
+  ...obsWindSpeed.map(p => p.windspeedms),
+  ...fcWindSpeed.map(p => p.windspeedms)
+];
 
-//const maxWind = Math.max(...allWind);
+const maxWind = Math.max(...allWind);
 
 // pyöristetään seuraavaan 5 m/s
-//const yMaxWind = Math.ceil((maxWind + 2) / 5) * 5;
+const yMaxWind = Math.ceil((maxWind + 2) / 5) * 5;
 
 
 
 new Chart(windCanvas, {
   type: "line",
   data: {
-    datasets: [
-      {
-        label: "Havainto",
-        data: obsWindInterp.map(p => ({ x: p.x, y: p.y })),
-        showLine: true,                 // ✅ ohut tukiviiva
-        borderColor: "rgba(0,128,0,0.35)",
-        borderWidth: 1,
-        pointRadius: 0,
-        tension: 0.45,
-        cubicInterpolationMode: "monotone",
-        windDirections: obsWindInterp.map(p => p.dir)
-      },
-      {
-        label: "Ennuste",
-        data: fcWindInterp.map(p => ({ x: p.x, y: p.y })),
-        showLine: true,
-        borderColor: "rgba(220,0,0,0.35)",
-        borderWidth: 1,
-        pointRadius: 0,
-        tension: 0.45,
-        cubicInterpolationMode: "monotone",
-        windDirections: fcWindInterp.map(p => p.dir)
-      }
-    ]
+datasets: [
+
+  // --- HAVAINTO: ohut viiva ---
+  {
+    data: obsWind.map(p => ({ x: p.x, y: p.y })),
+    borderColor: "rgba(0,128,0,0.4)",
+    borderWidth: 1,
+    tension: 0.3,
+    pointRadius: 0,
+    showLine: true
+  },
+
+  // --- HAVAINTO: nuolet ---
+  {
+    data: obsWind.map(p => ({ x: p.x, y: p.y })),
+    showLine: false,
+    pointRadius: 0,
+    borderColor: "green",
+    windDirections: obsWind.map(p => p.dir)
+  },
+
+  // --- ENNUSTE: ohut viiva ---
+  {
+    data: fcWind.map(p => ({ x: p.x, y: p.y })),
+    borderColor: "rgba(255,0,0,0.4)",
+    borderWidth: 1,
+    borderDash: [4, 4],
+    tension: 0.3,
+    pointRadius: 0,
+    showLine: true
+  },
+
+  // --- ENNUSTE: nuolet ---
+  {
+    data: fcWind.map(p => ({ x: p.x, y: p.y })),
+    showLine: false,
+    pointRadius: 0,
+    borderColor: "red",
+    windDirections: fcWind.map(p => p.dir)
+  }
+]
+
+    
+    
   },
   options: {
     responsive: false,
@@ -626,19 +561,17 @@ new Chart(windCanvas, {
       },
       y: {
         min: 0,
-        max: 15,                     // ✅ KIINTEÄ ASTEIKKO
-        ticks: {
-          stepSize: 3
-        },
-        title: {
-          display: true,
-          text: "m/s"
-        }
+        max: Math.ceil(Math.max(
+          ...obsWind.map(p => p.y),
+          ...fcWind.map(p => p.y)
+        ) / 5) * 5,
+        ticks: { stepSize: 2 },
+        title: { display: true, text: "m/s" }
       }
     }
   }
 });
-
+}
     // ==========================
     // TUULENSUUNTA (nuoli otsikkoon)
     // ==========================
@@ -659,7 +592,6 @@ new Chart(windCanvas, {
     popupEl.innerHTML += `<div>Virhe FMI-datan haussa</div>`;
   }
 });
-
 </script>
 
 </body>
