@@ -433,6 +433,24 @@ const fcPoints =
     ? interpolateTimeSeries(rawFcPoints, 30)
     : rawFcPoints;
 
+// ==========================
+// SILLAN LUONTI havainto → ennuste
+// ==========================
+if (obsPoints.length && fcPoints.length) {
+  const lastObs = obsPoints.at(-1);
+  const firstFc = fcPoints[0];
+
+  // jos väli on yli 10 min, tehdään silta
+  if (firstFc.x - lastObs.x > 10 * 60_000) {
+    fcPoints.unshift({
+      x: lastObs.x,
+      y: lastObs.y,
+      _bridge: true   // vain merkintä Chartia varten
+    });
+  }
+}
+
+
 
 
 
@@ -471,6 +489,12 @@ const fcPoints =
           data: fcPoints,
           borderColor: "red",
           borderDash: [6,4],
+          
+            segment: {
+		    borderDash: ctx =>
+		      ctx.p0.raw?._bridge ? [2, 4] : [6, 4]
+  		}
+          
           tension: 0.45,
           cubicInterpolationMode: "monotone",
           pointRadius: 0
