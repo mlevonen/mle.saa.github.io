@@ -502,7 +502,7 @@ const fcPoints =
 }
 
 // ==========================
-// TUULI GRAAFI (nuolet)
+// TUULI GRAAFI (nopeus)
 // ==========================
 if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
 
@@ -513,17 +513,16 @@ if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
     nowUtc.getTime() + OBS_TOLERANCE_MIN * 60_000
   );
 
-  // --- HAVAINNOT ---
-  const obsWind = obsWindSpeed
+  // --- raakapisteet ---
+  const rawObsWind = obsWindSpeed
     .map(p => ({
       x: parseFmiUtc(p.utctime),
       y: p.windspeedms,
-      dir: p.winddirection
+      dir: p.winddirection   // ← säilytetään
     }))
     .filter(p => p.x <= obsCutoffUtc);
 
-  // --- ENNUSTE ---
-  const fcWind = fcWindSpeed
+  const rawFcWind = fcWindSpeed
     .map((p, i) => ({
       x: parseFmiUtc(p.utctime),
       y: p.windspeedms,
@@ -531,99 +530,64 @@ if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
     }))
     .filter(p => p.x > obsCutoffUtc);
 
+  // --- tihennys VAIN nopeudelle ---
+  const obsWind =
+    rawObsWind.length >= 2
+      ? interpolateTimeSeries(rawObsWind, 30)
+      : rawObsWind;
 
+  const fcWind =
+    rawFcWind.length >= 2
+      ? interpolateTimeSeries(rawFcWind, 30)
+      : rawFcWind;
 
-const windCanvas = popupEl.querySelector('canvas[data-type="wind"]');
-const oldWind = Chart.getChart(windCanvas);
-if (oldWind) oldWind.destroy();
+  const windCanvas = popupEl.querySelector('canvas[data-type="wind"]');
+  const oldWind = Chart.getChart(windCanvas);
+  if (oldWind) oldWind.destroy();
 
-const allWind = [
-  ...obsWindSpeed.map(p => p.windspeedms),
-  ...fcWindSpeed.map(p => p.windspeedms)
-];
-
-const maxWind = Math.max(...allWind);
-
-// pyöristetään seuraavaan 5 m/s
-const yMaxWind = Math.ceil((maxWind + 2) / 5) * 5;
-
-
-
-new Chart(windCanvas, {
-  type: "line",
-  data: {
-datasets: [
-
-  // --- HAVAINTO: ohut viiva ---
-  {
-    data: obsWind.map(p => ({ x: p.x, y: p.y })),
-    borderColor: "rgba(0,128,0,0.4)",
-    borderWidth: 1,
-    tension: 0.3,
-    pointRadius: 0,
-    showLine: true
-  },
-
-  // --- HAVAINTO: nuolet ---
-  {
-    data: obsWind.map(p => ({ x: p.x, y: p.y })),
-    showLine: false,
-    pointRadius: 0,
-    borderColor: "green",
-    windDirections: obsWind.map(p => p.dir)
-  },
-
-  // --- ENNUSTE: ohut viiva ---
-  {
-    data: fcWind.map(p => ({ x: p.x, y: p.y })),
-    borderColor: "rgba(255,0,0,0.4)",
-    borderWidth: 1,
-    borderDash: [4, 4],
-    tension: 0.3,
-    pointRadius: 0,
-    showLine: true
-  },
-
-  // --- ENNUSTE: nuolet ---
-  {
-    data: fcWind.map(p => ({ x: p.x, y: p.y })),
-    showLine: false,
-    pointRadius: 0,
-    borderColor: "red",
-    windDirections: fcWind.map(p => p.dir)
-  }
-]
-
-    
-    
-  },
-  options: {
-    responsive: false,
-    plugins: {
-      legend: { display: false },
-      windArrowPlugin: true
-    },
-    scales: {
-      x: {
-        type: "time",
-        time: {
-          unit: "hour",
-          displayFormats: { hour: "HH" }
+  new Chart(windCanvas, {
+    type: "line",
+    data: {
+      datasets: [
+        {
+          label: "Havainto",
+          data: obsWind.map(p => ({ x: p.x, y: p.y })),
+          borderColor: "rgba(0,128,0,0.35)",
+          borderWidth: 1,
+          pointRadius: 0,
+          tension: 0.45,
+          cubicInterpolationMode: "monotone"
+        },
+        {
+          label: "Ennuste",
+          data: fcWind.map(p => ({ x: p.x, y: p.y })),
+          borderColor: "rgba(220,0,0,0.35)",
+          borderWidth: 1,
+          pointRadius: 0,
+          tension: 0.45,
+          cubicInterpolationMode: "monotone"
         }
-      },
-      y: {
-        min: 0,
-        max: Math.ceil(Math.max(
-          ...obsWind.map(p => p.y),
-          ...fcWind.map(p => p.y)
-        ) / 5) * 5,
-        ticks: { stepSize: 2 },
-        title: { display: true, text: "m/s" }
+      ]
+    },
+    options: {
+      responsive: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: {
+          type: "time",
+          time: { unit: "hour", displayFormats: { hour: "HH" } }
+        },
+        y: {
+          min: 0,
+          max: 15,
+          ticks: { stepSize: 3 },
+          title: { display: true, text: "m/s" }
+        }
       }
     }
-  }
-});
+  });
 }
+
     // ==========================
     // TUULENSUUNTA (nuoli otsikkoon)
     // ==========================
