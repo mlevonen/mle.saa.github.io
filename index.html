@@ -614,12 +614,14 @@ new Chart(windCanvas, {
         );
       }
     }
-
-  } catch (err) {
+  } 
+  
+  catch (err) {
     console.error("Popup error:", err);
     popupEl.innerHTML += `<div>Virhe FMI-datan haussa</div>`;
   }
 });
+
 </script>
 
 </body>
