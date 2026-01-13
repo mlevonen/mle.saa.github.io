@@ -549,20 +549,23 @@ if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
     type: "line",
     data: {
       datasets: [
-        {
-          label: "Havainto",
-          data: obsWind.map(p => ({ x: p.x, y: p.y })),
-          borderColor: "rgba(0,128,0,0.35)",
-          borderWidth: 1,
-          pointRadius: 0,
-          tension: 0.45,
-          cubicInterpolationMode: "monotone"
-        },
+		{
+		  label: "Havainto",
+		  data: obsWind.map(p => ({ x: p.x, y: p.y })),
+		  showLine: true,
+		  borderColor: "rgba(0,128,0,0.4)",
+		  borderWidth: 2,
+		  pointRadius: 0,
+		  tension: 0.45,
+		  cubicInterpolationMode: "monotone",
+		  windDirections: obsWind.map(p => p.dir) // ✅ NUOLET
+		},
+
         {
           label: "Ennuste",
           data: fcWind.map(p => ({ x: p.x, y: p.y })),
           borderColor: "rgba(220,0,0,0.35)",
-          borderWidth: 1,
+          borderWidth: 2,
           pointRadius: 0,
           tension: 0.45,
           cubicInterpolationMode: "monotone"
@@ -571,7 +574,7 @@ if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
     },
     options: {
       responsive: false,
-      plugins: { legend: { display: false } },
+      plugins: { legend: { display: false } windArrowPlugin: true },
       scales: {
         x: {
           type: "time",
