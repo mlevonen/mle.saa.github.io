@@ -420,6 +420,7 @@ map.on("popupopen", async e => {
 
 console.log(popupCache[cacheKey] ? "CACHE HIT" : "CACHE MISS", cacheKey);
 
+//LÄMPÖTILAN OTSIKKO
 
 const latestTemp = getLatestObservation(
   obsTemp,
@@ -577,6 +578,40 @@ if (obsPoints.length && fcPoints.length) {
     }
   });
 }
+
+//TUULIGRAAFIN OTSIKKO
+
+const latestWind = getLatestObservation(
+  obsWindSpeed,
+  "utctime",
+  "windspeedms"
+);
+
+if (latestWind) {
+  const windTitle = popupEl.querySelector(
+    'div:has(+ canvas[data-type="wind"])'
+  );
+
+  if (windTitle) {
+    const dir = latestWind.raw.winddirection;
+
+    windTitle.innerHTML = `
+      Tuuli ${latestWind.v.toFixed(1)} m/s
+      <span style="
+        display:inline-block;
+        margin-left:4px;
+        transform:rotate(${dir + 180}deg);
+      ">➤</span>
+    `;
+  }
+}
+
+
+
+
+
+
+
 
 // ==========================
 // TUULI GRAAFI (nopeus)
