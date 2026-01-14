@@ -279,43 +279,8 @@ const windArrowPlugin = {
 };
 
 
+
 Chart.register(windArrowPlugin);
-
-
-
-const nowLinePlugin = {
-  id: "nowLine",
-
-  afterDraw(chart) {
-    const { ctx, chartArea, scales } = chart;
-    const xScale = scales.x;
-
-    if (!xScale) return;
-
-    const now = Date.now();
-
-    // Jos "nyt" ei ole akselin alueella, ei piirretä
-    if (now < xScale.min || now > xScale.max) return;
-
-    const x = xScale.getPixelForValue(now);
-
-    ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(x, chartArea.top);
-    ctx.lineTo(x, chartArea.bottom);
-
-    ctx.strokeStyle = "rgba(0,0,0,0.5)";
-    ctx.lineWidth = 1;
-    ctx.setLineDash([4, 4]); // kevyt katkoviiva
-    ctx.stroke();
-
-    ctx.restore();
-  }
-};
-
-
-Chart.register(nowLinePlugin);
-
 
 
 const temperatureBandsPlugin = {
@@ -518,9 +483,8 @@ if (obsPoints.length && fcPoints.length) {
     options: {
       responsive: false,
       plugins: {
-        legend: { display: false },
-        nowLine: true
-      }
+        legend: { display: false }
+      },
       scales: {
         x: {
           type: "time",
