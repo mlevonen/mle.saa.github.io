@@ -520,7 +520,7 @@ if (obsPoints.length && fcPoints.length) {
       plugins: {
         legend: { display: false },
         nowLine: true
-      }
+      },
       scales: {
         x: {
           type: "time",
