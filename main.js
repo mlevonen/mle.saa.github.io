@@ -609,16 +609,17 @@ console.log("windSeries", windSeries);
 
 new Chart(windCanvas, {
   type: "line",
+
   data: {
     datasets: [
       {
         label: "Tuuli",
         data: windSeries,
         pointRadius: 0,
-
         tension: 0.45,
         cubicInterpolationMode: "monotone",
         spanGaps: true,
+
         segment: {
           borderColor: ctx =>
             ctx.p0.raw.phase === "fc"
@@ -628,30 +629,54 @@ new Chart(windCanvas, {
             ctx.p0.raw.phase === "fc"
               ? [6, 4]
               : []
-	},
+        },
+
         windDirections: windSeries.map(p => p.dir)
       }
     ]
   },
-  
-plugins: {
-  legend: { display: false },
-  windArrowPlugin: true,
 
-  tooltip: {
-    callbacks: {
-      label: ctx => {
-        const v = ctx.raw;
-        if (!v) return "";
+  // ✅ OPTIONS PUUTTUI
+  options: {
+    responsive: false,
 
-        const speed = v.y.toFixed(1);
-        const dir = v.dir;
+    plugins: {
+      legend: { display: false },
+      windArrowPlugin: true,
+      nowLine: true,
 
-        return `${speed} m/s · ${dir}°`;
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            const v = ctx.raw;
+            if (!v) return "";
+
+            const speed = v.y.toFixed(1);
+            const dir = v.dir;
+
+            return `${speed} m/s · ${dir}°`;
+          }
+        }
+      }
+    },
+
+    // ✅ X-AKSELI PAKOLLINEN
+    scales: {
+      x: {
+        type: "time",
+        time: {
+          unit: "hour",
+          displayFormats: { hour: "HH" }
+        }
+      },
+      y: {
+        min: 0,
+        max: 15,
+        ticks: { stepSize: 3 },
+        title: { display: true, text: "m/s" }
       }
     }
   }
-}
 });
 
 
