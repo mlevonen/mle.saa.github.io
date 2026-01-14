@@ -149,6 +149,7 @@ async function fetchForecastREST(lat, lon, params) {
   return res.json();
 }
 
+console.log("Forecast sample", fcWindSpeed?.[0]);
 
 
 function splitPastFuture(values) {
@@ -630,7 +631,7 @@ if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
     .map(p => ({
       x: parseFmiUtc(p.utctime),
       y: p.windspeedms,
-      gust: p.windgust,
+gust: p.windgust ?? p.WindGust,
       dir: p.winddirection   // ← säilytetään
     }))
     .filter(p => p.x <= obsCutoffUtc);
@@ -639,7 +640,7 @@ if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
     .map((p, i) => ({
       x: parseFmiUtc(p.utctime),
       y: p.windspeedms,
-      gust: p.WindGust,
+gust: p.windgust ?? p.WindGust,
       dir: fcWindDir?.[i]?.winddirection
     }))
     .filter(p => p.x > obsCutoffUtc);
