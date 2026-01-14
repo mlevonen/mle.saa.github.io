@@ -149,7 +149,7 @@ async function fetchForecastREST(lat, lon, params) {
   return res.json();
 }
 
-console.log("Forecast sample", fcWindSpeed?.[0]);
+
 
 
 function splitPastFuture(values) {
@@ -395,7 +395,7 @@ map.on("popupopen", async e => {
     let obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir;
 
     if (popupCache[cacheKey]) {
-      ({ obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir } =
+      ({ obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir, fcWindGust } =
         popupCache[cacheKey]);
     } else {
       obsTemp = await fetchTimeSeriesREST(lat, lon, {
@@ -418,9 +418,11 @@ map.on("popupopen", async e => {
   		param: "utctime,WindGust"
 		});
 
+console.log("fcWindSpeed sample", fcWindSpeed?.[0]);
+console.log("fcWindGust sample", fcWindGust?.[0]);
 
       popupCache[cacheKey] = {
-        obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir
+        obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir, fcWindGust,
       };
     }
 
