@@ -252,15 +252,6 @@ const windArrowPlugin = {
 
         const { x, y } = point.getProps(["x", "y"], true);
 
-		// ==========================
-        // VÄRI HAVAINTO vs ENNUSTE
-        // ==========================
-        const color =
-          raw.phase === "fc"
-            ? "rgba(220,0,0,0.9)"   // ennuste = punainen
-            : "rgba(0,140,0,0.9)";  // havainto = vihreä
-
-
         ctx.save();
         ctx.translate(x, y);
         ctx.rotate((dir + 180) * Math.PI / 180);
