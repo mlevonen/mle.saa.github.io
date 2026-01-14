@@ -408,11 +408,16 @@ map.on("popupopen", async e => {
         param: "utctime,windspeedms,winddirection,windgust"
       });
       fcWindSpeed = await fetchForecastREST(lat, lon, {
-        param: "utctime,windspeedms,WindGust"
+        param: "utctime,windspeedms"
       });
       fcWindDir = await fetchForecastREST(lat, lon, {
         param: "winddirection"
       });
+
+		const fcWindGust = await fetchForecastREST(lat, lon, {
+  		param: "utctime,WindGust"
+		});
+
 
       popupCache[cacheKey] = {
         obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir
@@ -636,14 +641,15 @@ gust: p.windgust ?? p.WindGust,
     }))
     .filter(p => p.x <= obsCutoffUtc);
 
-  const rawFcWind = fcWindSpeed
-    .map((p, i) => ({
-      x: parseFmiUtc(p.utctime),
-      y: p.windspeedms,
-gust: p.windgust ?? p.WindGust,
-      dir: fcWindDir?.[i]?.winddirection
-    }))
-    .filter(p => p.x > obsCutoffUtc);
+const rawFcWind = fcWindSpeed
+  .map((p, i) => ({
+    x: parseFmiUtc(p.utctime),
+    y: p.windspeedms,
+    gust: fcWindGust?.[i]?.WindGust ?? null,
+    dir: fcWindDir?.[i]?.winddirection
+  }))
+  .filter(p => p.x > obsCutoffUtc);
+
 
   // --- tihennys VAIN nopeudelle ---
   const obsWind =
