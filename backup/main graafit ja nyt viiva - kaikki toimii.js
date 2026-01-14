@@ -634,20 +634,25 @@ new Chart(windCanvas, {
     ]
   },
   
-plugins: {
-  legend: { display: false },
-  windArrowPlugin: true,
-
-  tooltip: {
-    callbacks: {
-      label: ctx => {
-        const v = ctx.raw;
-        if (!v) return "";
-
-        const speed = v.y.toFixed(1);
-        const dir = v.dir;
-
-        return `${speed} m/s · ${dir}°`;
+  options: {
+    responsive: false,
+    plugins: {
+      legend: { display: false },
+      windArrowPlugin: true
+    },
+    scales: {
+      x: {
+        type: "time",
+        time: {
+          unit: "hour",
+          displayFormats: { hour: "HH" }
+        }
+      },
+      y: {
+        min: 0,
+        max: 15,
+        ticks: { stepSize: 3 },
+        title: { display: true, text: "m/s" }
       }
     }
   }
