@@ -357,6 +357,9 @@ Chart.register(temperatureBandsPlugin);
 // ==========================
 
 map.on("popupopen", async e => {
+
+  console.log("POPUP OPEN");
+
   const popupEl = e.popup.getElement();
   if (!popupEl) return;
 
