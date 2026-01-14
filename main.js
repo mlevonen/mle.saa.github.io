@@ -404,7 +404,7 @@ map.on("popupopen", async e => {
         param: "utctime,temperature"
       });
       obsWindSpeed = await fetchTimeSeriesREST(lat, lon, {
-        param: "utctime,windspeedms,winddirection,WindGust"
+        param: "utctime,windspeedms,winddirection,windgust"
       });
       fcWindSpeed = await fetchForecastREST(lat, lon, {
         param: "utctime,windspeedms,WindGust"
@@ -630,7 +630,7 @@ if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
     .map(p => ({
       x: parseFmiUtc(p.utctime),
       y: p.windspeedms,
-      gust: p.WindGust,
+      gust: p.windgust,
       dir: p.winddirection   // ← säilytetään
     }))
     .filter(p => p.x <= obsCutoffUtc);
