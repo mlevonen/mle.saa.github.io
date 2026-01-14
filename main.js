@@ -248,25 +248,26 @@ const windArrowPlugin = {
 
       meta.data.forEach((point, i) => {
         const dir = dataset.windDirections[i];
-        if (dir == null) return;
+        const raw = dataset.data[i];
+
+        if (dir == null || !raw) return;
 
         const { x, y } = point.getProps(["x", "y"], true);
 
-		// ==========================
+        // ==========================
         // VÄRI HAVAINTO vs ENNUSTE
         // ==========================
         const color =
           raw.phase === "fc"
-            ? "rgba(220,0,0,0.9)"   // ennuste = punainen
-            : "rgba(0,140,0,0.9)";  // havainto = vihreä
-
+            ? "rgba(220,0,0,0.9)"   // ennuste
+            : "rgba(0,140,0,0.9)";  // havainto
 
         ctx.save();
         ctx.translate(x, y);
         ctx.rotate((dir + 180) * Math.PI / 180);
 
-        ctx.fillStyle = dataset.borderColor || "#000"; // ✅ KORJAUS
-        ctx.font = "18px sans-serif";
+        ctx.fillStyle = color;
+        ctx.font = "16px sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText("➤", 0, 0);
