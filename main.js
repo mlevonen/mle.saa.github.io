@@ -392,7 +392,7 @@ map.on("popupopen", async e => {
   const cacheKey = `${lat},${lon}`;
 
   try {
-    let obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir;
+    let obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir, fcWindGust;
 
     if (popupCache[cacheKey]) {
       ({ obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir, fcWindGust } =
@@ -422,7 +422,7 @@ console.log("fcWindSpeed sample", fcWindSpeed?.[0]);
 console.log("fcWindGust sample", fcWindGust?.[0]);
 
       popupCache[cacheKey] = {
-        obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir, fcWindGust,
+        obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir, fcWindGust
       };
     }
 
