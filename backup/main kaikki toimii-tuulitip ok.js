@@ -220,22 +220,6 @@ function interpolateTimeSeries(points, stepMinutes = 30) {
 }
 
 
-function getLatestObservation(data, timeKey, valueKey) {
-  const now = Date.now();
-
-  const past = data
-    .map(d => ({
-      t: parseFmiUtc(d[timeKey]),
-      v: d[valueKey],
-      raw: d
-    }))
-    .filter(p => p.t <= now);
-
-  if (!past.length) return null;
-
-  return past.at(-1);
-}
-
 
 
 
@@ -419,28 +403,6 @@ map.on("popupopen", async e => {
     }
 
 console.log(popupCache[cacheKey] ? "CACHE HIT" : "CACHE MISS", cacheKey);
-
-
-const latestTemp = getLatestObservation(
-  obsTemp,
-  "utctime",
-  "temperature"
-);
-
-if (latestTemp) {
-  const tempTitle = popupEl.querySelector(
-    'div:has(+ canvas[data-type="temp"])'
-  );
-
-  if (tempTitle) {
-    tempTitle.textContent =
-      `Lämpötila ${latestTemp.v.toFixed(1)} °C`;
-  }
-}
-
-
-
-
 
 
  // ==========================
