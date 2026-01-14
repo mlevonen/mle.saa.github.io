@@ -404,10 +404,10 @@ map.on("popupopen", async e => {
         param: "utctime,temperature"
       });
       obsWindSpeed = await fetchTimeSeriesREST(lat, lon, {
-        param: "utctime,windspeedms,winddirection,windgust"
+        param: "utctime,windspeedms,winddirection"
       });
       fcWindSpeed = await fetchForecastREST(lat, lon, {
-        param: "utctime,windspeedms,windgust"
+        param: "utctime,windspeedms"
       });
       fcWindDir = await fetchForecastREST(lat, lon, {
         param: "winddirection"
@@ -630,7 +630,6 @@ if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
     .map(p => ({
       x: parseFmiUtc(p.utctime),
       y: p.windspeedms,
-      gust: p.windgust,
       dir: p.winddirection   // ← säilytetään
     }))
     .filter(p => p.x <= obsCutoffUtc);
@@ -639,7 +638,6 @@ if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
     .map((p, i) => ({
       x: parseFmiUtc(p.utctime),
       y: p.windspeedms,
-      gust: p.windgust,
       dir: fcWindDir?.[i]?.winddirection
     }))
     .filter(p => p.x > obsCutoffUtc);
@@ -671,25 +669,6 @@ const windSeries = [
     dir: p.dir,
     phase: "fc"
   }))
-];
-
-
-const gustSeries = [
-  ...rawObsWind
-    .filter(p => p.gust != null)
-    .map(p => ({
-      x: p.x,
-      y: p.gust,
-      phase: "obs"
-    })),
-
-  ...rawFcWind
-    .filter(p => p.gust != null)
-    .map(p => ({
-      x: p.x,
-      y: p.gust,
-      phase: "fc"
-    }))
 ];
 
 
@@ -726,30 +705,8 @@ new Chart(windCanvas, {
         },
 
         windDirections: windSeries.map(p => p.dir)
-      },
- // ==========================
-  // PUUSKAT
-  // ==========================
-  {
-    label: "Puuska",
-    data: gustSeries,
-    pointRadius: 0,
-    borderWidth: 1,
-    tension: 0.2,
-    spanGaps: true,
-
-    segment: {
-      borderColor: ctx =>
-        ctx.p0.raw.phase === "fc"
-          ? "rgba(220,0,0,0.25)"
-          : "rgba(0,128,0,0.25)",
-      borderDash: ctx =>
-        ctx.p0.raw.phase === "fc"
-          ? [2, 4]
-          : [1, 3]
-    }
-  }
-]
+      }
+    ]
   },
 
   // ✅ OPTIONS PUUTTUI
