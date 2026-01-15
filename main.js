@@ -255,6 +255,7 @@ console.log("SCRIPT LOADED");
 
 const windArrowPlugin = {
   id: "windArrowPlugin",
+
   afterDatasetsDraw(chart) {
     const ctx = chart.ctx;
 
@@ -265,21 +266,15 @@ const windArrowPlugin = {
 
       meta.data.forEach((point, i) => {
         const dir = dataset.windDirections[i];
-        const raw = dataset.data[i];
-
-        if (dir == null || !raw) return;
+        if (dir == null) return;
 
         const { x, y } = point.getProps(["x", "y"], true);
 
-        // ==========================
-        // VÄRI HAVAINTO vs ENNUSTE
-        // ==========================
-		const phase = dataset.phase;
-		const color =
-		  phase === "fc"
-		    ? "rgba(220,0,0,0.9)"
-		    : "rgba(0,140,0,0.9)";
-
+        const phase = dataset.phase;
+        const color =
+          phase === "fc"
+            ? "rgba(220,0,0,0.9)"
+            : "rgba(0,140,0,0.9)";
 
         ctx.save();
         ctx.translate(x, y);
@@ -297,9 +292,7 @@ const windArrowPlugin = {
   }
 };
 
-
 Chart.register(windArrowPlugin);
-
 
 
 const nowLinePlugin = {
