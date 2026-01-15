@@ -414,7 +414,7 @@ map.on("popupopen", async e => {
         param: "winddirection"
       });
 
-	const fcWindGust = await fetchForecastREST(lat, lon, {
+	fcWindGust = await fetchForecastREST(lat, lon, {
 	  param: "utctime,hourlymaximumgust"
 	});
 
