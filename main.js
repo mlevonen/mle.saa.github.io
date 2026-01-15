@@ -709,6 +709,19 @@ const gustSeries = [
 
 console.log("windSeries", windSeries);
 
+//TUULIMAKSIMIN LASKEMINEN ENNEN PIIRTOA
+
+const allWindValues = [
+  ...windSeries.map(p => p.y),
+  ...gustSeries.map(p => p.y)
+].filter(v => typeof v === "number");
+
+const maxWind = allWindValues.length
+  ? Math.max(...allWindValues)
+  : 10;
+
+const yMaxWind = Math.ceil((maxWind + 2) / 5) * 5;
+
 
 new Chart(windCanvas, {
   type: "line",
@@ -794,12 +807,12 @@ new Chart(windCanvas, {
           displayFormats: { hour: "HH" }
         }
       },
-      y: {
-        min: 0,
-        max: 15,
-        ticks: { stepSize: 3 },
-        title: { display: true, text: "m/s" }
-      }
+		y: {
+		  min: 0,
+		  max: yMaxWind,
+		  ticks: { stepSize: 3 },
+		  title: { display: true, text: "m/s" }
+		}
     }
   }
 });
