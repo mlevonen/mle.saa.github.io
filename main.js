@@ -784,10 +784,9 @@ new Chart(windCanvas, {
 
         windDirections: windSeries.map(p => p.dir)
       },
- // ==========================
-  // PUUSKAT
-  // ==========================
-  
+// ==========================
+// PUUSKAT
+// ==========================
 
 {
   label: "Puuska (havainto)",
@@ -797,7 +796,7 @@ new Chart(windCanvas, {
   pointRadius: 3,
   pointBackgroundColor: "rgba(0,128,0,0.9)",
   pointBorderWidth: 0
-}
+},
 
 {
   label: "Puuska (ennuste)",
@@ -811,7 +810,6 @@ new Chart(windCanvas, {
   borderColor: "rgba(220,0,0,0.8)",
   borderDash: [2, 3]
 }
-
 
 
 
