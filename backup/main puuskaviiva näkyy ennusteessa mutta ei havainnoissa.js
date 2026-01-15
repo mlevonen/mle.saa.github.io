@@ -790,30 +790,24 @@ new Chart(windCanvas, {
   
 
 {
-  label: "Puuska (havainto)",
-  data: gustSeries.filter(p => p.phase === "obs"),
+  label: "Puuska",
+  data: gustSeries,
 
-  showLine: false,
-  pointRadius: 3,
-  pointBackgroundColor: "rgba(0,128,0,0.9)",
-  pointBorderWidth: 0
-}
-
-{
-  label: "Puuska (ennuste)",
-  data: gustSeries.filter(p => p.phase === "fc"),
-
-  showLine: true,
-  pointRadius: 0,
+  showLine: true,          // ✅ piirrä viiva
+  pointRadius: 0,          // ei pisteitä
   borderWidth: 1.5,
   tension: 0,
 
-  borderColor: "rgba(220,0,0,0.8)",
-  borderDash: [2, 3]
+  borderColor: ctx =>
+    ctx.raw?.phase === "fc"
+      ? "rgba(220,0,0,0.8)"   // ennuste: punainen
+      : "rgba(0,128,0,0.8)",  // havainto: vihreä
+
+  borderDash: ctx =>
+    ctx.raw?.phase === "fc"
+      ? [2, 3]                // ennuste katkoviiva
+      : []                    // havainto yhtenäinen
 }
-
-
-
 
 ]
   },
