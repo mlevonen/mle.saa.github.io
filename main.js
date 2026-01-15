@@ -414,9 +414,13 @@ map.on("popupopen", async e => {
         param: "winddirection"
       });
 
-		const fcWindGust = await fetchForecastREST(lat, lon, {
-  		param: "utctime,hourlymaximumgust"
-		});
+const fcGustByTime = new Map(
+  (fcWindGust ?? []).map(p => [
+    parseFmiUtc(p.utctime).getTime(),
+    p.hourlymaximumgust
+  ])
+);
+
 
 console.log("fcWindSpeed sample", fcWindSpeed?.[0]);
 console.log("fcWindGust sample", fcWindGust?.[0]);
@@ -644,13 +648,17 @@ gust: p.windgust ?? p.WindGust,
 .filter(p => p.x >= nowUtc);
 
 
-const rawFcWind = fcWindSpeed
-  .map((p, i) => ({
-    x: parseFmiUtc(p.utctime),
+const rawFcWind = fcWindSpeed.map(p => {
+  const t = parseFmiUtc(p.utctime).getTime();
+
+  return {
+    x: new Date(t),
     y: p.windspeedms,
-    gust: fcWindGust?.[i]?.hourlymaximumgust ?? null,
-    dir: fcWindDir?.[i]?.winddirection
-  }))
+    gust: fcGustByTime.get(t) ?? null,
+    dir: fcWindDir?.find(d => d.utctime === p.utctime)?.winddirection
+  };
+});
+
 .filter(p => p.x >= nowUtc);
 
 
@@ -725,6 +733,8 @@ const maxWind = allWindValues.length
 
 const yMaxWind = Math.ceil((maxWind + 2) / 5) * 5;
 
+console.log("fcGustByTime", fcGustByTime);
+console.log("rawFcWind", rawFcWind.slice(0, 3));
 console.log("gustSeries FINAL", gustSeries);
 
 
