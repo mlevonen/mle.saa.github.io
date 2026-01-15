@@ -631,6 +631,17 @@ if (latestWind) {
 if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
 
   const nowUtc = new Date();
+
+  // 🔑 1. rakenna puuskamappi
+  const fcGustByTime = new Map(
+    (fcWindGust ?? []).map(p => [
+      parseFmiUtc(p.utctime).getTime(),
+      p.hourlymaximumgust
+    ])
+  );
+
+
+  
   const OBS_TOLERANCE_MIN = 15;
 
   const obsCutoffUtc = new Date(
