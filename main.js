@@ -752,24 +752,25 @@ new Chart(windCanvas, {
  // ==========================
   // PUUSKAT
   // ==========================
-  {
-    label: "Puuska",
-    data: gustSeries,
-    pointRadius: 0,
-    borderWidth: 1,
-    tension: 0.2,
-    spanGaps: true,
+{
+  label: "Puuska",
+  data: gustSeries,
 
-    segment: {
-      borderColor: ctx =>
-        ctx.p0.raw.phase === "fc"
-          ? "rgba(220,0,0,0.25)"
-          : "rgba(0,128,0,0.25)",
-      borderDash: ctx =>
-        ctx.p0.raw.phase === "fc"
-          ? [2, 4]
-          : [1, 3]
-    }
+  showLine: true,          // 🔑 pakottaa viivan
+  pointRadius: 3,          // 🔑 näkyvät pisteet
+  pointHoverRadius: 4,
+  borderWidth: 1,
+  tension: 0,
+
+  borderColor: "rgba(220,0,0,0.35)",   // 🔑 TARVITAAN
+  borderDash: [2, 4],
+
+  pointBackgroundColor: ctx =>
+    ctx.raw.phase === "fc"
+      ? "rgba(220,0,0,0.8)"
+      : "rgba(0,128,0,0.8)"
+}
+
   }
 ]
   },
