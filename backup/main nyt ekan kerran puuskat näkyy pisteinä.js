@@ -661,8 +661,7 @@ const rawObsWind = obsWindSpeed
     gust: p.windgust != null ? p.windgust : p.WindGust,
     dir: p.winddirection
   }))
-.filter(p => p.x <= obsCutoffUtc);
-
+  .filter(p => p.x >= nowUtc);
 
 
 const rawFcWind = fcWindSpeed
@@ -678,8 +677,7 @@ const rawFcWind = fcWindSpeed
         : null
     };
   })
-.filter(p => p.x > obsCutoffUtc);
-
+  .filter(p => p.x >= nowUtc);
 
 
   // --- tihennys VAIN nopeudelle ---
@@ -793,22 +791,20 @@ new Chart(windCanvas, {
   label: "Puuska",
   data: gustSeries,
 
-  showLine: true,          // ✅ piirrä viiva
-  pointRadius: 0,          // ei pisteitä
-  borderWidth: 1.5,
-  tension: 0,
+  // 🔑 PIIRRETÄÄN VAIN PISTEET
+  showLine: false,
+  pointRadius: 4,
+  pointHoverRadius: 5,
 
-  borderColor: ctx =>
+  // 🔑 VÄRIT VARMASTI NÄKYVIIN
+  pointBackgroundColor: ctx =>
     ctx.raw?.phase === "fc"
-      ? "rgba(220,0,0,0.8)"   // ennuste: punainen
-      : "rgba(0,128,0,0.8)",  // havainto: vihreä
+      ? "rgba(220,0,0,0.9)"
+      : "rgba(0,128,0,0.9)",
 
-  borderDash: ctx =>
-    ctx.raw?.phase === "fc"
-      ? [2, 3]                // ennuste katkoviiva
-      : []                    // havainto yhtenäinen
+  pointBorderColor: "#000",
+  pointBorderWidth: 0
 }
-
 ]
   },
 
