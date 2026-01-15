@@ -806,17 +806,20 @@ new Chart(windCanvas, {
       // ==========================
       // TUULI – ENNUSTE (NUOLET VAIN)
       // ==========================
-      {
-        label: "Tuuli (ennuste)",
-        data: fcWind.map(p => ({ x: p.x, y: p.y })),
+{
+	  label: "Tuuli (ennuste)",
+	  data: fcWind.map(p => ({ x: p.x, y: p.y })),
 
-        showLine: false,        // 🔑 EI VIIVAA
-        borderWidth: 0,
-        pointRadius: 0,
+	  showLine: false,
+	  borderWidth: 0,
 
-        windDirections: fcWind.map(p => p.dir),
-        phase: "fc"
-      },
+	  // 🔑 näkymättömät pisteet (pakolliset nuolille)
+	  pointRadius: 0.01,
+	  pointHoverRadius: 0.01,
+
+	  windDirections: fcWind.map(p => p.dir),
+	  phase: "fc"
+	},
 
       // ==========================
       // PUUSKAT (jos käytössä)
