@@ -820,13 +820,14 @@ new Chart(windCanvas, {
   label: "Tuuli (ennuste)",
   data: fcWind.map(p => ({ x: p.x, y: p.y })),
 
-  // viiva on olemassa mutta näkymätön
-  showLine: true,
-  borderColor: "rgba(0,0,0,0)",   // 🔑 täysin läpinäkyvä
-  borderWidth: 2,
+  showLine: false,
 
-  // pisteitä ei näy
-  pointRadius: 0,
+  // 🔑 NÄKYMÄTTÖMÄT, MUTTA OLEMASSA OLEVAT PISTEET
+  pointRadius: 3,
+  pointHoverRadius: 3,
+  pointBackgroundColor: "rgba(0,0,0,0)",
+  pointBorderColor: "rgba(0,0,0,0)",
+  pointBorderWidth: 0,
 
   // nuolet
   windDirections: fcWind.map(p => p.dir),
