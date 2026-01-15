@@ -752,6 +752,8 @@ new Chart(windCanvas, {
  // ==========================
   // PUUSKAT
   // ==========================
+  
+  console.log("gustSeries", gustSeries);
 {
   label: "Puuska",
   data: gustSeries,
