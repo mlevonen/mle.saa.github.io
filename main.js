@@ -787,14 +787,11 @@ new Chart(windCanvas, {
     datasets: [
 
       // ==========================
-      // TUULI – HAVAINTO
+      // TUULI – HAVAINTO (viiva + nuolet)
       // ==========================
       {
         label: "Tuuli (havainto)",
-        data: obsWind.map(p => ({
-          x: p.x,
-          y: p.y
-        })),
+        data: obsWind.map(p => ({ x: p.x, y: p.y })),
 
         borderColor: "rgba(0,128,0,0.6)",
         borderWidth: 2,
@@ -802,60 +799,34 @@ new Chart(windCanvas, {
         tension: 0.45,
         cubicInterpolationMode: "monotone",
 
-        // vihreät nuolet
         windDirections: obsWind.map(p => p.dir),
         phase: "obs"
       },
 
       // ==========================
-      // TUULI – ENNUSTE
+      // TUULI – ENNUSTE (NUOLET VAIN)
       // ==========================
       {
         label: "Tuuli (ennuste)",
-        data: fcWind.map(p => ({
-          x: p.x,
-          y: p.y
-        })),
+        data: fcWind.map(p => ({ x: p.x, y: p.y })),
 
-        borderColor: "rgba(220,0,0,0.6)",
-        borderWidth: 2,
-        borderDash: [6, 4],
+        showLine: false,        // 🔑 EI VIIVAA
+        borderWidth: 0,
         pointRadius: 0,
-        tension: 0.45,
-        cubicInterpolationMode: "monotone",
 
-        // punaiset nuolet
         windDirections: fcWind.map(p => p.dir),
         phase: "fc"
       },
 
       // ==========================
-      // PUUSKA – HAVAINTO (pisteet)
+      // PUUSKAT (jos käytössä)
       // ==========================
       {
-        label: "Puuska (havainto)",
-        data: gustSeries.filter(p => p.phase === "obs"),
-
+        label: "Puuska",
+        data: gustSeries,
         showLine: false,
         pointRadius: 3,
-        pointBackgroundColor: "rgba(0,128,0,0.9)",
-        pointBorderWidth: 0
-      },
-
-      // ==========================
-      // PUUSKA – ENNUSTE (viiva)
-      // ==========================
-      {
-        label: "Puuska (ennuste)",
-        data: gustSeries.filter(p => p.phase === "fc"),
-
-        showLine: true,
-        pointRadius: 0,
-        borderWidth: 1.5,
-        tension: 0,
-
-        borderColor: "rgba(220,0,0,0.8)",
-        borderDash: [2, 3]
+        pointBackgroundColor: "rgba(220,0,0,0.8)"
       }
     ]
   },
@@ -866,27 +837,13 @@ new Chart(windCanvas, {
     plugins: {
       legend: { display: false },
       windArrowPlugin: true,
-      nowLine: true,
-
-      tooltip: {
-        callbacks: {
-          label: ctx => {
-            const v = ctx.raw;
-            if (!v) return "";
-
-            return `${v.y.toFixed(1)} m/s`;
-          }
-        }
-      }
+      nowLine: true
     },
 
     scales: {
       x: {
         type: "time",
-        time: {
-          unit: "hour",
-          displayFormats: { hour: "HH" }
-        }
+        time: { unit: "hour", displayFormats: { hour: "HH" } }
       },
       y: {
         min: 0,
