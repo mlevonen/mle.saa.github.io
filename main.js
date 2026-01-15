@@ -733,7 +733,7 @@ const fcWindDataset = {
   // nuolet
   windDirections: fcWind.map(p => p.dir),
   phase: "fc"
-}
+};
 
 
 
