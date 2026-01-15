@@ -770,7 +770,7 @@ new Chart(windCanvas, {
       ? "rgba(220,0,0,0.8)"
       : "rgba(0,128,0,0.8)"
 
-	}
+	
   }
 ]
   },
