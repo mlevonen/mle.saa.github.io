@@ -388,7 +388,7 @@ map.on("popupopen", async e => {
         param: "utctime,temperature"
       });
       obsWindSpeed = await fetchTimeSeriesREST(lat, lon, {
-        param: "utctime,windspeedms,winddirection,windgust"
+        param: "utctime,windspeedms,winddirection"
       });
       fcWindSpeed = await fetchForecastREST(lat, lon, {
         param: "utctime,windspeedms"
@@ -396,10 +396,6 @@ map.on("popupopen", async e => {
       fcWindDir = await fetchForecastREST(lat, lon, {
         param: "winddirection"
       });
-      fcWindGust = await fetchForecastREST(lat, lon, {
-	  param: "utctime,hourlymaximumgust"
-		});
-
 
       popupCache[cacheKey] = {
         obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir
@@ -602,26 +598,6 @@ const windSeries = [
   }))
 ];
 
-//PUUSKAT
-
-const gustSeries = [
-  ...obsWindSpeed
-    .filter(p => p.windgust != null)
-    .map(p => ({
-      x: parseFmiUtc(p.utctime),
-      y: p.windgust,
-      phase: "obs"
-    })),
-
-  ...(fcWindGust ?? [])
-    .filter(p => p.hourlymaximumgust != null)
-    .map(p => ({
-      x: parseFmiUtc(p.utctime),
-      y: p.hourlymaximumgust,
-      phase: "fc"
-    }))
-];
-
 
 
   const windCanvas = popupEl.querySelector('canvas[data-type="wind"]');
@@ -631,57 +607,46 @@ const gustSeries = [
 console.log("windSeries", windSeries);
 
 
-// ==========================
-// Y-AKSELIN MAKSIMI (tuuli + puuskat)
-// ==========================
-const allWindValues = [
-  ...windSeries.map(p => p.y),
-  ...gustSeries.map(p => p.y)
-].filter(v => typeof v === "number");
-
-const yMaxWind = allWindValues.length
-  ? Math.ceil((Math.max(...allWindValues) + 2) / 5) * 5
-  : 15;
-
-
-
-
-console.log("gustSeries", gustSeries);
-
 new Chart(windCanvas, {
   type: "line",
+
   data: {
     datasets: [
       {
         label: "Tuuli",
         data: windSeries,
+
+        // viiva jää, mutta hillitty
         borderColor: "rgba(0,0,0,0.15)",
         borderWidth: 1,
         pointRadius: 0,
         tension: 0.45,
         cubicInterpolationMode: "monotone",
+
         windDirections: windSeries.map(p => p.dir)
-      },
-      {
-        label: "Puuska",
-        data: gustSeries,
-        showLine: false,
-        pointRadius: 3,
-        pointBackgroundColor: ctx =>
-          ctx.raw.phase === "fc"
-            ? "rgba(220,0,0,0.9)"
-            : "rgba(0,140,0,0.9)",
-        pointBorderWidth: 0
       }
     ]
   },
+
   options: {
     responsive: false,
+
     plugins: {
       legend: { display: false },
       windArrowPlugin: true,
-      nowLine: true
+      nowLine: true,
+
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            const v = ctx.raw;
+            if (!v) return "";
+            return `${v.y.toFixed(1)} m/s · ${v.dir}°`;
+          }
+        }
+      }
     },
+
     scales: {
       x: {
         type: "time",
@@ -689,7 +654,7 @@ new Chart(windCanvas, {
       },
       y: {
         min: 0,
-        max: yMaxWind,   // 🔑 TÄSSÄ KÄYTETÄÄN
+        max: 15,
         ticks: { stepSize: 3 },
         title: { display: true, text: "m/s" }
       }
