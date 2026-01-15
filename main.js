@@ -615,28 +615,19 @@ new Chart(windCanvas, {
       {
         label: "Tuuli",
         data: windSeries,
+
+        // viiva jää, mutta hillitty
+        borderColor: "rgba(0,0,0,0.15)",
+        borderWidth: 1,
         pointRadius: 0,
         tension: 0.45,
         cubicInterpolationMode: "monotone",
-        spanGaps: true,
-
-        segment: {
-          borderColor: ctx =>
-            ctx.p0.raw.phase === "fc"
-              ? "rgba(220,0,0,0.5)"
-              : "rgba(0,128,0,0.5)",
-          borderDash: ctx =>
-            ctx.p0.raw.phase === "fc"
-              ? [6, 4]
-              : []
-        },
 
         windDirections: windSeries.map(p => p.dir)
       }
     ]
   },
 
-  // ✅ OPTIONS PUUTTUI
   options: {
     responsive: false,
 
@@ -650,24 +641,16 @@ new Chart(windCanvas, {
           label: ctx => {
             const v = ctx.raw;
             if (!v) return "";
-
-            const speed = v.y.toFixed(1);
-            const dir = v.dir;
-
-            return `${speed} m/s · ${dir}°`;
+            return `${v.y.toFixed(1)} m/s · ${v.dir}°`;
           }
         }
       }
     },
 
-    // ✅ X-AKSELI PAKOLLINEN
     scales: {
       x: {
         type: "time",
-        time: {
-          unit: "hour",
-          displayFormats: { hour: "HH" }
-        }
+        time: { unit: "hour", displayFormats: { hour: "HH" } }
       },
       y: {
         min: 0,
