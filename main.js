@@ -280,7 +280,10 @@ const windArrowPlugin = {
         ctx.translate(x, y);
         ctx.rotate((dir + 180) * Math.PI / 180);
 
-        ctx.fillStyle = color;
+        ctx.fillStyle =
+  			phase === "fc"
+    		? "rgba(220,0,0,0.9)"   // ennuste
+    		: "rgba(0,140,0,0.9)"; // havainto
         ctx.font = "16px sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
@@ -807,19 +810,21 @@ new Chart(windCanvas, {
       // TUULI – ENNUSTE (NUOLET VAIN)
       // ==========================
 {
-	  label: "Tuuli (ennuste)",
-	  data: fcWind.map(p => ({ x: p.x, y: p.y })),
+  label: "Tuuli (ennuste)",
+  data: fcWind.map(p => ({ x: p.x, y: p.y })),
 
-	  showLine: false,
-	  borderWidth: 0,
+  // viiva on olemassa mutta näkymätön
+  showLine: true,
+  borderColor: "rgba(0,0,0,0)",   // 🔑 täysin läpinäkyvä
+  borderWidth: 2,
 
-	  // 🔑 näkymättömät pisteet (pakolliset nuolille)
-	  pointRadius: 0.01,
-	  pointHoverRadius: 0.01,
+  // pisteitä ei näy
+  pointRadius: 0,
 
-	  windDirections: fcWind.map(p => p.dir),
-	  phase: "fc"
-	},
+  // nuolet
+  windDirections: fcWind.map(p => p.dir),
+  phase: "fc"
+},
 
       // ==========================
       // PUUSKAT (jos käytössä)
