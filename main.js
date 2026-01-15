@@ -274,10 +274,12 @@ const windArrowPlugin = {
         // ==========================
         // VÄRI HAVAINTO vs ENNUSTE
         // ==========================
-        const color =
-          raw.phase === "fc"
-            ? "rgba(220,0,0,0.9)"   // ennuste
-            : "rgba(0,140,0,0.9)";  // havainto
+		const phase = dataset.phase;
+		const color =
+		  phase === "fc"
+		    ? "rgba(220,0,0,0.9)"
+		    : "rgba(0,140,0,0.9)";
+
 
         ctx.save();
         ctx.translate(x, y);
@@ -764,14 +766,16 @@ const gustSeries = [
   const oldWind = Chart.getChart(windCanvas);
   if (oldWind) oldWind.destroy();
 
-console.log("windSeries", windSeries);
+
 
 //TUULIMAKSIMIN LASKEMINEN ENNEN PIIRTOA
 
 const allWindValues = [
-  ...windSeries.map(p => p.y),
+  ...obsWind.map(p => p.y),
+  ...fcWind.map(p => p.y),
   ...gustSeries.map(p => p.y)
 ].filter(v => typeof v === "number");
+
 
 const maxWind = allWindValues.length
   ? Math.max(...allWindValues)
@@ -790,60 +794,81 @@ new Chart(windCanvas, {
 
   data: {
     datasets: [
+
+      // ==========================
+      // TUULI – HAVAINTO
+      // ==========================
       {
-        label: "Tuuli",
-        data: windSeries,
+        label: "Tuuli (havainto)",
+        data: obsWind.map(p => ({
+          x: p.x,
+          y: p.y
+        })),
+
+        borderColor: "rgba(0,128,0,0.6)",
+        borderWidth: 2,
         pointRadius: 0,
         tension: 0.45,
         cubicInterpolationMode: "monotone",
-        spanGaps: true,
 
-        segment: {
-          borderColor: ctx =>
-            ctx.p0.raw.phase === "fc"
-              ? "rgba(220,0,0,0.5)"
-              : "rgba(0,128,0,0.5)",
-          borderDash: ctx =>
-            ctx.p0.raw.phase === "fc"
-              ? [6, 4]
-              : []
-        },
-
-        windDirections: windSeries.map(p => p.dir)
+        // vihreät nuolet
+        windDirections: obsWind.map(p => p.dir),
+        phase: "obs"
       },
-// ==========================
-// PUUSKAT
-// ==========================
 
-{
-  label: "Puuska (havainto)",
-  data: gustSeries.filter(p => p.phase === "obs"),
+      // ==========================
+      // TUULI – ENNUSTE
+      // ==========================
+      {
+        label: "Tuuli (ennuste)",
+        data: fcWind.map(p => ({
+          x: p.x,
+          y: p.y
+        })),
 
-  showLine: false,
-  pointRadius: 3,
-  pointBackgroundColor: "rgba(0,128,0,0.9)",
-  pointBorderWidth: 0
-},
+        borderColor: "rgba(220,0,0,0.6)",
+        borderWidth: 2,
+        borderDash: [6, 4],
+        pointRadius: 0,
+        tension: 0.45,
+        cubicInterpolationMode: "monotone",
 
-{
-  label: "Puuska (ennuste)",
-  data: gustSeries.filter(p => p.phase === "fc"),
+        // punaiset nuolet
+        windDirections: fcWind.map(p => p.dir),
+        phase: "fc"
+      },
 
-  showLine: true,
-  pointRadius: 0,
-  borderWidth: 1.5,
-  tension: 0,
+      // ==========================
+      // PUUSKA – HAVAINTO (pisteet)
+      // ==========================
+      {
+        label: "Puuska (havainto)",
+        data: gustSeries.filter(p => p.phase === "obs"),
 
-  borderColor: "rgba(220,0,0,0.8)",
-  borderDash: [2, 3]
-}
+        showLine: false,
+        pointRadius: 3,
+        pointBackgroundColor: "rgba(0,128,0,0.9)",
+        pointBorderWidth: 0
+      },
 
+      // ==========================
+      // PUUSKA – ENNUSTE (viiva)
+      // ==========================
+      {
+        label: "Puuska (ennuste)",
+        data: gustSeries.filter(p => p.phase === "fc"),
 
+        showLine: true,
+        pointRadius: 0,
+        borderWidth: 1.5,
+        tension: 0,
 
-]
+        borderColor: "rgba(220,0,0,0.8)",
+        borderDash: [2, 3]
+      }
+    ]
   },
 
-  // ✅ OPTIONS PUUTTUI
   options: {
     responsive: false,
 
@@ -858,16 +883,12 @@ new Chart(windCanvas, {
             const v = ctx.raw;
             if (!v) return "";
 
-            const speed = v.y.toFixed(1);
-            const dir = v.dir;
-
-            return `${speed} m/s · ${dir}°`;
+            return `${v.y.toFixed(1)} m/s`;
           }
         }
       }
     },
 
-    // ✅ X-AKSELI PAKOLLINEN
     scales: {
       x: {
         type: "time",
@@ -876,12 +897,12 @@ new Chart(windCanvas, {
           displayFormats: { hour: "HH" }
         }
       },
-		y: {
-		  min: 0,
-		  max: yMaxWind,
-		  ticks: { stepSize: 3 },
-		  title: { display: true, text: "m/s" }
-		}
+      y: {
+        min: 0,
+        max: yMaxWind,
+        ticks: { stepSize: 3 },
+        title: { display: true, text: "m/s" }
+      }
     }
   }
 });
