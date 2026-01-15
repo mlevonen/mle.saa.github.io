@@ -641,7 +641,8 @@ if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
 gust: p.windgust ?? p.WindGust,
       dir: p.winddirection   // ← säilytetään
     }))
-    .filter(p => p.x <= obsCutoffUtc);
+.filter(p => p.x >= nowUtc);
+
 
 const rawFcWind = fcWindSpeed
   .map((p, i) => ({
@@ -650,7 +651,8 @@ const rawFcWind = fcWindSpeed
     gust: fcWindGust?.[i]?.hourlymaximumgust ?? null,
     dir: fcWindDir?.[i]?.winddirection
   }))
-  .filter(p => p.x > obsCutoffUtc);
+.filter(p => p.x >= nowUtc);
+
 
 
   // --- tihennys VAIN nopeudelle ---
@@ -700,6 +702,7 @@ const gustSeries = [
       phase: "fc"
     }))
 ];
+
 
 
 
