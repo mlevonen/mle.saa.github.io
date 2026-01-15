@@ -415,7 +415,7 @@ map.on("popupopen", async e => {
       });
 
 		const fcWindGust = await fetchForecastREST(lat, lon, {
-  		param: "utctime,WindGust"
+  		param: "utctime,hourlymaximumgust"
 		});
 
 console.log("fcWindSpeed sample", fcWindSpeed?.[0]);
@@ -647,7 +647,7 @@ const rawFcWind = fcWindSpeed
   .map((p, i) => ({
     x: parseFmiUtc(p.utctime),
     y: p.windspeedms,
-    gust: fcWindGust?.[i]?.WindGust ?? null,
+    gust: fcWindGust?.[i]?.hourlymaximumgust ?? null,
     dir: fcWindDir?.[i]?.winddirection
   }))
   .filter(p => p.x > obsCutoffUtc);
