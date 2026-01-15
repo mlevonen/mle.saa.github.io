@@ -725,18 +725,16 @@ const fcWindDataset = {
     y: p.y
   })),
 
-  borderColor: "rgba(220,0,0,0.6)",
-  borderWidth: 2,
-  borderDash: [6, 4],
+  // 🔑 EI VIIVAA
+  showLine: false,
+  borderWidth: 0,
   pointRadius: 0,
-  tension: 0.45,
-  cubicInterpolationMode: "monotone",
 
   // nuolet
   windDirections: fcWind.map(p => p.dir),
-
   phase: "fc"
-};
+}
+
 
 
 
