@@ -414,12 +414,17 @@ map.on("popupopen", async e => {
         param: "winddirection"
       });
 
-const fcGustByTime = new Map(
-  (fcWindGust ?? []).map(p => [
-    parseFmiUtc(p.utctime).getTime(),
-    p.hourlymaximumgust
-  ])
-);
+	const fcWindGust = await fetchForecastREST(lat, lon, {
+	  param: "utctime,hourlymaximumgust"
+	});
+
+
+	const fcGustByTime = new Map(
+	  (fcWindGust ?? []).map(p => [
+	    parseFmiUtc(p.utctime).getTime(),
+	    p.hourlymaximumgust
+	  ])
+	);
 
 
 console.log("fcWindSpeed sample", fcWindSpeed?.[0]);
