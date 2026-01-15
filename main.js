@@ -375,10 +375,10 @@ map.on("popupopen", async e => {
   const cacheKey = `${lat},${lon}`;
 
   try {
-    let obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir;
+    let obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir, fcWindGust;
 
     if (popupCache[cacheKey]) {
-      ({ obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir } =
+      ({ obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir, fcWindGust } =
         popupCache[cacheKey]);
     } else {
       obsTemp = await fetchTimeSeriesREST(lat, lon, {
@@ -402,7 +402,7 @@ map.on("popupopen", async e => {
 
 
       popupCache[cacheKey] = {
-        obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir
+        obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir, fcWindGust
       };
     }
 
