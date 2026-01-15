@@ -637,30 +637,31 @@ if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
     nowUtc.getTime() + OBS_TOLERANCE_MIN * 60_000
   );
 
-  // --- raakapisteet ---
-  const rawObsWind = obsWindSpeed
-    .map(p => ({
-      x: parseFmiUtc(p.utctime),
-      y: p.windspeedms,
-gust: p.windgust ?? p.WindGust,
-      dir: p.winddirection   // ← säilytetään
-    }))
-.filter(p => p.x >= nowUtc);
-
-
-const rawFcWind = fcWindSpeed.map(p => {
-  const t = parseFmiUtc(p.utctime).getTime();
-
-  return {
-    x: new Date(t),
+// --- raakapisteet ---
+const rawObsWind = obsWindSpeed
+  .map(p => ({
+    x: parseFmiUtc(p.utctime),
     y: p.windspeedms,
-    gust: fcGustByTime.get(t) ?? null,
-    dir: fcWindDir?.find(d => d.utctime === p.utctime)?.winddirection
-  };
-});
+    gust: p.windgust != null ? p.windgust : p.WindGust,
+    dir: p.winddirection
+  }))
+  .filter(p => p.x >= nowUtc);
 
-.filter(p => p.x >= nowUtc);
 
+const rawFcWind = fcWindSpeed
+  .map(p => {
+    const t = parseFmiUtc(p.utctime).getTime();
+
+    return {
+      x: new Date(t),
+      y: p.windspeedms,
+      gust: fcGustByTime.get(t),
+      dir: fcWindDir
+        ? fcWindDir.find(d => d.utctime === p.utctime)?.winddirection
+        : null
+    };
+  })
+  .filter(p => p.x >= nowUtc);
 
 
   // --- tihennys VAIN nopeudelle ---
