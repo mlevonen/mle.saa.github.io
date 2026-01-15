@@ -253,6 +253,13 @@ console.log("SCRIPT LOADED");
 
 // TUULINUOLIPLUGIN
 
+console.log(
+  "wind arrows",
+  dataset.label,
+  chart.getDatasetMeta(datasetIndex).data.length
+);
+
+
 const windArrowPlugin = {
   id: "windArrowPlugin",
 
