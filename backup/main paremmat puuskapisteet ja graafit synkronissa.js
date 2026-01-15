@@ -696,46 +696,19 @@ const rawFcWind = fcWindSpeed
 // ==========================
 // YHDISTETTY TUULISARJA (havainto + ennuste)
 // ==========================
-const obsWindDataset = {
-  label: "Tuuli (havainto)",
-  data: obsWind.map(p => ({
+const windSeries = [
+  ...obsWind.map(p => ({
     x: p.x,
-    y: p.y
+    y: p.y,
+    dir: p.dir,
+    phase: "obs"
   })),
-
-  borderColor: "rgba(0,128,0,0.6)",
-  borderWidth: 2,
-  pointRadius: 0,
-  tension: 0.45,
-  cubicInterpolationMode: "monotone",
-
-  // nuolet
-  windDirections: obsWind.map(p => p.dir),
-
-  // metadata pluginille
-  phase: "obs"
-};
-
-const fcWindDataset = {
-  label: "Tuuli (ennuste)",
-  data: fcWind.map(p => ({
+  ...fcWind.map(p => ({
     x: p.x,
-    y: p.y
-  })),
-
-  borderColor: "rgba(220,0,0,0.6)",
-  borderWidth: 2,
-  borderDash: [6, 4],
-  pointRadius: 0,
-  tension: 0.45,
-  cubicInterpolationMode: "monotone",
-
-  // nuolet
-  windDirections: fcWind.map(p => p.dir),
-
-  phase: "fc"
-};
-
+    y: p.y,
+    dir: p.dir,
+    phase: "fc"
+  }))
 ];
 
 
