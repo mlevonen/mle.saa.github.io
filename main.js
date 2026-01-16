@@ -381,11 +381,6 @@ map.on("popupopen", async e => {
 
   console.log("POPUP OPEN");
   
-  console.log(
-  "OBS GUST SAMPLE",
-  obsWindSpeed?.slice(-3)
-);
-
   const popupEl = e.popup.getElement();
   if (!popupEl) return;
 
@@ -429,6 +424,13 @@ map.on("popupopen", async e => {
     }
 
 console.log(popupCache[cacheKey] ? "CACHE HIT" : "CACHE MISS", cacheKey);
+
+console.log(
+  "OBS WIND SAMPLE",
+  obsWindSpeed?.slice(-3)
+);
+
+
 
 // ==========================
 // NYT-HETKEN PUUSKA (havainto)
