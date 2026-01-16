@@ -409,26 +409,6 @@ map.on("popupopen", async e => {
 console.log(popupCache[cacheKey] ? "CACHE HIT" : "CACHE MISS", cacheKey);
 
 
-const latestTemp = getLatestObservation(
-  obsTemp,
-  "utctime",
-  "temperature"
-);
-
-if (latestTemp) {
-  const tempTitle = popupEl.querySelector(
-    'div:has(+ canvas[data-type="temp"])'
-  );
-
-  if (tempTitle) {
-    tempTitle.textContent =
-      `Lämpötila ${latestTemp.v.toFixed(1)} °C`;
-  }
-}
-
-
-
-
  // ==========================
 // LÄMPÖTILA GRAAFI
 // ==========================
@@ -563,41 +543,6 @@ if (obsPoints.length && fcPoints.length) {
     }
   });
 }
-
-
-
-const latestWind = getLatestObservation(
-  obsWindSpeed,
-  "utctime",
-  "windspeedms"
-);
-
-const latestGust = getLatestObservation(
-  obsWindSpeed,
-  "utctime",
-  "windgust"
-);
-
-
-if (latestWind) {
-  const windTitle = popupEl.querySelector(
-    'div:has(+ canvas[data-type="wind"])'
-  );
-
-  if (windTitle) {
-    const speed = latestWind.v.toFixed(1);
-
-    const gustText = latestGust && latestGust.v != null
-      ? ` (puuskat ${latestGust.v.toFixed(1)} m/s)`
-      : "";
-
-    windTitle.textContent =
-      `Tuuli ${speed} m/s${gustText}`;
-  }
-}
-
-
-
 
 // ==========================
 // TUULI GRAAFI (nopeus)
