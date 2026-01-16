@@ -622,7 +622,7 @@ const gustFc = (fcWindGust ?? [])
     y: p.hourlymaximumgust
   }));
 
-];
+
 
 
 
