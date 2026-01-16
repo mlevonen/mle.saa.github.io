@@ -650,7 +650,7 @@ const yMaxWind = allWindValues.length
 
 
 
-console.log("gustSeries", gustSeries);
+
 
 new Chart(windCanvas, {
   type: "line",
