@@ -430,6 +430,29 @@ console.log(
   obsWindSpeed?.slice(-3)
 );
 
+// ==========================
+// NYT-HETKEN PUUSKA (ENNUSTE)
+// ==========================
+const latestForecastGust = (() => {
+  if (!Array.isArray(fcWindGust)) return null;
+
+  const now = Date.now();
+
+  const past = fcWindGust
+    .map(d => ({
+      t: parseFmiUtc(d.utctime),
+      v: d.hourlymaximumgust
+    }))
+    .filter(p => p.t && p.t.getTime() <= now && p.v != null);
+
+  if (!past.length) return null;
+
+  return past.at(-1);
+})();
+
+
+
+
 
 
 const latestForecastGust = (() => {
@@ -651,9 +674,7 @@ if (latestWind) {
     const speed = latestWind.v.toFixed(1);
 
     let gustText = "";
-    if (latestGust?.v != null) {
-      gustText = ` (puuskat ${latestGust.v.toFixed(1)} m/s)`;
-    } else if (latestForecastGust?.v != null) {
+    if (latestForecastGust?.v != null) {
       gustText = ` (puuskat ${latestForecastGust.v.toFixed(1)} m/s, enn.)`;
     }
 
@@ -661,6 +682,9 @@ if (latestWind) {
       `Tuuli ${speed} m/s${gustText}`;
   }
 }
+
+console.log("FC GUST SAMPLE", fcWindGust?.slice(-3));
+
 
 
 
