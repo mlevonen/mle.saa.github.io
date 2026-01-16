@@ -425,6 +425,28 @@ map.on("popupopen", async e => {
 
 console.log(popupCache[cacheKey] ? "CACHE HIT" : "CACHE MISS", cacheKey);
 
+const latestGust = (() => {
+  if (!Array.isArray(obsWindSpeed)) return null;
+
+  const now = Date.now();
+
+  const past = obsWindSpeed
+    .map(d => ({
+      t: parseFmiUtc(d.utctime),
+      v:
+        d.windgust ??
+        d.WindGust ??
+        d.hourlymaximumgust ??
+        null
+    }))
+    .filter(p => p.t && p.t.getTime() <= now && p.v != null);
+
+  if (!past.length) return null;
+
+  return past.at(-1);
+})();
+
+
 
 const latestTemp = getLatestObservation(
   obsTemp,
@@ -607,27 +629,6 @@ if (latestWind) {
       `Tuuli ${speed} m/s${gustText}`;
   }
 }
-
-const latestGust = (() => {
-  if (!Array.isArray(obsWindSpeed)) return null;
-
-  const now = Date.now();
-
-  const past = obsWindSpeed
-    .map(d => ({
-      t: parseFmiUtc(d.utctime),
-      v:
-        d.windgust ??
-        d.WindGust ??
-        d.hourlymaximumgust ??
-        null
-    }))
-    .filter(p => p.t && p.t.getTime() <= now && p.v != null);
-
-  if (!past.length) return null;
-
-  return past.at(-1);
-})();
 
 
 
