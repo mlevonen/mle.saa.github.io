@@ -725,7 +725,20 @@ datasets: [
 
 
 
-
+    // ==========================
+    // TUULENSUUNTA (nuoli otsikkoon)
+    // ==========================
+    const latestDir = fcWindDir?.at(-1)?.winddirection;
+    if (latestDir !== undefined) {
+      const title = popupEl.querySelector(".popup-title");
+      if (title && !title.dataset.windAdded) {
+        title.dataset.windAdded = "1";
+        title.insertAdjacentHTML(
+          "beforeend",
+          ` <span style="display:inline-block;transform:rotate(${latestDir+180}deg)">➤</span>`
+        );
+      }
+    }
   } 
   
   } 
