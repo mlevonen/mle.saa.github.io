@@ -380,6 +380,11 @@ Chart.register(temperatureBandsPlugin);
 map.on("popupopen", async e => {
 
   console.log("POPUP OPEN");
+  
+  console.log(
+  "OBS GUST SAMPLE",
+  obsWindSpeed?.slice(-3)
+);
 
   const popupEl = e.popup.getElement();
   if (!popupEl) return;
