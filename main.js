@@ -432,6 +432,25 @@ console.log(
 
 
 
+const latestForecastGust = (() => {
+  if (!Array.isArray(fcWindGust)) return null;
+
+  const now = Date.now();
+
+  const past = fcWindGust
+    .map(d => ({
+      t: parseFmiUtc(d.utctime),
+      v: d.hourlymaximumgust
+    }))
+    .filter(p => p.t && p.t.getTime() <= now && p.v != null);
+
+  if (!past.length) return null;
+
+  return past.at(-1);
+})();
+
+
+
 // ==========================
 // NYT-HETKEN PUUSKA (havainto)
 // ==========================
@@ -631,14 +650,18 @@ if (latestWind) {
   if (windTitle) {
     const speed = latestWind.v.toFixed(1);
 
-    const gustText = latestGust && latestGust.v != null
-      ? ` (puuskat ${latestGust.v.toFixed(1)} m/s)`
-      : "";
+    let gustText = "";
+    if (latestGust?.v != null) {
+      gustText = ` (puuskat ${latestGust.v.toFixed(1)} m/s)`;
+    } else if (latestForecastGust?.v != null) {
+      gustText = ` (puuskat ${latestForecastGust.v.toFixed(1)} m/s, enn.)`;
+    }
 
     windTitle.textContent =
       `Tuuli ${speed} m/s${gustText}`;
   }
 }
+
 
 
 
