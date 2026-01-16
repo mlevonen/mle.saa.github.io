@@ -220,6 +220,23 @@ function interpolateTimeSeries(points, stepMinutes = 30) {
 }
 
 
+function getLatestObservation(data, timeKey, valueKey) {
+  if (!Array.isArray(data)) return null;
+
+  const now = Date.now();
+
+  const past = data
+    .map(d => ({
+      t: parseFmiUtc(d[timeKey]),
+      v: d[valueKey],
+      raw: d
+    }))
+    .filter(p => p.t && p.t.getTime() <= now && p.v != null);
+
+  if (!past.length) return null;
+
+  return past.at(-1);
+}
 
 
 
