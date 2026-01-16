@@ -604,24 +604,22 @@ const windSeries = [
 
 //PUUSKAT
 
-// ==========================
-// PUUSKAT: havainto vs ennuste
-// ==========================
+const gustSeries = [
+  ...obsWindSpeed
+    .filter(p => p.windgust != null)
+    .map(p => ({
+      x: parseFmiUtc(p.utctime),
+      y: p.windgust,
+      phase: "obs"
+    })),
 
-const gustObs = obsWindSpeed
-  .filter(p => p.windgust != null)
-  .map(p => ({
-    x: parseFmiUtc(p.utctime),
-    y: p.windgust
-  }));
-
-const gustFc = (fcWindGust ?? [])
-  .filter(p => p.hourlymaximumgust != null)
-  .map(p => ({
-    x: parseFmiUtc(p.utctime),
-    y: p.hourlymaximumgust
-  }));
-
+  ...(fcWindGust ?? [])
+    .filter(p => p.hourlymaximumgust != null)
+    .map(p => ({
+      x: parseFmiUtc(p.utctime),
+      y: p.hourlymaximumgust,
+      phase: "fc"
+    }))
 ];
 
 
@@ -638,8 +636,7 @@ console.log("windSeries", windSeries);
 // ==========================
 const allWindValues = [
   ...windSeries.map(p => p.y),
-  ...gustObs.map(p => p.y),
-  ...gustFc.map(p => p.y)
+  ...gustSeries.map(p => p.y)
 ].filter(v => typeof v === "number");
 
 const yMaxWind = allWindValues.length
@@ -649,57 +646,34 @@ const yMaxWind = allWindValues.length
 
 
 
-
 console.log("gustSeries", gustSeries);
 
 new Chart(windCanvas, {
   type: "line",
   data: {
-datasets: [
-  // ==========================
-  // PERUSTUULI (nuolet, ennuste + havainto)
-  // ==========================
-  {
-    label: "Tuuli",
-    data: windSeries,
-    borderColor: "rgba(0,0,0,0.15)",
-    borderWidth: 1,
-    pointRadius: 0,
-    tension: 0.45,
-    cubicInterpolationMode: "monotone",
-    windDirections: windSeries.map(p => p.dir)
-  },
-
-  // ==========================
-  // PUUSKAT – HAVAINNOT (pisteet)
-  // ==========================
-  {
-    label: "Puuska (havainto)",
-    data: gustObs,
-    showLine: false,
-    pointRadius: 4,
-    pointBackgroundColor: "rgba(0,140,0,0.9)",
-    pointBorderWidth: 0
-  },
-
-  // ==========================
-  // PUUSKAT – ENNUSTE (viiva)
-  // ==========================
-  {
-    label: "Puuska (ennuste)",
-    data: gustFc,
-    showLine: true,
-    pointRadius: 0,
-    borderWidth: 1.5,
-    tension: 0,
-    borderColor: "rgba(220,0,0,0.7)",
-    borderDash: [2, 3]
-  }
-]
-
-    
-    
-    
+    datasets: [
+      {
+        label: "Tuuli",
+        data: windSeries,
+        borderColor: "rgba(0,0,0,0.15)",
+        borderWidth: 1,
+        pointRadius: 0,
+        tension: 0.45,
+        cubicInterpolationMode: "monotone",
+        windDirections: windSeries.map(p => p.dir)
+      },
+      {
+        label: "Puuska",
+        data: gustSeries,
+        showLine: false,
+        pointRadius: 3,
+        pointBackgroundColor: ctx =>
+          ctx.raw.phase === "fc"
+            ? "rgba(220,0,0,0.9)"
+            : "rgba(0,140,0,0.9)",
+        pointBorderWidth: 0
+      }
+    ]
   },
   options: {
     responsive: false,
