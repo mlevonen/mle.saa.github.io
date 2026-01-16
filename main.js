@@ -425,6 +425,9 @@ map.on("popupopen", async e => {
 
 console.log(popupCache[cacheKey] ? "CACHE HIT" : "CACHE MISS", cacheKey);
 
+// ==========================
+// NYT-HETKEN PUUSKA (havainto)
+// ==========================
 const latestGust = (() => {
   if (!Array.isArray(obsWindSpeed)) return null;
 
@@ -434,9 +437,9 @@ const latestGust = (() => {
     .map(d => ({
       t: parseFmiUtc(d.utctime),
       v:
+        d.hourlymaximumgust ??   // 🔑 HAVAINNOISSA TÄMÄ
         d.windgust ??
         d.WindGust ??
-        d.hourlymaximumgust ??
         null
     }))
     .filter(p => p.t && p.t.getTime() <= now && p.v != null);
