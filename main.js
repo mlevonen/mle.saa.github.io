@@ -589,11 +589,6 @@ const latestWind = getLatestObservation(
   "windspeedms"
 );
 
-const latestGust = getLatestObservation(
-  obsWindSpeed,
-  "utctime",
-  "windgust"
-);
 
 
 if (latestWind) {
