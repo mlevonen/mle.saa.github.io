@@ -614,38 +614,31 @@ if (obsPoints.length && fcPoints.length) {
 }
 
 
-// ==========================
-// NYT-HETKEN PUUSKA (havainto, otsikkoon)
-// ==========================
+
 // ==========================
 // NYT-HETKEN PUUSKA (havainto, FMI-varma)
+// ==========================
+// ==========================
+// VIIMEISIN HAVAINNOITU PUUSKA (PT1H max)
 // ==========================
 const latestGustObs = (() => {
   if (!Array.isArray(obsWindSpeed)) return null;
 
   const now = Date.now();
 
-  const past = obsWindSpeed
-    .map(d => {
-      let v = null;
-
-      // 1️⃣ Oikea FMI-havainto (m/s)
-      if (typeof d.windgust === "number") {
-        v = d.windgust;
-      }
-      // 2️⃣ Vaihtoehtoinen kenttä (kt → m/s)
-      else if (typeof d.wg === "number") {
-        v = d.wg * 0.51444;
-      }
-
-      return {
-        t: parseFmiUtc(d.utctime),
-        v
-      };
-    })
-    .filter(p => p.t && p.t.getTime() <= now && p.v != null);
-
-  return past.length ? past.at(-1) : null;
+  return obsWindSpeed
+    .map(p => ({
+      t: parseFmiUtc(p.utctime),
+      v: p.windgust
+    }))
+    // hyväksytään viimeisen 2 tunnin sisältä
+    .filter(p =>
+      p.v != null &&
+      p.t &&
+      p.t.getTime() <= now &&
+      p.t.getTime() >= now - 2 * 3600_000
+    )
+    .at(-1) || null;
 })();
 
 console.log("LATEST GUST OBS (resolved)", latestGustObs);
@@ -668,13 +661,14 @@ if (latestWind) {
   if (windTitle) {
     const speed = latestWind.v.toFixed(1);
 
-    let gustText = "";
+let gustText = "";
 
-    if (latestGustObs?.v != null) {
-      gustText = ` (puuskat ${latestGustObs.v.toFixed(1)} m/s)`;
-    } else if (latestForecastGust?.v != null) {
-      gustText = ` (puuskat ${latestForecastGust.v.toFixed(1)} m/s, enn.)`;
-    }
+if (latestGustObs?.v != null) {
+  gustText = ` (puuskat ${latestGustObs.v.toFixed(1)} m/s)`;
+} else if (latestForecastGust?.v != null) {
+  gustText = ` (puuskat ${latestForecastGust.v.toFixed(1)} m/s, enn.)`;
+}
+
 
     windTitle.textContent = `Tuuli ${speed} m/s${gustText}`;
   }
