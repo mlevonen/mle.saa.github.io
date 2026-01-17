@@ -526,67 +526,59 @@ if (obsPoints.length && fcPoints.length) {
   const yMinTemp = Math.floor((minTemp - padding) / 5) * 5;
   const yMaxTemp = Math.ceil((maxTemp + padding) / 5) * 5;
 
-  new Chart(tempCanvas, {
-    type: "line",
-    data: {
-      datasets: [
-        {
-          label: "Havainto",
-          data: obsPoints,
-          borderColor: "blue",
-          tension: 0.45,
-          cubicInterpolationMode: "monotone",
-          pointRadius: 2
-        },
-        {
-          label: "Ennuste",
-          data: fcPoints,
-          borderColor: "red",
-          borderDash: [6,4],
-          
-		segment: {
-		  borderDash: ctx =>
-		    ctx.p0.raw?._bridge ? [2, 4] : [6, 4]
-		},
-          
-		tension: 0.45,
+new Chart(tempCanvas, {
+  type: "line",
+  data: {
+    datasets: [
+      {
+        label: "Havainto",
+        data: obsPoints,
+        borderColor: "blue",
+        tension: 0.45,
+        pointRadius: 2
+      },
+      {
+        label: "Ennuste",
+        data: fcPoints,
+        borderColor: "red",
+        borderDash: [6,4],
+        tension: 0.45,
+        pointRadius: 0
+      }
+    ]
+  },
+  options: {
+    responsive: false,
 
-          cubicInterpolationMode: "monotone",
-          pointRadius: 0
+    plugins: {
+      legend: {
+        display: true,
+        position: "top",
+        labels: {
+          usePointStyle: true,
+          boxWidth: 10
         }
-      ]
+      },
+      nowLine: true
     },
-options: {
-  responsive: false,
 
-  plugins: {
-    legend: {
-      display: true,
-      position: "top",
-      labels: {
-        usePointStyle: true,
-        boxWidth: 10
+    scales: {
+      x: {
+        type: "time",
+        time: {
+          unit: "hour",
+          displayFormats: { hour: "HH" }
+        }
+      },
+      y: {
+        min: yMinTemp,
+        max: yMaxTemp,
+        ticks: { stepSize: 5 },
+        title: { display: true, text: "°C" }
       }
-    },
-    nowLine: true
-  },   // ✅ PILKKU TÄSSÄ
-
-  scales: {
-    x: {
-      type: "time",
-      time: {
-        unit: "hour",
-        displayFormats: { hour: "HH" }
-      }
-    },
-    y: {
-      min: yMinTemp,
-      max: yMaxTemp,
-      ticks: { stepSize: 5 },
-      title: { display: true, text: "°C" }
     }
   }
-}
+});   // ✅ TÄMÄ PUUTTUI
 
 
 
