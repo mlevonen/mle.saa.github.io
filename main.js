@@ -384,6 +384,8 @@ map.on("popupopen", async e => {
   const popupEl = e.popup.getElement();
   if (!popupEl) return;
 
+	console.log("POPUP HTML:", popupEl.innerHTML);
+
   const canvases = popupEl.querySelectorAll("canvas");
   if (!canvases.length) return;
 
