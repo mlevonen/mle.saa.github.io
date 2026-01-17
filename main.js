@@ -384,6 +384,21 @@ map.on("popupopen", async e => {
   const popupEl = e.popup.getElement();
   if (!popupEl) return;
 
+const tempCanvas = popupEl.querySelector(
+  'canvas[data-type="temp"]'
+);
+
+const windCanvas = popupEl.querySelector(
+  'canvas[data-type="wind"]'
+);
+
+if (!tempCanvas || !windCanvas) {
+  console.warn("Canvas puuttuu popupista");
+  return;
+}
+
+
+
 	console.log("POPUP HTML:", popupEl.innerHTML);
 
   const canvases = popupEl.querySelectorAll("canvas");
@@ -466,11 +481,16 @@ map.on("popupopen", async e => {
 	console.log("FC TEMP LENGTH:", fcPoints.length);
 
     
-    if (Array.isArray(obsTemp) && Array.isArray(fcTemp)) {
-      /* ⬅️ koko lämpötilagraafikoodisi
-         (sellaisenaan, vain sisennys kunnossa)
-      */
-    }
+if (Array.isArray(obsTemp) && Array.isArray(fcTemp)) {
+  const oldTemp = Chart.getChart(tempCanvas);
+  if (oldTemp) oldTemp.destroy();
+
+  new Chart(tempCanvas, {
+    type: "line",
+    data: { ... },
+    options: { ... }
+  });
+}
 
     // ==========================
     // TUULI OTSIKKO
@@ -512,11 +532,17 @@ map.on("popupopen", async e => {
 	console.log("FC WIND LENGTH:", fcWind.length);
 
     
-    if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
-      /* ⬅️ koko tuuligraafikoodisi
-         (sellaisenaan)
-      */
-    }
+if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
+  const oldWind = Chart.getChart(windCanvas);
+  if (oldWind) oldWind.destroy();
+
+  new Chart(windCanvas, {
+    type: "line",
+    data: { ... },
+    options: { ... }
+  });
+}
+
 
   } catch (err) {
     console.error("Popup error:", err);
