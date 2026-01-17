@@ -541,7 +541,7 @@ if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
     data: { ... },
     options: { ... }
   });
-}
+
 
 
   } catch (err) {
