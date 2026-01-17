@@ -238,22 +238,57 @@ function getLatestObservation(data, timeKey, valueKey) {
   return past.at(-1);
 }
 
-function parseLatestWindGustFromXML(xmlText) {
+function parseLatestGustFromMultipoint(xmlText) {
   const doc = new DOMParser().parseFromString(xmlText, "text/xml");
 
-  const values = [...doc.querySelectorAll("wfs\\:member, member")];
+  const valuesNode =
+    doc.querySelector("gml\\:doubleOrNilReasonTupleList, doubleOrNilReasonTupleList");
 
-  const gusts = values
-    .map(m => {
-      const time = m.querySelector("time")?.textContent;
-      const gust = m.querySelector("windgust")?.textContent;
-      return time && gust ? { t: new Date(time), v: Number(gust) } : null;
-    })
-    .filter(Boolean);
+  const positionsNode =
+    doc.querySelector("gmlcov\\:positions, positions");
 
-  return gusts.at(-1) || null;
+  if (!valuesNode || !positionsNode) return null;
+
+  const values = valuesNode.textContent.trim().split(/\s+/).map(Number);
+  const positions = positionsNode.textContent.trim().split(/\s+/);
+
+  // multipointcoverage: lat lon time lat lon time ...
+  const times = [];
+  for (let i = 2; i < positions.length; i += 3) {
+    times.push(new Date(Number(positions[i]) * 1000));
+  }
+
+  if (!values.length || !times.length) return null;
+
+  return {
+    t: times.at(-1),
+    v: values.at(-1)
+  };
 }
 
+
+async function fetchObservedGustMultipoint(place) {
+  if (!place) return null;
+
+  const now = new Date();
+  const past = new Date(now.getTime() - 12 * 3600_000).toISOString();
+
+  const params = new URLSearchParams({
+    service: "WFS",
+    version: "2.0.0",
+    request: "GetFeature",
+    storedquery_id: "fmi::observations::weather::hourly::multipointcoverage",
+    place,
+    starttime: past,
+    endtime: now.toISOString(),
+    parameters: "WindGust"
+  });
+
+  const res = await fetch(`https://opendata.fmi.fi/wfs?${params}`);
+  if (!res.ok) throw new Error("multipointcoverage fetch failed");
+
+  return res.text(); // XML
+}
 
 
 // ==========================
@@ -645,10 +680,25 @@ if (obsPoints.length && fcPoints.length) {
 // ==========================
 // VIIMEISIN HAVAINNOITU PUUSKA (PT1H max)
 // ==========================
-const gustXML = await fetchHourlyGust(lat, lon);
-const latestGustObs = parseLatestWindGustFromXML(gustXML);
+const gustXML = await fetchObservedGustMultipoint(placeName);
+const latestGustObs = parseLatestGustFromMultipoint(gustXML);
 
-console.log("LATEST 3s GUST", latestGustObs);
+console.log("LATEST GUST (multipoint)", latestGustObs);
+
+// ==========================
+// PUUSKA – multipointcoverage (havainto)
+// ==========================
+let latestGustObs = null;
+
+if (placeName) {
+  try {
+    const gustXML = await fetchObservedGustMultipoint(placeName);
+    latestGustObs = parseLatestGustFromMultipoint(gustXML);
+    console.log("LATEST GUST (multipoint)", latestGustObs);
+  } catch (err) {
+    console.warn("Gust multipoint failed:", err);
+  }
+}
 
 
 
@@ -677,8 +727,6 @@ if (latestWind) {
       `Tuuli ${latestWind.v.toFixed(1)} m/s${gustText}`;
   }
 }
-
-
 
 
 
