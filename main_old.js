@@ -238,6 +238,21 @@ function getLatestObservation(data, timeKey, valueKey) {
   return past.at(-1);
 }
 
+function parseLatestWindGustFromXML(xmlText) {
+  const doc = new DOMParser().parseFromString(xmlText, "text/xml");
+
+  const values = [...doc.querySelectorAll("wfs\\:member, member")];
+
+  const gusts = values
+    .map(m => {
+      const time = m.querySelector("time")?.textContent;
+      const gust = m.querySelector("windgust")?.textContent;
+      return time && gust ? { t: new Date(time), v: Number(gust) } : null;
+    })
+    .filter(Boolean);
+
+  return gusts.at(-1) || null;
+}
 
 
 
@@ -626,33 +641,15 @@ if (obsPoints.length && fcPoints.length) {
 
 
 
-// ==========================
-// NYT-HETKEN PUUSKA (havainto, FMI-varma)
-// ==========================
+
 // ==========================
 // VIIMEISIN HAVAINNOITU PUUSKA (PT1H max)
 // ==========================
-const latestGustObs = (() => {
-  if (!Array.isArray(obsWindSpeed)) return null;
+const gustXML = await fetchHourlyGust(lat, lon);
+const latestGustObs = parseLatestWindGustFromXML(gustXML);
 
-  const now = Date.now();
+console.log("LATEST 3s GUST", latestGustObs);
 
-  return obsWindSpeed
-    .map(p => ({
-      t: parseFmiUtc(p.utctime),
-      v: p.windgust
-    }))
-    // hyväksytään viimeisen 2 tunnin sisältä
-    .filter(p =>
-      p.v != null &&
-      p.t &&
-      p.t.getTime() <= now &&
-      p.t.getTime() >= now - 2 * 3600_000
-    )
-    .at(-1) || null;
-})();
-
-console.log("LATEST GUST OBS (resolved)", latestGustObs);
 
 
 
@@ -670,20 +667,17 @@ if (latestWind) {
   );
 
   if (windTitle) {
-    const speed = latestWind.v.toFixed(1);
+    let gustText = "";
 
-let gustText = "";
+    if (latestGustObs?.v != null) {
+      gustText = ` (puuskat ${latestGustObs.v.toFixed(1)} m/s)`;
+    }
 
-if (latestGustObs?.v != null) {
-  gustText = ` (puuskat ${latestGustObs.v.toFixed(1)} m/s)`;
-} else if (latestForecastGust?.v != null) {
-  gustText = ` (puuskat ${latestForecastGust.v.toFixed(1)} m/s, enn.)`;
-}
-
-
-    windTitle.textContent = `Tuuli ${speed} m/s${gustText}`;
+    windTitle.textContent =
+      `Tuuli ${latestWind.v.toFixed(1)} m/s${gustText}`;
   }
 }
+
 
 
 
