@@ -675,6 +675,16 @@ if (latestGustObs?.v != null) {
 }
 
 
+console.table(
+  obsWindSpeed.slice(-10).map(p => ({
+    time: p.utctime,
+    gust: p.windgust,
+    speed: p.windspeedms
+  }))
+);
+
+
+
 // ==========================
 // TUULI GRAAFI (nopeus)
 // ==========================
