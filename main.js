@@ -674,11 +674,10 @@ if (obsPoints.length && fcPoints.length) {
   });
 }
 
-
 // ==========================
-// VIIMEISIN HAVAINNOITU PUUSKA (PT1H max)
+// VIIMEISIN HAVAINNOITU PUUSKA (timeseries, windgust)
 // ==========================
-const latestGustObs = (() => {
+const latestGustTimeseries = (() => {
   if (!Array.isArray(obsWindSpeed)) return null;
 
   const now = Date.now();
@@ -688,7 +687,6 @@ const latestGustObs = (() => {
       t: parseFmiUtc(p.utctime),
       v: p.windgust
     }))
-    // hyväksytään viimeisen 2 tunnin sisältä
     .filter(p =>
       p.v != null &&
       p.t &&
@@ -698,23 +696,36 @@ const latestGustObs = (() => {
     .at(-1) || null;
 })();
 
-console.log("LATEST GUST OBS (resolved)", latestGustObs);
+console.log("LATEST GUST (timeseries)", latestGustTimeseries);
 
 
 // ==========================
-// PUUSKA – multipointcoverage (havainto)
+// VIIMEISIN HAVAINNOITU PUUSKA (multipointcoverage, PT1H max)
 // ==========================
-let latestGustObs = null;
+let latestGustMultipoint = null;
 
 if (placeName) {
   try {
     const gustXML = await fetchObservedGustMultipoint(placeName);
-    latestGustObs = parseLatestGustFromMultipoint(gustXML);
-    console.log("LATEST GUST (multipoint)", latestGustObs);
+    latestGustMultipoint = parseLatestGustFromMultipoint(gustXML);
+    console.log("LATEST GUST (multipoint)", latestGustMultipoint);
   } catch (err) {
     console.warn("Gust multipoint failed:", err);
   }
 }
+
+
+
+// ==========================
+// PUUSKA OTSIKKOON – prioriteetti
+// ==========================
+const latestGustObs =
+  latestGustMultipoint ??
+  latestGustTimeseries ??
+  null;
+
+console.log("LATEST GUST (final)", latestGustObs);
+
 
 
 
