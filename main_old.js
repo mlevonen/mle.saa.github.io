@@ -377,6 +377,17 @@ Chart.register(temperatureBandsPlugin);
 // Popup → lämpötila + tuuli (havainto + ennuste)
 // ==========================
 
+console.table(
+  obsWindSpeed.slice(-10).map(p => ({
+    time: p.utctime,
+    gust: p.windgust,
+    speed: p.windspeedms
+  }))
+);
+
+
+
+
 map.on("popupopen", async e => {
 
   console.log("POPUP OPEN");
@@ -674,14 +685,6 @@ if (latestGustObs?.v != null) {
   }
 }
 
-
-console.table(
-  obsWindSpeed.slice(-10).map(p => ({
-    time: p.utctime,
-    gust: p.windgust,
-    speed: p.windspeedms
-  }))
-);
 
 
 
