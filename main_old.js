@@ -675,15 +675,31 @@ if (obsPoints.length && fcPoints.length) {
 }
 
 
-
-
 // ==========================
 // VIIMEISIN HAVAINNOITU PUUSKA (PT1H max)
 // ==========================
-const gustXML = await fetchObservedGustMultipoint(placeName);
-const latestGustObs = parseLatestGustFromMultipoint(gustXML);
+const latestGustObs = (() => {
+  if (!Array.isArray(obsWindSpeed)) return null;
 
-console.log("LATEST GUST (multipoint)", latestGustObs);
+  const now = Date.now();
+
+  return obsWindSpeed
+    .map(p => ({
+      t: parseFmiUtc(p.utctime),
+      v: p.windgust
+    }))
+    // hyväksytään viimeisen 2 tunnin sisältä
+    .filter(p =>
+      p.v != null &&
+      p.t &&
+      p.t.getTime() <= now &&
+      p.t.getTime() >= now - 2 * 3600_000
+    )
+    .at(-1) || null;
+})();
+
+console.log("LATEST GUST OBS (resolved)", latestGustObs);
+
 
 // ==========================
 // PUUSKA – multipointcoverage (havainto)
@@ -709,8 +725,6 @@ const latestWind = getLatestObservation(
   "windspeedms"
 );
 
-
-
 if (latestWind) {
   const windTitle = popupEl.querySelector(
     'div:has(+ canvas[data-type="wind"])'
@@ -727,6 +741,7 @@ if (latestWind) {
       `Tuuli ${latestWind.v.toFixed(1)} m/s${gustText}`;
   }
 }
+
 
 
 
