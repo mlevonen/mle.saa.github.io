@@ -455,10 +455,7 @@ const latestForecastGust = (() => {
 // ==========================
 // NYT-HETKEN PUUSKA (havainto) – SAMA LÄHDE KUIN GRAAFI
 // ==========================
-const latestGustObs =
-  gustObs.length > 0
-    ? gustObs.at(-1)
-    : null;
+
 
 
 const latestTemp = getLatestObservation(
@@ -617,6 +614,16 @@ if (obsPoints.length && fcPoints.length) {
 }
 
 
+// ==========================
+// NYT-HETKEN PUUSKA (havainto, otsikkoon)
+// ==========================
+const latestGustObs = getLatestObservation(
+  obsWindSpeed,
+  "utctime",
+  "windgust"
+);
+
+
 
 const latestWind = getLatestObservation(
   obsWindSpeed,
@@ -636,8 +643,8 @@ if (latestWind) {
 
     let gustText = "";
 
-    if (latestGustObs?.y != null) {
-      gustText = ` (puuskat ${latestGustObs.y.toFixed(1)} m/s)`;
+    if (latestGustObs?.v != null) {
+      gustText = ` (puuskat ${latestGustObs.v.toFixed(1)} m/s)`;
     } else if (latestForecastGust?.v != null) {
       gustText = ` (puuskat ${latestForecastGust.v.toFixed(1)} m/s, enn.)`;
     }
@@ -645,6 +652,7 @@ if (latestWind) {
     windTitle.textContent = `Tuuli ${speed} m/s${gustText}`;
   }
 }
+
 
 console.log("LATEST GUST OBS", latestGustObs);
 
