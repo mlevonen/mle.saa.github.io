@@ -380,7 +380,7 @@ Chart.register(temperatureBandsPlugin);
 map.on("popupopen", async e => {
 
   console.log("POPUP OPEN");
-
+  
   const popupEl = e.popup.getElement();
   if (!popupEl) return;
 
@@ -424,6 +424,75 @@ map.on("popupopen", async e => {
     }
 
 console.log(popupCache[cacheKey] ? "CACHE HIT" : "CACHE MISS", cacheKey);
+
+console.log(
+  "OBS WIND SAMPLE",
+  obsWindSpeed?.slice(-3)
+);
+
+// ==========================
+// NYT-HETKEN PUUSKA (ENNUSTE)
+// ==========================
+const latestForecastGust = (() => {
+  if (!Array.isArray(fcWindGust)) return null;
+
+  const now = Date.now();
+
+  const past = fcWindGust
+    .map(d => ({
+      t: parseFmiUtc(d.utctime),
+      v: d.hourlymaximumgust
+    }))
+    .filter(p => p.t && p.t.getTime() <= now && p.v != null);
+
+  if (!past.length) return null;
+
+  return past.at(-1);
+})();
+
+
+
+
+  const now = Date.now();
+
+  const past = fcWindGust
+    .map(d => ({
+      t: parseFmiUtc(d.utctime),
+      v: d.hourlymaximumgust
+    }))
+    .filter(p => p.t && p.t.getTime() <= now && p.v != null);
+
+  if (!past.length) return null;
+
+  return past.at(-1);
+})();
+
+
+
+// ==========================
+// NYT-HETKEN PUUSKA (havainto)
+// ==========================
+const latestGust = (() => {
+  if (!Array.isArray(obsWindSpeed)) return null;
+
+  const now = Date.now();
+
+  const past = obsWindSpeed
+    .map(d => ({
+      t: parseFmiUtc(d.utctime),
+      v:
+        d.hourlymaximumgust ??   // 🔑 HAVAINNOISSA TÄMÄ
+        d.windgust ??
+        d.WindGust ??
+        null
+    }))
+    .filter(p => p.t && p.t.getTime() <= now && p.v != null);
+
+  if (!past.length) return null;
+
+  return past.at(-1);
+})();
+
 
 
 const latestTemp = getLatestObservation(
@@ -589,11 +658,6 @@ const latestWind = getLatestObservation(
   "windspeedms"
 );
 
-const latestGust = getLatestObservation(
-  obsWindSpeed,
-  "utctime",
-  "windgust"
-);
 
 
 if (latestWind) {
@@ -604,14 +668,18 @@ if (latestWind) {
   if (windTitle) {
     const speed = latestWind.v.toFixed(1);
 
-    const gustText = latestGust && latestGust.v != null
-      ? ` (puuskat ${latestGust.v.toFixed(1)} m/s)`
-      : "";
+    let gustText = "";
+    if (latestForecastGust?.v != null) {
+      gustText = ` (puuskat ${latestForecastGust.v.toFixed(1)} m/s, enn.)`;
+    }
 
     windTitle.textContent =
       `Tuuli ${speed} m/s${gustText}`;
   }
 }
+
+console.log("FC GUST SAMPLE", fcWindGust?.slice(-3));
+
 
 
 
