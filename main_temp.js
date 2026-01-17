@@ -238,57 +238,7 @@ function getLatestObservation(data, timeKey, valueKey) {
   return past.at(-1);
 }
 
-function parseLatestGustFromMultipoint(xmlText) {
-  const doc = new DOMParser().parseFromString(xmlText, "text/xml");
 
-  const valuesNode =
-    doc.querySelector("gml\\:doubleOrNilReasonTupleList, doubleOrNilReasonTupleList");
-
-  const positionsNode =
-    doc.querySelector("gmlcov\\:positions, positions");
-
-  if (!valuesNode || !positionsNode) return null;
-
-  const values = valuesNode.textContent.trim().split(/\s+/).map(Number);
-  const positions = positionsNode.textContent.trim().split(/\s+/);
-
-  // multipointcoverage: lat lon time lat lon time ...
-  const times = [];
-  for (let i = 2; i < positions.length; i += 3) {
-    times.push(new Date(Number(positions[i]) * 1000));
-  }
-
-  if (!values.length || !times.length) return null;
-
-  return {
-    t: times.at(-1),
-    v: values.at(-1)
-  };
-}
-
-
-async function fetchObservedGustMultipoint(place) {
-  if (!place) return null;
-
-  const now = new Date();
-  const past = new Date(now.getTime() - 12 * 3600_000).toISOString();
-
-  const params = new URLSearchParams({
-    service: "WFS",
-    version: "2.0.0",
-    request: "GetFeature",
-    storedquery_id: "fmi::observations::weather::hourly::multipointcoverage",
-    place,
-    starttime: past,
-    endtime: now.toISOString(),
-    parameters: "WindGust"
-  });
-
-  const res = await fetch(`https://opendata.fmi.fi/wfs?${params}`);
-  if (!res.ok) throw new Error("multipointcoverage fetch failed");
-
-  return res.text(); // XML
-}
 
 
 // ==========================
@@ -427,21 +377,10 @@ Chart.register(temperatureBandsPlugin);
 // Popup → lämpötila + tuuli (havainto + ennuste)
 // ==========================
 
-console.table(
-  obsWindSpeed.slice(-10).map(p => ({
-    time: p.utctime,
-    gust: p.windgust,
-    speed: p.windspeedms
-  }))
-);
-
-
-
-
 map.on("popupopen", async e => {
 
   console.log("POPUP OPEN");
-  
+
   const popupEl = e.popup.getElement();
   if (!popupEl) return;
 
@@ -485,38 +424,6 @@ map.on("popupopen", async e => {
     }
 
 console.log(popupCache[cacheKey] ? "CACHE HIT" : "CACHE MISS", cacheKey);
-
-console.log(
-  "OBS WIND SAMPLE",
-  obsWindSpeed?.slice(-3)
-);
-
-// ==========================
-// NYT-HETKEN PUUSKA (ENNUSTE)
-// ==========================
-const latestForecastGust = (() => {
-  if (!Array.isArray(fcWindGust)) return null;
-
-  const now = Date.now();
-
-  const past = fcWindGust
-    .map(d => ({
-      t: parseFmiUtc(d.utctime),
-      v: d.hourlymaximumgust
-    }))
-    .filter(p => p.t && p.t.getTime() <= now && p.v != null);
-
-  if (!past.length) return null;
-
-  return past.at(-1);
-})();
-
-
-
-// ==========================
-// NYT-HETKEN PUUSKA (havainto) – SAMA LÄHDE KUIN GRAAFI
-// ==========================
-
 
 
 const latestTemp = getLatestObservation(
@@ -619,113 +526,59 @@ if (obsPoints.length && fcPoints.length) {
   const yMinTemp = Math.floor((minTemp - padding) / 5) * 5;
   const yMaxTemp = Math.ceil((maxTemp + padding) / 5) * 5;
 
-  new Chart(tempCanvas, {
-    type: "line",
-    data: {
-      datasets: [
-        {
-          label: "Havainto",
-          data: obsPoints,
-          borderColor: "blue",
-          tension: 0.45,
-          cubicInterpolationMode: "monotone",
-          pointRadius: 2
-        },
-        {
-          label: "Ennuste",
-          data: fcPoints,
-          borderColor: "red",
-          borderDash: [6,4],
-          
-		segment: {
-		  borderDash: ctx =>
-		    ctx.p0.raw?._bridge ? [2, 4] : [6, 4]
-		},
-          
-		tension: 0.45,
-
-          cubicInterpolationMode: "monotone",
-          pointRadius: 0
-        }
-      ]
-    },
-    options: {
-      responsive: false,
-      plugins: {
-        legend: { display: false },
-        nowLine: true
+new Chart(tempCanvas, {
+  type: "line",
+  data: {
+    datasets: [
+      {
+        label: "Havainto",
+        data: obsPoints,
+        borderColor: "blue",
+        tension: 0.45,
+        pointRadius: 2
       },
-      scales: {
-        x: {
-          type: "time",
-          time: {
-            unit: "hour",
-            displayFormats: { hour: "HH" }
-          }
-        },
-        y: {
-          min: yMinTemp,
-          max: yMaxTemp,
-          ticks: { stepSize: 5 },
-          title: { display: true, text: "°C" }
+      {
+        label: "Ennuste",
+        data: fcPoints,
+        borderColor: "red",
+        borderDash: [6,4],
+        tension: 0.45,
+        pointRadius: 0
+      }
+    ]
+  },
+  options: {
+    responsive: false,
+
+    plugins: {
+      legend: {
+        display: true,
+        position: "top",
+        labels: {
+          usePointStyle: true,
+          boxWidth: 10
         }
+      },
+      nowLine: true
+    },
+
+    scales: {
+      x: {
+        type: "time",
+        time: {
+          unit: "hour",
+          displayFormats: { hour: "HH" }
+        }
+      },
+      y: {
+        min: yMinTemp,
+        max: yMaxTemp,
+        ticks: { stepSize: 5 },
+        title: { display: true, text: "°C" }
       }
     }
-  });
-}
-
-// ==========================
-// VIIMEISIN HAVAINNOITU PUUSKA (timeseries, windgust)
-// ==========================
-const latestGustTimeseries = (() => {
-  if (!Array.isArray(obsWindSpeed)) return null;
-
-  const now = Date.now();
-
-  return obsWindSpeed
-    .map(p => ({
-      t: parseFmiUtc(p.utctime),
-      v: p.windgust
-    }))
-    .filter(p =>
-      p.v != null &&
-      p.t &&
-      p.t.getTime() <= now &&
-      p.t.getTime() >= now - 2 * 3600_000
-    )
-    .at(-1) || null;
-})();
-
-console.log("LATEST GUST (timeseries)", latestGustTimeseries);
-
-
-// ==========================
-// VIIMEISIN HAVAINNOITU PUUSKA (multipointcoverage, PT1H max)
-// ==========================
-let latestGustMultipoint = null;
-
-if (placeName) {
-  try {
-    const gustXML = await fetchObservedGustMultipoint(placeName);
-    latestGustMultipoint = parseLatestGustFromMultipoint(gustXML);
-    console.log("LATEST GUST (multipoint)", latestGustMultipoint);
-  } catch (err) {
-    console.warn("Gust multipoint failed:", err);
   }
-}
-
-
-
-// ==========================
-// PUUSKA OTSIKKOON – prioriteetti
-// ==========================
-const latestGustObs =
-  latestGustMultipoint ??
-  latestGustTimeseries ??
-  null;
-
-console.log("LATEST GUST (final)", latestGustObs);
-
+});   // ✅ TÄMÄ PUUTTUI
 
 
 
@@ -736,20 +589,29 @@ const latestWind = getLatestObservation(
   "windspeedms"
 );
 
+const latestGust = getLatestObservation(
+  obsWindSpeed,
+  "utctime",
+  "windgust"
+);
+
+
 if (latestWind) {
   const windTitle = popupEl.querySelector(
     'div:has(+ canvas[data-type="wind"])'
   );
 
   if (windTitle) {
-    let gustText = "";
+    const speed = latestWind.v.toFixed(1);
 
-    if (latestGustObs?.v != null) {
-      gustText = ` (puuskat ${latestGustObs.v.toFixed(1)} m/s)`;
-    }
+    const gustText = latestGust && latestGust.v != null
+      ? ` (puuskat ${latestGust.v.toFixed(1)} m/s)`
+      : "";
 
-    windTitle.textContent =
-      `Tuuli ${latestWind.v.toFixed(1)} m/s${gustText}`;
+windTitle.textContent =
+  `Tuuli ${latestWind.v.toFixed(1)} m/s (10 min ka)`;
+
+
   }
 }
 
