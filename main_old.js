@@ -617,11 +617,38 @@ if (obsPoints.length && fcPoints.length) {
 // ==========================
 // NYT-HETKEN PUUSKA (havainto, otsikkoon)
 // ==========================
-const latestGustObs = getLatestObservation(
-  obsWindSpeed,
-  "utctime",
-  "windgust"
-);
+// ==========================
+// NYT-HETKEN PUUSKA (havainto, FMI-varma)
+// ==========================
+const latestGustObs = (() => {
+  if (!Array.isArray(obsWindSpeed)) return null;
+
+  const now = Date.now();
+
+  const past = obsWindSpeed
+    .map(d => {
+      let v = null;
+
+      // 1️⃣ Oikea FMI-havainto (m/s)
+      if (typeof d.windgust === "number") {
+        v = d.windgust;
+      }
+      // 2️⃣ Vaihtoehtoinen kenttä (kt → m/s)
+      else if (typeof d.wg === "number") {
+        v = d.wg * 0.51444;
+      }
+
+      return {
+        t: parseFmiUtc(d.utctime),
+        v
+      };
+    })
+    .filter(p => p.t && p.t.getTime() <= now && p.v != null);
+
+  return past.length ? past.at(-1) : null;
+})();
+
+console.log("LATEST GUST OBS (resolved)", latestGustObs);
 
 
 
@@ -652,15 +679,6 @@ if (latestWind) {
     windTitle.textContent = `Tuuli ${speed} m/s${gustText}`;
   }
 }
-
-
-console.log("LATEST GUST OBS", latestGustObs);
-
-
-console.log("FC GUST SAMPLE", fcWindGust?.slice(-3));
-
-
-
 
 
 // ==========================
