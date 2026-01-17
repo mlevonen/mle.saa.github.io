@@ -556,37 +556,38 @@ if (obsPoints.length && fcPoints.length) {
         }
       ]
     },
-    options: {
-      responsive: false,
-plugins: {
-  legend: {
-    display: true,
-    position: "top",
-    labels: {
-      usePointStyle: true,
-      boxWidth: 10
-    }
-  },
-  nowLine: true
-}
-      scales: {
-        x: {
-          type: "time",
-          time: {
-            unit: "hour",
-            displayFormats: { hour: "HH" }
-          }
-        },
-        y: {
-          min: yMinTemp,
-          max: yMaxTemp,
-          ticks: { stepSize: 5 },
-          title: { display: true, text: "°C" }
-        }
+options: {
+  responsive: false,
+
+  plugins: {
+    legend: {
+      display: true,
+      position: "top",
+      labels: {
+        usePointStyle: true,
+        boxWidth: 10
       }
+    },
+    nowLine: true
+  },   // ✅ PILKKU TÄSSÄ
+
+  scales: {
+    x: {
+      type: "time",
+      time: {
+        unit: "hour",
+        displayFormats: { hour: "HH" }
+      }
+    },
+    y: {
+      min: yMinTemp,
+      max: yMaxTemp,
+      ticks: { stepSize: 5 },
+      title: { display: true, text: "°C" }
     }
-  });
+  }
 }
+
 
 
 
