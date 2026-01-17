@@ -453,22 +453,6 @@ const latestForecastGust = (() => {
 
 
 
-  const now = Date.now();
-
-  const past = fcWindGust
-    .map(d => ({
-      t: parseFmiUtc(d.utctime),
-      v: d.hourlymaximumgust
-    }))
-    .filter(p => p.t && p.t.getTime() <= now && p.v != null);
-
-  if (!past.length) return null;
-
-  return past.at(-1);
-})();
-
-
-
 // ==========================
 // NYT-HETKEN PUUSKA (havainto)
 // ==========================
@@ -669,14 +653,20 @@ if (latestWind) {
     const speed = latestWind.v.toFixed(1);
 
     let gustText = "";
-    if (latestForecastGust?.v != null) {
+
+    if (latestGust?.v != null) {
+      // 🔑 ENSISIJAISENA HAVAINTO
+      gustText = ` (puuskat ${latestGust.v.toFixed(1)} m/s)`;
+    } else if (latestForecastGust?.v != null) {
+      // 🔑 VARALLA ENNUSTE
       gustText = ` (puuskat ${latestForecastGust.v.toFixed(1)} m/s, enn.)`;
     }
 
-    windTitle.textContent =
-      `Tuuli ${speed} m/s${gustText}`;
+    windTitle.textContent = `Tuuli ${speed} m/s${gustText}`;
   }
 }
+
+
 
 console.log("FC GUST SAMPLE", fcWindGust?.slice(-3));
 
