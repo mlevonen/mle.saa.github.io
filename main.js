@@ -460,6 +460,12 @@ map.on("popupopen", async e => {
     // ==========================
     // LÄMPÖTILAGRAAFI
     // ==========================
+    
+    console.log("TEMP CANVAS:", tempCanvas);
+	console.log("OBS TEMP LENGTH:", obsPoints.length);
+	console.log("FC TEMP LENGTH:", fcPoints.length);
+
+    
     if (Array.isArray(obsTemp) && Array.isArray(fcTemp)) {
       /* ⬅️ koko lämpötilagraafikoodisi
          (sellaisenaan, vain sisennys kunnossa)
@@ -500,6 +506,12 @@ map.on("popupopen", async e => {
     // ==========================
     // TUULIGRAAFI
     // ==========================
+    
+    console.log("WIND CANVAS:", windCanvas);
+	console.log("OBS WIND LENGTH:", obsWind.length);
+	console.log("FC WIND LENGTH:", fcWind.length);
+
+    
     if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
       /* ⬅️ koko tuuligraafikoodisi
          (sellaisenaan)
