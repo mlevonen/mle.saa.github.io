@@ -454,6 +454,10 @@ const latestForecastGust = (() => {
 
 
 
+
+const latestForecastGust = (() => {
+  if (!Array.isArray(fcWindGust)) return null;
+
   const now = Date.now();
 
   const past = fcWindGust
