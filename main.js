@@ -559,8 +559,14 @@ if (obsPoints.length && fcPoints.length) {
     options: {
       responsive: false,
       plugins: {
-        legend: { display: false },
+        legend: { 
+        display: true,
+        position: "top",
+        labels: {
+        	usePointStyle: true,
+        	boxWidth: 10
         nowLine: true
+        }
       },
       scales: {
         x: {
