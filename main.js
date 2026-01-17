@@ -608,8 +608,9 @@ if (latestWind) {
       ? ` (puuskat ${latestGust.v.toFixed(1)} m/s)`
       : "";
 
-    windTitle.textContent =
-      `Tuuli ${speed} m/s${gustText}`;
+	windTitle.textContent =
+	  `Tuuli nyt ${latestWind.v.toFixed(1)} m/s`;
+
   }
 }
 
