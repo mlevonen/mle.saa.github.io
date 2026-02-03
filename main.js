@@ -556,53 +556,52 @@ if (obsPoints.length && fcPoints.length) {
         }
       ]
     },
-    options: {
-      responsive: false,
+options: {
+  responsive: false,
 
-plugins: {
-  legend: {
-    display: true,
-    position: "top",
-    align: "start",           // 👈 vasemmalle
-    labels: {
-      usePointStyle: true,
-      pointStyle: "circle",
-      boxWidth: 6,            // 👈 ~50 % pienempi
-      boxHeight: 6,
-      color: "#000",
-      generateLabels(chart) {
-        const labels =
-          Chart.defaults.plugins.legend.labels.generateLabels(chart);
+  plugins: {
+    legend: {
+      display: true,
+      position: "top",
+      align: "start",           // vasemmalle
+      labels: {
+        usePointStyle: true,
+        pointStyle: "circle",
+        boxWidth: 6,
+        boxHeight: 6,
+        color: "#000",
+        generateLabels(chart) {
+          const labels =
+            Chart.defaults.plugins.legend.labels.generateLabels(chart);
 
-        labels.forEach(l => {
-          l.fillStyle = l.strokeStyle; // 👈 täytetään koko pallo
-        });
+          labels.forEach(l => {
+            l.fillStyle = l.strokeStyle;
+          });
 
-        return labels;
-      }
-    }
-  },
-  nowLine: true
-}
-
-
-
-      scales: {
-        x: {
-          type: "time",
-          time: {
-            unit: "hour",
-            displayFormats: { hour: "HH" }
-          }
-        },
-        y: {
-          min: yMinTemp,
-          max: yMaxTemp,
-          ticks: { stepSize: 5 },
-          title: { display: true, text: "°C" }
+          return labels;
         }
       }
+    },
+    nowLine: true
+  },   // ✅ TÄMÄ PILKKU PUUTTUI
+
+  scales: {
+    x: {
+      type: "time",
+      time: {
+        unit: "hour",
+        displayFormats: { hour: "HH" }
+      }
+    },
+    y: {
+      min: yMinTemp,
+      max: yMaxTemp,
+      ticks: { stepSize: 5 },
+      title: { display: true, text: "°C" }
     }
+  }
+}
+
   });
 }
 
