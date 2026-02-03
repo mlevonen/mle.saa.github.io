@@ -558,10 +558,20 @@ if (obsPoints.length && fcPoints.length) {
     },
     options: {
       responsive: false,
-      plugins: {
-        legend: { display: false },
-        nowLine: true
-      },
+
+plugins: {
+  legend: {
+    display: true,
+    position: "top",
+    labels: {
+      usePointStyle: true,
+      boxWidth: 10
+    }
+  },
+  nowLine: true
+},
+
+
       scales: {
         x: {
           type: "time",
@@ -775,11 +785,21 @@ datasets: [
   },
   options: {
     responsive: false,
-    plugins: {
-      legend: { display: false },
-      windArrowPlugin: true,
-      nowLine: true
-    },
+
+plugins: {
+  legend: {
+    display: true,
+    position: "top",
+    labels: {
+      usePointStyle: true,
+      boxWidth: 10
+    }
+  },
+  windArrowPlugin: true,
+  nowLine: true
+},
+
+
     scales: {
       x: {
         type: "time",
