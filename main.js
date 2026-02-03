@@ -804,7 +804,7 @@ plugins: {
       
         filter(item, chart) {
         return item.text !== "Tuuli";
-    }   
+       
     }
   },
   windArrowPlugin: true,
