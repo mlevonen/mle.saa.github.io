@@ -559,34 +559,21 @@ if (obsPoints.length && fcPoints.length) {
 options: {
   responsive: false,
 
-plugins: {
-  legend: {
-    display: true,
-    position: "top",
-    align: "start",
-
-    labels: {
-      usePointStyle: true,
-      pointStyle: "circle",
-      boxWidth: 6,
-      boxHeight: 6,
-
-      generateLabels(chart) {
-        const labels =
-          Chart.defaults.plugins.legend.labels.generateLabels(chart);
-
-        labels.forEach(label => {
-          // 🔵🟥 täytetään pallo kokonaan datasetin värillä
-          label.fillStyle = label.strokeStyle;
-        });
-
-        return labels;
+  plugins: {
+    legend: {
+      display: true,
+      position: "top",
+      align: "start",
+      labels: {
+        usePointStyle: true,
+        pointStyle: "circle",
+        boxWidth: 6,
+        boxHeight: 6
       }
-    }
-  },
-  nowLine: true
-}
-
+    },
+    windArrowPlugin: true,
+    nowLine: true
+  },   // ✅ TÄRKEÄ PILKKU
 
 scales: {
   x: {
