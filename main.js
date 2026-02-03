@@ -806,7 +806,7 @@ plugins: {
         return item.text !== "Tuuli";
        
     }
-  },
+  }
   windArrowPlugin: true,
   nowLine: true
 },
