@@ -839,7 +839,7 @@ plugins: {
 
   windArrowPlugin: true,
   nowLine: true
-}
+},
 
 
 
