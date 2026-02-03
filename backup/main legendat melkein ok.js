@@ -816,31 +816,16 @@ plugins: {
       boxWidth: 6,
       boxHeight: 6,
 
-      filter(item) {
-        // edelleen poistetaan turha "Tuuli"
+      // 🔑 POISTETAAN "Tuuli"-legendarivi
+      filter(item, chart) {
         return item.text !== "Tuuli";
-      },
-
-      generateLabels(chart) {
-        const labels =
-          Chart.defaults.plugins.legend.labels.generateLabels(chart);
-
-        labels.forEach(label => {
-          // 🔴 Puuskat täytetään kokonaan
-          if (label.text.includes("Puuska")) {
-            label.fillStyle = label.strokeStyle;
-          }
-        });
-
-        return labels;
       }
     }
   },
 
   windArrowPlugin: true,
   nowLine: true
-}
-
+},
 
 
 
