@@ -747,7 +747,7 @@ datasets: [
   // PERUSTUULI (nuolet, ennuste + havainto)
   // ==========================
   {
-    label: "TuuliX",
+    label: "Tuuli",
     data: windSeries,
     borderColor: "rgba(0,0,0,0.15)",
     borderWidth: 1,
@@ -801,6 +801,10 @@ plugins: {
       pointStyle: "circle",
       boxWidth: 6,
       boxHeight: 6
+      
+        filter(item, chart) {
+        return item.text !== "Tuuli";
+    }   
     }
   },
   windArrowPlugin: true,
