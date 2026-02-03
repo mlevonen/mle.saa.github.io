@@ -563,13 +563,28 @@ plugins: {
   legend: {
     display: true,
     position: "top",
+    align: "start",           // 👈 vasemmalle
     labels: {
       usePointStyle: true,
-      boxWidth: 10
+      pointStyle: "circle",
+      boxWidth: 6,            // 👈 ~50 % pienempi
+      boxHeight: 6,
+      color: "#000",
+      generateLabels(chart) {
+        const labels =
+          Chart.defaults.plugins.legend.labels.generateLabels(chart);
+
+        labels.forEach(l => {
+          l.fillStyle = l.strokeStyle; // 👈 täytetään koko pallo
+        });
+
+        return labels;
+      }
     }
   },
   nowLine: true
-},
+}
+
 
 
       scales: {
@@ -790,14 +805,18 @@ plugins: {
   legend: {
     display: true,
     position: "top",
+    align: "start",           // 👈 vasemmalle
     labels: {
       usePointStyle: true,
-      boxWidth: 10
+      pointStyle: "circle",
+      boxWidth: 6,
+      boxHeight: 6
     }
   },
   windArrowPlugin: true,
   nowLine: true
 },
+
 
 
     scales: {
