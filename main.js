@@ -585,7 +585,7 @@ plugins: {
     }
   },
   nowLine: true
-}
+},
 
 
 scales: {
