@@ -747,7 +747,7 @@ datasets: [
   // PERUSTUULI (nuolet, ennuste + havainto)
   // ==========================
   {
-    label: "Tuuli",
+    label: "TuuliX",
     data: windSeries,
     borderColor: "rgba(0,0,0,0.15)",
     borderWidth: 1,
