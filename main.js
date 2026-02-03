@@ -593,7 +593,7 @@ options: {
 }
 
   });
-
+}
 
 
 
@@ -804,7 +804,7 @@ plugins: {
   },
   windArrowPlugin: true,
   nowLine: true
-}
+},
 
 
 
