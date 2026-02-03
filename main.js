@@ -563,27 +563,17 @@ options: {
     legend: {
       display: true,
       position: "top",
-      align: "start",           // vasemmalle
+      align: "start",
       labels: {
         usePointStyle: true,
         pointStyle: "circle",
         boxWidth: 6,
-        boxHeight: 6,
-        color: "#000",
-        generateLabels(chart) {
-          const labels =
-            Chart.defaults.plugins.legend.labels.generateLabels(chart);
-
-          labels.forEach(l => {
-            l.fillStyle = l.strokeStyle;
-          });
-
-          return labels;
-        }
+        boxHeight: 6
       }
     },
+    windArrowPlugin: true,
     nowLine: true
-  },   // ✅ TÄMÄ PILKKU PUUTTUI
+  },   // ✅ TÄRKEÄ PILKKU
 
   scales: {
     x: {
@@ -594,10 +584,10 @@ options: {
       }
     },
     y: {
-      min: yMinTemp,
-      max: yMaxTemp,
-      ticks: { stepSize: 5 },
-      title: { display: true, text: "°C" }
+      min: 0,
+      max: yMaxWind,
+      ticks: { stepSize: 3 },
+      title: { display: true, text: "m/s" }
     }
   }
 }
