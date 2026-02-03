@@ -761,7 +761,7 @@ datasets: [
   // PUUSKAT – HAVAINNOT (pisteet)
   // ==========================
   {
-    label: "Tuuli (havainto)",
+    label: "Puuska (havainto)",
     data: gustObs,
     showLine: false,
     pointRadius: 4,
