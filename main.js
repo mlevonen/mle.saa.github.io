@@ -575,21 +575,22 @@ options: {
     nowLine: true
   },   // ✅ TÄRKEÄ PILKKU
 
-  scales: {
-    x: {
-      type: "time",
-      time: {
-        unit: "hour",
-        displayFormats: { hour: "HH" }
-      }
-    },
-    y: {
-      min: 0,
-      max: yMaxWind,
-      ticks: { stepSize: 3 },
-      title: { display: true, text: "m/s" }
+scales: {
+  x: {
+    type: "time",
+    time: {
+      unit: "hour",
+      displayFormats: { hour: "HH" }
     }
+  },
+  y: {
+    min: yMinTemp,
+    max: yMaxTemp,
+    ticks: { stepSize: 5 },
+    title: { display: true, text: "°C" }
   }
+}
+
 }
 
   });
