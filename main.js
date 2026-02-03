@@ -795,21 +795,25 @@ plugins: {
   legend: {
     display: true,
     position: "top",
-    align: "start",           // 👈 vasemmalle
+    align: "start",
+
     labels: {
       usePointStyle: true,
       pointStyle: "circle",
       boxWidth: 6,
-      boxHeight: 6
-      
-        filter(item, chart) {
+      boxHeight: 6,
+
+      // 🔑 POISTETAAN "Tuuli"-legendarivi
+      filter(item, chart) {
         return item.text !== "Tuuli";
-       
+      }
     }
-  }
+  },
+
   windArrowPlugin: true,
   nowLine: true
-},
+}
+
 
 
 
