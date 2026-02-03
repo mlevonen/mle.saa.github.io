@@ -774,7 +774,7 @@ datasets: [
   // PUUSKAT – HAVAINNOT (pisteet)
   // ==========================
   {
-    label: "Havainto",
+    label: "Tuuli (havainto)",
     data: gustObs,
     showLine: false,
     pointRadius: 4,
@@ -786,7 +786,7 @@ datasets: [
   // PUUSKAT – ENNUSTE (viiva)
   // ==========================
   {
-    label: "Ennuste (puuskaennuste katkoviivalla)",
+    label: "Puuska (ennuste)",
     data: gustFc,
     showLine: true,
     pointRadius: 0,
