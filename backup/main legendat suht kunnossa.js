@@ -104,8 +104,8 @@ async function fetchTimeSeries(lat, lon, parameter) {
 // ==========================
 async function fetchTimeSeriesREST(lat, lon, params) {
   const now = new Date();
-  const past = new Date(now.getTime() - 12 * 3600_000).toISOString();
-  const future = new Date(now.getTime() + 36 * 3600_000).toISOString();
+  const past = new Date(now.getTime() - 6 * 3600_000).toISOString();
+  const future = new Date(now.getTime() + 6 * 3600_000).toISOString();
 
   const urlParams = new URLSearchParams({
     latlon: `${Number(lat)},${Number(lon)}`,
