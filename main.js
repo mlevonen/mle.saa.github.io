@@ -884,11 +884,11 @@ y: {
     text: "m/s"
   }
 }
-
+}
   }
 });
 
-}
+
   
   catch (err) {
     console.error("Popup error:", err);
