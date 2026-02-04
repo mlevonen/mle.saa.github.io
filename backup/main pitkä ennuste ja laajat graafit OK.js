@@ -857,34 +857,13 @@ plugins: {
         type: "time",
         time: { unit: "hour", displayFormats: { hour: "HH" } }
       },
-      
-y: {
-  beginAtZero: true,
-
-  min: 0,
-  max: Math.max(10, yMaxWind), // vähintään 10 m/s, ettei skaala elä liikaa
-
-  ticks: {
-    stepSize: 1,               // 🔑 1 m/s välein
-    precision: 0               // ei desimaaleja
-  },
-
-  grid: {
-    drawBorder: false,
-    color: ctx => {
-      // joka 5 m/s hieman tummempi viiva
-      return ctx.tick.value % 5 === 0
-        ? "rgba(0,0,0,0.25)"
-        : "rgba(0,0,0,0.1)";
+      y: {
+        min: 0,
+        max: yMaxWind,   // 🔑 TÄSSÄ KÄYTETÄÄN
+        ticks: { stepSize: 3 },
+        title: { display: true, text: "m/s" }
+      }
     }
-  },
-
-  title: {
-    display: true,
-    text: "m/s"
-  }
-}
-
   }
 });
 
