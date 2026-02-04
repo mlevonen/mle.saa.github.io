@@ -888,6 +888,7 @@ y: {
   }
 });
 
+}
   
   catch (err) {
     console.error("Popup error:", err);
