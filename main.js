@@ -829,6 +829,7 @@ plugins: {
           // 🔴 Puuskat täytetään kokonaan
           if (label.text.includes("Puuska")) {
             label.fillStyle = label.strokeStyle;
+            label.lineWidth = 0;          // 🔑 estää viivan
           }
         });
 
