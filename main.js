@@ -129,7 +129,7 @@ async function fetchTimeSeriesREST(lat, lon, params) {
 // ==========================
 async function fetchForecastREST(lat, lon, params) {
   const now = new Date();
-  const future = new Date(now.getTime() + 12 * 3600_000).toISOString();
+  const future = new Date(now.getTime() + 36 * 3600_000).toISOString();
 
   const urlParams = new URLSearchParams({
     latlon: `${Number(lat)},${Number(lon)}`,
