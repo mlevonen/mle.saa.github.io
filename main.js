@@ -39,7 +39,7 @@ marker.bindPopup(`
   <div><strong>Lämpötila</strong></div>
   <canvas
     class="popup-chart"
-    width="400"
+    width="650"
     height="160"
     data-lat="${lat}"
     data-lon="${lon}"
@@ -49,7 +49,7 @@ marker.bindPopup(`
   <div style="margin-top:8px;"><strong>Tuuli</strong></div>
   <canvas
     class="popup-chart"
-    width="400"
+    width="650"
     height="160"
     data-lat="${lat}"
     data-lon="${lon}"
