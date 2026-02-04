@@ -747,12 +747,6 @@ const yMaxWind = allWindValues.length
   : 15;
 
 
-console.log(
-  "FORECAST RANGE:",
-  fcWind[0]?.x,
-  "→",
-  fcWind.at(-1)?.x
-);
 
 
 
