@@ -845,9 +845,6 @@ new Chart(windCanvas, {
         ticks: {
           stepSize: 1,
           precision: 0
-        maxRotation: 0,
-    	minRotation: 0,
-    	autoSkip: true
         },
 
         grid: {
