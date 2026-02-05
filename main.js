@@ -596,6 +596,14 @@ scales: {
       displayFormats: { hour: "HH" }
     }
   },
+      ticks: {
+      maxRotation: 0,
+      minRotation: 0,
+      autoSkip: true
+    }
+  },
+  
+  
   y: {
     min: yMinTemp,
     max: yMaxTemp,
@@ -836,6 +844,12 @@ new Chart(windCanvas, {
         type: "time",
         time: { unit: "hour", displayFormats: { hour: "HH" } }
       },
+    ticks: {
+      maxRotation: 0,
+      minRotation: 0,
+      autoSkip: true
+    }
+  },
 
       y: {
         beginAtZero: true,
