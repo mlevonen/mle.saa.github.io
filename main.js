@@ -13,7 +13,7 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 function buildHourlyLabels(count, endTimeISO) {
   const end = new Date(endTimeISO);
   return Array.from({ length: count }, (_, i) => {
-    const d = new Date(end.getTime() - (count - 1 - i) * 3600_000);
+    const d = new Date(end.getTime() - (count - 1 - i) * 3600000);
     return d.toLocaleTimeString("fi-FI", {
       hour: "2-digit",
       minute: "2-digit"
@@ -45,10 +45,10 @@ function interpolateTimeSeries(points, stepMinutes = 30) {
     result.push(p1);
 
     const dt = p2.x - p1.x;
-    const steps = Math.floor(dt / (stepMinutes * 60_000));
+    const steps = Math.floor(dt / (stepMinutes * 60000));
 
     for (let s = 1; s < steps; s++) {
-      const t = p1.x.getTime() + s * stepMinutes * 60_000;
+      const t = p1.x.getTime() + s * stepMinutes * 60000;
       const ratio = (t - p1.x) / dt;
 
       result.push({
@@ -299,7 +299,7 @@ if (Array.isArray(obsTemp) && Array.isArray(fcTemp)) {
   const OBS_TOLERANCE_MIN = 15;
 
   const obsCutoffUtc = new Date(
-    nowUtc.getTime() + OBS_TOLERANCE_MIN * 60_000
+    nowUtc.getTime() + OBS_TOLERANCE_MIN * 60000
   );
 
 
@@ -339,7 +339,7 @@ if (obsPoints.length && fcPoints.length) {
   const firstFc = fcPoints[0];
 
   // jos väli on yli 10 min, tehdään silta
-  if (firstFc.x - lastObs.x > 10 * 60_000) {
+  if (firstFc.x - lastObs.x > 10 * 60000) {
     fcPoints.unshift({
       x: lastObs.x,
       y: lastObs.y,
@@ -387,13 +387,14 @@ if (obsPoints.length && fcPoints.length) {
           data: fcPoints,
           borderColor: "red",
           borderDash: [6,4],
-          
-        	segment: {
-  		  borderDash: ctx =>
-  		    (ctx.p0 && ctx.p0.raw && ctx.p0.raw._bridge) ? [2, 4] : [6, 4]
-  		},
-          
-		tension: 0.45,
+
+          segment: {
+            borderDash: function(ctx) {
+              return (ctx.p0 && ctx.p0.raw && ctx.p0.raw._bridge) ? [2, 4] : [6, 4];
+            }
+          },
+
+          tension: 0.45,
 
           cubicInterpolationMode: "monotone",
           pointRadius: 0
@@ -507,7 +508,7 @@ if (Array.isArray(obsWindSpeed) && Array.isArray(fcWindSpeed)) {
   const OBS_TOLERANCE_MIN = 15;
 
   const obsCutoffUtc = new Date(
-    nowUtc.getTime() + OBS_TOLERANCE_MIN * 60_000
+    nowUtc.getTime() + OBS_TOLERANCE_MIN * 60000
   );
 
   // --- raakapisteet ---
