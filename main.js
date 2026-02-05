@@ -388,10 +388,10 @@ if (obsPoints.length && fcPoints.length) {
           borderColor: "red",
           borderDash: [6,4],
           
-		segment: {
-		  borderDash: ctx =>
-		    ctx.p0.raw?._bridge ? [2, 4] : [6, 4]
-		},
+        	segment: {
+  		  borderDash: ctx =>
+  		    (ctx.p0 && ctx.p0.raw && ctx.p0.raw._bridge) ? [2, 4] : [6, 4]
+  		},
           
 		tension: 0.45,
 
