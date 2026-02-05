@@ -594,7 +594,7 @@ scales: {
     time: {
       unit: "hour",
       displayFormats: { hour: "HH" }
-    },
+    }
     ticks: {
     maxRotation: 0,
     minRotation: 0,
@@ -855,28 +855,42 @@ plugins: {
 
 
 
-
-
-    scales: {
-      x: {
-        type: "time",
-        time: { unit: "hour", displayFormats: { hour: "HH" } }
-      },
+ scales: {
+  x: {
+    type: "time",
+    time: {
+      unit: "hour",
+      displayFormats: { hour: "HH" }
+    },
     ticks: {
-    maxRotation: 0,
-    minRotation: 0,
-    autoSkip: true
+      maxRotation: 0,
+      minRotation: 0,
+      autoSkip: true
+    }
   },
 
-
-      y: {
-        min: 0,
-        max: yMaxWind,   // 🔑 TÄSSÄ KÄYTETÄÄN
-        ticks: { stepSize: 3 },
-        title: { display: true, text: "m/s" }
-      }
+  y: {
+    beginAtZero: true,
+    min: 0,
+    max: yMaxWind,
+    ticks: {
+      stepSize: 1,
+      precision: 0
+    },
+    grid: {
+      drawBorder: false,
+      color: ctx =>
+        ctx.tick.value % 5 === 0
+          ? "rgba(0,0,0,0.25)"
+          : "rgba(0,0,0,0.1)"
+    },
+    title: {
+      display: true,
+      text: "m/s"
     }
   }
+}
+
 });
 
 
