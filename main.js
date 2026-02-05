@@ -863,6 +863,8 @@ new Chart(windCanvas, {
     }
   }
 });
+
+}
 }
 
   
