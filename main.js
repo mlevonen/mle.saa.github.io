@@ -39,7 +39,7 @@ marker.bindPopup(`
   <div><strong>Lämpötila</strong></div>
   <canvas
     class="popup-chart"
-    width="400"
+    width="650"
     height="160"
     data-lat="${lat}"
     data-lon="${lon}"
@@ -49,7 +49,7 @@ marker.bindPopup(`
   <div style="margin-top:8px;"><strong>Tuuli</strong></div>
   <canvas
     class="popup-chart"
-    width="400"
+    width="650"
     height="160"
     data-lat="${lat}"
     data-lon="${lon}"
@@ -104,8 +104,8 @@ async function fetchTimeSeries(lat, lon, parameter) {
 // ==========================
 async function fetchTimeSeriesREST(lat, lon, params) {
   const now = new Date();
-  const past = new Date(now.getTime() - 6 * 3600_000).toISOString();
-  const future = new Date(now.getTime() + 6 * 3600_000).toISOString();
+  const past = new Date(now.getTime() - 12 * 3600_000).toISOString();
+  const future = new Date(now.getTime() + 36 * 3600_000).toISOString();
 
   const urlParams = new URLSearchParams({
     latlon: `${Number(lat)},${Number(lon)}`,
@@ -129,7 +129,7 @@ async function fetchTimeSeriesREST(lat, lon, params) {
 // ==========================
 async function fetchForecastREST(lat, lon, params) {
   const now = new Date();
-  const future = new Date(now.getTime() + 12 * 3600_000).toISOString();
+  const future = new Date(now.getTime() + 36 * 3600_000).toISOString();
 
   const urlParams = new URLSearchParams({
     latlon: `${Number(lat)},${Number(lon)}`,
@@ -221,6 +221,8 @@ function interpolateTimeSeries(points, stepMinutes = 30) {
 
 
 function getLatestObservation(data, timeKey, valueKey) {
+  if (!Array.isArray(data)) return null;
+
   const now = Date.now();
 
   const past = data
@@ -229,13 +231,12 @@ function getLatestObservation(data, timeKey, valueKey) {
       v: d[valueKey],
       raw: d
     }))
-    .filter(p => p.t <= now);
+    .filter(p => p.t && p.t.getTime() <= now && p.v != null);
 
   if (!past.length) return null;
 
   return past.at(-1);
 }
-
 
 
 
@@ -391,10 +392,10 @@ map.on("popupopen", async e => {
   const cacheKey = `${lat},${lon}`;
 
   try {
-    let obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir;
+    let obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir, fcWindGust;
 
     if (popupCache[cacheKey]) {
-      ({ obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir } =
+      ({ obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir, fcWindGust } =
         popupCache[cacheKey]);
     } else {
       obsTemp = await fetchTimeSeriesREST(lat, lon, {
@@ -404,7 +405,7 @@ map.on("popupopen", async e => {
         param: "utctime,temperature"
       });
       obsWindSpeed = await fetchTimeSeriesREST(lat, lon, {
-        param: "utctime,windspeedms,winddirection"
+        param: "utctime,windspeedms,winddirection,windgust"
       });
       fcWindSpeed = await fetchForecastREST(lat, lon, {
         param: "utctime,windspeedms"
@@ -412,15 +413,18 @@ map.on("popupopen", async e => {
       fcWindDir = await fetchForecastREST(lat, lon, {
         param: "winddirection"
       });
+      fcWindGust = await fetchForecastREST(lat, lon, {
+	  param: "utctime,hourlymaximumgust"
+		});
+
 
       popupCache[cacheKey] = {
-        obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir
+        obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir, fcWindGust
       };
     }
 
 console.log(popupCache[cacheKey] ? "CACHE HIT" : "CACHE MISS", cacheKey);
 
-//LÄMPÖTILAN OTSIKKO
 
 const latestTemp = getLatestObservation(
   obsTemp,
@@ -438,8 +442,6 @@ if (latestTemp) {
       `Lämpötila ${latestTemp.v.toFixed(1)} °C`;
   }
 }
-
-
 
 
 
@@ -554,32 +556,60 @@ if (obsPoints.length && fcPoints.length) {
         }
       ]
     },
-    options: {
-      responsive: false,
-      plugins: {
-        legend: { display: false },
-        nowLine: true
-      },
-      scales: {
-        x: {
-          type: "time",
-          time: {
-            unit: "hour",
-            displayFormats: { hour: "HH" }
-          }
-        },
-        y: {
-          min: yMinTemp,
-          max: yMaxTemp,
-          ticks: { stepSize: 5 },
-          title: { display: true, text: "°C" }
-        }
+options: {
+  responsive: false,
+
+plugins: {
+  legend: {
+    display: true,
+    position: "top",
+    align: "start",
+
+    labels: {
+      usePointStyle: true,
+      pointStyle: "circle",
+      boxWidth: 6,
+      boxHeight: 6,
+
+      generateLabels(chart) {
+        const labels =
+          Chart.defaults.plugins.legend.labels.generateLabels(chart);
+
+        labels.forEach(label => {
+          // 🔵🟥 täytetään pallo kokonaan datasetin värillä
+          label.fillStyle = label.strokeStyle;
+        });
+
+        return labels;
       }
     }
+  },
+  nowLine: true
+},
+
+
+scales: {
+  x: {
+    type: "time",
+    time: {
+      unit: "hour",
+      displayFormats: { hour: "HH" }
+    }
+  },
+  y: {
+    min: yMinTemp,
+    max: yMaxTemp,
+    ticks: { stepSize: 5 },
+    title: { display: true, text: "°C" }
+  }
+}
+
+}
+
   });
 }
 
-//TUULIGRAAFIN OTSIKKO
+
 
 const latestWind = getLatestObservation(
   obsWindSpeed,
@@ -587,28 +617,29 @@ const latestWind = getLatestObservation(
   "windspeedms"
 );
 
+const latestGust = getLatestObservation(
+  obsWindSpeed,
+  "utctime",
+  "windgust"
+);
+
+
 if (latestWind) {
   const windTitle = popupEl.querySelector(
     'div:has(+ canvas[data-type="wind"])'
   );
 
   if (windTitle) {
-    const dir = latestWind.raw.winddirection;
+    const speed = latestWind.v.toFixed(1);
 
-    windTitle.innerHTML = `
-      Tuuli ${latestWind.v.toFixed(1)} m/s
-      <span style="
-        display:inline-block;
-        margin-left:4px;
-        transform:rotate(${dir + 180}deg);
-      ">➤</span>
-    `;
+    const gustText = latestGust && latestGust.v != null
+      ? ` (puuskat ${latestGust.v.toFixed(1)} m/s)`
+      : "";
+
+    windTitle.textContent =
+      `Tuuli ${speed} m/s${gustText}`;
   }
 }
-
-
-
-
 
 
 
@@ -671,6 +702,28 @@ const windSeries = [
   }))
 ];
 
+//PUUSKAT
+
+// ==========================
+// PUUSKAT: havainto vs ennuste
+// ==========================
+
+const gustObs = obsWindSpeed
+  .filter(p => p.windgust != null)
+  .map(p => ({
+    x: parseFmiUtc(p.utctime),
+    y: p.windgust
+  }));
+
+const gustFc = (fcWindGust ?? [])
+  .filter(p => p.hourlymaximumgust != null)
+  .map(p => ({
+    x: parseFmiUtc(p.utctime),
+    y: p.hourlymaximumgust
+  }));
+
+
+
 
 
   const windCanvas = popupEl.querySelector('canvas[data-type="wind"]');
@@ -680,71 +733,133 @@ const windSeries = [
 console.log("windSeries", windSeries);
 
 
+// ==========================
+// Y-AKSELIN MAKSIMI (tuuli + puuskat)
+// ==========================
+const allWindValues = [
+  ...windSeries.map(p => p.y),
+  ...gustObs.map(p => p.y),
+  ...gustFc.map(p => p.y)
+].filter(v => typeof v === "number");
+
+const yMaxWind = allWindValues.length
+  ? Math.ceil((Math.max(...allWindValues) + 2) / 5) * 5
+  : 15;
+
+
+console.log(
+  "FORECAST RANGE:",
+  fcWind[0]?.x,
+  "→",
+  fcWind.at(-1)?.x
+);
+
+
+
+
+
 new Chart(windCanvas, {
   type: "line",
-
   data: {
-    datasets: [
-      {
-        label: "Tuuli",
-        data: windSeries,
-        pointRadius: 0,
-        tension: 0.45,
-        cubicInterpolationMode: "monotone",
-        spanGaps: true,
-
-        segment: {
-          borderColor: ctx =>
-            ctx.p0.raw.phase === "fc"
-              ? "rgba(220,0,0,0.5)"
-              : "rgba(0,128,0,0.5)",
-          borderDash: ctx =>
-            ctx.p0.raw.phase === "fc"
-              ? [6, 4]
-              : []
-        },
-
-        windDirections: windSeries.map(p => p.dir)
-      }
-    ]
+datasets: [
+  // ==========================
+  // PERUSTUULI (nuolet, ennuste + havainto)
+  // ==========================
+  {
+    label: "Tuuli",
+    data: windSeries,
+    borderColor: "rgba(0,0,0,0.15)",
+    borderWidth: 1,
+    pointRadius: 0,
+    tension: 0.45,
+    cubicInterpolationMode: "monotone",
+    windDirections: windSeries.map(p => p.dir)
   },
 
-  // ✅ OPTIONS PUUTTUI
+  // ==========================
+  // PUUSKAT – HAVAINNOT (pisteet)
+  // ==========================
+  {
+    label: "Havainto",
+    data: gustObs,
+    showLine: false,
+    pointRadius: 4,
+    pointBackgroundColor: "rgba(0,140,0,0.9)",
+    pointBorderWidth: 0
+  },
+
+  // ==========================
+  // PUUSKAT – ENNUSTE (viiva)
+  // ==========================
+  {
+    label: "Ennuste (puuskaennuste katkoviivalla)",
+    data: gustFc,
+    showLine: true,
+    pointRadius: 0,
+    borderWidth: 1.5,
+    tension: 0,
+    borderColor: "rgba(220,0,0,0.7)",
+    borderDash: [2, 3]
+  }
+]
+
+    
+    
+    
+  },
   options: {
     responsive: false,
 
-    plugins: {
-      legend: { display: false },
-      windArrowPlugin: true,
-      nowLine: true,
+plugins: {
+  legend: {
+    display: true,
+    position: "top",
+    align: "start",
 
-      tooltip: {
-        callbacks: {
-          label: ctx => {
-            const v = ctx.raw;
-            if (!v) return "";
+    labels: {
+      usePointStyle: true,
+      pointStyle: "circle",
+      boxWidth: 6,
+      boxHeight: 6,
 
-            const speed = v.y.toFixed(1);
-            const dir = v.dir;
+      filter(item) {
+        // edelleen poistetaan turha "Tuuli"
+        return item.text !== "Tuuli";
+      },
 
-            return `${speed} m/s · ${dir}°`;
+      generateLabels(chart) {
+        const labels =
+          Chart.defaults.plugins.legend.labels.generateLabels(chart);
+
+        labels.forEach(label => {
+          // 🔴 Puuskat täytetään kokonaan
+          if (label.text.includes("Puuska")) {
+            label.fillStyle = label.strokeStyle;
+            label.lineWidth = 0;          // 🔑 estää viivan
           }
-        }
-      }
-    },
+        });
 
-    // ✅ X-AKSELI PAKOLLINEN
+        return labels;
+      }
+    }
+  },
+
+  windArrowPlugin: true,
+  nowLine: true
+},
+
+
+
+
+
     scales: {
       x: {
         type: "time",
-        time: {
-          unit: "hour",
-          displayFormats: { hour: "HH" }
-        }
+        time: { unit: "hour", displayFormats: { hour: "HH" } }
       },
       y: {
         min: 0,
-        max: 15,
+        max: yMaxWind,   // 🔑 TÄSSÄ KÄYTETÄÄN
         ticks: { stepSize: 3 },
         title: { display: true, text: "m/s" }
       }
@@ -754,20 +869,7 @@ new Chart(windCanvas, {
 
 
 
-    // ==========================
-    // TUULENSUUNTA (nuoli otsikkoon)
-    // ==========================
-    const latestDir = fcWindDir?.at(-1)?.winddirection;
-    if (latestDir !== undefined) {
-      const title = popupEl.querySelector(".popup-title");
-      if (title && !title.dataset.windAdded) {
-        title.dataset.windAdded = "1";
-        title.insertAdjacentHTML(
-          "beforeend",
-          ` <span style="display:inline-block;transform:rotate(${latestDir+180}deg)">➤</span>`
-        );
-      }
-    }
+
   } 
   
   } 
