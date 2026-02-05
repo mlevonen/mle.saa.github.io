@@ -761,130 +761,106 @@ console.log(
 new Chart(windCanvas, {
   type: "line",
   data: {
-datasets: [
-  // ==========================
-  // PERUSTUULI (nuolet, ennuste + havainto)
-  // ==========================
-  {
-    label: "Tuuli",
-    data: windSeries,
-    borderColor: "rgba(0,0,0,0.15)",
-    borderWidth: 1,
-    pointRadius: 0,
-    tension: 0.45,
-    cubicInterpolationMode: "monotone",
-    windDirections: windSeries.map(p => p.dir)
+    datasets: [
+      {
+        label: "Tuuli",
+        data: windSeries,
+        borderColor: "rgba(0,0,0,0.15)",
+        borderWidth: 1,
+        pointRadius: 0,
+        tension: 0.45,
+        cubicInterpolationMode: "monotone",
+        windDirections: windSeries.map(p => p.dir)
+      },
+      {
+        label: "Havainto",
+        data: gustObs,
+        showLine: false,
+        pointRadius: 4,
+        pointBackgroundColor: "rgba(0,140,0,0.9)",
+        pointBorderWidth: 0
+      },
+      {
+        label: "Ennuste (puuskaennuste katkoviivalla)",
+        data: gustFc,
+        showLine: true,
+        pointRadius: 0,
+        borderWidth: 1.5,
+        tension: 0,
+        borderColor: "rgba(220,0,0,0.7)",
+        borderDash: [2, 3]
+      }
+    ]
   },
 
-  // ==========================
-  // PUUSKAT – HAVAINNOT (pisteet)
-  // ==========================
-  {
-    label: "Havainto",
-    data: gustObs,
-    showLine: false,
-    pointRadius: 4,
-    pointBackgroundColor: "rgba(0,140,0,0.9)",
-    pointBorderWidth: 0
-  },
-
-  // ==========================
-  // PUUSKAT – ENNUSTE (viiva)
-  // ==========================
-  {
-    label: "Ennuste (puuskaennuste katkoviivalla)",
-    data: gustFc,
-    showLine: true,
-    pointRadius: 0,
-    borderWidth: 1.5,
-    tension: 0,
-    borderColor: "rgba(220,0,0,0.7)",
-    borderDash: [2, 3]
-  }
-]
-
-    
-    
-    
-  },
   options: {
     responsive: false,
 
-plugins: {
-  legend: {
-    display: true,
-    position: "top",
-    align: "start",
+    plugins: {
+      legend: {
+        display: true,
+        position: "top",
+        align: "start",
+        labels: {
+          usePointStyle: true,
+          pointStyle: "circle",
+          boxWidth: 6,
+          boxHeight: 6,
 
-    labels: {
-      usePointStyle: true,
-      pointStyle: "circle",
-      boxWidth: 6,
-      boxHeight: 6,
+          filter(item) {
+            return item.text !== "Tuuli";
+          },
 
-      filter(item) {
-        // edelleen poistetaan turha "Tuuli"
-        return item.text !== "Tuuli";
+          generateLabels(chart) {
+            const labels =
+              Chart.defaults.plugins.legend.labels.generateLabels(chart);
+
+            labels.forEach(label => {
+              if (label.text.includes("Puuska")) {
+                label.fillStyle = label.strokeStyle;
+                label.lineWidth = 0;
+              }
+            });
+
+            return labels;
+          }
+        }
       },
 
-      generateLabels(chart) {
-        const labels =
-          Chart.defaults.plugins.legend.labels.generateLabels(chart);
-
-        labels.forEach(label => {
-          // 🔴 Puuskat täytetään kokonaan
-          if (label.text.includes("Puuska")) {
-            label.fillStyle = label.strokeStyle;
-            label.lineWidth = 0;          // 🔑 estää viivan
-          }
-        });
-
-        return labels;
-      }
-    }
-  },
-
-  windArrowPlugin: true,
-  nowLine: true
-},
-
-
-
-
+      windArrowPlugin: true,
+      nowLine: true
+    },
 
     scales: {
       x: {
         type: "time",
         time: { unit: "hour", displayFormats: { hour: "HH" } }
       },
-      
-y: {
-  beginAtZero: true,
 
-  min: 0,
-  max: Math.max(10, yMaxWind), // vähintään 10 m/s, ettei skaala elä liikaa
+      y: {
+        beginAtZero: true,
+        min: 0,
+        max: Math.max(10, yMaxWind),
 
-  ticks: {
-    stepSize: 1,               // 🔑 1 m/s välein
-    precision: 0               // ei desimaaleja
-  },
+        ticks: {
+          stepSize: 1,
+          precision: 0
+        },
 
-  grid: {
-    drawBorder: false,
-    color: ctx => {
-      // joka 5 m/s hieman tummempi viiva
-      return ctx.tick.value % 5 === 0
-        ? "rgba(0,0,0,0.25)"
-        : "rgba(0,0,0,0.1)";
+        grid: {
+          drawBorder: false,
+          color: ctx =>
+            ctx.tick.value % 5 === 0
+              ? "rgba(0,0,0,0.25)"
+              : "rgba(0,0,0,0.1)"
+        },
+
+        title: {
+          display: true,
+          text: "m/s"
+        }
+      }
     }
-  },
-
-  title: {
-    display: true,
-    text: "m/s"
-  }
-}
-}
   }
 });
 
