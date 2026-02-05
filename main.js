@@ -599,7 +599,11 @@ scales: {
   y: {
     min: yMinTemp,
     max: yMaxTemp,
-    ticks: { stepSize: 5 },
+    ticks: { stepSize: 5
+    maxRotation: 0,
+    minRotation: 0,
+    autoSkip: true
+     },
     title: { display: true, text: "°C" }
   }
 }
@@ -845,6 +849,9 @@ new Chart(windCanvas, {
         ticks: {
           stepSize: 1,
           precision: 0
+    maxRotation: 0,
+    minRotation: 0,
+    autoSkip: true
         },
 
         grid: {
