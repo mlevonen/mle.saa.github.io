@@ -594,25 +594,27 @@ scales: {
     time: {
       unit: "hour",
       displayFormats: { hour: "HH" }
-    }
-  },
-      ticks: {
+    },
+    ticks: {
       maxRotation: 0,
       minRotation: 0,
       autoSkip: true
     }
-  }
-  
-  
+  },
+
   y: {
     min: yMinTemp,
     max: yMaxTemp,
-    ticks: { stepSize: 5 },
-    title: { display: true, text: "°C" }
+    ticks: {
+      stepSize: 5
+    },
+    title: {
+      display: true,
+      text: "°C"
+    }
   }
 }
 
-}
 
   });
 }
