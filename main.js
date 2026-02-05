@@ -594,7 +594,7 @@ scales: {
     time: {
       unit: "hour",
       displayFormats: { hour: "HH" }
-    }
+    },
     ticks: {
     maxRotation: 0,
     minRotation: 0,
