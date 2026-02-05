@@ -863,7 +863,7 @@ new Chart(windCanvas, {
     }
   }
 });
-
+}
 
   
   catch (err) {
