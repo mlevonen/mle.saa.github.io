@@ -894,11 +894,9 @@ plugins: {
 });
 
 
-
-
   } 
   
-  } 
+   
   
   catch (err) {
     console.error("Popup error:", err);
