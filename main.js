@@ -601,7 +601,7 @@ scales: {
       minRotation: 0,
       autoSkip: true
     }
-  },
+  }
   
   
   y: {
