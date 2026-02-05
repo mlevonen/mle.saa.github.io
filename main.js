@@ -594,7 +594,12 @@ scales: {
     time: {
       unit: "hour",
       displayFormats: { hour: "HH" }
-    }
+    },
+    ticks: {
+    maxRotation: 0,
+    minRotation: 0,
+    autoSkip: true
+  }
   },
   y: {
     min: yMinTemp,
@@ -857,6 +862,13 @@ plugins: {
         type: "time",
         time: { unit: "hour", displayFormats: { hour: "HH" } }
       },
+    ticks: {
+    maxRotation: 0,
+    minRotation: 0,
+    autoSkip: true
+  }
+
+
       y: {
         min: 0,
         max: yMaxWind,   // 🔑 TÄSSÄ KÄYTETÄÄN
