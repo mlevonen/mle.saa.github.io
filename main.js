@@ -891,11 +891,6 @@ plugins: {
   }
 }
 
-});
-
-
-  } 
-  
    
   
   catch (err) {
