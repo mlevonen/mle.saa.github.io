@@ -1,4 +1,9 @@
+import { loadPopupData } from "./api/dataLoader.js";
+import { updatePopupTitles } from "./popup/popupTitles.js";
+import { renderTemperatureChart } from "./charts/temperatureChart.js";
+import { renderWindChart } from "./charts/windChart.js";
 import "./charts/plugins.js";
+
 
 "use strict";
 

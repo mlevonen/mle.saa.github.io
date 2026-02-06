@@ -1,8 +1,5 @@
 import { parseFmiUtc, interpolateTimeSeries } from "../utils/time.js";
-export function renderTemperatureChart(popupEl, data) { ... }
-
-
-function renderTemperatureChart(popupEl, data) {
+export function renderTemperatureChart(popupEl, data) {
   const { obsTemp, fcTemp } = data;
 
   if (!Array.isArray(obsTemp) || !Array.isArray(fcTemp)) return;

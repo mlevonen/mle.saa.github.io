@@ -1,5 +1,6 @@
+import { parseFmiUtc, interpolateTimeSeries } from "../utils/time.js";
 
-function renderWindChart(popupEl, data) {
+export function renderWindChart(popupEl, data) {
   const {
     obsWindSpeed,
     fcWindSpeed,
