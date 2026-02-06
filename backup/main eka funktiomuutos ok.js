@@ -293,62 +293,6 @@ async function loadPopupData(lat, lon) {
   return data;
 }
 
-function updatePopupTitles(popupEl, data) {
-  const { obsTemp, obsWindSpeed } = data;
-
-  // ==========================
-  // LÄMPÖTILA-OTSIKKO
-  // ==========================
-  const latestTemp = getLatestObservation(
-    obsTemp,
-    "utctime",
-    "temperature"
-  );
-
-  if (latestTemp) {
-    const tempTitle = popupEl.querySelector(
-      'div:has(+ canvas[data-type="temp"])'
-    );
-
-    if (tempTitle) {
-      tempTitle.textContent =
-        `Lämpötila ${latestTemp.v.toFixed(1)} °C`;
-    }
-  }
-
-  // ==========================
-  // TUULI-OTSIKKO
-  // ==========================
-  const latestWind = getLatestObservation(
-    obsWindSpeed,
-    "utctime",
-    "windspeedms"
-  );
-
-  const latestGust = getLatestObservation(
-    obsWindSpeed,
-    "utctime",
-    "windgust"
-  );
-
-  if (latestWind) {
-    const windTitle = popupEl.querySelector(
-      'div:has(+ canvas[data-type="wind"])'
-    );
-
-    if (windTitle) {
-      const speed = latestWind.v.toFixed(1);
-
-      const gustText =
-        latestGust && latestGust.v != null
-          ? ` (puuskat ${latestGust.v.toFixed(1)} m/s)`
-          : "";
-
-      windTitle.textContent =
-        `Tuuli ${speed} m/s${gustText}`;
-    }
-  }
-}
 
 
 
@@ -493,8 +437,6 @@ map.on("popupopen", async e => {
   const cacheKey = `${lat},${lon}`;
 
 try {
-    const data = await loadPopupData(lat, lon);
-    updatePopupTitles(popupEl, data);
   const {
     obsTemp,
     fcTemp,
@@ -505,6 +447,26 @@ try {
   } = await loadPopupData(lat, lon);
 
 console.log(popupCache[cacheKey] ? "CACHE HIT" : "CACHE MISS", cacheKey);
+
+
+const latestTemp = getLatestObservation(
+  obsTemp,
+  "utctime",
+  "temperature"
+);
+
+if (latestTemp) {
+  const tempTitle = popupEl.querySelector(
+    'div:has(+ canvas[data-type="temp"])'
+  );
+
+  if (tempTitle) {
+    tempTitle.textContent =
+      `Lämpötila ${latestTemp.v.toFixed(1)} °C`;
+  }
+}
+
+
 
 
  // ==========================
@@ -669,6 +631,40 @@ scales: {
 
   });
 }
+
+
+
+const latestWind = getLatestObservation(
+  obsWindSpeed,
+  "utctime",
+  "windspeedms"
+);
+
+const latestGust = getLatestObservation(
+  obsWindSpeed,
+  "utctime",
+  "windgust"
+);
+
+
+if (latestWind) {
+  const windTitle = popupEl.querySelector(
+    'div:has(+ canvas[data-type="wind"])'
+  );
+
+  if (windTitle) {
+    const speed = latestWind.v.toFixed(1);
+
+    const gustText = latestGust && latestGust.v != null
+      ? ` (puuskat ${latestGust.v.toFixed(1)} m/s)`
+      : "";
+
+    windTitle.textContent =
+      `Tuuli ${speed} m/s${gustText}`;
+  }
+}
+
+
 
 
 // ==========================
