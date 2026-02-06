@@ -246,8 +246,53 @@ function getLatestObservation(data, timeKey, valueKey) {
 // ==========================
 const popupCache = {};
 
+async function loadPopupData(lat, lon) {
+  const cacheKey = `${lat},${lon}`;
 
-console.log("SCRIPT LOADED");
+  if (popupCache[cacheKey]) {
+    console.log("CACHE HIT", cacheKey);
+    return popupCache[cacheKey];
+  }
+
+  console.log("CACHE MISS", cacheKey);
+
+  const obsTemp = await fetchTimeSeriesREST(lat, lon, {
+    param: "utctime,temperature"
+  });
+
+  const fcTemp = await fetchForecastREST(lat, lon, {
+    param: "utctime,temperature"
+  });
+
+  const obsWindSpeed = await fetchTimeSeriesREST(lat, lon, {
+    param: "utctime,windspeedms,winddirection,windgust"
+  });
+
+  const fcWindSpeed = await fetchForecastREST(lat, lon, {
+    param: "utctime,windspeedms"
+  });
+
+  const fcWindDir = await fetchForecastREST(lat, lon, {
+    param: "winddirection"
+  });
+
+  const fcWindGust = await fetchForecastREST(lat, lon, {
+    param: "utctime,hourlymaximumgust"
+  });
+
+  const data = {
+    obsTemp,
+    fcTemp,
+    obsWindSpeed,
+    fcWindSpeed,
+    fcWindDir,
+    fcWindGust
+  };
+
+  popupCache[cacheKey] = data;
+  return data;
+}
+
 
 
 
@@ -391,37 +436,15 @@ map.on("popupopen", async e => {
   const lon = canvases[0].dataset.lon;
   const cacheKey = `${lat},${lon}`;
 
-  try {
-    let obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir, fcWindGust;
-
-    if (popupCache[cacheKey]) {
-      ({ obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir, fcWindGust } =
-        popupCache[cacheKey]);
-    } else {
-      obsTemp = await fetchTimeSeriesREST(lat, lon, {
-        param: "utctime,temperature"
-      });
-      fcTemp = await fetchForecastREST(lat, lon, {
-        param: "utctime,temperature"
-      });
-      obsWindSpeed = await fetchTimeSeriesREST(lat, lon, {
-        param: "utctime,windspeedms,winddirection,windgust"
-      });
-      fcWindSpeed = await fetchForecastREST(lat, lon, {
-        param: "utctime,windspeedms"
-      });
-      fcWindDir = await fetchForecastREST(lat, lon, {
-        param: "winddirection"
-      });
-      fcWindGust = await fetchForecastREST(lat, lon, {
-	  param: "utctime,hourlymaximumgust"
-		});
-
-
-      popupCache[cacheKey] = {
-        obsTemp, fcTemp, obsWindSpeed, fcWindSpeed, fcWindDir, fcWindGust
-      };
-    }
+try {
+  const {
+    obsTemp,
+    fcTemp,
+    obsWindSpeed,
+    fcWindSpeed,
+    fcWindDir,
+    fcWindGust
+  } = await loadPopupData(lat, lon);
 
 console.log(popupCache[cacheKey] ? "CACHE HIT" : "CACHE MISS", cacheKey);
 
