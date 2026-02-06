@@ -247,57 +247,6 @@ function getLatestObservation(data, timeKey, valueKey) {
 
 
 
-// ==========================
-// Popup data cache, tästä alkaa isot muutokset
-// ==========================
-const popupCache = {};
-
-async function loadPopupData(lat, lon) {
-  const cacheKey = `${lat},${lon}`;
-
-  if (popupCache[cacheKey]) {
-    console.log("CACHE HIT", cacheKey);
-    return popupCache[cacheKey];
-  }
-
-  console.log("CACHE MISS", cacheKey);
-
-  const obsTemp = await fetchTimeSeriesREST(lat, lon, {
-    param: "utctime,temperature"
-  });
-
-  const fcTemp = await fetchForecastREST(lat, lon, {
-    param: "utctime,temperature"
-  });
-
-  const obsWindSpeed = await fetchTimeSeriesREST(lat, lon, {
-    param: "utctime,windspeedms,winddirection,windgust"
-  });
-
-  const fcWindSpeed = await fetchForecastREST(lat, lon, {
-    param: "utctime,windspeedms"
-  });
-
-  const fcWindDir = await fetchForecastREST(lat, lon, {
-    param: "winddirection"
-  });
-
-  const fcWindGust = await fetchForecastREST(lat, lon, {
-    param: "utctime,hourlymaximumgust"
-  });
-
-  const data = {
-    obsTemp,
-    fcTemp,
-    obsWindSpeed,
-    fcWindSpeed,
-    fcWindDir,
-    fcWindGust
-  };
-
-  popupCache[cacheKey] = data;
-  return data;
-}
 
 function updatePopupTitles(popupEl, data) {
   const { obsTemp, obsWindSpeed } = data;
