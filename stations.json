@@ -1,153 +1,33 @@
 {
   "type": "FeatureCollection",
   "features": [
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "101004",
-        "name": "Helsinki Kaisaniemi"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [24.94, 60.17]
-      }
-    },
+    { "type": "Feature", "properties": { "id": "100908", "name": "Utö" }, "geometry": { "type": "Point", "coordinates": [21.37, 59.78] } },
+    { "type": "Feature", "properties": { "id": "100920", "name": "Isokari" }, "geometry": { "type": "Point", "coordinates": [21.02, 60.72] } },
+    { "type": "Feature", "properties": { "id": "100946", "name": "Hanko" }, "geometry": { "type": "Point", "coordinates": [22.97, 59.83] } },
+    { "type": "Feature", "properties": { "id": "101000", "name": "Parainen" }, "geometry": { "type": "Point", "coordinates": [22.30, 60.30] } },
+    { "type": "Feature", "properties": { "id": "101004", "name": "Turku" }, "geometry": { "type": "Point", "coordinates": [22.27, 60.45] } },
+    { "type": "Feature", "properties": { "id": "100945", "name": "Maarianhamina" }, "geometry": { "type": "Point", "coordinates": [19.94, 60.10] } },
 
+    { "type": "Feature", "properties": { "id": "101028", "name": "Helsinki" }, "geometry": { "type": "Point", "coordinates": [24.94, 60.17] } },
+    { "type": "Feature", "properties": { "id": "101029", "name": "Espoo" }, "geometry": { "type": "Point", "coordinates": [24.66, 60.21] } },
+    { "type": "Feature", "properties": { "id": "101030", "name": "Porvoo" }, "geometry": { "type": "Point", "coordinates": [25.66, 60.39] } },
+    { "type": "Feature", "properties": { "id": "101031", "name": "Kotka" }, "geometry": { "type": "Point", "coordinates": [26.94, 60.47] } },
+    { "type": "Feature", "properties": { "id": "101032", "name": "Hamina" }, "geometry": { "type": "Point", "coordinates": [27.20, 60.57] } },
 
-{
-  "type": "Feature",
-  "properties": {
-    "id": "100996",
-    "name": "Helsinki Harmaja"
-  },
-  "geometry": {
-    "type": "Point",
-    "coordinates": [24.95, 60.15]
-  }
-},
-{
-  "type": "Feature",
-  "properties": {
-    "id": "100908",
-    "name": "Utö"
-  },
-  "geometry": {
-    "type": "Point",
-    "coordinates": [21.37, 59.78]
-  }
-},
-{
-  "type": "Feature",
-  "properties": {
-    "id": "100905",
-    "name": "Rauma Kylmäpihlaja"
-  },
-  "geometry": {
-    "type": "Point",
-    "coordinates": [21.38, 60.13]
-  }
-},
-{
-  "type": "Feature",
-  "properties": {
-    "id": "100907",
-    "name": "Hanko Russarö"
-  },
-  "geometry": {
-    "type": "Point",
-    "coordinates": [23.10, 59.83]
-  }
-},
-{
-  "type": "Feature",
-  "properties": {
-    "id": "101059",
-    "name": "Porvoo Kalbådagrund"
-  },
-  "geometry": {
-    "type": "Point",
-    "coordinates": [25.67, 60.20]
-  }
-},
-{
-  "type": "Feature",
-  "properties": {
-    "id": "100903",
-    "name": "Kökar"
-  },
-  "geometry": {
-    "type": "Point",
-    "coordinates": [21.07, 60.56]
-  }
-},
-{
-  "type": "Feature",
-  "properties": {
-    "id": "100899",
-    "name": "Märket"
-  },
-  "geometry": {
-    "type": "Point",
-    "coordinates": [20.70, 60.20]
-  }
-},
-{
-  "type": "Feature",
-  "properties": {
-    "id": "101061",
-    "name": "Kotka Rankki"
-  },
-  "geometry": {
-    "type": "Point",
-    "coordinates": [26.80, 60.40]
-  }
-},
-{
-  "type": "Feature",
-  "properties": {
-    "id": "100904",
-    "name": "Kustavi Isokari"
-  },
-  "geometry": {
-    "type": "Point",
-    "coordinates": [21.47, 60.72]
-  }
-},
-{
-  "type": "Feature",
-  "properties": {
-    "id": "101003",
-    "name": "Emäsalo"
-  },
-  "geometry": {
-    "type": "Point",
-    "coordinates": [24.55, 59.95]
-  }
-},
+    { "type": "Feature", "properties": { "id": "101050", "name": "Rauma" }, "geometry": { "type": "Point", "coordinates": [21.50, 61.13] } },
+    { "type": "Feature", "properties": { "id": "101051", "name": "Pori" }, "geometry": { "type": "Point", "coordinates": [21.80, 61.49] } },
+    { "type": "Feature", "properties": { "id": "101052", "name": "Kristiinankaupunki" }, "geometry": { "type": "Point", "coordinates": [21.37, 62.27] } },
+    { "type": "Feature", "properties": { "id": "101053", "name": "Kaskinen" }, "geometry": { "type": "Point", "coordinates": [21.22, 62.38] } },
+    { "type": "Feature", "properties": { "id": "101054", "name": "Vaasa" }, "geometry": { "type": "Point", "coordinates": [21.62, 63.10] } },
 
+    { "type": "Feature", "properties": { "id": "101070", "name": "Kalajoki" }, "geometry": { "type": "Point", "coordinates": [23.95, 64.26] } },
+    { "type": "Feature", "properties": { "id": "101071", "name": "Raahe" }, "geometry": { "type": "Point", "coordinates": [24.48, 64.68] } },
+    { "type": "Feature", "properties": { "id": "101072", "name": "Oulu" }, "geometry": { "type": "Point", "coordinates": [25.47, 65.01] } },
+    { "type": "Feature", "properties": { "id": "101073", "name": "Kemi" }, "geometry": { "type": "Point", "coordinates": [24.56, 65.74] } },
+    { "type": "Feature", "properties": { "id": "101074", "name": "Tornio" }, "geometry": { "type": "Point", "coordinates": [24.15, 65.85] } },
 
-
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "101009",
-        "name": "Espoo Tapiola"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [24.78, 60.18]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "100968",
-        "name": "Tampere Härmälä"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [23.76, 61.47]
-      }
-    }
+    { "type": "Feature", "properties": { "id": "200001", "name": "Tampere" }, "geometry": { "type": "Point", "coordinates": [23.76, 61.50] } },
+    { "type": "Feature", "properties": { "id": "200002", "name": "Jyväskylä" }, "geometry": { "type": "Point", "coordinates": [25.75, 62.24] } },
+    { "type": "Feature", "properties": { "id": "200003", "name": "Kuopio" }, "geometry": { "type": "Point", "coordinates": [27.68, 62.89] } }
   ]
 }
