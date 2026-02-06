@@ -2,6 +2,7 @@ import { loadPopupData } from "./api/dataLoader.js";
 import { updatePopupTitles } from "./popup/popupTitles.js";
 import { renderTemperatureChart } from "./charts/temperatureChart.js";
 import { renderWindChart } from "./charts/windChart.js";
+import { renderPopupExtras } from "./popup/popupExtras.js";
 import "./charts/plugins.js";
 
 
@@ -265,6 +266,7 @@ map.on("popupopen", async e => {
     updatePopupTitles(popupEl, data);
     renderTemperatureChart(popupEl, data);
     renderWindChart(popupEl, data);
+    renderPopupExtras(popupEl, data);
 
   } catch (err) {
     console.error("Popup error:", err);
