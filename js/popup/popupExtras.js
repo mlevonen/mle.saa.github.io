@@ -33,13 +33,14 @@ function getPressureTrend(data, minutes = 180) {
   if (diff < -1) return "down";
   return "steady";
 }
-console.log("obsWindSpeed sample", data.obsWindSpeed?.[0]);
+
 
 export function renderPopupExtras(popupEl, data) {
   // 🔑 data on olemassa VAIN täällä
   const pressure = getPressure(data);
   const trend = getPressureTrend(data);
-
+  
+  console.log("obsWindSpeed sample", data.obsWindSpeed?.[0]);
   console.log("latest pressure", pressure);
 
   let container = popupEl.querySelector(".popup-extras");
