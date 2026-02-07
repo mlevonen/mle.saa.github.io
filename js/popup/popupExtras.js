@@ -1,16 +1,17 @@
 import { getLatestObservation } from "../utils/helpers.js";
 import { weatherCodeToIcon } from "./weatherIcons.js";
 
-console.log("latest weather", weather);
-
-
 export function renderPopupExtras(popupEl, data) {
-  console.log("renderPopupExtras CALLED", data);
+  console.log("renderPopupExtras CALLED");
+
+  // 🔑 weather määritellään TÄÄLLÄ, ei tiedoston juuressa
   const weather = getLatestObservation(
     data.obsTemp,
     "utctime",
     "weathercode"
   );
+
+  console.log("latest weather", weather);
 
   const iconFile = weather
     ? weatherCodeToIcon(weather.v)
