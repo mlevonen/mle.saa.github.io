@@ -279,29 +279,30 @@ function getPressureTrend(data, minutes = 180) {
 // ==========================
 
 map.on("popupopen", async e => {
+
   const popupEl = e.popup.getElement();
   if (!popupEl) return;
 
-  const canvas = popupEl.querySelector("canvas");
-  if (!canvas) return;
+  const canvases = popupEl.querySelectorAll("canvas");
+  if (!canvases.length) return;
 
   const lat = canvases[0].dataset.lat;
   const lon = canvases[0].dataset.lon;
   const fmisid = canvases[0].dataset.fmisid;
 
+  console.log("Popup datasets:", { lat, lon, fmisid });
+
 
   try {
-    const data = await loadPopupData(lat, lon);
+    const data = await loadPopupData(lat, lon, fmisid);
 
     updatePopupTitles(popupEl, data);
     renderPopupExtras(popupEl, data);
     renderTemperatureChart(popupEl, data);
     renderWindChart(popupEl, data);
-    
 
   } catch (err) {
     console.error("Popup error:", err);
-    popupEl.innerHTML += `<div>Virhe FMI-datan haussa</div>`;
   }
 });
 
