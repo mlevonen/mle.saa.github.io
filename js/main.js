@@ -284,6 +284,8 @@ map.on("popupopen", async e => {
   if (!canvas) return;
 
   const { lat, lon } = canvas.dataset;
+  const fmisid = e.popup._source.feature.properties.id;
+
 
   try {
     const data = await loadPopupData(lat, lon);

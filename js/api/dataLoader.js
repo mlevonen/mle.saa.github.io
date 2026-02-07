@@ -8,7 +8,7 @@ import { fetchSeaLevel } from "../api/sealevel.js";
 
 const popupCache = {};
 
-export async function loadPopupData(lat, lon) {
+export async function loadPopupData(lat, lon, fmisid) {
   const cacheKey = `${lat},${lon}`;
 
   if (popupCache[cacheKey]) {
@@ -52,10 +52,12 @@ export async function loadPopupData(lat, lon) {
 
   let seaLevel = null;
   try {
-  seaLevel = await fetchSeaLevel(lat, lon);
+  seaLevel = await fetchSeaLevel(fmisid);
   } catch (e) {
   seaLevel = null;
   }
+
+  console.log("Sea level fmisid", fmisid);
 
 
 
