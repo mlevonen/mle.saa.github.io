@@ -27,6 +27,10 @@ export async function loadPopupData(lat, lon) {
     param: "utctime,windspeedms,winddirection,windgust,pressurehpa"
   });
 
+  const obsPressure = await fetchTimeSeriesREST(lat, lon, {
+  param: "utctime,pressurehpa"
+  });
+
   const fcWindSpeed = await fetchForecastREST(lat, lon, {
     param: "utctime,windspeedms"
   });
@@ -39,10 +43,14 @@ export async function loadPopupData(lat, lon) {
     param: "utctime,hourlymaximumgust"
   });
 
+
+
+
   const data = {
     obsTemp,
     fcTemp,
     obsWindSpeed,
+    obsPressure, 
     fcWindSpeed,
     fcWindDir,
     fcWindGust

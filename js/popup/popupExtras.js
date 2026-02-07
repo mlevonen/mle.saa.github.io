@@ -2,14 +2,15 @@ import { getLatestObservation } from "../utils/helpers.js";
 
 function getPressure(data) {
   return getLatestObservation(
-    data.obsWindSpeed,
+    data.obsPressure,
     "utctime",
     "pressurehpa"
   );
 }
 
+
 function getPressureTrend(data, minutes = 180) {
-  const series = data.obsWindSpeed
+  const series = data.obsPressure
     .map(d => ({
       t: new Date(d.utctime),
       v: d.pressurehpa
@@ -33,6 +34,7 @@ function getPressureTrend(data, minutes = 180) {
   if (diff < -1) return "down";
   return "steady";
 }
+
 
 
 export function renderPopupExtras(popupEl, data) {
