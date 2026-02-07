@@ -245,6 +245,31 @@ function getLatestObservation(data, timeKey, valueKey) {
   return past.at(-1);
 }
 
+function getPressureTrend(data, minutes = 180) {
+  const series = data.obsWindSpeed
+    .map(d => ({
+      t: new Date(d.utctime),
+      v: d.pressurehpa
+    }))
+    .filter(p => p.v != null);
+
+  if (series.length < 2) return null;
+
+  const latest = series.at(-1);
+  const cutoff = latest.t.getTime() - minutes * 60_000;
+
+  const past = [...series]
+    .reverse()
+    .find(p => p.t.getTime() <= cutoff);
+
+  if (!past) return null;
+
+  const diff = latest.v - past.v;
+
+  if (diff > 1) return "up";
+  if (diff < -1) return "down";
+  return "steady";
+}
 
 
 // ==========================

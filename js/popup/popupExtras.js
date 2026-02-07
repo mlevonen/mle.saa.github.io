@@ -53,14 +53,19 @@ export function renderPopupExtras(popupEl, data) {
     return;
   }
 
-  const arrow =
-    trend === "up" ? "↗" :
-    trend === "down" ? "↘" :
-    "→";
+const arrow =
+  trend === "up" ? "↗" :
+  trend === "down" ? "↘" :
+  "→";
 
-  container.innerHTML = `
-    <span class="popup-pressure">
-      🌡️ ${pressure.v.toFixed(0)} hPa ${arrow}
-    </span>
-  `;
+const pressureHtml = `
+  <span class="popup-pressure">
+    🌡️ ${pressure.v.toFixed(0)} hPa ${arrow}
+  </span>
+`;
+
+container.innerHTML = `
+  ${pressureHtml}
+`;
+
 }
