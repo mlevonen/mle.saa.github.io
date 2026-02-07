@@ -1,49 +1,162 @@
 {
   "type": "FeatureCollection",
   "features": [
-    { "type": "Feature", "properties": { "id": "HAAPASAARI", "name": "Haapasaari", "municipality": "Kotka", "seaArea": "Suomenlahti" }, "geometry": { "type": "Point", "coordinates": [27.18, 60.30] } },
-    { "type": "Feature", "properties": { "id": "RANKKI", "name": "Rankki", "municipality": "Kotka", "seaArea": "Suomenlahti" }, "geometry": { "type": "Point", "coordinates": [26.97, 60.38] } },
-    { "type": "Feature", "properties": { "id": "ORRENGRUND", "name": "Orrengrund", "municipality": "Loviisa", "seaArea": "Suomenlahti" }, "geometry": { "type": "Point", "coordinates": [26.04, 60.26] } },
-    { "type": "Feature", "properties": { "id": "KILPILAHTI", "name": "Kilpilahti satama", "municipality": "Porvoo", "seaArea": "Suomenlahti" }, "geometry": { "type": "Point", "coordinates": [25.57, 60.27] } },
-    { "type": "Feature", "properties": { "id": "EMASALO", "name": "Emäsalo", "municipality": "Porvoo", "seaArea": "Suomenlahti" }, "geometry": { "type": "Point", "coordinates": [25.60, 60.21] } },
-    { "type": "Feature", "properties": { "id": "KALBADAGRUND", "name": "Kalbådagrund", "municipality": "Porvoo", "seaArea": "Suomenlahti" }, "geometry": { "type": "Point", "coordinates": [25.63, 59.99] } },
-    { "type": "Feature", "properties": { "id": "VUOSAARI", "name": "Vuosaari satama", "municipality": "Helsinki", "seaArea": "Suomenlahti" }, "geometry": { "type": "Point", "coordinates": [25.17, 60.20] } },
-    { "type": "Feature", "properties": { "id": "ITATOUKKI", "name": "Itätoukki", "municipality": "Sipoo", "seaArea": "Suomenlahti" }, "geometry": { "type": "Point", "coordinates": [25.38, 60.22] } },
-    { "type": "Feature", "properties": { "id": "HARMAJA", "name": "Harmaja", "municipality": "Helsinki", "seaArea": "Suomenlahti" }, "geometry": { "type": "Point", "coordinates": [24.97, 60.11] } },
-    { "type": "Feature", "properties": { "id": "MAKILUOTO", "name": "Mäkiluoto", "municipality": "Kirkkonummi", "seaArea": "Suomenlahti" }, "geometry": { "type": "Point", "coordinates": [24.40, 59.98] } },
-    { "type": "Feature", "properties": { "id": "BAGASKAR", "name": "Bågaskär", "municipality": "Inkoo", "seaArea": "Suomenlahti" }, "geometry": { "type": "Point", "coordinates": [24.05, 59.90] } },
-    { "type": "Feature", "properties": { "id": "TULLINIEMI", "name": "Tulliniemi", "municipality": "Hanko", "seaArea": "Suomenlahti" }, "geometry": { "type": "Point", "coordinates": [22.91, 59.82] } },
-    { "type": "Feature", "properties": { "id": "RUSSARO", "name": "Russarö", "municipality": "Hanko", "seaArea": "Suomenlahti" }, "geometry": { "type": "Point", "coordinates": [22.95, 59.77] } },
 
-    { "type": "Feature", "properties": { "id": "VANO", "name": "Vänö", "municipality": "Kemiönsaari", "seaArea": "Saaristomeri" }, "geometry": { "type": "Point", "coordinates": [22.10, 60.02] } },
-    { "type": "Feature", "properties": { "id": "UTO", "name": "Utö", "municipality": "Parainen", "seaArea": "Saaristomeri" }, "geometry": { "type": "Point", "coordinates": [21.37, 59.78] } },
-    { "type": "Feature", "properties": { "id": "RAJAKARI", "name": "Rajakari", "municipality": "Turku", "seaArea": "Saaristomeri" }, "geometry": { "type": "Point", "coordinates": [22.22, 60.40] } },
-    { "type": "Feature", "properties": { "id": "FAGERHOLM", "name": "Fagerholm", "municipality": "Parainen", "seaArea": "Saaristomeri" }, "geometry": { "type": "Point", "coordinates": [22.10, 60.22] } },
-    { "type": "Feature", "properties": { "id": "KUMLINGE", "name": "Kumlinge kirkonkylä", "municipality": "Kumlinge", "seaArea": "Saaristomeri" }, "geometry": { "type": "Point", "coordinates": [20.78, 60.25] } },
-    { "type": "Feature", "properties": { "id": "LANGNAS", "name": "Långnäs satama", "municipality": "Lumparland", "seaArea": "Ahvenanmeri" }, "geometry": { "type": "Point", "coordinates": [20.31, 60.12] } },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "harmaja",
+        "fmisid": 100971,
+        "name": "Harmaja"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [24.98, 60.10]
+      }
+    },
 
-    { "type": "Feature", "properties": { "id": "LANSISATAMA", "name": "Länsisatama", "municipality": "Maarianhamina", "seaArea": "Ahvenanmeri" }, "geometry": { "type": "Point", "coordinates": [19.91, 60.09] } },
-    { "type": "Feature", "properties": { "id": "LOTSBERGET", "name": "Lotsberget", "municipality": "Maarianhamina", "seaArea": "Ahvenanmeri" }, "geometry": { "type": "Point", "coordinates": [19.93, 60.10] } },
-    { "type": "Feature", "properties": { "id": "NYHAMN", "name": "Nyhamn", "municipality": "Lemland", "seaArea": "Ahvenanmeri" }, "geometry": { "type": "Point", "coordinates": [19.95, 60.00] } },
-    { "type": "Feature", "properties": { "id": "MARKET", "name": "Märket", "municipality": "Hammarland", "seaArea": "Ahvenanmeri" }, "geometry": { "type": "Point", "coordinates": [19.13, 60.30] } },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "utö",
+        "fmisid": 100908,
+        "name": "Utö"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [21.37, 59.78]
+      }
+    },
 
-    { "type": "Feature", "properties": { "id": "ISOKARI", "name": "Isokari", "municipality": "Kustavi", "seaArea": "Selkämeri" }, "geometry": { "type": "Point", "coordinates": [21.02, 60.72] } },
-    { "type": "Feature", "properties": { "id": "KYLMAPIHLAJA", "name": "Kylmäpihlaja", "municipality": "Rauma", "seaArea": "Selkämeri" }, "geometry": { "type": "Point", "coordinates": [21.25, 61.05] } },
-    { "type": "Feature", "properties": { "id": "TAHKOLUOTO", "name": "Tahkoluoto satama", "municipality": "Pori", "seaArea": "Selkämeri" }, "geometry": { "type": "Point", "coordinates": [21.39, 61.61] } },
-    { "type": "Feature", "properties": { "id": "SALGRUND", "name": "Sälgrund", "municipality": "Kaskinen", "seaArea": "Selkämeri" }, "geometry": { "type": "Point", "coordinates": [21.20, 62.22] } },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tulliniemi",
+        "fmisid": 100932,
+        "name": "Tulliniemi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [22.93, 59.81]
+      }
+    },
 
-    { "type": "Feature", "properties": { "id": "BREDSKARET", "name": "Bredskäret", "municipality": "Korsnäs", "seaArea": "Merenkurkku" }, "geometry": { "type": "Point", "coordinates": [21.05, 62.85] } },
-    { "type": "Feature", "properties": { "id": "STROMMINGSBADAN", "name": "Strömmingsbådan", "municipality": "Maalahti", "seaArea": "Merenkurkku" }, "geometry": { "type": "Point", "coordinates": [21.20, 62.95] } },
-    { "type": "Feature", "properties": { "id": "VALASSAARET", "name": "Valassaaret", "municipality": "Mustasaari", "seaArea": "Merenkurkku" }, "geometry": { "type": "Point", "coordinates": [20.92, 63.43] } },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "russaro",
+        "fmisid": 100933,
+        "name": "Russarö"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [22.95, 59.80]
+      }
+    },
 
-    { "type": "Feature", "properties": { "id": "KALLAN", "name": "Kallan", "municipality": "Pietarsaari", "seaArea": "Perämeri" }, "geometry": { "type": "Point", "coordinates": [22.43, 63.66] } },
-    { "type": "Feature", "properties": { "id": "TANKAR", "name": "Tankar", "municipality": "Kokkola", "seaArea": "Perämeri" }, "geometry": { "type": "Point", "coordinates": [22.84, 63.95] } },
-    { "type": "Feature", "properties": { "id": "ULKOKALLA", "name": "Ulkokalla", "municipality": "Kalajoki", "seaArea": "Perämeri" }, "geometry": { "type": "Point", "coordinates": [23.70, 64.33] } },
-    { "type": "Feature", "properties": { "id": "NAHKIAINEN", "name": "Nahkiainen", "municipality": "Raahe", "seaArea": "Perämeri" }, "geometry": { "type": "Point", "coordinates": [24.38, 64.57] } },
-    { "type": "Feature", "properties": { "id": "LAPALUOTO", "name": "Lapaluoto satama", "municipality": "Raahe", "seaArea": "Perämeri" }, "geometry": { "type": "Point", "coordinates": [24.47, 64.69] } },
-    { "type": "Feature", "properties": { "id": "VIHREAASAARI", "name": "Vihreäsaari satama", "municipality": "Oulu", "seaArea": "Perämeri" }, "geometry": { "type": "Point", "coordinates": [25.45, 65.03] } },
-    { "type": "Feature", "properties": { "id": "MARJANIEMI", "name": "Marjaniemi", "municipality": "Hailuoto", "seaArea": "Perämeri" }, "geometry": { "type": "Point", "coordinates": [24.73, 65.01] } },
-    { "type": "Feature", "properties": { "id": "KEMI_MAJAKKA", "name": "Kemi I majakka", "municipality": "Kemi", "seaArea": "Perämeri" }, "geometry": { "type": "Point", "coordinates": [24.42, 65.78] } },
-    { "type": "Feature", "properties": { "id": "AJOS", "name": "Ajos", "municipality": "Kemi", "seaArea": "Perämeri" }, "geometry": { "type": "Point", "coordinates": [24.56, 65.70] } }
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "isokari",
+        "fmisid": 100685,
+        "name": "Isokari"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [21.01, 60.72]
+      }
+    },
+
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kylmapihlaja",
+        "fmisid": 100684,
+        "name": "Kylmäpihlaja"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [21.39, 61.61]
+      }
+    },
+
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tahkoluoto",
+        "fmisid": 101784,
+        "name": "Tahkoluoto satama"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [21.39, 61.61]
+      }
+    },
+
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "salgrund",
+        "fmisid": 100696,
+        "name": "Sälgrund"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [21.20, 62.33]
+      }
+    },
+
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "bredskaret",
+        "fmisid": 100697,
+        "name": "Bredskäret"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [21.18, 62.95]
+      }
+    },
+
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "valassaaret",
+        "fmisid": 100698,
+        "name": "Valassaaret"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [21.07, 63.43]
+      }
+    },
+
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tankarinmajaka",
+        "fmisid": 100699,
+        "name": "Tankar"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [22.85, 63.95]
+      }
+    },
+
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kemi1",
+        "fmisid": 100683,
+        "name": "Kemi I majakka"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [24.53, 65.67]
+      }
+    }
+
   ]
 }
