@@ -3,6 +3,9 @@ import {
   fetchForecastREST
 } from "../api/fmiApi.js";
 
+import { fetchSeaLevel } from "../api/sealevel.js";
+
+
 const popupCache = {};
 
 export async function loadPopupData(lat, lon) {
@@ -47,6 +50,12 @@ export async function loadPopupData(lat, lon) {
     param: "utctime,hourlymaximumgust"
   });
 
+  let seaLevel = null;
+  try {
+  seaLevel = await fetchSeaLevel(lat, lon);
+  } catch (e) {
+  seaLevel = null;
+  }
 
 
 
@@ -58,7 +67,8 @@ export async function loadPopupData(lat, lon) {
     fcPressure, 
     fcWindSpeed,
     fcWindDir,
-    fcWindGust
+    fcWindGust,
+    seaLevel
   };
 
   popupCache[cacheKey] = data;

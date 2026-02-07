@@ -36,6 +36,15 @@ function getPressureTrend(data, hours = 3) {
   return "steady";
 }
 
+function getSeaLevel(data) {
+  if (!Array.isArray(data.seaLevel)) return null;
+
+  const latest = data.seaLevel.at(-1);
+  if (!latest?.sealevel) return null;
+
+  return latest.sealevel; // cm
+}
+
 
 
 export function renderPopupExtras(popupEl, data) {
@@ -63,14 +72,13 @@ const arrow =
   trend === "down" ? "↘" :
   "→";
 
-const pressureHtml = `
-  <span class="popup-pressure">
-    🌡️ ${pressure.v.toFixed(0)} hPa ${arrow}
-  </span>
-`;
+container.innerHTML = pressureHtml;
 
-container.innerHTML = `
-  ${pressureHtml}
-`;
-
+const sea = getSeaLevel(data);
+if (sea != null) {
+  container.innerHTML += `
+    <span class="popup-sealevel">
+      🌊 ${sea > 0 ? "+" : ""}${sea} cm
+    </span>
+  `;
 }
