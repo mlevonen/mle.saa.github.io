@@ -1,26 +1,48 @@
-import { fetchTimeSeriesREST, fetchForecastREST } from "./fmiApi.js";
-
 const popupCache = {};
 
 export async function loadPopupData(lat, lon) {
-  const key = `${lat},${lon}`;
-  if (popupCache[key]) return popupCache[key];
+  const cacheKey = `${lat},${lon}`;
+
+  if (popupCache[cacheKey]) {
+    console.log("CACHE HIT", cacheKey);
+    return popupCache[cacheKey];
+  }
+
+  console.log("CACHE MISS", cacheKey);
+
+  const obsTemp = await fetchTimeSeriesREST(lat, lon, {
+    param: "utctime,temperature,weathercode"
+  });
+
+  const fcTemp = await fetchForecastREST(lat, lon, {
+    param: "utctime,temperature"
+  });
+
+  const obsWindSpeed = await fetchTimeSeriesREST(lat, lon, {
+    param: "utctime,windspeedms,winddirection,windgust,pressurehpa"
+  });
+
+  const fcWindSpeed = await fetchForecastREST(lat, lon, {
+    param: "utctime,windspeedms"
+  });
+
+  const fcWindDir = await fetchForecastREST(lat, lon, {
+    param: "winddirection"
+  });
+
+  const fcWindGust = await fetchForecastREST(lat, lon, {
+    param: "utctime,hourlymaximumgust"
+  });
 
   const data = {
-    const obsTemp = await fetchTimeSeriesREST(lat, lon, {
-      param: "utctime,temperature,weathercode"}),
-
-    fcTemp: await fetchForecastREST(lat, lon, { param: "utctime,temperature" }),
-    obsWindSpeed: await fetchTimeSeriesREST(lat, lon, {
-      param: "utctime,windspeedms,winddirection,windgust"
-    }),
-    fcWindSpeed: await fetchForecastREST(lat, lon, { param: "utctime,windspeedms" }),
-    fcWindDir: await fetchForecastREST(lat, lon, { param: "winddirection" }),
-    fcWindGust: await fetchForecastREST(lat, lon, {
-      param: "utctime,hourlymaximumgust"
-    })
+    obsTemp,
+    fcTemp,
+    obsWindSpeed,
+    fcWindSpeed,
+    fcWindDir,
+    fcWindGust
   };
 
-  popupCache[key] = data;
+  popupCache[cacheKey] = data;
   return data;
 }
