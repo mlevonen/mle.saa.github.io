@@ -72,6 +72,12 @@ const arrow =
   trend === "down" ? "↘" :
   "→";
 
+const pressureHtml = `
+  <span class="popup-pressure">
+    🌡️ ${pressure.v.toFixed(0)} hPa ${arrow}
+  </span>
+`;
+
 container.innerHTML = pressureHtml;
 
 const sea = getSeaLevel(data);
@@ -81,4 +87,4 @@ if (sea != null) {
       🌊 ${sea > 0 ? "+" : ""}${sea} cm
     </span>
   `;
-}
+}}
