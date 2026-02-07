@@ -8,27 +8,38 @@ function getPressure(data) {
   );
 }
 
-const pressure = getPressure(data);
-console.log("latest pressure", pressure);
+function getPressureTrend(data, minutes = 180) {
+  const series = data.obsWindSpeed
+    .map(d => ({
+      t: new Date(d.utctime),
+      v: d.pressurehpa
+    }))
+    .filter(p => p.v != null);
 
+  if (series.length < 2) return null;
 
-import { weatherCodeToIcon } from "./weatherIcons.js";
+  const latest = series.at(-1);
+  const cutoff = latest.t.getTime() - minutes * 60_000;
+
+  const past = [...series]
+    .reverse()
+    .find(p => p.t.getTime() <= cutoff);
+
+  if (!past) return null;
+
+  const diff = latest.v - past.v;
+
+  if (diff > 1) return "up";
+  if (diff < -1) return "down";
+  return "steady";
+}
 
 export function renderPopupExtras(popupEl, data) {
-  console.log("renderPopupExtras CALLED");
+  // 🔑 data on olemassa VAIN täällä
+  const pressure = getPressure(data);
+  const trend = getPressureTrend(data);
 
-  // 🔑 weather määritellään TÄÄLLÄ, ei tiedoston juuressa
-  const weather = getLatestObservation(
-    data.obsTemp,
-    "utctime",
-    "weathercode"
-  );
-
-  console.log("latest weather", weather);
-
-  const iconFile = weather
-    ? weatherCodeToIcon(weather.v)
-    : null;
+  console.log("latest pressure", pressure);
 
   let container = popupEl.querySelector(".popup-extras");
   if (!container) {
@@ -37,13 +48,19 @@ export function renderPopupExtras(popupEl, data) {
     popupEl.prepend(container);
   }
 
+  if (!pressure) {
+    container.innerHTML = "";
+    return;
+  }
+
+  const arrow =
+    trend === "up" ? "↗" :
+    trend === "down" ? "↘" :
+    "→";
+
   container.innerHTML = `
-    ${iconFile ? `
-      <img
-        src="/js/assets/weather-icons/${iconFile}"
-        class="weather-icon"
-        alt="Sääsymboli"
-      />
-    ` : ""}
+    <span class="popup-pressure">
+      🌡️ ${pressure.v.toFixed(0)} hPa ${arrow}
+    </span>
   `;
 }
