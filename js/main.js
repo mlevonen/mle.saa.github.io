@@ -50,7 +50,7 @@ marker.bindPopup(`
     height="160"
     data-lat="${lat}"
     data-lon="${lon}"
-    data-fmisid="${f.properties.id}"
+    data-fmisid="${f.properties.fmisid}"
     data-type="temp"
   ></canvas>
 
@@ -61,7 +61,7 @@ marker.bindPopup(`
     height="160"
     data-lat="${lat}"
     data-lon="${lon}"
-    data-fmisid="${f.properties.id}"
+    data-fmisid="${f.properties.fmisid}"
     data-type="wind"
   ></canvas>
 `);
