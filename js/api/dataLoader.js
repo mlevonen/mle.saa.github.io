@@ -1,7 +1,7 @@
 import {
   fetchTimeSeriesREST,
   fetchForecastREST
-} from "../api/fmi.js";
+} from "../api/fmiApi.js";
 
 const popupCache = {};
 
