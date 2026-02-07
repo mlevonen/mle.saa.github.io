@@ -1,3 +1,8 @@
+import {
+  fetchTimeSeriesREST,
+  fetchForecastREST
+} from "../api/fmi.js";
+
 const popupCache = {};
 
 export async function loadPopupData(lat, lon) {
