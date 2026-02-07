@@ -31,6 +31,10 @@ export async function loadPopupData(lat, lon) {
   param: "utctime,pressurehpa"
   });
 
+  const fcPressure = await fetchForecastREST(lat, lon, {
+  param: "utctime,pressurehpa"
+  });
+
   const fcWindSpeed = await fetchForecastREST(lat, lon, {
     param: "utctime,windspeedms"
   });
@@ -50,7 +54,8 @@ export async function loadPopupData(lat, lon) {
     obsTemp,
     fcTemp,
     obsWindSpeed,
-    obsPressure, 
+    obsPressure,
+    fcPressure, 
     fcWindSpeed,
     fcWindDir,
     fcWindGust

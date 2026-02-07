@@ -2,15 +2,15 @@ import { getLatestObservation } from "../utils/helpers.js";
 
 function getPressure(data) {
   return getLatestObservation(
-    data.obsPressure,
+    data.fcPressure,
     "utctime",
     "pressurehpa"
   );
 }
 
 
-function getPressureTrend(data, minutes = 180) {
-  const series = data.obsPressure
+function getPressureTrend(data, hours = 3) {
+  const series = data.fcPressure
     .map(d => ({
       t: new Date(d.utctime),
       v: d.pressurehpa
@@ -19,16 +19,17 @@ function getPressureTrend(data, minutes = 180) {
 
   if (series.length < 2) return null;
 
-  const latest = series.at(-1);
-  const cutoff = latest.t.getTime() - minutes * 60_000;
+  const now = Date.now();
+  const current = series.find(p => p.t.getTime() >= now);
+  if (!current) return null;
 
   const past = [...series]
     .reverse()
-    .find(p => p.t.getTime() <= cutoff);
+    .find(p => p.t.getTime() <= now - hours * 3600_000);
 
   if (!past) return null;
 
-  const diff = latest.v - past.v;
+  const diff = current.v - past.v;
 
   if (diff > 1) return "up";
   if (diff < -1) return "down";
