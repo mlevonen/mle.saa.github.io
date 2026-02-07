@@ -264,9 +264,10 @@ map.on("popupopen", async e => {
     const data = await loadPopupData(lat, lon);
 
     updatePopupTitles(popupEl, data);
+    renderPopupExtras(popupEl, data);
     renderTemperatureChart(popupEl, data);
     renderWindChart(popupEl, data);
-    renderPopupExtras(popupEl, data);
+    
 
   } catch (err) {
     console.error("Popup error:", err);

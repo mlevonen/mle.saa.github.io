@@ -7,7 +7,9 @@ export async function loadPopupData(lat, lon) {
   if (popupCache[key]) return popupCache[key];
 
   const data = {
-    obsTemp: await fetchTimeSeriesREST(lat, lon, { param: "utctime,temperature" }),
+    const obsTemp = await fetchTimeSeriesREST(lat, lon, {
+      param: "utctime,temperature,weathercode"}),
+
     fcTemp: await fetchForecastREST(lat, lon, { param: "utctime,temperature" }),
     obsWindSpeed: await fetchTimeSeriesREST(lat, lon, {
       param: "utctime,windspeedms,winddirection,windgust"
