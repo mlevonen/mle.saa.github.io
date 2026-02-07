@@ -4,7 +4,7 @@ import { renderTemperatureChart } from "./charts/temperatureChart.js";
 import { renderWindChart } from "./charts/windChart.js";
 import { renderPopupExtras } from "./popup/popupExtras.js";
 import "./charts/plugins.js";
-
+console.log("renderPopupExtras import:", renderPopupExtras);
 
 "use strict";
 
