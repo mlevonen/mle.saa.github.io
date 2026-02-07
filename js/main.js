@@ -50,6 +50,7 @@ marker.bindPopup(`
     height="160"
     data-lat="${lat}"
     data-lon="${lon}"
+    data-fmisid="${f.properties.id}"
     data-type="temp"
   ></canvas>
 
@@ -60,6 +61,7 @@ marker.bindPopup(`
     height="160"
     data-lat="${lat}"
     data-lon="${lon}"
+    data-fmisid="${f.properties.id}"
     data-type="wind"
   ></canvas>
 `);
@@ -283,8 +285,9 @@ map.on("popupopen", async e => {
   const canvas = popupEl.querySelector("canvas");
   if (!canvas) return;
 
-  const { lat, lon } = canvas.dataset;
-  const fmisid = e.popup._source.feature.properties.id;
+  const lat = canvases[0].dataset.lat;
+  const lon = canvases[0].dataset.lon;
+  const fmisid = canvases[0].dataset.fmisid;
 
 
   try {
