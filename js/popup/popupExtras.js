@@ -1,4 +1,17 @@
 import { getLatestObservation } from "../utils/helpers.js";
+
+function getPressure(data) {
+  return getLatestObservation(
+    data.obsWindSpeed,
+    "utctime",
+    "pressurehpa"
+  );
+}
+
+const pressure = getPressure(data);
+console.log("latest pressure", pressure);
+
+
 import { weatherCodeToIcon } from "./weatherIcons.js";
 
 export function renderPopupExtras(popupEl, data) {
