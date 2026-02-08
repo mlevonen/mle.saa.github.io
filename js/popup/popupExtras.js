@@ -84,7 +84,9 @@ if (pressure) {
 // ==========================
 // MERIVEDENKORKEUS (ajetaan AINA)
 // ==========================
-const sea = getSeaLevel(data);
+const sea = data.seaLevel;
+console.log("renderPopupExtras seaLevel =", sea);
+
 if (sea != null) {
   container.innerHTML += `
     <span class="popup-sealevel">
