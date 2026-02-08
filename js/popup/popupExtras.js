@@ -46,13 +46,13 @@ function getSeaLevel(data) {
 }
 
 
-console.log("POPUP EXTRAS DATA", data);
+
 export function renderPopupExtras(popupEl, data) {
   // 🔑 data on olemassa VAIN täällä
   const pressure = getPressure(data);
   const trend = getPressureTrend(data);
  
-
+  console.log("POPUP EXTRAS DATA", data);
   console.log("obsWindSpeed sample", data.obsWindSpeed?.[0]);
   console.log("latest pressure", pressure);
 
