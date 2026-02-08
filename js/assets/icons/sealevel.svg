@@ -1,14 +1,1 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-<svg width="800px" height="800px" viewBox="0 0 72 72" id="emoji" version="1.1" xmlns="http://www.w3.org/2000/svg">
-  <g id="color">
-    <path fill="#61B2E4" d="M68,44.7744c-8,0-11.1127,3-16.1127,3s-10-3-16-3s-10,3-16,3S7,44.7744,4,44.7744V68h64V44.7744z"/>
-  </g>
-  <g id="line">
-    <path fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.8873,44.7744 c3,0,9,3,15,3s10-3,16-3s11,3,16,3s7-3,15-3"/>
-    <line x1="18.9215" x2="18.9215" y1="39.5555" y2="26.4931" fill="none" stroke="#000000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>
-    <path fill="none" stroke="#000000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M13.9215,31.1065 L18.8,25.9256c0.0397-0.0421,0.106-0.0441,0.1481-0.0044c0.0019,0.0018,0.0038,0.0037,0.0056,0.0056l4.9678,5.4432"/>
-    <line x1="51.5379" x2="51.5379" y1="39.5555" y2="26.4931" fill="none" stroke="#000000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>
-    <path fill="none" stroke="#000000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M46.5379,31.1065 l4.8786-5.1809c0.0397-0.0421,0.106-0.0441,0.1481-0.0044c0.0019,0.0018,0.0038,0.0037,0.0056,0.0056l4.9677,5.4432"/>
-  </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36"><title>Straight-ruler SVG Icon</title><path fill="#FFCC4D" d="M30.021 34.264a3.998 3.998 0 0 1-5.656 0L1.736 11.636a4 4 0 0 1 0-5.657l4.243-4.242a4 4 0 0 1 5.657 0l22.626 22.628a4 4 0 0 1 .001 5.656z"/><path fill="#292F33" d="M9.515 6.687a1 1 0 0 1-1.414-1.415l3.536-3.536l1.414 1.415zm5.656 1.414a.999.999 0 1 1-1.414-1.414l1.415-1.415l1.414 1.415zm1.415 5.656a.999.999 0 1 1-1.414-1.414l3.536-3.536c.486.486.929.928 1.414 1.415zm5.656 1.414a.998.998 0 0 1-1.413 0a.998.998 0 0 1 0-1.414l1.414-1.415c.485.487.928.928 1.414 1.415zm1.415 5.657a1 1 0 0 1-1.415-1.414l3.536-3.535l1.414 1.414zm7.071 7.071a.998.998 0 0 1-1.413 0a.998.998 0 0 1-.001-1.414l3.536-3.535l1.414 1.414zm-1.415-5.657a1 1 0 1 1-1.414-1.413l1.415-1.414l1.413 1.413z"/></svg>
