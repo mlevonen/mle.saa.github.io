@@ -4,25 +4,32 @@ export async function fetchSeaLevel(fmisid) {
     version: "2.0.0",
     request: "GetFeature",
     storedquery_id: "fmi::observations::mareograph::instant::simple",
-    fmisid: fmisid,
-    outputFormat: "application/json"   // 🔑 TÄMÄ PUUTTUI
+    fmisid: fmisid
   });
 
   const url = `https://opendata.fmi.fi/wfs/fin?${params}`;
   console.log("SEA LEVEL OBS REQUEST:", url);
 
   const res = await fetch(url);
-  const text = await res.text();
-
-  if (!res.ok || text.startsWith("<")) {
+  if (!res.ok) {
     console.warn("Sea level observation not available for fmisid", fmisid);
     return null;
   }
 
-  const json = JSON.parse(text);
+  const text = await res.text();
 
-  const feature = json?.features?.[0];
-  const value = feature?.properties?.value;
+  // 🔑 XML-parsinta
+  const parser = new DOMParser();
+  const xml = parser.parseFromString(text, "application/xml");
 
-  return value ?? null;
+  // FMI mareograph: arvo löytyy <BsWfs:ParameterValue>
+  const valueNode = xml.querySelector("BsWfs\\:ParameterValue, ParameterValue");
+
+  if (!valueNode) {
+    console.warn("Sea level value missing for fmisid", fmisid);
+    return null;
+  }
+
+  const value = parseFloat(valueNode.textContent);
+  return Number.isFinite(value) ? value : null;
 }
