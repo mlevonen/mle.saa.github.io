@@ -5,51 +5,34 @@ import { getLatestObservation } from "../utils/helpers.js";
    ========================================================= */
 
 // --- Ilmanpaine (hPa, numero) ---
-function getPressure(data) {
-  if (!Array.isArray(data.fcPressure)) return null;
-
-  const latest = data.fcPressure.at(-1);
-
-  return (
-    latest?.pressurehpa ??
-    latest?.value ??
-    latest?.PA_PT1H_AVG ??
-    null
-  );
+function getPressure(series) {
+  if (!Array.isArray(series)) return null;
+  const latest = series.at(-1);
+  return latest?.pressurehpa ?? null;
 }
 
-
-// --- Ilmanpaineen trendi (up / down / steady) ---
-function getPressureTrend(data, hours = 3) {
-  if (!Array.isArray(data.fcPressure)) return null;
-
-  const series = data.fcPressure
-    .map(d => ({
-      t: new Date(d.utctime).getTime(),
-      v: d.pressurehpa
-    }))
-    .filter(p => p.v != null && !isNaN(p.t));
-
-  if (series.length < 2) return null;
+function getPressureTrend(series, hours = 3) {
+  if (!Array.isArray(series) || series.length < 2) return null;
 
   const now = Date.now();
 
   const current = [...series]
     .reverse()
-    .find(p => p.t <= now);
+    .find(p => Date.parse(p.utctime) <= now);
   if (!current) return null;
 
   const past = [...series]
     .reverse()
-    .find(p => p.t <= now - hours * 3600_000);
+    .find(p => Date.parse(p.utctime) <= now - hours * 3600_000);
   if (!past) return null;
 
-  const diff = current.v - past.v;
+  const diff = current.pressurehpa - past.pressurehpa;
 
   if (diff > 0.5) return "up";
   if (diff < -0.5) return "down";
   return "steady";
 }
+
 
 // --- Merivedenkorkeus (cm, numero) ---
 function getSeaLevel(data) {
@@ -97,8 +80,9 @@ export function renderPopupExtras(popupEl, data) {
      ILMANPAINE
      ========================== */
 
-  const pressure = getPressure(data);
-  const trend = getPressureTrend(data);
+    const pressure = getPressure(data.obsPressure);
+    const trend = getPressureTrend(data.obsPressure);
+
 
   if (pressure != null) {
     const arrow =
