@@ -1,112 +1,114 @@
 import { getLatestObservation } from "../utils/helpers.js";
 
+/* =========================================================
+   DATA-HELPERIT
+   ========================================================= */
+
+// --- Ilmanpaine (hPa, numero) ---
 function getPressure(data) {
-  return getLatestObservation(
+  const obs = getLatestObservation(
     data.fcPressure,
     "utctime",
     "pressurehpa"
   );
+  return obs?.pressurehpa ?? null;
 }
 
-
+// --- Ilmanpaineen trendi (up / down / steady) ---
 function getPressureTrend(data, hours = 3) {
+  if (!Array.isArray(data.fcPressure)) return null;
+
   const series = data.fcPressure
     .map(d => ({
-      t: new Date(d.utctime),
+      t: new Date(d.utctime).getTime(),
       v: d.pressurehpa
     }))
-    .filter(p => p.v != null);
+    .filter(p => p.v != null && !isNaN(p.t));
 
   if (series.length < 2) return null;
 
   const now = Date.now();
-  const current = series.find(p => p.t.getTime() >= now);
+
+  const current = [...series]
+    .reverse()
+    .find(p => p.t <= now);
   if (!current) return null;
 
   const past = [...series]
     .reverse()
-    .find(p => p.t.getTime() <= now - hours * 3600_000);
-
+    .find(p => p.t <= now - hours * 3600_000);
   if (!past) return null;
 
   const diff = current.v - past.v;
 
-  if (diff > 1) return "up";
-  if (diff < -1) return "down";
+  if (diff > 0.5) return "up";
+  if (diff < -0.5) return "down";
   return "steady";
 }
 
+// --- Merivedenkorkeus (cm, numero) ---
 function getSeaLevel(data) {
   if (!Array.isArray(data.seaLevel)) return null;
 
   const latest = data.seaLevel.at(-1);
-  if (!latest?.sealevel) return null;
-
-  return latest.sealevel; // cm
+  return latest?.sealevel ?? null;
 }
 
 
+/* =========================================================
+   RENDER
+   ========================================================= */
 
 export function renderPopupExtras(popupEl, data) {
-  // 🔑 data on olemassa VAIN täällä
-  const pressure = getPressure(data);
-  const trend = getPressureTrend(data);
- 
-  console.log("POPUP EXTRAS DATA", data);
-  console.log("obsWindSpeed sample", data.obsWindSpeed?.[0]);
-  console.log("latest pressure", pressure);
-
   const content = popupEl.querySelector(".leaflet-popup-content");
   if (!content) return;
 
   let container = content.querySelector(".popup-extras");
   if (!container) {
-  container = document.createElement("div");
-  container.className = "popup-extras";
-  content.prepend(container);
+    container = document.createElement("div");
+    container.className = "popup-extras";
+    content.prepend(container);
   }
 
-// tyhjennetään sisältö aina aluksi
-container.innerHTML = "";
+  // Tyhjennetään aina
+  container.innerHTML = "";
 
-// ==========================
-// ILMANPAINE (vain jos on dataa)
-// ==========================
-if (pressure) {
-  const arrow =
-    trend === "up" ? "↗" :
-    trend === "down" ? "↘" :
-    "→";
+  /* ==========================
+     ILMANPAINE
+     ========================== */
 
-  container.innerHTML += `
-    <span class="popup-pressure">
-      🌡️ ${pressure.v.toFixed(0)} hPa ${arrow}
-    </span>
-  `;
+  const pressure = getPressure(data);
+  const trend = getPressureTrend(data);
+
+  if (pressure != null) {
+    const arrow =
+      trend === "up" ? "▲" :
+      trend === "down" ? "▼" :
+      "▬";
+
+    container.innerHTML += `
+      <span class="popup-pressure">
+        🌡️ ${pressure.toFixed(0)} hPa ${arrow}
+      </span>
+    `;
+  }
+
+  /* ==========================
+     MERIVEDENKORKEUS
+     ========================== */
+
+  const sea = getSeaLevel(data);
+
+  if (sea != null) {
+    container.innerHTML += `
+      <span class="popup-sealevel">
+        <img
+          src="/js/assets/icons/sealevel.svg"
+          class="popup-sealevel-icon"
+          alt="Merivedenkorkeus"
+        />
+        ${sea > 0 ? "+" : ""}${sea} cm
+      </span>
+    `;
+  }
 }
-
-// ==========================
-// MERIVEDENKORKEUS (ajetaan AINA)
-// ==========================
-const sea = data.seaLevel;
-console.log("renderPopupExtras seaLevel =", sea);
-
-if (sea != null) {
-  container.innerHTML += `
-  <span class="popup-sealevel">
-    <img
-      src="/js/assets/icons/sealevel.svg"
-      class="popup-sealevel-icon"
-      alt="Merivedenkorkeus"
-    />
-    ${sea > 0 ? "+" : ""}${sea} cm
-  </span>
-`;
-
-
-setTimeout(() => {
-  console.log("popup DOM after render", popupEl.innerHTML);
-}, 0);
-
-
-}}
