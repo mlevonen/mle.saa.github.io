@@ -28,24 +28,25 @@ export async function fetchSeaLevel(fmisid) {
 );
 
 for (const el of elements) {
-    const nameNode = el.querySelector(
+  const nameNode = el.querySelector(
     "BsWfs\\:ParameterName, ParameterName"
-    );
-    const valueNode = el.querySelector(
+  );
+  const valueNode = el.querySelector(
     "BsWfs\\:ParameterValue, ParameterValue"
-    );
+  );
 
   if (!nameNode || !valueNode) continue;
 
-  // TW = merivedenkorkeus
-  if (nameNode.textContent.trim() === "TW") {
-    const meters = parseFloat(valueNode.textContent);
-    if (!Number.isFinite(meters)) return null;
+  const name = nameNode.textContent.trim();
 
-    // 🔑 MUUNNETAAN SENTTIMETREIKSI
-    return Math.round(meters * 100);
+  if (name === "WATLEV" || name === "TW") {
+    const mm = Number(valueNode.textContent);
+    if (!Number.isFinite(mm)) return null;
+
+    return Math.round(mm / 10); // cm
   }
 }
+
 
 console.warn("Sea level TW value not found for fmisid", fmisid);
 return null;}
