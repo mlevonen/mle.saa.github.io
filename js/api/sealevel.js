@@ -22,14 +22,30 @@ export async function fetchSeaLevel(fmisid) {
   const parser = new DOMParser();
   const xml = parser.parseFromString(text, "application/xml");
 
-  // FMI mareograph: arvo löytyy <BsWfs:ParameterValue>
-  const valueNode = xml.querySelector("BsWfs\\:ParameterValue, ParameterValue");
+// hae kaikki BsWfsElementit
+  const elements = xml.querySelectorAll(
+  "BsWfs\\:BsWfsElement, BsWfsElement"
+);
 
-  if (!valueNode) {
-    console.warn("Sea level value missing for fmisid", fmisid);
-    return null;
+for (const el of elements) {
+    const nameNode = el.querySelector(
+    "BsWfs\\:ParameterName, ParameterName"
+    );
+    const valueNode = el.querySelector(
+    "BsWfs\\:ParameterValue, ParameterValue"
+    );
+
+  if (!nameNode || !valueNode) continue;
+
+  // TW = merivedenkorkeus
+  if (nameNode.textContent.trim() === "TW") {
+    const meters = parseFloat(valueNode.textContent);
+    if (!Number.isFinite(meters)) return null;
+
+    // 🔑 MUUNNETAAN SENTTIMETREIKSI
+    return Math.round(meters * 100);
   }
-
-  const value = parseFloat(valueNode.textContent);
-  return Number.isFinite(value) ? value : null;
 }
+
+console.warn("Sea level TW value not found for fmisid", fmisid);
+return null;}

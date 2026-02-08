@@ -56,12 +56,16 @@ export function renderPopupExtras(popupEl, data) {
   console.log("obsWindSpeed sample", data.obsWindSpeed?.[0]);
   console.log("latest pressure", pressure);
 
-  let container = popupEl.querySelector(".popup-extras");
+  const content = popupEl.querySelector(".leaflet-popup-content");
+  if (!content) return;
+
+  let container = content.querySelector(".popup-extras");
   if (!container) {
-    container = document.createElement("div");
-    container.className = "popup-extras";
-    popupEl.prepend(container);
+  container = document.createElement("div");
+  container.className = "popup-extras";
+  content.prepend(container);
   }
+
 // tyhjennetään sisältö aina aluksi
 container.innerHTML = "";
 
