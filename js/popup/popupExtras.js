@@ -72,7 +72,7 @@ function getSeaLevel(data) {
 /* =========================================================
    RENDER
    ========================================================= */
-console.log("fcPressure:", data.fcPressure);
+
 export function renderPopupExtras(popupEl, data) {
   const content = popupEl.querySelector(".leaflet-popup-content");
   if (!content) return;
@@ -84,7 +84,7 @@ export function renderPopupExtras(popupEl, data) {
     content.prepend(container);
     
   }
-  
+  console.log("fcPressure:", data.fcPressure);
   // Tyhjennetään aina
   container.innerHTML = "";
 
