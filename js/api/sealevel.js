@@ -4,7 +4,8 @@ export async function fetchSeaLevel(fmisid) {
     version: "2.0.0",
     request: "GetFeature",
     storedquery_id: "fmi::observations::mareograph::instant::simple",
-    fmisid: fmisid
+    fmisid: fmisid,
+    outputFormat: "application/json"   // 🔑 TÄMÄ PUUTTUI
   });
 
   const url = `https://opendata.fmi.fi/wfs/fin?${params}`;
@@ -23,7 +24,5 @@ export async function fetchSeaLevel(fmisid) {
   const feature = json?.features?.[0];
   const value = feature?.properties?.value;
 
-  if (value == null) return null;
-
-  return value; // cm
+  return value ?? null;
 }
