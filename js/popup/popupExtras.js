@@ -82,10 +82,9 @@ export function renderPopupExtras(popupEl, data) {
     container = document.createElement("div");
     container.className = "popup-extras";
     content.prepend(container);
-    console.log("fcPressure:", data.fcPressure);
-
+    
   }
-
+  console.log("fcPressure:", data.fcPressure);
   // Tyhjennetään aina
   container.innerHTML = "";
 
