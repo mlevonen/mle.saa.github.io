@@ -6,13 +6,18 @@ import { getLatestObservation } from "../utils/helpers.js";
 
 // --- Ilmanpaine (hPa, numero) ---
 function getPressure(data) {
-  const obs = getLatestObservation(
-    data.fcPressure,
-    "utctime",
-    "pressurehpa"
+  if (!Array.isArray(data.fcPressure)) return null;
+
+  const latest = data.fcPressure.at(-1);
+
+  return (
+    latest?.pressurehpa ??
+    latest?.value ??
+    latest?.PA_PT1H_AVG ??
+    null
   );
-  return obs?.pressurehpa ?? null;
 }
+
 
 // --- Ilmanpaineen trendi (up / down / steady) ---
 function getPressureTrend(data, hours = 3) {
