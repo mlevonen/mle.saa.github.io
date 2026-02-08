@@ -7,23 +7,22 @@ export async function fetchSeaLevel(fmisid) {
     service: "WFS",
     version: "2.0.0",
     request: "GetFeature",
-    storedquery_id: "fmi::forecast::sealevel::point::timevaluepair",
+    storedquery_id: "fmi::observations::mareograph::instant::timevaluepair",
     fmisid: fmisid,
-    geoid: "N2000",          // 🔑 TÄMÄ PUUTTUI
     starttime: start,
     endtime: end,
-    timestep: 60,
-    outputFormat: "application/json"
+    timestep: 60
   });
 
-  const url = `https://opendata.fmi.fi/wfs?${params}`;
-  console.log("SEA LEVEL FORECAST REQUEST:", url);
+  // 🔑 HUOMAA /wfs/fin
+  const url = `https://opendata.fmi.fi/wfs/fin?${params}`;
+  console.log("SEA LEVEL OBS REQUEST:", url);
 
   const res = await fetch(url);
   const text = await res.text();
 
   if (!res.ok || text.startsWith("<")) {
-    console.warn("Sea level forecast not available for fmisid", fmisid);
+    console.warn("Sea level observation not available for fmisid", fmisid);
     return null;
   }
 
@@ -31,8 +30,8 @@ export async function fetchSeaLevel(fmisid) {
 
   if (!Array.isArray(json) || json.length === 0) return null;
 
+  // FMI palauttaa [{ time, value }]
   const latest = json.at(-1);
 
-  // FMI palauttaa usein muodossa { time, value }
   return latest?.value ?? null;
 }
