@@ -93,11 +93,16 @@ console.log("renderPopupExtras seaLevel =", sea);
 
 if (sea != null) {
   container.innerHTML += `
-    <span class="popup-sealevel">
-      🌊 ${sea > 0 ? "+" : ""}${sea} cm
-    
-    </span>
-  `;
+  <span class="popup-sealevel">
+    <img
+      src="/js/assets/icons/sealevel.svg"
+      class="popup-sealevel-icon"
+      alt="Merivedenkorkeus"
+    />
+    ${sea > 0 ? "+" : ""}${sea} cm
+  </span>
+`;
+
 
 setTimeout(() => {
   console.log("popup DOM after render", popupEl.innerHTML);
