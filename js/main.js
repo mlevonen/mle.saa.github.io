@@ -34,11 +34,15 @@ fetch("stations.json")
       const [lon, lat] = f.geometry.coordinates;
       const { name } = f.properties;
 
-      const marker = L.circleMarker([lat, lon], {
-        radius: 5,
-        color: "blue",
-        fillOpacity: 0.7
-      }).addTo(layer);
+    const marker = L.circleMarker([lat, lon], {
+    radius: 5,
+    color: "blue",
+    fillOpacity: 0.7
+    }).addTo(layer);
+
+    // 🔑 TÄRKEÄ: tallenna feature markerille
+    marker.feature = f;
+
 
 marker.bindPopup(`
   <div class="popup-title">${name}</div>
@@ -296,6 +300,9 @@ map.on("popupopen", async e => {
   // 🔑 3. Ota FMISID:t propertiesista (EI canvasista)
   const weatherFmisid = props.weatherFmisid;
   const seaLevelFmisid = props.seaLevelFmisid ?? null;
+
+  console.log("Popup feature", e.popup._source.feature);
+
 
   try {
     // 🔑 4. Kutsu loadPopupDataa UUDESSA muodossa
