@@ -61,25 +61,28 @@ export function renderPopupExtras(popupEl, data) {
     container.className = "popup-extras";
     popupEl.prepend(container);
   }
+// tyhjennetään sisältö aina aluksi
+container.innerHTML = "";
 
-  if (!pressure) {
-    container.innerHTML = "";
-    return;
-  }
+// ==========================
+// ILMANPAINE (vain jos on dataa)
+// ==========================
+if (pressure) {
+  const arrow =
+    trend === "up" ? "↗" :
+    trend === "down" ? "↘" :
+    "→";
 
-const arrow =
-  trend === "up" ? "↗" :
-  trend === "down" ? "↘" :
-  "→";
+  container.innerHTML += `
+    <span class="popup-pressure">
+      🌡️ ${pressure.v.toFixed(0)} hPa ${arrow}
+    </span>
+  `;
+}
 
-const pressureHtml = `
-  <span class="popup-pressure">
-    🌡️ ${pressure.v.toFixed(0)} hPa ${arrow}
-  </span>
-`;
-
-container.innerHTML = pressureHtml;
-
+// ==========================
+// MERIVEDENKORKEUS (ajetaan AINA)
+// ==========================
 const sea = getSeaLevel(data);
 if (sea != null) {
   container.innerHTML += `
