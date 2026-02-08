@@ -94,4 +94,10 @@ if (sea != null) {
     
     </span>
   `;
+
+setTimeout(() => {
+  console.log("popup DOM after render", popupEl.innerHTML);
+}, 0);
+
+
 }}
