@@ -1,20 +1,12 @@
 export async function fetchSeaLevel(fmisid) {
-  const now = new Date();
-  const start = new Date(now.getTime() - 6 * 3600_000).toISOString();
-  const end = now.toISOString();
-
   const params = new URLSearchParams({
     service: "WFS",
     version: "2.0.0",
     request: "GetFeature",
-    storedquery_id: "fmi::observations::mareograph::instant::timevaluepair",
-    fmisid: fmisid,
-    starttime: start,
-    endtime: end,
-    timestep: 60
+    storedquery_id: "fmi::observations::mareograph::instant::simple",
+    fmisid: fmisid
   });
 
-  // 🔑 HUOMAA /wfs/fin
   const url = `https://opendata.fmi.fi/wfs/fin?${params}`;
   console.log("SEA LEVEL OBS REQUEST:", url);
 
@@ -28,10 +20,10 @@ export async function fetchSeaLevel(fmisid) {
 
   const json = JSON.parse(text);
 
-  if (!Array.isArray(json) || json.length === 0) return null;
+  const feature = json?.features?.[0];
+  const value = feature?.properties?.value;
 
-  // FMI palauttaa [{ time, value }]
-  const latest = json.at(-1);
+  if (value == null) return null;
 
-  return latest?.value ?? null;
+  return value; // cm
 }
