@@ -5,22 +5,69 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "harmaja",
-        "fmisid": 100971,
-        "name": "Harmaja"
+        "id": "helsinki",
+        "name": "Helsinki",
+        "weatherFmisid": 100971,
+        "seaLevelFmisid": 132310,
+        "seaLevelName": "Helsinki Kaivopuisto"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [24.98, 60.10]
+        "coordinates": [24.95, 60.17]
       }
     },
 
     {
       "type": "Feature",
       "properties": {
-        "id": "utö",
-        "fmisid": 100908,
-        "name": "Utö"
+        "id": "porvoo",
+        "name": "Porvoo",
+        "weatherFmisid": 101004,
+        "seaLevelFmisid": 100669,
+        "seaLevelName": "Porvoo Emäsalo Vaarlahti"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [25.66, 60.39]
+      }
+    },
+
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hamina",
+        "name": "Hamina",
+        "weatherFmisid": 101030,
+        "seaLevelFmisid": 134254,
+        "seaLevelName": "Hamina Pitäjänsaari"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [27.20, 60.57]
+      }
+    },
+
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hanko",
+        "name": "Hanko",
+        "weatherFmisid": 101023,
+        "seaLevelFmisid": 134253,
+        "seaLevelName": "Hanko Pikku Kolalahti"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [22.97, 59.83]
+      }
+    },
+
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "uto",
+        "name": "Utö",
+        "weatherFmisid": 100908
       },
       "geometry": {
         "type": "Point",
@@ -31,130 +78,150 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "tulliniemi",
-        "fmisid": 100932,
-        "name": "Tulliniemi"
+        "id": "turku",
+        "name": "Turku",
+        "weatherFmisid": 101033,
+        "seaLevelFmisid": 134225,
+        "seaLevelName": "Turku Ruissalo Saaronniemi"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [22.93, 59.81]
+        "coordinates": [22.27, 60.45]
       }
     },
 
     {
       "type": "Feature",
       "properties": {
-        "id": "russaro",
-        "fmisid": 100933,
-        "name": "Russarö"
+        "id": "rauma",
+        "name": "Rauma",
+        "weatherFmisid": 101060,
+        "seaLevelFmisid": 134224,
+        "seaLevelName": "Rauma Petäjäs"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [22.95, 59.80]
+        "coordinates": [21.51, 61.13]
       }
     },
 
     {
       "type": "Feature",
       "properties": {
-        "id": "isokari",
-        "fmisid": 100685,
-        "name": "Isokari"
+        "id": "pori",
+        "name": "Pori",
+        "weatherFmisid": 101061,
+        "seaLevelFmisid": 134266,
+        "seaLevelName": "Pori Mäntyluoto Kallo"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [21.01, 60.72]
+        "coordinates": [21.47, 61.60]
       }
     },
 
     {
       "type": "Feature",
       "properties": {
-        "id": "kylmapihlaja",
-        "fmisid": 100684,
-        "name": "Kylmäpihlaja"
+        "id": "kaskinen",
+        "name": "Kaskinen",
+        "weatherFmisid": 101065,
+        "seaLevelFmisid": 134251,
+        "seaLevelName": "Kaskinen Ådskär"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [21.39, 61.61]
+        "coordinates": [21.22, 62.38]
       }
     },
 
     {
       "type": "Feature",
       "properties": {
-        "id": "tahkoluoto",
-        "fmisid": 101784,
-        "name": "Tahkoluoto satama"
+        "id": "vaasa",
+        "name": "Vaasa",
+        "weatherFmisid": 101067,
+        "seaLevelFmisid": 134223,
+        "seaLevelName": "Vaasa Vaskiluoto"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [21.39, 61.61]
+        "coordinates": [21.60, 63.10]
       }
     },
 
     {
       "type": "Feature",
       "properties": {
-        "id": "salgrund",
-        "fmisid": 100696,
-        "name": "Sälgrund"
+        "id": "pietarsaari",
+        "name": "Pietarsaari",
+        "weatherFmisid": 101071,
+        "seaLevelFmisid": 134250,
+        "seaLevelName": "Pietarsaari Leppäluoto"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [21.20, 62.33]
+        "coordinates": [22.70, 63.68]
       }
     },
 
     {
       "type": "Feature",
       "properties": {
-        "id": "bredskaret",
-        "fmisid": 100697,
-        "name": "Bredskäret"
+        "id": "raahe",
+        "name": "Raahe",
+        "weatherFmisid": 101073,
+        "seaLevelFmisid": 100540,
+        "seaLevelName": "Raahe Lapaluoto"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [21.18, 62.95]
+        "coordinates": [24.48, 64.69]
       }
     },
 
     {
       "type": "Feature",
       "properties": {
-        "id": "valassaaret",
-        "fmisid": 100698,
-        "name": "Valassaaret"
+        "id": "oulu",
+        "name": "Oulu",
+        "weatherFmisid": 101074,
+        "seaLevelFmisid": 134248,
+        "seaLevelName": "Oulu Toppila"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [21.07, 63.43]
+        "coordinates": [25.47, 65.01]
       }
     },
 
     {
       "type": "Feature",
       "properties": {
-        "id": "tankarinmajaka",
-        "fmisid": 100699,
-        "name": "Tankar"
+        "id": "kemi",
+        "name": "Kemi",
+        "weatherFmisid": 101075,
+        "seaLevelFmisid": 100539,
+        "seaLevelName": "Kemi Ajos"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [22.85, 63.95]
+        "coordinates": [24.56, 65.73]
       }
     },
 
     {
       "type": "Feature",
       "properties": {
-        "id": "kemi1",
-        "fmisid": 100683,
-        "name": "Kemi I majakka"
+        "id": "foglo",
+        "name": "Föglö",
+        "weatherFmisid": 101010,
+        "seaLevelFmisid": 134252,
+        "seaLevelName": "Föglö Degerby"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [24.53, 65.67]
+        "coordinates": [20.40, 60.00]
       }
     }
 
