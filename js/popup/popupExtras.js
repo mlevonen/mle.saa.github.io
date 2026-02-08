@@ -48,11 +48,25 @@ function getPressureTrend(data, hours = 3) {
 
 // --- Merivedenkorkeus (cm, numero) ---
 function getSeaLevel(data) {
-  if (!Array.isArray(data.seaLevel)) return null;
+  const sea = data.seaLevel;
 
-  const latest = data.seaLevel.at(-1);
-  return latest?.sealevel ?? null;
+  // suora numero
+  if (typeof sea === "number") return sea;
+
+  // objekti
+  if (sea && typeof sea.sealevel === "number") {
+    return sea.sealevel;
+  }
+
+  // aikasarja
+  if (Array.isArray(sea)) {
+    const latest = sea.at(-1);
+    return latest?.sealevel ?? null;
+  }
+
+  return null;
 }
+
 
 
 /* =========================================================
