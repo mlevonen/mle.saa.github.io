@@ -9,6 +9,7 @@ export async function fetchSeaLevel(fmisid) {
     request: "GetFeature",
     storedquery_id: "fmi::forecast::sealevel::point::timevaluepair",
     fmisid: fmisid,
+    geoid: "N2000",          // 🔑 TÄMÄ PUUTTUI
     starttime: start,
     endtime: end,
     timestep: 60,
@@ -30,7 +31,8 @@ export async function fetchSeaLevel(fmisid) {
 
   if (!Array.isArray(json) || json.length === 0) return null;
 
-  // oletetaan N2000
   const latest = json.at(-1);
-  return latest?.sealevel ?? null;
+
+  // FMI palauttaa usein muodossa { time, value }
+  return latest?.value ?? null;
 }
