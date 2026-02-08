@@ -67,7 +67,7 @@ export async function loadPopupData({
   }
 
 
-  console.log("Sea level fmisid", fmisid);
+  console.log("Sea level fmisid", seaLevelFmisid);
 
 
 
