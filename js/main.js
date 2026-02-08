@@ -286,15 +286,25 @@ map.on("popupopen", async e => {
   const canvases = popupEl.querySelectorAll("canvas");
   if (!canvases.length) return;
 
+  // 🔑 1. Ota feature.properties ENSIN
+  const props = e.popup._source.feature.properties;
+
+  // 🔑 2. Lat/lon edelleen canvasista (ok)
   const lat = canvases[0].dataset.lat;
   const lon = canvases[0].dataset.lon;
-  const fmisid = canvases[0].dataset.fmisid;
 
-  console.log("Popup datasets:", { lat, lon, fmisid });
-
+  // 🔑 3. Ota FMISID:t propertiesista (EI canvasista)
+  const weatherFmisid = props.weatherFmisid;
+  const seaLevelFmisid = props.seaLevelFmisid ?? null;
 
   try {
-    const data = await loadPopupData(lat, lon, fmisid);
+    // 🔑 4. Kutsu loadPopupDataa UUDESSA muodossa
+    const data = await loadPopupData({
+      lat,
+      lon,
+      weatherFmisid,
+      seaLevelFmisid
+    });
 
     updatePopupTitles(popupEl, data);
     renderPopupExtras(popupEl, data);
@@ -305,4 +315,5 @@ map.on("popupopen", async e => {
     console.error("Popup error:", err);
   }
 });
+
 
