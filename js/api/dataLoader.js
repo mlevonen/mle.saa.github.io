@@ -20,11 +20,8 @@ export async function loadPopupData({
   const cacheKey = `${lat},${lon}`;
 
   if (popupCache[cacheKey]) {
-    console.log("CACHE HIT", cacheKey);
-    return popupCache[cacheKey];
+      return popupCache[cacheKey];
   }
-
-  console.log("CACHE MISS", cacheKey);
 
   const obsTemp = await fetchTimeSeriesREST(lat, lon, {
     param: "utctime,temperature,weathercode"
@@ -61,11 +58,6 @@ export async function loadPopupData({
     seaLevel = null;
   }
   }
-
-
-  console.log("Sea level fmisid", seaLevelFmisid);
-
-
 
   const data = {
     obsTemp,

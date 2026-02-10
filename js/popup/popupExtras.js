@@ -70,8 +70,7 @@ export function renderPopupExtras(popupEl, data) {
     content.prepend(container);
     
   }
-  console.log("obsPressure content:", data.obsPressure);
-
+  
   // Tyhjennetään aina
   container.innerHTML = "";
   
@@ -84,9 +83,7 @@ export function renderPopupExtras(popupEl, data) {
   const pressure = getPressure(data.obsPressure);
   const trend = getPressureTrend(data.obsPressure);
 
-  console.log("popupExtras data keys:", Object.keys(data));
-
-
+  
 if (pressure != null) {
   const arrow =
     trend === "up" ? "▲" :
