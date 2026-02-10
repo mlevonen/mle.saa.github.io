@@ -4,7 +4,6 @@ import { getLatestObservation } from "../utils/helpers.js";
    DATA-HELPERIT
    ========================================================= */
 
-// --- Ilmanpaine (hPa, numero) ---
 function getPressure(series) {
   if (!Array.isArray(series) || series.length === 0) return null;
 
@@ -13,7 +12,6 @@ function getPressure(series) {
     ? latest.pressurehpa
     : null;
 }
-
 
 function getPressureTrend(series, hours = 3) {
   if (!Array.isArray(series)) return null;
@@ -77,7 +75,7 @@ export function renderPopupExtras(popupEl, data) {
   console.log("fcPressure:", data.fcPressure);
   // Tyhjennetään aina
   container.innerHTML = "";
-
+  console.log("obsPressure last:", data.obsPressure?.at(-1));
   /* ==========================
      ILMANPAINE
      ========================== */
@@ -97,6 +95,7 @@ if (pressure != null) {
     </span>
   `;
 }
+
 
 
   /* ==========================
