@@ -10,12 +10,25 @@ import { getLatestObservation } from "../utils/helpers.js";
 function getSmartSymbol(series) {
   if (!Array.isArray(series)) return null;
 
-  const latest = [...series]
-    .reverse()
-    .find(s => Number.isFinite(s.smartsymbol));
+  const now = Date.now();
 
-  return latest ? latest.smartsymbol : null;
+  const latestPast = [...series]
+    .filter(s => Number.isFinite(s.smartsymbol))
+    .map(s => ({
+      ...s,
+      time: Date.parse(
+        s.utctime.replace(
+          /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})$/,
+          "$1-$2-$3T$4:$5:$6Z"
+        )
+      )
+    }))
+    .filter(s => !Number.isNaN(s.time) && s.time <= now)
+    .sort((a, b) => b.time - a.time)[0];
+
+  return latestPast ? latestPast.smartsymbol : null;
 }
+
 
 
 
