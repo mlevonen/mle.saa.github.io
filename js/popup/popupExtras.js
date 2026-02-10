@@ -75,13 +75,15 @@ export function renderPopupExtras(popupEl, data) {
   console.log("fcPressure:", data.fcPressure);
   // Tyhjennetään aina
   container.innerHTML = "";
-  console.log("obsPressure last:", data.obsPressure?.at(-1));
+  console.log("obsWindSpeed last:", data.obsWindSpeed?.at(-1));
+
   /* ==========================
      ILMANPAINE
      ========================== */
 
-const pressure = getPressure(data.obsPressure);
-const trend = getPressureTrend(data.obsPressure);
+  const pressure = getPressure(data.obsWindSpeed);
+  const trend = getPressureTrend(data.obsWindSpeed);
+
 
 if (pressure != null) {
   const arrow =
