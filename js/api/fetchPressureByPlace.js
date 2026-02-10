@@ -19,13 +19,18 @@ export async function fetchPressureByPlace(place) {
   const parser = new DOMParser();
   const xml = parser.parseFromString(xmlText, "application/xml");
 
-  const times = [...xml.querySelectorAll("BsWfs\\:Time")];
-  const values = [...xml.querySelectorAll("BsWfs\\:ParameterValue")];
+  const NS = "http://xml.fmi.fi/schema/wfs/2.0";
 
-  if (!times.length || !values.length) return [];
+  const times = [...xml.getElementsByTagNameNS(NS, "Time")];
+  const values = [...xml.getElementsByTagNameNS(NS, "ParameterValue")];
+
+  if (!times.length || !values.length) {
+    console.warn("No pressure data found for place:", place);
+    return [];
+  }
 
   return times.map((t, i) => ({
     utctime: t.textContent,
     pressurehpa: Number(values[i]?.textContent)
-  })).filter(p => !Number.isNaN(p.pressurehpa));
+  })).filter(p => Number.isFinite(p.pressurehpa));
 }
