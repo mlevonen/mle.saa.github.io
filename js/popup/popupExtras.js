@@ -55,6 +55,18 @@ function getSeaLevel(data) {
 }
 
 
+// --- Sääsymbolin haku ---
+
+function getSmartSymbol(series) {
+  if (!Array.isArray(series) || series.length === 0) return null;
+
+  const latest = series.at(-1);
+  return typeof latest.smartsymbol === "number"
+    ? latest.smartsymbol
+    : null;
+}
+
+
 /* =========================================================
    RENDER
    ========================================================= */
@@ -74,6 +86,26 @@ export function renderPopupExtras(popupEl, data) {
   // Tyhjennetään aina
   container.innerHTML = "";
   
+
+
+  /* ==========================
+     SÄÄSYMBOLI
+     ========================== */
+
+  const symbol = getSmartSymbol(data.obsWeather);
+
+  if (symbol != null) {
+  container.innerHTML += `
+    <div class="popup-weather-symbol">
+      <img
+        src="/js/assets/weather-icons/SmartSymbol/${symbol}.svg"
+        alt="Sääsymboli"
+        class="popup-weather-icon"
+      />
+    </div>
+  `;
+  }
+
 
 
   /* ==========================
