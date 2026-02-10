@@ -87,7 +87,8 @@ export function renderPopupExtras(popupEl, data) {
     content.prepend(container);
     
   }
-  
+  console.log("popup HTML after symbol:", container.innerHTML);
+
   // Tyhjennetään aina
   container.innerHTML = "";
   
@@ -96,7 +97,7 @@ export function renderPopupExtras(popupEl, data) {
   /* ==========================
      SÄÄSYMBOLI
      ========================== */
-console.log("obsWeather content:", data.obsWeather);
+  console.log("obsWeather content:", data.obsWeather);
   const symbol = getSmartSymbol(data.obsWeather);
 
   if (symbol != null) {
