@@ -75,7 +75,8 @@ export function renderPopupExtras(popupEl, data) {
   console.log("fcPressure:", data.fcPressure);
   // Tyhjennetään aina
   container.innerHTML = "";
-  console.log("obsWindSpeed last:", data.obsWindSpeed?.at(-1));
+  console.log("obsPressure sample:", obsPressure?.at(-1));
+
 
   /* ==========================
      ILMANPAINE

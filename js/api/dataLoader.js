@@ -11,6 +11,7 @@ const popupCache = {};
 export async function loadPopupData({
   lat,
   lon,
+  weatherPlace,
   weatherFmisid,
   seaLevelFmisid
 }) {
@@ -36,9 +37,11 @@ export async function loadPopupData({
     param: "utctime,windspeedms,winddirection,windgust,pressurehpa"
   });
 
-  const obsPressure = await fetchTimeSeriesREST(lat, lon, {
+  const obsPressure = await fetchTimeSeriesREST(null, null, {
+  place: weatherPlace,
   param: "utctime,pressurehpa"
   });
+
 
   const fcWindSpeed = await fetchForecastREST(lat, lon, {
     param: "utctime,windspeedms"

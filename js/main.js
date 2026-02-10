@@ -309,6 +309,7 @@ map.on("popupopen", async e => {
     const data = await loadPopupData({
       lat,
       lon,
+      weatherPlace,
       weatherFmisid,
       seaLevelFmisid
     });
