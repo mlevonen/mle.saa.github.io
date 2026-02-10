@@ -1,8 +1,23 @@
+console.log("obsWeather content:", data.obsWeather);
+
+
 import { getLatestObservation } from "../utils/helpers.js";
 
 /* =========================================================
    DATA-HELPERIT
    ========================================================= */
+
+// --- Sääsymbolin haku ---
+
+function getSmartSymbol(series) {
+  if (!Array.isArray(series) || series.length === 0) return null;
+
+  const latest = series.at(-1);
+  return typeof latest.smartsymbol === "number"
+    ? latest.smartsymbol
+    : null;
+}
+
 
 function getPressure(series) {
   if (!Array.isArray(series) || series.length === 0) return null;
@@ -55,16 +70,7 @@ function getSeaLevel(data) {
 }
 
 
-// --- Sääsymbolin haku ---
 
-function getSmartSymbol(series) {
-  if (!Array.isArray(series) || series.length === 0) return null;
-
-  const latest = series.at(-1);
-  return typeof latest.smartsymbol === "number"
-    ? latest.smartsymbol
-    : null;
-}
 
 
 /* =========================================================
