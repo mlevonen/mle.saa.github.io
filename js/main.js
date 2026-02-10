@@ -4,11 +4,9 @@ import { renderTemperatureChart } from "./charts/temperatureChart.js";
 import { renderWindChart } from "./charts/windChart.js";
 import { renderPopupExtras } from "./popup/popupExtras.js";
 import "./charts/plugins.js";
-console.log("renderPopupExtras import:", renderPopupExtras);
+
 
 "use strict";
-
-console.log("MAIN.JS LOADED");
 
 const map = L.map("map").setView([60, 25], 6);
 
@@ -17,9 +15,6 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 const FMI_WFS = "https://opendata.fmi.fi/wfs";
-
-console.log("MAP CREATED");
-
 
 // ==========================
 // Asemat kartalle
@@ -98,8 +93,6 @@ async function fetchTimeSeries(lat, lon, parameter) {
   });
 
   const url = `${FMI_WFS}?${params}`;
-  console.log("FMI REQUEST:", url);
-
   const res = await fetch(url);
   const text = await res.text();
 
@@ -129,8 +122,7 @@ async function fetchTimeSeriesREST(lat, lon, params) {
   });
 
   const url = `https://opendata.fmi.fi/timeseries?${urlParams}`;
-  console.log("FMI REST REQUEST:", url);
-
+  
   const res = await fetch(url);
   if (!res.ok) throw new Error("FMI REST fetch failed");
 
@@ -154,8 +146,7 @@ async function fetchForecastREST(lat, lon, params) {
   });
 
   const url = `https://opendata.fmi.fi/timeseries?${urlParams}`;
-  console.log("FMI FORECAST REQUEST:", url);
-
+  
   const res = await fetch(url);
   if (!res.ok) throw new Error("FMI forecast fetch failed");
 
@@ -325,8 +316,6 @@ map.on("popupopen", async e => {
   // 🔑 3. Ota FMISID:t propertiesista (EI canvasista)
   const weatherFmisid = props.weatherFmisid;
   const seaLevelFmisid = props.seaLevelFmisid ?? null;
-
-  console.log("Popup feature", e.popup._source.feature);
 
 
   try {
