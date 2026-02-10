@@ -277,6 +277,31 @@ function getPressureTrend(data, minutes = 180) {
   return "steady";
 }
 
+export async function fetchPressureByPlace(place) {
+  const url = `https://opendata.fmi.fi/wfs
+    ?service=WFS
+    &version=2.0.0
+    &request=getFeature
+    &storedquery_id=fmi::observations::weather::simple
+    &place=${encodeURIComponent(place)}
+    &parameters=pressure
+  `.replace(/\s+/g, "");
+
+  const res = await fetch(url);
+  const xml = await res.text();
+
+  // 👉 tähän kevyt parseri:
+  // etsi viimeisin <BsWfs:ParameterValue>
+  // ja sitä vastaava <BsWfs:Time>
+
+  return [
+    {
+      utctime: "...",
+      pressurehpa: 1019.6
+    }
+  ];
+}
+
 
 // ==========================
 // Popup → lämpötila + tuuli (havainto + ennuste)
