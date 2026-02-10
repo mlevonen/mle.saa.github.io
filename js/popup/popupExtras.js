@@ -32,6 +32,7 @@ function getPressureTrend(series, hours = 3) {
   return "steady";
 }
 
+console.log("obsPressure content:", data.obsPressure);
 
 
 // --- Merivedenkorkeus (cm, numero) ---
