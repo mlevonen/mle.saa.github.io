@@ -6,32 +6,34 @@ import { getLatestObservation } from "../utils/helpers.js";
 
 // --- Ilmanpaine (hPa, numero) ---
 function getPressure(series) {
-  if (!Array.isArray(series)) return null;
+  if (!Array.isArray(series) || series.length === 0) return null;
+
   const latest = series.at(-1);
-  return latest?.pressurehpa ?? null;
+  return typeof latest.pressurehpa === "number"
+    ? latest.pressurehpa
+    : null;
 }
 
+
 function getPressureTrend(series, hours = 3) {
-  if (!Array.isArray(series) || series.length < 2) return null;
+  if (!Array.isArray(series)) return null;
 
-  const now = Date.now();
+  const clean = series.filter(
+    p => typeof p.pressurehpa === "number"
+  );
 
-  const current = [...series]
-    .reverse()
-    .find(p => Date.parse(p.utctime) <= now);
-  if (!current) return null;
+  if (clean.length < hours + 1) return null;
 
-  const past = [...series]
-    .reverse()
-    .find(p => Date.parse(p.utctime) <= now - hours * 3600_000);
-  if (!past) return null;
+  const current = clean.at(-1).pressurehpa;
+  const past = clean.at(-(hours + 1)).pressurehpa;
 
-  const diff = current.pressurehpa - past.pressurehpa;
+  const diff = current - past;
 
   if (diff > 0.5) return "up";
   if (diff < -0.5) return "down";
   return "steady";
 }
+
 
 
 // --- Merivedenkorkeus (cm, numero) ---
@@ -80,22 +82,22 @@ export function renderPopupExtras(popupEl, data) {
      ILMANPAINE
      ========================== */
 
-    const pressure = getPressure(data.obsPressure);
-    const trend = getPressureTrend(data.obsPressure);
+const pressure = getPressure(data.obsPressure);
+const trend = getPressureTrend(data.obsPressure);
 
+if (pressure != null) {
+  const arrow =
+    trend === "up" ? "▲" :
+    trend === "down" ? "▼" :
+    "▬";
 
-  if (pressure != null) {
-    const arrow =
-      trend === "up" ? "▲" :
-      trend === "down" ? "▼" :
-      "▬";
+  container.innerHTML += `
+    <span class="popup-pressure">
+      🌡️ ${pressure.toFixed(0)} hPa ${arrow}
+    </span>
+  `;
+}
 
-    container.innerHTML += `
-      <span class="popup-pressure">
-        🌡️ ${pressure.toFixed(0)} hPa ${arrow}
-      </span>
-    `;
-  }
 
   /* ==========================
      MERIVEDENKORKEUS
