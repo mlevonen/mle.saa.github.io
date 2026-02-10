@@ -11,11 +11,11 @@ function getSmartSymbol(series) {
   if (!Array.isArray(series) || series.length === 0) return null;
 
   const latest = series.at(-1);
-  return typeof latest.smartsymbol === "number"
+  return Number.isFinite(latest.smartsymbol)
     ? latest.smartsymbol
     : null;
-    
 }
+
 
 
 function getPressure(series) {
@@ -95,23 +95,22 @@ export function renderPopupExtras(popupEl, data) {
   
 
 
-  /* ==========================
-     SÄÄSYMBOLI
-     ========================== */
-  console.log("obsWeather content:", data.obsWeather);
+  // === SÄÄSYMBOLI (YLÄREUNA) ===
   const symbol = getSmartSymbol(data.obsWeather);
+  console.log("SMART SYMBOL:", symbol);
 
-  if (symbol != null) {
+  if (symbol !== null) {
   container.innerHTML += `
     <div class="popup-weather-symbol">
       <img
-        src="/js/assets/weather-icons/SmartSymbol/${symbol}.svg"
+        src="./js/assets/weather-icons/SmartSymbol/${symbol}.svg"
         alt="Sääsymboli"
         class="popup-weather-icon"
       />
     </div>
   `;
-  }
+}
+
 
 
 
