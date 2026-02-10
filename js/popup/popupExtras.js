@@ -14,7 +14,7 @@ function getSmartSymbol(series) {
   return typeof latest.smartsymbol === "number"
     ? latest.smartsymbol
     : null;
-    console.log("obsWeather content:", data.obsWeather);
+    
 }
 
 
@@ -96,7 +96,7 @@ export function renderPopupExtras(popupEl, data) {
   /* ==========================
      SÄÄSYMBOLI
      ========================== */
-
+console.log("obsWeather content:", data.obsWeather);
   const symbol = getSmartSymbol(data.obsWeather);
 
   if (symbol != null) {
