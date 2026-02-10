@@ -54,7 +54,6 @@ function getSeaLevel(data) {
   return null;
 }
 
-console.log("obsPressure content:", data.obsPressure);
 
 /* =========================================================
    RENDER
@@ -71,7 +70,8 @@ export function renderPopupExtras(popupEl, data) {
     content.prepend(container);
     
   }
-  console.log("fcPressure:", data.fcPressure);
+  console.log("obsPressure content:", data.obsPressure);
+
   // Tyhjennetään aina
   container.innerHTML = "";
   
