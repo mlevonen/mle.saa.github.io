@@ -85,9 +85,9 @@ export function renderPopupExtras(popupEl, data) {
     container = document.createElement("div");
     container.className = "popup-extras";
     content.prepend(container);
-    
+    console.log("popup HTML after symbol:", container.innerHTML);
   }
-  console.log("popup HTML after symbol:", container.innerHTML);
+  
 
   // Tyhjennetään aina
   container.innerHTML = "";
