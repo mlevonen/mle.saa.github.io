@@ -5,6 +5,7 @@ import {
 
 import { fetchSeaLevel } from "../api/sealevel.js";
 
+import { fetchPressureByPlace } from "../api/fetchPressureByPlace.js";
 
 const popupCache = {};
 
