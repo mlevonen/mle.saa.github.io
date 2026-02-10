@@ -37,11 +37,7 @@ export async function loadPopupData({
     param: "utctime,windspeedms,winddirection,windgust,pressurehpa"
   });
 
-  const obsPressure = await fetchPressureByPlace(null, null, {
-  place: weatherPlace,
-  param: "utctime,pressurehpa"
-  });
-
+  const obsPressure = await fetchPressureByPlace(weatherPlace);
 
   const fcWindSpeed = await fetchForecastREST(lat, lon, {
     param: "utctime,windspeedms"
