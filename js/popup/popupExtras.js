@@ -82,8 +82,10 @@ export function renderPopupExtras(popupEl, data) {
      ILMANPAINE
      ========================== */
 
-  const pressure = getPressure(data.obsWindSpeed);
-  const trend = getPressureTrend(data.obsWindSpeed);
+  const pressure = getPressure(data.obsPressure);
+  const trend = getPressureTrend(data.obsPressure);
+
+  console.log("popupExtras data keys:", Object.keys(data));
 
 
 if (pressure != null) {
