@@ -6,7 +6,7 @@ import { getLatestObservation } from "../utils/helpers.js";
    ========================================================= */
 
 // --- Sääsymbolin haku ---
-console.log("obsWeather content:", data.obsWeather);
+
 function getSmartSymbol(series) {
   if (!Array.isArray(series) || series.length === 0) return null;
 
@@ -14,6 +14,7 @@ function getSmartSymbol(series) {
   return typeof latest.smartsymbol === "number"
     ? latest.smartsymbol
     : null;
+    console.log("obsWeather content:", data.obsWeather);
 }
 
 
