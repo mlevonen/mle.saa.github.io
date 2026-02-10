@@ -83,8 +83,7 @@ export function renderPopupExtras(popupEl, data) {
   const pressure = getPressure(data.obsPressure);
   const trend = getPressureTrend(data.obsPressure);
 
-  
-if (pressure != null) {
+  if (pressure != null) {
   const arrow =
     trend === "up" ? "▲" :
     trend === "down" ? "▼" :
@@ -95,7 +94,13 @@ if (pressure != null) {
       🌡️ ${pressure.toFixed(0)} hPa ${arrow}
     </span>
   `;
-}
+  } else {
+  container.innerHTML += `
+    <span class="popup-pressure popup-pressure--na">
+      🌡️ Ilmanpaine: —
+    </span>
+  `;
+  }
 
 
 
