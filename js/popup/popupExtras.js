@@ -75,6 +75,7 @@ function getSeaLevel(data) {
 /* =========================================================
    RENDER
    ========================================================= */
+console.log("renderPopupExtras CALLED");
 
 export function renderPopupExtras(popupEl, data) {
   const content = popupEl.querySelector(".leaflet-popup-content");
