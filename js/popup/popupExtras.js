@@ -32,8 +32,6 @@ function getPressureTrend(series, hours = 3) {
   return "steady";
 }
 
-console.log("obsPressure content:", data.obsPressure);
-
 
 // --- Merivedenkorkeus (cm, numero) ---
 function getSeaLevel(data) {
@@ -56,7 +54,7 @@ function getSeaLevel(data) {
   return null;
 }
 
-
+console.log("obsPressure content:", data.obsPressure);
 
 /* =========================================================
    RENDER
