@@ -1,5 +1,3 @@
-console.log("obsWeather content:", data.obsWeather);
-
 
 import { getLatestObservation } from "../utils/helpers.js";
 
@@ -8,7 +6,7 @@ import { getLatestObservation } from "../utils/helpers.js";
    ========================================================= */
 
 // --- Sääsymbolin haku ---
-
+console.log("obsWeather content:", data.obsWeather);
 function getSmartSymbol(series) {
   if (!Array.isArray(series) || series.length === 0) return null;
 
