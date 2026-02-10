@@ -8,13 +8,15 @@ import { getLatestObservation } from "../utils/helpers.js";
 // --- Sääsymbolin haku ---
 
 function getSmartSymbol(series) {
-  if (!Array.isArray(series) || series.length === 0) return null;
+  if (!Array.isArray(series)) return null;
 
-  const latest = series.at(-1);
-  return Number.isFinite(latest.smartsymbol)
-    ? latest.smartsymbol
-    : null;
+  const latest = [...series]
+    .reverse()
+    .find(s => Number.isFinite(s.smartsymbol));
+
+  return latest ? latest.smartsymbol : null;
 }
+
 
 
 
