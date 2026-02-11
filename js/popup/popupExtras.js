@@ -93,6 +93,7 @@ function getSeaLevel(data) {
 console.log("renderPopupExtras CALLED");
 
 export function renderPopupExtras(popupEl, data) {
+
   const content = popupEl.querySelector(".leaflet-popup-content");
   if (!content) return;
 
@@ -101,43 +102,38 @@ export function renderPopupExtras(popupEl, data) {
     container = document.createElement("div");
     container.className = "popup-extras";
     content.prepend(container);
-    console.log("popup HTML after symbol:", container.innerHTML);
-    }
-  
+  }
 
-  // Tyhjennetään aina
   container.innerHTML = "";
 
-// ===== HEADER =====
   container.innerHTML += `
     <div class="popup-header">
-    <div class="popup-location">
-      ${data.locationName ?? ""}
-    </div>
+      <div class="popup-location">
+        ${data.locationName ?? ""}
+      </div>
     </div>
   `;
+
   container.innerHTML += `<div class="popup-inline-metrics">`;
-
-
-/* ==========================
-   MITTARIT (RIVISSÄ + EROTIN)
-   ========================== */
 
   const symbol = getSmartSymbol(data.obsWeather);
 
-/* === SÄÄSYMBOLI === */
+  if (symbol !== null) {
+    container.innerHTML += `
+      <div class="popup-inline-item">
+        <img
+          src="./js/assets/weather-icons/SmartSymbol/${symbol}.svg"
+          class="popup-weather-icon"
+        />
+      </div>
+    `;
+  }
 
-if (symbol !== null) {
-  container.innerHTML += `
-    <div class="popup-inline-item">
-      <img
-        src="./js/assets/weather-icons/SmartSymbol/${symbol}.svg"
-        alt="Sääsymboli"
-        class="popup-weather-icon"
-      />
-    </div>
-  `;
+  // ... kaikki muu mittarikoodi ...
+
+  container.innerHTML += `</div>`;
 }
+
 
 /* === ILMANPAINE === */
 
