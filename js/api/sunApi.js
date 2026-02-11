@@ -1,17 +1,24 @@
 const sunCache = {};
 
 export async function fetchSunTimes(lat, lon) {
-  const key = `${lat.toFixed(3)},${lon.toFixed(3)}`;
+  const latNum = Number(lat);
+  const lonNum = Number(lon);
 
-  // 🔹 CACHE HIT
+  if (!Number.isFinite(latNum) || !Number.isFinite(lonNum)) {
+    console.warn("Invalid lat/lon for sun API:", lat, lon);
+    return null;
+  }
+
+  const key = `${latNum.toFixed(3)},${lonNum.toFixed(3)}`;
+
   if (sunCache[key]) {
     return sunCache[key];
   }
 
   const url =
     "https://api.sunrise-sunset.org/json" +
-    `?lat=${lat}` +
-    `&lng=${lon}` +
+    `?lat=${latNum}` +
+    `&lng=${lonNum}` +
     "&formatted=0" +
     "&tzid=Europe/Helsinki";
 
@@ -25,8 +32,7 @@ export async function fetchSunTimes(lat, lon) {
     sunset: json.results.sunset
   };
 
-  // 🔹 Tallenna cacheen
   sunCache[key] = result;
-
   return result;
 }
+
