@@ -117,6 +117,26 @@ html, body { margin: 0; height: 100%; }
   white-space: nowrap;
 }
 
+.popup-inline-metrics {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.popup-inline-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 🔹 Erotin vain jos ei ole ensimmäinen */
+.popup-inline-item:not(:first-child)::before {
+  content: "|";
+  margin: 0 6px;
+  opacity: 0.4;
+}
+
 </style>
 
 </head>
