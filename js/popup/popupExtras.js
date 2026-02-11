@@ -156,9 +156,15 @@ if (pressure != null) {
     "▬";
 
   container.innerHTML += `
-    <div class="popup-row">
-      🌡️ ${pressure.toFixed(0)} hPa ${arrow}
+<div class="popup-row">
+    <img
+    src="./js/assets/icons/pressure.svg"
+    class="popup-icon"
+    alt="Ilmanpaine"
+    />
+  ${pressure.toFixed(0)} hPa ${arrow}
     </div>
+
   `;
 } else {
   container.innerHTML += `
