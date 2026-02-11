@@ -117,10 +117,6 @@ export function renderPopupExtras(popupEl, data) {
     </div>
   `;
 
-  
-
-
-
 }
 
 /* ==========================
@@ -219,4 +215,3 @@ if (data.sunTimes) {
 }
 
 container.innerHTML += `</div>`;
-}
