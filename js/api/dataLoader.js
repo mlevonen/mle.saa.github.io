@@ -37,10 +37,10 @@ export async function loadPopupData({
 
   const obsPressure = await fetchPressureByPlace(weatherPlace);
 
-  const obsWeather = await fetchTimeSeriesREST(null, null, {
-  place: weatherPlace,
+const obsWeather = await fetchTimeSeriesREST(lat, lon, {
   param: "utctime,smartsymbol"
-  });
+});
+
 
   const fcWindSpeed = await fetchForecastREST(lat, lon, {
     param: "utctime,windspeedms"
