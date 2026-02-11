@@ -211,3 +211,4 @@ if (data.sunTimes) {
 }
 
 container.innerHTML += `</div>`;
+}
