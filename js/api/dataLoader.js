@@ -68,15 +68,6 @@ export async function loadPopupData({
   }
   }
 
-  let sunTimes = null;
-
-  try {
-  sunTimes = await fetchSunTimes(lat, lon);
-  } catch (e) {
-  console.warn("Sun API failed", e);
-  sunTimes = null;
-  }
-
 
   const data = {
     obsTemp,
