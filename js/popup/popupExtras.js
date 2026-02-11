@@ -107,13 +107,22 @@ export function renderPopupExtras(popupEl, data) {
 
   // Tyhjennetään aina
   container.innerHTML = "";
+
+// ===== HEADER =====
+  container.innerHTML += `
+    <div class="popup-header">
+    <div class="popup-location">
+      ${data.locationName ?? ""}
+    </div>
+    </div>
+  `;
+
   
 
 
   // === SÄÄSYMBOLI (YLÄREUNA) ===
   const symbol = getSmartSymbol(data.obsWeather);
-  console.log("SMART SYMBOL:", symbol);
-
+  
   if (symbol !== null) {
   container.innerHTML += `
     <div class="popup-weather-symbol">
@@ -129,50 +138,52 @@ export function renderPopupExtras(popupEl, data) {
 
 
 
-  /* ==========================
-     ILMANPAINE
-     ========================== */
+ /* ==========================
+   MITTARIT (ALLEKKAIN)
+   ========================== */
 
-  const pressure = getPressure(data.obsPressure);
-  const trend = getPressureTrend(data.obsPressure);
+container.innerHTML += `<div class="popup-metrics">`;
 
-  if (pressure != null) {
+/* === ILMANPAINE === */
+
+const pressure = getPressure(data.obsPressure);
+const trend = getPressureTrend(data.obsPressure);
+
+if (pressure != null) {
   const arrow =
     trend === "up" ? "▲" :
     trend === "down" ? "▼" :
     "▬";
 
   container.innerHTML += `
-    <span class="popup-pressure">
+    <div class="popup-row">
       🌡️ ${pressure.toFixed(0)} hPa ${arrow}
-    </span>
+    </div>
   `;
-  } else {
+} else {
   container.innerHTML += `
-    <span class="popup-pressure popup-pressure--na">
+    <div class="popup-row popup-pressure--na">
       🌡️ Ilmanpaine: —
-    </span>
+    </div>
   `;
-  }
+}
 
+/* === MERIVEDENKORKEUS === */
 
+const sea = getSeaLevel(data);
 
-  /* ==========================
-     MERIVEDENKORKEUS
-     ========================== */
+if (sea != null) {
+  container.innerHTML += `
+    <div class="popup-row">
+      <img
+        src="./js/assets/icons/sealevel.svg"
+        class="popup-sealevel-icon"
+        alt="Merivedenkorkeus"
+      />
+      ${sea > 0 ? "+" : ""}${sea} cm
+    </div>
+  `;
+}
 
-  const sea = getSeaLevel(data);
-
-  if (sea != null) {
-    container.innerHTML += `
-      <span class="popup-sealevel">
-        <img
-          src="/js/assets/icons/sealevel.svg"
-          class="popup-sealevel-icon"
-          alt="Merivedenkorkeus"
-        />
-        ${sea > 0 ? "+" : ""}${sea} cm
-      </span>
-    `;
-  }
+container.innerHTML += `</div>`;
 }
