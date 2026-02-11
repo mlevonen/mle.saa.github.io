@@ -132,7 +132,7 @@ export function renderPopupExtras(popupEl, data) {
   // ... kaikki muu mittarikoodi ...
 
   container.innerHTML += `</div>`;
-}
+
 
 
 /* === ILMANPAINE === */
