@@ -186,4 +186,28 @@ if (sea != null) {
 }
 
 container.innerHTML += `</div>`;
+
+/* === AURINGONNOUSU / -LASKU === */
+
+if (data.sunTimes) {
+  const sunrise = new Date(data.sunTimes.sunrise);
+  const sunset = new Date(data.sunTimes.sunset);
+
+  const format = (d) =>
+    d.toLocaleTimeString("fi-FI", {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+
+  container.innerHTML += `
+    <div class="popup-row">
+      🌅 ${format(sunrise)}
+    </div>
+    <div class="popup-row">
+      🌇 ${format(sunset)}
+    </div>
+  `;
+}
+
+
 }

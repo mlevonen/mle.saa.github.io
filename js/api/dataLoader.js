@@ -7,6 +7,9 @@ import { fetchSeaLevel } from "../api/sealevel.js";
 
 import { fetchPressureByPlace } from "../api/fetchPressureByPlace.js";
 
+import { fetchSunTimes } from "../api/sunApi.js";
+
+
 const popupCache = {};
 
 export async function loadPopupData({
@@ -37,10 +40,11 @@ export async function loadPopupData({
 
   const obsPressure = await fetchPressureByPlace(weatherPlace);
 
-const obsWeather = await fetchTimeSeriesREST(lat, lon, {
+  const obsWeather = await fetchTimeSeriesREST(lat, lon, {
   param: "utctime,smartsymbol"
-});
+  });
 
+  const sunTimes = await fetchSunTimes(lat, lon);
 
   const fcWindSpeed = await fetchForecastREST(lat, lon, {
     param: "utctime,windspeedms"
@@ -73,7 +77,8 @@ const obsWeather = await fetchTimeSeriesREST(lat, lon, {
     fcWindSpeed,
     fcWindDir,
     fcWindGust,
-    seaLevel
+    seaLevel,
+    sunTimes
   };
 
   popupCache[cacheKey] = data;
