@@ -120,19 +120,7 @@ export function renderPopupExtras(popupEl, data) {
   
 
 
-  // === SÄÄSYMBOLI (YLÄREUNA) ===
-  const symbol = getSmartSymbol(data.obsWeather);
-  
-  if (symbol !== null) {
-  container.innerHTML += `
-    <div class="popup-weather-symbol">
-      <img
-        src="./js/assets/weather-icons/SmartSymbol/${symbol}.svg"
-        alt="Sääsymboli"
-        class="popup-weather-icon"
-      />
-    </div>
-  `;
+
 }
 
 /* ==========================
