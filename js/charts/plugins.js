@@ -32,7 +32,7 @@ const windArrowPlugin = {
         ctx.rotate((dir + 180) * Math.PI / 180);
 
         ctx.fillStyle = color;
-        ctx.font = "9px sans-serif";
+        ctx.font = "13px sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText("➤", 0, 0);
