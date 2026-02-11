@@ -205,15 +205,23 @@ if (data.sunTimes) {
       minute: "2-digit"
     });
 
-  container.innerHTML += `
-    <div class="popup-row">
-      🌅 ${format(sunrise)}
-    </div>
-    <div class="popup-row">
-      🌇 ${format(sunset)}
-    </div>
-  `;
-}
+container.innerHTML += `
+  <div class="popup-row">
+    <img
+      src="./js/assets/icons/sunrise.svg"
+      class="popup-icon"
+      alt="Auringonnousu"
+    />
+    ${format(sunrise)}
+  </div>
+  <div class="popup-row">
+    <img
+      src="./js/assets/icons/sunset.svg"
+      class="popup-icon"
+      alt="Auringonlasku"
+    />
+    ${format(sunset)}
+  </div>
+`;
 
-
-}
+}}
