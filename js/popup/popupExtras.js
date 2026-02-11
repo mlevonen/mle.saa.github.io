@@ -102,7 +102,7 @@ export function renderPopupExtras(popupEl, data) {
     container.className = "popup-extras";
     content.prepend(container);
     console.log("popup HTML after symbol:", container.innerHTML);
-  }
+    }
   
 
   // Tyhjennetään aina
@@ -123,7 +123,7 @@ export function renderPopupExtras(popupEl, data) {
    MITTARIT (RIVISSÄ + EROTIN)
    ========================== */
 
-
+  const symbol = getSmartSymbol(data.obsWeather);
 
 /* === SÄÄSYMBOLI === */
 
