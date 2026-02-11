@@ -135,14 +135,25 @@ export function renderPopupExtras(popupEl, data) {
   `;
 }
 
-
-
-
- /* ==========================
-   MITTARIT (ALLEKKAIN)
+/* ==========================
+   MITTARIT (RIVISSÄ + EROTIN)
    ========================== */
 
-container.innerHTML += `<div class="popup-metrics">`;
+container.innerHTML += `<div class="popup-inline-metrics">`;
+
+/* === SÄÄSYMBOLI === */
+
+if (symbol !== null) {
+  container.innerHTML += `
+    <div class="popup-inline-item">
+      <img
+        src="./js/assets/weather-icons/SmartSymbol/${symbol}.svg"
+        alt="Sääsymboli"
+        class="popup-weather-icon"
+      />
+    </div>
+  `;
+}
 
 /* === ILMANPAINE === */
 
@@ -156,20 +167,13 @@ if (pressure != null) {
     "▬";
 
   container.innerHTML += `
-<div class="popup-row">
-    <img
-    src="./js/assets/icons/pressure.svg"
-    class="popup-icon"
-    alt="Ilmanpaine"
-    />
-  ${pressure.toFixed(0)} hPa ${arrow}
-    </div>
-
-  `;
-} else {
-  container.innerHTML += `
-    <div class="popup-row popup-pressure--na">
-      🌡️ Ilmanpaine: —
+    <div class="popup-inline-item">
+      <img
+        src="./js/assets/icons/pressure.svg"
+        class="popup-icon"
+        alt="Ilmanpaine"
+      />
+      ${pressure.toFixed(0)} hPa ${arrow}
     </div>
   `;
 }
@@ -180,18 +184,16 @@ const sea = getSeaLevel(data);
 
 if (sea != null) {
   container.innerHTML += `
-    <div class="popup-row">
+    <div class="popup-inline-item">
       <img
         src="./js/assets/icons/sealevel.svg"
-        class="popup-sealevel-icon"
+        class="popup-icon"
         alt="Merivedenkorkeus"
       />
       ${sea > 0 ? "+" : ""}${sea} cm
     </div>
   `;
 }
-
-container.innerHTML += `</div>`;
 
 /* === AURINGONNOUSU / -LASKU === */
 
@@ -205,23 +207,28 @@ if (data.sunTimes) {
       minute: "2-digit"
     });
 
-container.innerHTML += `
-  <div class="popup-row">
-    <img
-      src="./js/assets/icons/sunrise.svg"
-      class="popup-icon"
-      alt="Auringonnousu"
-    />
-    ${format(sunrise)}
-  </div>
-  <div class="popup-row">
-    <img
-      src="./js/assets/icons/sunset.svg"
-      class="popup-icon"
-      alt="Auringonlasku"
-    />
-    ${format(sunset)}
-  </div>
-`;
+  container.innerHTML += `
+    <div class="popup-inline-item">
+      <img
+        src="./js/assets/icons/sunrise.svg"
+        class="popup-icon"
+        alt="Auringonnousu"
+      />
+      ${format(sunrise)}
+    </div>
+  `;
 
-}}
+  container.innerHTML += `
+    <div class="popup-inline-item">
+      <img
+        src="./js/assets/icons/sunset.svg"
+        class="popup-icon"
+        alt="Auringonlasku"
+      />
+      ${format(sunset)}
+    </div>
+  `;
+}
+
+container.innerHTML += `</div>`;
+}
