@@ -117,7 +117,7 @@ export function renderPopupExtras(popupEl, data) {
     </div>
   `;
   container.innerHTML += `<div class="popup-inline-metrics">`;
-}
+
 
 /* ==========================
    MITTARIT (RIVISSÄ + EROTIN)
