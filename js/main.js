@@ -45,6 +45,7 @@ stations.forEach(station => {
     fillOpacity: 0.7
   });
 
+  marker.station = station;
 
   marker.bindPopup(`
     <div class="popup-title">${station.name}</div>
@@ -333,15 +334,21 @@ map.on("popupopen", async e => {
   if (!canvases.length) return;
 
   // 🔑 1. Ota feature.properties ENSIN
-  const props = e.popup._source.feature.properties;
+  const station = e.popup._source.station;
+  if (!station) return;
+
 
   // 🔑 2. Lat/lon edelleen canvasista (ok)
   const lat = canvases[0].dataset.lat;
   const lon = canvases[0].dataset.lon;
 
   // 🔑 3. Ota FMISID:t propertiesista (EI canvasista)
-  const weatherFmisid = props.weatherFmisid;
-  const seaLevelFmisid = props.seaLevelFmisid ?? null;
+  const weatherFmisid =
+  station.type === "weather" ? station.fmisid : null;
+
+  const seaLevelFmisid =
+  station.type === "sealevel" ? station.fmisid : null;
+
 
 
   try {
@@ -349,7 +356,7 @@ map.on("popupopen", async e => {
     const data = await loadPopupData({
       lat,
       lon,
-      weatherPlace: "Pori",
+      weatherPlace: station.name,
       weatherFmisid,
       seaLevelFmisid
     });
