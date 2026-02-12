@@ -28,6 +28,21 @@ L.control.layers(null, {
   collapsed: false
 }).addTo(map);
 
+// TESTIMARKER
+const testMarker = L.circleMarker([60.17, 24.95], {
+  radius: 8,
+  color: "red",
+  fillColor: "red",
+  fillOpacity: 0.8
+}).bindPopup("Testi: Helsinki weather");
+
+weatherLayer.addLayer(testMarker);
+
+
+
+
+
+
 // ==========================
 // Asemat kartalle
 // ==========================
