@@ -43,47 +43,48 @@ weatherLayer.addLayer(testMarker);
 
 
 
+/
 // ==========================
-// Asemat kartalle
+// Layerit
 // ==========================
-fetch("stations.json")
-  .then(r => r.json())
-  .then(data => {
 
-    const weatherLayer = L.layerGroup().addTo(map);
-    const seaLevelLayer = L.layerGroup().addTo(map);
-    const coastalLayer = L.layerGroup().addTo(map);
+const weatherLayer = L.layerGroup().addTo(map);
+const seaLevelLayer = L.layerGroup().addTo(map);
+const coastalLayer = L.layerGroup().addTo(map);
 
-
-    data.features.forEach(f => {
-      const [lon, lat] = f.geometry.coordinates;
-      const { name } = f.properties;
-
-    const marker = L.circleMarker([lat, lon], {
-    radius: 5,
-    color: "blue",
-    fillOpacity: 0.7
-    });
-
-    // 🔑 TÄRKEÄ: tallenna feature markerille
-    marker.feature = f;
-    // Päätellään tyyppi ID:n perusteella
-    if (f.properties.weatherFmisid) {
-    weatherLayer.addLayer(marker);
-  }
-
-    if (f.properties.seaLevelFmisid) {
-    seaLevelLayer.addLayer(marker);
-  }
-
-  L.control.layers(null, {
+L.control.layers(null, {
   "🌤 Sääasemat": weatherLayer,
   "🌊 Vedenkorkeus": seaLevelLayer,
   "⚓ Rannikkoasemat": coastalLayer
-  }, {
-  collapsed: false
-  }).addTo(map);
+}, { collapsed: false }).addTo(map);
 
+
+// ==========================
+// Asemat kartalle
+// ==========================
+
+stations.forEach(station => {
+
+  const marker = L.circleMarker([station.lat, station.lon], {
+    radius: 5,
+    color: "blue",
+    fillOpacity: 0.7
+  });
+
+  // Lisää layeriin tyypin perusteella
+  if (station.type === "weather") {
+    weatherLayer.addLayer(marker);
+  }
+
+  if (station.type === "sealevel") {
+    seaLevelLayer.addLayer(marker);
+  }
+
+  if (station.type === "coastal") {
+    coastalLayer.addLayer(marker);
+  }
+
+});
 
 
 marker.bindPopup(`
@@ -112,11 +113,11 @@ marker.bindPopup(`
   ></canvas>
 `);
 
-    });
+    
 
     map.fitBounds(weatherLayer.getBounds(), { padding: [30, 30] });
 
-  });
+  
 
 // ==========================
 // FMI aikasarja (JSON TUETTU)
