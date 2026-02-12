@@ -24,10 +24,12 @@ export async function fetchPressureByFmisid(fmisid) {
   const parser = new DOMParser();
   const xml = parser.parseFromString(xmlText, "application/xml");
 
-  const NS = "http://xml.fmi.fi/schema/wfs/2.0";
+  const times = [...xml.getElementsByTagName("*")]
+  .filter(el => el.localName === "time");
 
-  const times = [...xml.getElementsByTagNameNS(NS, "Time")];
-  const values = [...xml.getElementsByTagNameNS(NS, "ParameterValue")];
+  const values = [...xml.getElementsByTagName("*")]
+  .filter(el => el.localName === "value");
+
 
   if (!times.length || !values.length) {
     console.warn("No pressure data found for place:", place);
