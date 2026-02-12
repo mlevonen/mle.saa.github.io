@@ -43,7 +43,7 @@ weatherLayer.addLayer(testMarker);
 
 
 
-/
+
 // ==========================
 // Layerit
 // ==========================
