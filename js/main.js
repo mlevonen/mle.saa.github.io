@@ -16,6 +16,18 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 
 const FMI_WFS = "https://opendata.fmi.fi/wfs";
 
+const weatherLayer = L.layerGroup().addTo(map);
+const seaLevelLayer = L.layerGroup().addTo(map);
+const coastalLayer = L.layerGroup().addTo(map);
+
+L.control.layers(null, {
+  "🌤 Sääasemat": weatherLayer,
+  "🌊 Vedenkorkeus": seaLevelLayer,
+  "⚓ Rannikkoasemat": coastalLayer
+}, {
+  collapsed: false
+}).addTo(map);
+
 // ==========================
 // Asemat kartalle
 // ==========================
