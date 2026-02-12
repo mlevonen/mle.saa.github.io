@@ -50,7 +50,10 @@ fetch("stations.json")
   .then(r => r.json())
   .then(data => {
 
-    const layer = L.featureGroup().addTo(map);
+    const weatherLayer = L.layerGroup().addTo(map);
+    const seaLevelLayer = L.layerGroup().addTo(map);
+    const coastalLayer = L.layerGroup().addTo(map);
+
 
     data.features.forEach(f => {
       const [lon, lat] = f.geometry.coordinates;
@@ -60,10 +63,27 @@ fetch("stations.json")
     radius: 5,
     color: "blue",
     fillOpacity: 0.7
-    }).addTo(layer);
+    });
 
     // 🔑 TÄRKEÄ: tallenna feature markerille
     marker.feature = f;
+    // Päätellään tyyppi ID:n perusteella
+    if (f.properties.weatherFmisid) {
+    weatherLayer.addLayer(marker);
+  }
+
+    if (f.properties.seaLevelFmisid) {
+    seaLevelLayer.addLayer(marker);
+  }
+
+  L.control.layers(null, {
+  "🌤 Sääasemat": weatherLayer,
+  "🌊 Vedenkorkeus": seaLevelLayer,
+  "⚓ Rannikkoasemat": coastalLayer
+  }, {
+  collapsed: false
+  }).addTo(map);
+
 
 
 marker.bindPopup(`
@@ -94,7 +114,8 @@ marker.bindPopup(`
 
     });
 
-    map.fitBounds(layer.getBounds(), { padding: [30, 30] });
+    map.fitBounds(weatherLayer.getBounds(), { padding: [30, 30] });
+
   });
 
 // ==========================
