@@ -1,21 +1,25 @@
 export async function fetchPressureByFmisid(fmisid) {
 
-  const end = new Date();
-  const start = new Date(end.getTime() - 6 * 3600_000);
+  const now = new Date();
+  const startTime = new Date(now.getTime() - 6 * 60 * 60 * 1000).toISOString();
+  const endTime = now.toISOString();
 
-  const url =
-    "https://opendata.fmi.fi/wfs" +
-    "?service=WFS" +
-    "&version=2.0.0" +
-    "&request=getFeature" +
-    "&storedquery_id=fmi::observations::weather::simple" +
-    `&fmisid=${fmisid}` +
-    "&parameters=pressure" +
-    `&starttime=${start.toISOString()}` +
-    `&endtime=${end.toISOString()}`;
+  const url = `
+    https://opendata.fmi.fi/wfs?service=WFS
+    &version=2.0.0
+    &request=getFeature
+    &storedquery_id=fmi::observations::weather::simple
+    &fmisid=${fmisid}
+    &parameters=pressure
+    &starttime=${startTime}
+    &endtime=${endTime}
+  `.replace(/\s+/g, '');
 
-  const res = await fetch(url);
-  const xmlText = await res.text();
+  const response = await fetch(url);
+  const text = await response.text();
+
+  return text;
+  
 
   const parser = new DOMParser();
   const xml = parser.parseFromString(xmlText, "application/xml");
