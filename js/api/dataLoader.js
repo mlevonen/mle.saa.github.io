@@ -20,7 +20,6 @@ export async function loadPopupData({
   seaLevelFmisid
   
 }) {
-console.log("Pressure data:", obsPressure);
 
   const cacheKey = `${lat},${lon}`;
 
@@ -71,7 +70,7 @@ console.log("Pressure data:", obsPressure);
     seaLevel = null;
   }
   }
-
+console.log("Pressure data:", obsPressure);
 
   const data = {
     obsTemp,
