@@ -18,7 +18,9 @@ export async function loadPopupData({
   weatherPlace,
   weatherFmisid,
   seaLevelFmisid
+  
 }) {
+console.log("Pressure data:", obsPressure);
 
   const cacheKey = `${lat},${lon}`;
 
