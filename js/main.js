@@ -21,9 +21,10 @@ const FMI_WFS = "https://opendata.fmi.fi/wfs";
 // Layerit
 // ==========================
 
-const weatherLayer = L.layerGroup().addTo(map);
-const seaLevelLayer = L.layerGroup().addTo(map);
-const coastalLayer = L.layerGroup().addTo(map);
+const weatherLayer = L.featureGroup().addTo(map);
+const seaLevelLayer = L.featureGroup().addTo(map);
+const coastalLayer = L.featureGroup().addTo(map);
+
 
 L.control.layers(null, {
   "🌤 Sääasemat": weatherLayer,
@@ -44,9 +45,6 @@ stations.forEach(station => {
     fillOpacity: 0.7
   });
 
- if (weatherLayer.getLayers().length > 0) {
-  map.fitBounds(weatherLayer.getBounds(), { padding: [30, 30] });
-}
 
   marker.bindPopup(`
     <div class="popup-title">${station.name}</div>
@@ -89,7 +87,9 @@ stations.forEach(station => {
 
   });
 
-
+  if (weatherLayer.getLayers().length > 0) {
+  map.fitBounds(weatherLayer.getBounds(), { padding: [30, 30] });
+  }
  
 
     
