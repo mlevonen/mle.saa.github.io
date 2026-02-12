@@ -5,7 +5,7 @@ import {
 
 import { fetchSeaLevel } from "../api/sealevel.js";
 
-import { fetchPressureByPlace } from "../api/fetchPressureByPlace.js";
+import { fetchPressureByFmisid } from "../api/fetchPressureByPlace.js";
 
 import { fetchSunTimes } from "../api/sunApi.js";
 
@@ -38,7 +38,9 @@ export async function loadPopupData({
     param: "utctime,windspeedms,winddirection,windgust,pressurehpa"
   });
 
-  const obsPressure = await fetchPressureByPlace(weatherPlace);
+  const obsPressure = weatherFmisid
+  ? await fetchPressureByFmisid(weatherFmisid)
+  : null;
 
   const obsWeather = await fetchTimeSeriesREST(lat, lon, {
   param: "utctime,smartsymbol"

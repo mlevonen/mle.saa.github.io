@@ -1,4 +1,5 @@
-export async function fetchPressureByPlace(place) {
+export async function fetchPressureByFmisid(fmisid) {
+
   const end = new Date();
   const start = new Date(end.getTime() - 6 * 3600_000);
 

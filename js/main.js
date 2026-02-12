@@ -295,15 +295,17 @@ function getPressureTrend(data, minutes = 180) {
   return "steady";
 }
 
-export async function fetchPressureByFmisid (place) {
-  const url = `https://opendata.fmi.fi/wfs
-    ?service=WFS
-    &version=2.0.0
-    &request=getFeature
-    &storedquery_id=fmi::observations::weather::simple
-    &place=${encodeURIComponent(place)}
-    &parameters=pressure
-  `.replace(/\s+/g, "");
+export async function fetchPressureByFmisid (fmisid) {
+  const url = `
+  https://opendata.fmi.fi/wfs?service=WFS&version=2.0.0
+  &request=getFeature
+  &storedquery_id=fmi::observations::weather::simple
+  &fmisid=${fmisid}
+  &parameters=pressure
+  &starttime=${startTime}
+  &endtime=${endTime}
+  `.replace(/\s+/g, '');
+
 
   const res = await fetch(url);
   const xml = await res.text();
