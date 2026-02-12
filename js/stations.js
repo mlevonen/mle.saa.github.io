@@ -244,8 +244,8 @@ const stations = [
    */
 
   {
-    type: "weather",
-    id: "kotka-haapasaari-weather",
+    type: "coastal",
+    id: "kotka-haapasaari",
     name: "Kotka Haapasaari",
     fmisid: 101042,
     lat: 60.29,
@@ -253,8 +253,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "kotka-rankki-weather",
+    type: "coastal",
+    id: "kotka-rankki",
     name: "Kotka Rankki",
     fmisid: 101030,
     lat: 60.38,
@@ -262,8 +262,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "loviisa-orrengrund-weather",
+    type: "coastal",
+    id: "loviisa-orrengrund",
     name: "Loviisa Orrengrund",
     fmisid: 101039,
     lat: 60.27,
@@ -271,8 +271,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "porvoo-kilpilahti-satama-weather",
+    type: "coastal",
+    id: "porvoo-kilpilahti-satama",
     name: "Porvoo Kilpilahti satama",
     fmisid: 100683,
     lat: 60.3,
@@ -280,8 +280,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "porvoo-emäsalo-weather",
+    type: "coastal",
+    id: "porvoo-emäsalo",
     name: "Porvoo Emäsalo",
     fmisid: 101023,
     lat: 60.2,
@@ -289,8 +289,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "porvoo-kalbådagrund-weather",
+    type: "coastal",
+    id: "porvoo-kalbådagrund",
     name: "Porvoo Kalbådagrund",
     fmisid: 101022,
     lat: 59.99,
@@ -298,8 +298,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "helsinki-vuosaari-satama-weather",
+    type: "coastal",
+    id: "helsinki-vuosaari-satama",
     name: "Helsinki Vuosaari satama",
     fmisid: 151028,
     lat: 60.21,
@@ -307,8 +307,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "sipoo-itätoukki-weather",
+    type: "coastal",
+    id: "sipoo-itätoukki",
     name: "Sipoo Itätoukki",
     fmisid: 105392,
     lat: 60.1,
@@ -316,8 +316,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "helsinki-harmaja-weather",
+    type: "coastal",
+    id: "helsinki-harmaja",
     name: "Helsinki Harmaja",
     fmisid: 100996,
     lat: 60.11,
@@ -325,8 +325,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "helsinki-helsingin-majakka-weather",
+    type: "coastal",
+    id: "helsinki-helsingin-majakka",
     name: "Helsinki Helsingin majakka",
     fmisid: 101003,
     lat: 59.95,
@@ -334,8 +334,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "kirkkonummi-mäkiluoto-weather",
+    type: "coastal",
+    id: "kirkkonummi-mäkiluoto",
     name: "Kirkkonummi Mäkiluoto",
     fmisid: 100997,
     lat: 59.92,
@@ -343,8 +343,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "inkoo-bågaskär-weather",
+    type: "coastal",
+    id: "inkoo-bågaskär",
     name: "Inkoo Bågaskär",
     fmisid: 100969,
     lat: 59.93,
@@ -352,8 +352,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "raasepori-jussarö-weather",
+    type: "coastal",
+    id: "raasepori-jussarö",
     name: "Raasepori Jussarö",
     fmisid: 100965,
     lat: 59.82,
@@ -361,8 +361,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "hanko-tulliniemi-weather",
+    type: "coastal",
+    id: "hanko-tulliniemi",
     name: "Hanko Tulliniemi",
     fmisid: 100946,
     lat: 59.81,
@@ -370,8 +370,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "hanko-russarö-weather",
+    type: "coastal",
+    id: "hanko-russarö",
     name: "Hanko Russarö",
     fmisid: 100932,
     lat: 59.77,
@@ -379,8 +379,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "kemiönsaari-vänö-weather",
+    type: "coastal",
+    id: "kemiönsaari-vänö",
     name: "Kemiönsaari Vänö",
     fmisid: 100945,
     lat: 59.87,
@@ -388,8 +388,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "parainen-utö-weather",
+    type: "coastal",
+    id: "parainen-utö",
     name: "Parainen Utö",
     fmisid: 100908,
     lat: 59.78,
@@ -397,8 +397,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "kökar-bogskär-weather",
+    type: "coastal",
+    id: "kökar-bogskär",
     name: "Kökar Bogskär",
     fmisid: 100921,
     lat: 59.5,
@@ -406,8 +406,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "turku-rajakari-weather",
+    type: "coastal",
+    id: "turku-rajakari",
     name: "Turku Rajakari",
     fmisid: 100947,
     lat: 60.38,
@@ -415,8 +415,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "parainen-fagerholm-weather",
+    type: "coastal",
+    id: "parainen-fagerholm",
     name: "Parainen Fagerholm",
     fmisid: 100924,
     lat: 60.11,
@@ -425,8 +425,8 @@ const stations = [
 
 
   {
-    type: "weather",
-    id: "lumparland-långnäs-satama-weather",
+    type: "coastal",
+    id: "lumparland-långnäs-satama",
     name: "Lumparland Långnäs satama",
     fmisid: 151048,
     lat: 60.12,
@@ -434,8 +434,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "maarianhamina-länsisatama-weather",
+    type: "coastal",
+    id: "maarianhamina-länsisatama",
     name: "Maarianhamina Länsisatama",
     fmisid: 151029,
     lat: 60.09,
@@ -443,8 +443,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "maarianhamina-lotsberget-weather",
+    type: "coastal",
+    id: "maarianhamina-lotsberget",
     name: "Maarianhamina Lotsberget",
     fmisid: 107383,
     lat: 60.09,
@@ -452,8 +452,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "lemland-nyhamn-weather",
+    type: "coastal",
+    id: "lemland-nyhamn",
     name: "Lemland Nyhamn",
     fmisid: 100909,
     lat: 59.96,
@@ -461,8 +461,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "hammarland-märket-weather",
+    type: "coastal",
+    id: "hammarland-märket",
     name: "Hammarland Märket",
     fmisid: 100919,
     lat: 60.3,
@@ -470,8 +470,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "kustavi-isokari-weather",
+    type: "coastal",
+    id: "kustavi-isokari",
     name: "Kustavi Isokari",
     fmisid: 101059,
     lat: 60.72,
@@ -479,8 +479,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "rauma-kylmäpihlaja-weather",
+    type: "coastal",
+    id: "rauma-kylmäpihlaja",
     name: "Rauma Kylmäpihlaja",
     fmisid: 101061,
     lat: 61.14,
@@ -488,8 +488,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "pori-tahkoluoto-satama-weather",
+    type: "coastal",
+    id: "pori-tahkoluoto-satama",
     name: "Pori Tahkoluoto satama",
     fmisid: 101267,
     lat: 61.63,
@@ -497,8 +497,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "kristiinankaupunki-majakka-weather",
+    type: "coastal",
+    id: "kristiinankaupunki-majakka",
     name: "Kristiinankaupunki Majakka",
     fmisid: 101268,
     lat: 62.2,
@@ -506,8 +506,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "kaskinen-sälgrund-weather",
+    type: "coastal",
+    id: "kaskinen-sälgrund",
     name: "Kaskinen Sälgrund",
     fmisid: 101256,
     lat: 62.33,
@@ -515,8 +515,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "korsnäs-bredskäret-weather",
+    type: "coastal",
+    id: "korsnäs-bredskäret",
     name: "Korsnäs Bredskäret",
     fmisid: 101479,
     lat: 62.93,
@@ -524,8 +524,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "maalahti-strömmingsbådan-weather",
+    type: "coastal",
+    id: "maalahti-strömmingsbådan",
     name: "Maalahti Strömmingsbådan",
     fmisid: 101481,
     lat: 62.98,
@@ -533,8 +533,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "mustasaari-valassaaret-weather",
+    type: "coastal",
+    id: "mustasaari-valassaaret",
     name: "Mustasaari Valassaaret",
     fmisid: 101464,
     lat: 63.44,
@@ -542,8 +542,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "pietarsaari-kallan-weather",
+    type: "coastal",
+    id: "pietarsaari-kallan",
     name: "Pietarsaari Kallan",
     fmisid: 101660,
     lat: 63.75,
@@ -551,8 +551,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "kokkola-tankar-weather",
+    type: "coastal",
+    id: "kokkola-tankar",
     name: "Kokkola Tankar",
     fmisid: 101661,
     lat: 63.95,
@@ -560,8 +560,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "kalajoki-ulkokalla-weather",
+    type: "coastal",
+    id: "kalajoki-ulkokalla",
     name: "Kalajoki Ulkokalla",
     fmisid: 101673,
     lat: 64.33,
@@ -569,8 +569,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "raahe-nahkiainen-weather",
+    type: "coastal",
+    id: "raahe-nahkiainen",
     name: "Raahe Nahkiainen",
     fmisid: 101775,
     lat: 64.61,
@@ -578,8 +578,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "oulu-vihreäsaari-satama-weather",
+    type: "coastal",
+    id: "oulu-vihreäsaari-satama",
     name: "Oulu Vihreäsaari satama",
     fmisid: 101794,
     lat: 65.01,
@@ -587,8 +587,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "hailuoto-marjaniemi-weather",
+    type: "coastal",
+    id: "hailuoto-marjaniemi",
     name: "Hailuoto Marjaniemi",
     fmisid: 101784,
     lat: 65.04,
@@ -596,8 +596,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "kemi-i-majakka-weather",
+    type: "coastal",
+    id: "kemi-i-majakka",
     name: "Kemi I majakka",
     fmisid: 101783,
     lat: 65.39,
@@ -605,8 +605,8 @@ const stations = [
   },
 
   {
-    type: "weather",
-    id: "kemi-ajos-weather",
+    type: "coastal",
+    id: "kemi-ajos",
     name: "Kemi Ajos",
     fmisid: 101846,
     lat: 65.67,
