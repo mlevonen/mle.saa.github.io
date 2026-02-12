@@ -8,7 +8,7 @@ export async function fetchPressureByPlace(place) {
     "&version=2.0.0" +
     "&request=getFeature" +
     "&storedquery_id=fmi::observations::weather::simple" +
-    `&place=${encodeURIComponent(place)}` +
+    `&fmisid=${fmisid}` +
     "&parameters=pressure" +
     `&starttime=${start.toISOString()}` +
     `&endtime=${end.toISOString()}`;

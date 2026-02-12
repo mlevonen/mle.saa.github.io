@@ -295,7 +295,7 @@ function getPressureTrend(data, minutes = 180) {
   return "steady";
 }
 
-export async function fetchPressureByPlace(place) {
+export async function fetchPressureByFmisid (place) {
   const url = `https://opendata.fmi.fi/wfs
     ?service=WFS
     &version=2.0.0
@@ -356,7 +356,7 @@ map.on("popupopen", async e => {
     const data = await loadPopupData({
       lat,
       lon,
-      weatherPlace: station.name,
+      weatherPlace:station.type === "weather" ? station.name : null,
       weatherFmisid,
       seaLevelFmisid
     });
