@@ -16,33 +16,6 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 
 const FMI_WFS = "https://opendata.fmi.fi/wfs";
 
-const weatherLayer = L.layerGroup().addTo(map);
-const seaLevelLayer = L.layerGroup().addTo(map);
-const coastalLayer = L.layerGroup().addTo(map);
-
-L.control.layers(null, {
-  "🌤 Sääasemat": weatherLayer,
-  "🌊 Vedenkorkeus": seaLevelLayer,
-  "⚓ Rannikkoasemat": coastalLayer
-}, {
-  collapsed: false
-}).addTo(map);
-
-// TESTIMARKER
-const testMarker = L.circleMarker([60.17, 24.95], {
-  radius: 8,
-  color: "red",
-  fillColor: "red",
-  fillOpacity: 0.8
-}).bindPopup("Testi: Helsinki weather");
-
-weatherLayer.addLayer(testMarker);
-
-
-
-
-
-
 
 // ==========================
 // Layerit
