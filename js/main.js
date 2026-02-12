@@ -82,12 +82,12 @@ stations.forEach(station => {
   if (station.type === "coastal") {
     coastalLayer.addLayer(marker);
   }
-
+map.fitBounds(weatherLayer.getBounds(), { padding: [30, 30] });
 });
 
     
 
-    map.fitBounds(weatherLayer.getBounds(), { padding: [30, 30] });
+    
 
   
 
