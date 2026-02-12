@@ -44,7 +44,33 @@ stations.forEach(station => {
     fillOpacity: 0.7
   });
 
-  // Lisää layeriin tyypin perusteella
+  marker.bindPopup(`
+    <div class="popup-title">${station.name}</div>
+
+    <div><strong>Lämpötila</strong></div>
+    <canvas
+      class="popup-chart"
+      width="650"
+      height="160"
+      data-lat="${station.lat}"
+      data-lon="${station.lon}"
+      data-fmisid="${station.fmisid}"
+      data-type="temp"
+    ></canvas>
+
+    <div style="margin-top:8px;"><strong>Tuuli</strong></div>
+    <canvas
+      class="popup-chart"
+      width="650"
+      height="160"
+      data-lat="${station.lat}"
+      data-lon="${station.lon}"
+      data-fmisid="${station.fmisid}"
+      data-type="wind"
+    ></canvas>
+  `);
+
+  // Lisää oikeaan layeriin
   if (station.type === "weather") {
     weatherLayer.addLayer(marker);
   }
@@ -58,33 +84,6 @@ stations.forEach(station => {
   }
 
 });
-
-
-marker.bindPopup(`
-  <div class="popup-title">${name}</div>
-
-  <div><strong>Lämpötila</strong></div>
-  <canvas
-    class="popup-chart"
-    width="650"
-    height="160"
-    data-lat="${lat}"
-    data-lon="${lon}"
-    data-fmisid="${f.properties.fmisid}"
-    data-type="temp"
-  ></canvas>
-
-  <div style="margin-top:8px;"><strong>Tuuli</strong></div>
-  <canvas
-    class="popup-chart"
-    width="650"
-    height="160"
-    data-lat="${lat}"
-    data-lon="${lon}"
-    data-fmisid="${f.properties.fmisid}"
-    data-type="wind"
-  ></canvas>
-`);
 
     
 
