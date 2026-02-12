@@ -21,23 +21,17 @@ export async function fetchPressureByFmisid(fmisid) {
   return text;
   
 
-  const parser = new DOMParser();
-  const xml = parser.parseFromString(xmlText, "application/xml");
+  const points = [...xml.getElementsByTagName("*")]
+  .filter(el => el.localName === "MeasurementTVP");
 
-  const times = [...xml.getElementsByTagName("*")]
-  .filter(el => el.localName === "time");
+  return points.map(p => {
+  const time = [...p.children].find(c => c.localName === "time");
+  const value = [...p.children].find(c => c.localName === "value");
 
-  const values = [...xml.getElementsByTagName("*")]
-  .filter(el => el.localName === "value");
+  return {
+    utctime: time?.textContent,
+    pressurehpa: Number(value?.textContent)
+  };
+  }).filter(p => Number.isFinite(p.pressurehpa));
 
-
-  if (!times.length || !values.length) {
-    console.warn("No pressure data found for place:", place);
-    return [];
-  }
-
-  return times.map((t, i) => ({
-    utctime: t.textContent,
-    pressurehpa: Number(values[i]?.textContent)
-  })).filter(p => Number.isFinite(p.pressurehpa));
 }
