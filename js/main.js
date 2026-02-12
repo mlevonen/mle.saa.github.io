@@ -321,6 +321,8 @@ export async function fetchPressureByFmisid (fmisid) {
       pressurehpa: 1019.6
     }
   ];
+  console.log("Pressure URL:", url);
+
 }
 
 
