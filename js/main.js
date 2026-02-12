@@ -21,6 +21,7 @@ const FMI_WFS = "https://opendata.fmi.fi/wfs";
 // Layerit
 // ==========================
 
+
 const weatherLayer = L.featureGroup().addTo(map);
 const seaLevelLayer = L.featureGroup().addTo(map);
 const coastalLayer = L.featureGroup().addTo(map);

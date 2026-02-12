@@ -11,6 +11,7 @@ export function updatePopupTitles(popupEl, data) {
     ).textContent = `Lämpötila ${temp.v.toFixed(1)} °C`;
   }
 
+  
   if (wind) {
     popupEl.querySelector(
       'div:has(+ canvas[data-type="wind"])'
