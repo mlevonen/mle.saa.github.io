@@ -75,6 +75,21 @@ stations.forEach(station => {
     ></canvas>
   `);
 
+  marker.on("mouseover", function () {
+  this.setStyle({
+    weight: 3
+  });
+  });
+
+  marker.on("mouseout", function () {
+  this.setStyle({
+    weight: 1
+  });
+  });
+
+
+
+
   // Lisää oikeaan layeriin
   if (station.type === "weather") {
     weatherLayer.addLayer(marker);
