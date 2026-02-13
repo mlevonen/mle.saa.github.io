@@ -49,6 +49,14 @@ stations.forEach(station => {
 
   marker.station = station;
 
+  // 🔹 Hover-nimi
+  marker.bindTooltip(station.name, {
+    direction: "top",
+    offset: [0, -8],
+    opacity: 0.9
+  });
+
+
   marker.bindPopup(`
     <div class="popup-title">${station.name}</div>
 
@@ -86,9 +94,6 @@ stations.forEach(station => {
     weight: 1
   });
   });
-
-
-
 
   // Lisää oikeaan layeriin
   if (station.type === "weather") {
