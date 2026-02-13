@@ -366,8 +366,8 @@ function getMarkerStyle(type) {
     case "coastal":
       return {
         radius: 6,
-        color: "#ff7f00",
-        fillColor: "#ff7f00",
+        color: "#6189ED",
+        fillColor: "#6189ED",
         fillOpacity: 0.9,
         weight: 1
       };
