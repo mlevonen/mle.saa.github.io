@@ -462,6 +462,7 @@ map.on("popupopen", async e => {
     wind: data.obsWindSpeed?.at(-1)?.windspeedms ?? null,
     sea: data.obsSeaLevel?.at(-1)?.sealevel ?? null
     };
+    console.log("Sea level data:", data.obsSeaLevel);
 
   } catch (err) {
     console.error("Popup error:", err);
