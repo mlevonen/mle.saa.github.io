@@ -50,14 +50,45 @@ stations.forEach(station => {
   marker.station = station;
 
   // 🔹 Hover-nimi
-  marker.bindTooltip(
-  `<strong>${station.name}</strong><br><small>${station.type}</small>`,
-  {
-    direction: "top",
-    offset: [0, -8],
-    opacity: 0.9
+  // Alustetaan preview-cache
+  marker.previewData = null;
+
+  // Tyhjä tooltip – sisältö asetetaan hoverissa
+  marker.bindTooltip("", {
+  direction: "top",
+  offset: [0, -8],
+  opacity: 0.9
+  });
+
+  marker.on("mouseover", function () {
+
+  let content = `<strong>${station.name}</strong>`;
+
+  const data = this.previewData;
+
+  if (data) {
+
+    if (station.type === "weather" && data.temp != null) {
+      content += `<br>${data.temp.toFixed(1)} °C`;
+    }
+
+    if (station.type === "coastal" && data.wind != null) {
+      content += `<br>${data.wind.toFixed(1)} m/s`;
+    }
+
+    if (station.type === "sealevel" && data.sea != null) {
+      content += `<br>${data.sea.toFixed(0)} cm`;
+    }
+
   }
-  );
+
+  this.setTooltipContent(content);
+  this.openTooltip();
+});
+
+marker.on("mouseout", function () {
+  this.closeTooltip();
+});
 
 
   marker.bindPopup(`
@@ -85,18 +116,6 @@ stations.forEach(station => {
       data-type="wind"
     ></canvas>
   `);
-
-  marker.on("mouseover", function () {
-  this.setStyle({
-    weight: 3
-  });
-  });
-
-  marker.on("mouseout", function () {
-  this.setStyle({
-    weight: 1
-  });
-  });
 
   // Lisää oikeaan layeriin
   if (station.type === "weather") {
@@ -419,6 +438,14 @@ map.on("popupopen", async e => {
   const seaLevelFmisid =
   station.type === "sealevel" ? station.fmisid : null;
 
+  const marker = e.popup._source;
+
+  // hae latest helperilla tai suoraan arrayn lopusta
+  marker.previewData = {
+  temp: data.obsTemp?.at(-1)?.temperature ?? null,
+  wind: data.obsWindSpeed?.at(-1)?.windspeedms ?? null,
+  sea: data.obsSeaLevel?.at(-1)?.sealevel ?? null
+  };
 
 
   try {
