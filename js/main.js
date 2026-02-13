@@ -348,8 +348,7 @@ map.on("popupopen", async e => {
   const lon = canvases[0].dataset.lon;
 
   // 🔑 3. Ota FMISID:t propertiesista (EI canvasista)
-  const weatherFmisid =
-  station.type === "weather" ? station.fmisid : null;
+  const weatherFmisid = station.fmisid ?? null;
 
   const seaLevelFmisid =
   station.type === "sealevel" ? station.fmisid : null;
