@@ -64,36 +64,35 @@ stations.forEach(station => {
 
   let content = `<strong>${station.name}</strong>`;
 
-  const data = this.previewData;
+  const preview = this.previewData;
 
-  if (data) {
+  if (!preview) {
+    this.setTooltipContent(content);
+    this.openTooltip();
+    return;
+  }
 
-    if (station.type === "weather" && data.temp != null) {
-      content += `<br>${data.temp.toFixed(1)} °C`;
-    }
+  if (station.type === "weather" && preview.temp != null) {
+    content += `<br>${preview.temp.toFixed(1)} °C`;
+  }
 
-    if (station.type === "coastal" && data.wind != null) {
-      content += `<br>${data.wind.toFixed(1)} m/s`;
-    }
+  else if (station.type === "coastal" && preview.wind != null) {
+    content += `<br>${preview.wind.toFixed(1)} m/s`;
+  }
 
-    if (station.type === "sealevel" && data.sea != null) {
-      content += `<br>${data.sea.toFixed(0)} cm`;
-    }
-
-    if (station.type === "sealevel" && data.sea != null) {
-    const sign = data.sea > 0 ? "+" : "";
-    content += `<br>${sign}${data.sea} cm`;
-}
-
+  else if (station.type === "sealevel" && preview.sea != null) {
+    const sign = preview.sea > 0 ? "+" : "";
+    content += `<br>${sign}${preview.sea} cm`;
   }
 
   this.setTooltipContent(content);
   this.openTooltip();
-});
+  });
 
-marker.on("mouseout", function () {
+
+  marker.on("mouseout", function () {
   this.closeTooltip();
-});
+  });
 
 
   marker.bindPopup(`
