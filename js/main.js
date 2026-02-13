@@ -80,6 +80,11 @@ stations.forEach(station => {
       content += `<br>${data.sea.toFixed(0)} cm`;
     }
 
+    if (station.type === "sealevel" && data.sea != null) {
+    const sign = data.sea > 0 ? "+" : "";
+    content += `<br>${sign}${data.sea} cm`;
+}
+
   }
 
   this.setTooltipContent(content);
@@ -457,11 +462,12 @@ map.on("popupopen", async e => {
      const marker = e.popup._source;
 
     // hae latest helperilla tai suoraan arrayn lopusta
-    marker.previewData = {
-    temp: data.obsTemp?.at(-1)?.temperature ?? null,
-    wind: data.obsWindSpeed?.at(-1)?.windspeedms ?? null,
-    sea: data.obsSeaLevel?.at(-1)?.sealevel ?? null
-    };
+  marker.previewData = {
+  temp: data.obsTemp?.at(-1)?.temperature ?? null,
+  wind: data.obsWindSpeed?.at(-1)?.windspeedms ?? null,
+  sea: data.seaLevel?.at(-1) ?? null
+  };
+
     console.log("Sea level data:", data.obsSeaLevel);
 
   } catch (err) {
