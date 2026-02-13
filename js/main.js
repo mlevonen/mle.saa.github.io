@@ -40,11 +40,12 @@ L.control.layers(null, {
 
 stations.forEach(station => {
 
-  const marker = L.circleMarker([station.lat, station.lon], {
-    radius: 5,
-    color: "blue",
-    fillOpacity: 0.7
-  });
+  const style = getMarkerStyle(station.type);
+
+  const marker = L.circleMarker(
+    [station.lat, station.lon],
+    style
+  );
 
   marker.station = station;
 
@@ -323,6 +324,48 @@ export async function fetchPressureByFmisid (fmisid) {
   ];
   console.log("Pressure URL:", url);
 
+}
+
+function getMarkerStyle(type) {
+
+  switch (type) {
+
+    case "weather":
+      return {
+        radius: 7,
+        color: "#1e90ff",
+        fillColor: "#1e90ff",
+        fillOpacity: 0.9,
+        weight: 1
+      };
+
+    case "sealevel":
+      return {
+        radius: 8,
+        color: "#00b894",
+        fillColor: "#00b894",
+        fillOpacity: 0.9,
+        weight: 1
+      };
+
+    case "coastal":
+      return {
+        radius: 6,
+        color: "#ff7f00",
+        fillColor: "#ff7f00",
+        fillOpacity: 0.9,
+        weight: 1
+      };
+
+    default:
+      return {
+        radius: 6,
+        color: "#999",
+        fillColor: "#999",
+        fillOpacity: 0.8,
+        weight: 1
+      };
+  }
 }
 
 
