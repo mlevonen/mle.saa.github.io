@@ -465,10 +465,8 @@ map.on("popupopen", async e => {
   marker.previewData = {
   temp: data.obsTemp?.at(-1)?.temperature ?? null,
   wind: data.obsWindSpeed?.at(-1)?.windspeedms ?? null,
-  sea: data.seaLevel?.at(-1) ?? null
+  sea: data.seaLevel ?? null
   };
-
-    console.log("Sea level data:", data.obsSeaLevel);
 
   } catch (err) {
     console.error("Popup error:", err);
