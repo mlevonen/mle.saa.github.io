@@ -29,7 +29,7 @@ const coastalLayer = L.featureGroup().addTo(map);
 
 L.control.layers(null, {
   "🌤 Sääasemat": weatherLayer,
-  "🌊 Vedenkorkeus": seaLevelLayer,
+  "🌊 Vedenkorkeusasemat": seaLevelLayer,
   "⚓ Rannikkoasemat": coastalLayer
 }, { collapsed: false }).addTo(map);
 
