@@ -19,24 +19,40 @@ export async function fetchPressureByFmisid(fmisid) {
   const xmlText = await response.text();
 
   const parser = new DOMParser();
-  const xml = parser.parseFromString(xmlText, "application/xml");
+const xml = parser.parseFromString(xmlText, "application/xml");
 
-  const points = [...xml.getElementsByTagName("*")]
-    .filter(el => el.localName === "MeasurementTVP");
+// Hae kaikki BsWfsElementit
+const elements = [...xml.getElementsByTagName("*")]
+  .filter(el => el.localName === "BsWfsElement");
 
-  if (!points.length) {
-    console.warn("No pressure MeasurementTVP elements found");
-    return [];
-  }
+if (!elements.length) {
+  console.warn("No BsWfsElement elements found");
+  return [];
+}
 
-  return points.map(p => {
-    const time = [...p.children].find(c => c.localName === "time");
-    const value = [...p.children].find(c => c.localName === "value");
+const result = elements
+  .map(el => {
+
+    const paramName = [...el.children]
+      .find(c => c.localName === "ParameterName")?.textContent;
+
+    if (paramName !== "pressure") return null;
+
+    const time = [...el.children]
+      .find(c => c.localName === "Time")?.textContent;
+
+    const value = [...el.children]
+      .find(c => c.localName === "ParameterValue")?.textContent;
 
     return {
-      utctime: time?.textContent,
-      pressurehpa: Number(value?.textContent)
+      utctime: time,
+      pressurehpa: Number(value)
     };
-  }).filter(p => Number.isFinite(p.pressurehpa));
+
+  })
+  .filter(p => p && Number.isFinite(p.pressurehpa));
+
+return result;
+
 }
 
