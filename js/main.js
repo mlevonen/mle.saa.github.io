@@ -348,8 +348,8 @@ function getMarkerStyle(type) {
     case "weather":
       return {
         radius: 7,
-        color: "#1e90ff",
-        fillColor: "#1e90ff",
+        color: "#21A419",
+        fillColor: "#21A419",
         fillOpacity: 0.9,
         weight: 1
       };
@@ -357,8 +357,8 @@ function getMarkerStyle(type) {
     case "sealevel":
       return {
         radius: 8,
-        color: "#00b894",
-        fillColor: "#00b894",
+        color: "#ED952C",
+        fillColor: "#ED952C",
         fillOpacity: 0.9,
         weight: 1
       };
