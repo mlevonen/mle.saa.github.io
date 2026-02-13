@@ -356,7 +356,7 @@ function getMarkerStyle(type) {
 
     case "sealevel":
       return {
-        radius: 8,
+        radius: 5,
         color: "#ED952C",
         fillColor: "#ED952C",
         fillOpacity: 0.9,
