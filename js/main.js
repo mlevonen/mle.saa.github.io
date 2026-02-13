@@ -50,11 +50,14 @@ stations.forEach(station => {
   marker.station = station;
 
   // 🔹 Hover-nimi
-  marker.bindTooltip(station.name, {
+  marker.bindTooltip(
+  `<strong>${station.name}</strong><br><small>${station.type}</small>`,
+  {
     direction: "top",
     offset: [0, -8],
     opacity: 0.9
-  });
+  }
+  );
 
 
   marker.bindPopup(`
