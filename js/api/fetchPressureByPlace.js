@@ -16,22 +16,27 @@ export async function fetchPressureByFmisid(fmisid) {
   `.replace(/\s+/g, '');
 
   const response = await fetch(url);
-  const text = await response.text();
+  const xmlText = await response.text();
 
-  return text;
-  
+  const parser = new DOMParser();
+  const xml = parser.parseFromString(xmlText, "application/xml");
 
   const points = [...xml.getElementsByTagName("*")]
-  .filter(el => el.localName === "MeasurementTVP");
+    .filter(el => el.localName === "MeasurementTVP");
+
+  if (!points.length) {
+    console.warn("No pressure MeasurementTVP elements found");
+    return [];
+  }
 
   return points.map(p => {
-  const time = [...p.children].find(c => c.localName === "time");
-  const value = [...p.children].find(c => c.localName === "value");
+    const time = [...p.children].find(c => c.localName === "time");
+    const value = [...p.children].find(c => c.localName === "value");
 
-  return {
-    utctime: time?.textContent,
-    pressurehpa: Number(value?.textContent)
-  };
+    return {
+      utctime: time?.textContent,
+      pressurehpa: Number(value?.textContent)
+    };
   }).filter(p => Number.isFinite(p.pressurehpa));
-
 }
+
