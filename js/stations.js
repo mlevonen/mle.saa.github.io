@@ -272,15 +272,6 @@ const stations = [
 
   {
     type: "coastal",
-    id: "porvoo-kilpilahti-satama",
-    name: "Porvoo Kilpilahti satama",
-    fmisid: 100683,
-    lat: 60.3,
-    lon: 25.55
-  },
-
-  {
-    type: "coastal",
     id: "porvoo-emäsalo",
     name: "Porvoo Emäsalo",
     fmisid: 101023,
@@ -304,15 +295,6 @@ const stations = [
     fmisid: 151028,
     lat: 60.21,
     lon: 25.2
-  },
-
-  {
-    type: "coastal",
-    id: "sipoo-itätoukki",
-    name: "Sipoo Itätoukki",
-    fmisid: 105392,
-    lat: 60.1,
-    lon: 25.19
   },
 
   {
@@ -358,15 +340,6 @@ const stations = [
     fmisid: 100965,
     lat: 59.82,
     lon: 23.57
-  },
-
-  {
-    type: "coastal",
-    id: "hanko-tulliniemi",
-    name: "Hanko Tulliniemi",
-    fmisid: 100946,
-    lat: 59.81,
-    lon: 22.91
   },
 
   {
