@@ -438,15 +438,6 @@ map.on("popupopen", async e => {
   const seaLevelFmisid =
   station.type === "sealevel" ? station.fmisid : null;
 
-  const marker = e.popup._source;
-
-  // hae latest helperilla tai suoraan arrayn lopusta
-  marker.previewData = {
-  temp: data.obsTemp?.at(-1)?.temperature ?? null,
-  wind: data.obsWindSpeed?.at(-1)?.windspeedms ?? null,
-  sea: data.obsSeaLevel?.at(-1)?.sealevel ?? null
-  };
-
 
   try {
     // 🔑 4. Kutsu loadPopupDataa UUDESSA muodossa
@@ -462,6 +453,15 @@ map.on("popupopen", async e => {
     renderPopupExtras(popupEl, data);
     renderTemperatureChart(popupEl, data);
     renderWindChart(popupEl, data);
+
+     const marker = e.popup._source;
+
+    // hae latest helperilla tai suoraan arrayn lopusta
+    marker.previewData = {
+    temp: data.obsTemp?.at(-1)?.temperature ?? null,
+    wind: data.obsWindSpeed?.at(-1)?.windspeedms ?? null,
+    sea: data.obsSeaLevel?.at(-1)?.sealevel ?? null
+    };
 
   } catch (err) {
     console.error("Popup error:", err);
