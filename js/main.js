@@ -457,11 +457,23 @@ function getMarkerStyle(type) {
 
 function createWindIcon(speed, direction) {
 
+  const svg = `
+    <svg width="36" height="36" viewBox="0 0 24 24"
+         style="transform: rotate(${direction}deg);">
+      <path d="M12 2 L12 16 M6 10 L12 16 L18 10"
+            stroke="#111"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            fill="none"/>
+    </svg>
+  `;
+
   return L.divIcon({
     className: "wind-marker",
     html: `
       <div class="wind-wrapper">
-        <div class="wind-arrow" style="transform: rotate(${direction}deg);"></div>
+        ${svg}
         <div class="wind-speed">${speed.toFixed(0)}</div>
       </div>
     `,
