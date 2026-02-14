@@ -456,7 +456,7 @@ function getMarkerStyle(type) {
 }
 
 function meteoToSvg(direction) {
-  return direction + 180;
+  return direction + 180 - 90;
 }
 
 
@@ -465,7 +465,7 @@ function createWindIcon(speed, direction) {
   const svg = `
     <svg width="36" height="36" viewBox="0 0 24 24"
        style="
-         transform: rotate(${direction - 180}deg);
+         transform: rotate(${direction + 90}deg);
          transform-origin: 50% 50%;
        ">
       <path d="M12 2 L12 16 M6 10 L12 16 L18 10"
