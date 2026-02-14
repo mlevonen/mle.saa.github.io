@@ -455,6 +455,11 @@ function getMarkerStyle(type) {
   }
 }
 
+function meteoToSvg(direction) {
+  return direction - 180;
+}
+
+
 function createWindIcon(speed, direction) {
 
   const svg = `
