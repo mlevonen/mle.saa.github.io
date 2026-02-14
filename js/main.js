@@ -42,6 +42,8 @@ stations.forEach(station => {
 
   const style = getMarkerStyle(station.type);
 
+  markerRegistry[station.fmisid] = marker;
+
   const marker = L.circleMarker(
     [station.lat, station.lon],
     style
@@ -140,11 +142,11 @@ stations.forEach(station => {
   map.fitBounds(weatherLayer.getBounds(), { padding: [30, 30] });
   }
  
-
-  
   stations.forEach(async station => {
 
   if (!station.featured) return;
+
+  const markerRegistry = {};
 
   try {
 
@@ -164,10 +166,11 @@ stations.forEach(station => {
       latestWind.winddirection
     );
 
-    const marker = L.marker(
-      [station.lat, station.lon],
-      { icon }
-    ).addTo(map);
+    const marker = markerRegistry[station.fmisid];
+    if (!marker) return;
+
+    marker.setIcon(icon);
+
 
   } catch (err) {
     console.error("Wind marker error:", err);
