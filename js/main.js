@@ -462,12 +462,14 @@ function meteoToSvg(direction) {
 
 function createWindIcon(speed, direction) {
 
+  const rotation = direction + 90; // minne tuulee
+
   const svg = `
     <svg width="36" height="36" viewBox="0 0 24 24"
-       style="
-         transform: rotate(${direction - 90}deg);
-         transform-origin: 50% 50%;
-       ">
+         style="
+           transform: rotate(${rotation}deg);
+           transform-origin: 12px 12px;
+         ">
       <path d="M12 2 L12 16 M6 10 L12 16 L18 10"
             stroke="#111"
             stroke-width="2.5"
@@ -489,6 +491,7 @@ function createWindIcon(speed, direction) {
     iconAnchor: [20, 20]
   });
 }
+
 
 
 // ==========================
