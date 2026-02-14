@@ -462,7 +462,7 @@ function meteoToSvg(direction) {
 
 function createWindIcon(speed, direction) {
 
-  const rotation = direction + 90; // minne tuulee
+  const rotation = direction - 90; // mistä tuulee
 
   const svg = `
     <svg width="36" height="36" viewBox="0 0 24 24"
@@ -491,6 +491,7 @@ function createWindIcon(speed, direction) {
     iconAnchor: [20, 20]
   });
 }
+
 
 
 
