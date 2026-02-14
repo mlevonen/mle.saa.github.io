@@ -455,6 +455,8 @@ function getMarkerStyle(type) {
   }
 }
 
+console.log("Station:", station.name);
+console.log("Direction used:", direction);
 
 function createWindIcon(speed, direction) {
 
