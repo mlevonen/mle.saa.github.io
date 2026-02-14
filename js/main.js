@@ -147,9 +147,8 @@ stations.forEach(station => {
   }
  
 
-  //FEATURED-LOOPPI
-
-  stations.forEach(async station => {
+// FEATURED-LOOPPI
+stations.forEach(async station => {
 
   if (!station.featured) return;
 
@@ -162,30 +161,28 @@ stations.forEach(station => {
       seaLevelFmisid: null
     });
 
-    const latestWind = data.obsWindSpeed?.at(-1);
-    if (!latestWind) return;
-
-    const icon = createWindIcon(
-      latestWind.windspeedms,
-      latestWind.winddirection
-    );
+    const latestSpeed = data.obsWindSpeed?.at(-1);
+    const latestDir   = data.obsWindDir?.at(-1); // tämä voi olla eri array
 
     console.log("Station:", station.name);
-    console.log("Direction used:", direction);
+    console.log("Latest speed object:", latestSpeed);
+    console.log("Latest dir object:", latestDir);
 
+    if (!latestSpeed || !latestDir) return;
 
+    const icon = createWindIcon(
+      latestSpeed.windspeedms,
+      latestDir.winddirection
+    );
 
-
-    const marker = markerRegistry[station.fmisid];
-    if (!marker) return;
-
-    marker.setIcon(icon);
+    L.marker([station.lat, station.lon], { icon }).addTo(map);
 
   } catch (err) {
     console.error("Wind marker error:", err);
   }
 
 });
+
 
 
     
