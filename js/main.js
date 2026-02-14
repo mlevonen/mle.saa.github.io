@@ -459,17 +459,15 @@ function getMarkerStyle(type) {
 function createWindIcon(speed, direction) {
 
   const svg = `
-    <svg width="36" height="36" viewBox="0 0 24 24"
-         style="
-           transform: rotate(0deg);
-           transform-origin: 12px 12px;
-         ">
-      <path d="M12 22 L12 6 M8 10 L12 6 L16 10"
-            stroke="#111"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            fill="none"/>
+    <svg width="36" height="36" viewBox="0 0 24 24">
+      <g transform="rotate(${direction} 12 12)">
+        <path d="M12 22 L12 6 M8 10 L12 6 L16 10"
+              stroke="#111"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              fill="none"/>
+      </g>
     </svg>
   `;
 
@@ -485,6 +483,7 @@ function createWindIcon(speed, direction) {
     iconAnchor: [20, 20]
   });
 }
+
 
 
 
