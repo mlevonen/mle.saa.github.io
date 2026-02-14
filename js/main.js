@@ -458,9 +458,11 @@ function getMarkerStyle(type) {
 
 function createWindIcon(speed, direction) {
 
+  const rotation = direction - 90;
+
   const svg = `
     <svg width="36" height="36" viewBox="0 0 24 24">
-      <g transform="rotate(0 12 12)">
+      <g transform="rotate(${rotation} 12 12)">
         <polygon points="12,2 6,14 18,14"
                  fill="#111"/>
       </g>
@@ -469,11 +471,17 @@ function createWindIcon(speed, direction) {
 
   return L.divIcon({
     className: "wind-marker",
-    html: svg,
+    html: `
+      <div class="wind-wrapper">
+        ${svg}
+        <div class="wind-speed">${speed.toFixed(0)}</div>
+      </div>
+    `,
     iconSize: [40, 40],
     iconAnchor: [20, 20]
   });
 }
+
 
 
 
