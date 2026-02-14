@@ -464,15 +464,19 @@ function createWindIcon(speed, direction) {
 
   const svg = `
     <svg width="36" height="36" viewBox="0 0 24 24"
-         style="">
-      <path d="M12 2 L12 16 M6 10 L12 16 L18 10"
-            stroke="#111"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            fill="none"/>
+       style="
+         transform: rotate(${direction}deg);
+         transform-origin: 50% 50%;
+       ">
+    <path d="M12 2 L12 16 M6 10 L12 16 L18 10"
+          stroke="#111"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          fill="none"/>
     </svg>
-  `;
+    `;
+
   console.log("Wind direction raw:", direction);
   return L.divIcon({
     className: "wind-marker",
