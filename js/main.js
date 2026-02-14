@@ -460,29 +460,21 @@ function createWindIcon(speed, direction) {
 
   const svg = `
     <svg width="36" height="36" viewBox="0 0 24 24">
-      <g transform="rotate(${direction} 12 12)">
-        <path d="M12 22 L12 6 M8 10 L12 6 L16 10"
-              stroke="#111"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              fill="none"/>
+      <g transform="rotate(0 12 12)">
+        <polygon points="12,2 6,14 18,14"
+                 fill="#111"/>
       </g>
     </svg>
   `;
 
   return L.divIcon({
     className: "wind-marker",
-    html: `
-      <div class="wind-wrapper">
-        ${svg}
-        <div class="wind-speed">${speed.toFixed(0)}</div>
-      </div>
-    `,
+    html: svg,
     iconSize: [40, 40],
     iconAnchor: [20, 20]
   });
 }
+
 
 
 
