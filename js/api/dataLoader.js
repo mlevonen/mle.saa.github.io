@@ -70,7 +70,7 @@ export async function loadPopupData({
     seaLevel = null;
   }
   }
-console.log("Pressure data:", obsPressure);
+
 
   const data = {
     obsTemp,

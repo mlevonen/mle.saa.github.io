@@ -473,7 +473,7 @@ function createWindIcon(speed, direction) {
             fill="none"/>
     </svg>
   `;
-
+  console.log("Wind direction raw:", direction);
   return L.divIcon({
     className: "wind-marker",
     html: `
@@ -485,7 +485,7 @@ function createWindIcon(speed, direction) {
     iconSize: [40, 40],
     iconAnchor: [20, 20]
   });
-  console.log("Wind direction raw:", direction);
+  
 
 }
 
