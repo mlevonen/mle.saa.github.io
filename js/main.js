@@ -43,14 +43,17 @@ stations.forEach(station => {
 
   const style = getMarkerStyle(station.type);
 
-  const marker = L.circleMarker(
-    [station.lat, station.lon],
-    style
-  );
+  let marker;
+
+  if (station.featured) {
+    marker = L.marker([station.lat, station.lon]);
+  } else {
+    marker = L.circleMarker([station.lat, station.lon], style);
+  }
 
   marker.station = station;
-
   markerRegistry[station.fmisid] = marker;
+
 
   // 🔹 Hover-nimi
   // Alustetaan preview-cache
