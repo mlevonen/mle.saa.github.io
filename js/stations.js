@@ -249,7 +249,8 @@ const stations = [
     name: "Kotka Haapasaari",
     fmisid: 101042,
     lat: 60.29,
-    lon: 27.18
+    lon: 27.18,
+    featured: true
   },
 
   {
@@ -312,7 +313,8 @@ const stations = [
     name: "Helsinki Helsingin majakka",
     fmisid: 101003,
     lat: 59.95,
-    lon: 24.93
+    lon: 24.93,
+    featured: true
   },
 
   {
@@ -348,7 +350,8 @@ const stations = [
     name: "Hanko Russarö",
     fmisid: 100932,
     lat: 59.77,
-    lon: 22.95
+    lon: 22.95,
+    featured: true
   },
 
   {
@@ -366,7 +369,8 @@ const stations = [
     name: "Parainen Utö",
     fmisid: 100908,
     lat: 59.78,
-    lon: 21.37
+    lon: 21.37,
+    featured: true
   },
 
   {
@@ -393,7 +397,8 @@ const stations = [
     name: "Parainen Fagerholm",
     fmisid: 100924,
     lat: 60.11,
-    lon: 21.7
+    lon: 21.7,
+    featured: true
   },
 
 
@@ -430,7 +435,8 @@ const stations = [
     name: "Lemland Nyhamn",
     fmisid: 100909,
     lat: 59.96,
-    lon: 19.95
+    lon: 19.95,
+    featured: true
   },
 
   {
@@ -448,7 +454,8 @@ const stations = [
     name: "Kustavi Isokari",
     fmisid: 101059,
     lat: 60.72,
-    lon: 21.03
+    lon: 21.03,
+    featured: true
   },
 
   {
@@ -457,7 +464,8 @@ const stations = [
     name: "Rauma Kylmäpihlaja",
     fmisid: 101061,
     lat: 61.14,
-    lon: 21.3
+    lon: 21.3,
+    featured: true
   },
 
   {
@@ -466,7 +474,8 @@ const stations = [
     name: "Pori Tahkoluoto satama",
     fmisid: 101267,
     lat: 61.63,
-    lon: 21.38
+    lon: 21.38,
+    featured: true
   },
 
   {
@@ -475,7 +484,8 @@ const stations = [
     name: "Kristiinankaupunki Majakka",
     fmisid: 101268,
     lat: 62.2,
-    lon: 21.17
+    lon: 21.17,
+    featured: true
   },
 
   {
@@ -502,7 +512,8 @@ const stations = [
     name: "Maalahti Strömmingsbådan",
     fmisid: 101481,
     lat: 62.98,
-    lon: 20.74
+    lon: 20.74,
+    featured: true
   },
 
   {
@@ -520,7 +531,8 @@ const stations = [
     name: "Pietarsaari Kallan",
     fmisid: 101660,
     lat: 63.75,
-    lon: 22.52
+    lon: 22.52,
+    featured: true
   },
 
   {
@@ -547,7 +559,8 @@ const stations = [
     name: "Raahe Nahkiainen",
     fmisid: 101775,
     lat: 64.61,
-    lon: 23.9
+    lon: 23.9,
+    featured: true
   },
 
   {
@@ -565,7 +578,8 @@ const stations = [
     name: "Hailuoto Marjaniemi",
     fmisid: 101784,
     lat: 65.04,
-    lon: 24.56
+    lon: 24.56,
+    featured: true
   },
 
   {
@@ -574,7 +588,8 @@ const stations = [
     name: "Kemi I majakka",
     fmisid: 101783,
     lat: 65.39,
-    lon: 24.1
+    lon: 24.1,
+    featured: true
   },
 
   {
@@ -583,7 +598,8 @@ const stations = [
     name: "Kemi Ajos",
     fmisid: 101846,
     lat: 65.67,
-    lon: 24.52
+    lon: 24.52,
+    featured: true
   },
 
 

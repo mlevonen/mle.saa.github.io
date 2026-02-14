@@ -141,6 +141,40 @@ stations.forEach(station => {
   }
  
 
+  
+  stations.forEach(async station => {
+
+  if (!station.featured) return;
+
+  try {
+
+    const data = await loadPopupData({
+      lat: station.lat,
+      lon: station.lon,
+      weatherFmisid: station.fmisid,
+      seaLevelFmisid: null
+    });
+
+    const latestWind = data.obsWindSpeed?.at(-1);
+
+    if (!latestWind) return;
+
+    const icon = createWindIcon(
+      latestWind.windspeedms,
+      latestWind.winddirection
+    );
+
+    const marker = L.marker(
+      [station.lat, station.lon],
+      { icon }
+    ).addTo(map);
+
+  } catch (err) {
+    console.error("Wind marker error:", err);
+  }
+
+});
+
     
 
   
@@ -412,6 +446,22 @@ function getMarkerStyle(type) {
         weight: 1
       };
   }
+}
+
+function createWindIcon(speed, direction) {
+
+  return L.divIcon({
+    className: "wind-marker",
+    html: `
+      <div class="wind-wrapper">
+        <div class="wind-arrow" style="transform: rotate(${direction}deg);"></div>
+        <div class="wind-speed">${speed.toFixed(0)}</div>
+      </div>
+    `,
+    iconSize: [40, 40],
+    iconAnchor: [20, 20]
+  });
+
 }
 
 
