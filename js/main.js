@@ -26,6 +26,7 @@ const weatherLayer = L.featureGroup().addTo(map);
 const seaLevelLayer = L.featureGroup().addTo(map);
 const coastalLayer = L.featureGroup().addTo(map);
 
+const markerRegistry = {};
 
 L.control.layers(null, {
   "🌤 Sääasemat": weatherLayer,
@@ -42,14 +43,14 @@ stations.forEach(station => {
 
   const style = getMarkerStyle(station.type);
 
-  markerRegistry[station.fmisid] = marker;
-
   const marker = L.circleMarker(
     [station.lat, station.lon],
     style
   );
 
   marker.station = station;
+
+  markerRegistry[station.fmisid] = marker;
 
   // 🔹 Hover-nimi
   // Alustetaan preview-cache
@@ -142,11 +143,12 @@ stations.forEach(station => {
   map.fitBounds(weatherLayer.getBounds(), { padding: [30, 30] });
   }
  
+
+  //FEATURED-LOOPPI
+
   stations.forEach(async station => {
 
   if (!station.featured) return;
-
-  const markerRegistry = {};
 
   try {
 
@@ -158,7 +160,6 @@ stations.forEach(station => {
     });
 
     const latestWind = data.obsWindSpeed?.at(-1);
-
     if (!latestWind) return;
 
     const icon = createWindIcon(
@@ -171,12 +172,12 @@ stations.forEach(station => {
 
     marker.setIcon(icon);
 
-
   } catch (err) {
     console.error("Wind marker error:", err);
   }
 
 });
+
 
     
 
