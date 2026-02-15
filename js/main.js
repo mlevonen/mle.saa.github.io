@@ -148,6 +148,7 @@ stations.forEach(station => {
  
 
 // FEATURED-LOOPPI
+
 stations.forEach(async station => {
 
   if (!station.featured) return;
@@ -157,31 +158,28 @@ stations.forEach(async station => {
     const data = await loadPopupData({
       lat: station.lat,
       lon: station.lon,
+      weatherPlace: null,          // EI REST place-hakua
       weatherFmisid: station.fmisid,
       seaLevelFmisid: null
     });
 
-    const latestSpeed = data.obsWindSpeed?.at(-1);
-    const latestDir   = data.obsWindDir?.at(-1); // tämä voi olla eri array
-
-    console.log("Station:", station.name);
-    console.log("Latest speed object:", latestSpeed);
-    console.log("Latest dir object:", latestDir);
-
-    if (!latestSpeed || !latestDir) return;
+    const latestWind = data.obsWindSpeed?.at(-1);
+    if (!latestWind) return;
 
     const icon = createWindIcon(
-      latestSpeed.windspeedms,
-      latestDir.winddirection
+      latestWind.windspeedms,
+      latestWind.winddirection
     );
 
-    L.marker([station.lat, station.lon], { icon }).addTo(map);
+    L.marker([station.lat, station.lon], { icon })
+      .addTo(map);
 
   } catch (err) {
     console.error("Wind marker error:", err);
   }
 
 });
+
 
 
 
