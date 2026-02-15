@@ -9,23 +9,28 @@ export async function fetchObservationByFmisid(fmisid, parameter) {
     version: "2.0.0",
     request: "GetFeature",
     storedquery_id: "fmi::observations::weather::timevaluepair",
-    fmisid: fmisid,
+    fmisid,
     parameters: parameter,
     starttime: start,
     endtime: end
   });
 
   const res = await fetch(`https://opendata.fmi.fi/wfs/fin?${params}`);
-  if (!res.ok) throw new Error("Observation fetch failed");
+
+  if (!res.ok) {
+    const text = await res.text();
+    console.error("FMI error response:", text);
+    throw new Error("Observation fetch failed");
+  }
 
   const xmlText = await res.text();
   const parser = new DOMParser();
   const xml = parser.parseFromString(xmlText, "application/xml");
 
-  const points = [...xml.getElementsByTagName("*")]
+  const series = [...xml.getElementsByTagName("*")]
     .filter(el => el.localName === "MeasurementTVP");
 
-  return points.map(p => {
+  return series.map(p => {
     const time = [...p.children].find(c => c.localName === "time");
     const value = [...p.children].find(c => c.localName === "value");
 
@@ -35,6 +40,7 @@ export async function fetchObservationByFmisid(fmisid, parameter) {
     };
   }).filter(p => Number.isFinite(p.value));
 }
+
 
 
 
