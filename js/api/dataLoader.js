@@ -84,17 +84,17 @@ if (weatherFmisid) {
 
   const tempData = await fetchObservationByFmisid(
     weatherFmisid,
-    "utctime,temperature,weathercode"
+    "temperature,weathercode"
   );
 
   const windData = await fetchObservationByFmisid(
     weatherFmisid,
-    "utctime,windspeedms,winddirection,windgust,pressure"
+    "windspeedms,winddirection,windgust,pressure"
   );
 
   const weatherData = await fetchObservationByFmisid(
     weatherFmisid,
-    "utctime,smartsymbol"
+    "smartsymbol"
   );
 
   obsTemp = tempData;
@@ -109,7 +109,7 @@ if (weatherFmisid) {
 
   
   const fcTemp = await fetchForecastREST(lat, lon, {
-    param: "utctime,temperature"
+    param: "temperature"
   });
 
 
@@ -122,7 +122,7 @@ if (weatherFmisid) {
   const sunTimes = await fetchSunTimes(lat, lon);
 
   const fcWindSpeed = await fetchForecastREST(lat, lon, {
-    param: "utctime,windspeedms"
+    param: "windspeedms"
   });
 
   const fcWindDir = await fetchForecastREST(lat, lon, {
@@ -130,7 +130,7 @@ if (weatherFmisid) {
   });
 
   const fcWindGust = await fetchForecastREST(lat, lon, {
-    param: "utctime,hourlymaximumgust"
+    param: "hourlymaximumgust"
   });
 
   let seaLevel = null;
