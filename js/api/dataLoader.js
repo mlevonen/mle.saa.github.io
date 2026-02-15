@@ -10,10 +10,9 @@ export async function fetchObservationByFmisid(fmisid, parameters) {
     request: "GetFeature",
     storedquery_id: "fmi::observations::weather::timevaluepair",
     fmisid: fmisid,
-    parameters,
+    parameters: "windspeedms,winddirection",
     starttime: start,
     endtime: end,
-    timestep: "60",
     outputFormat: "application/json"
   });
 
