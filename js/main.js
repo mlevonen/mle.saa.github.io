@@ -178,6 +178,14 @@ stations.forEach(async station => {
     console.error("Wind marker error:", err);
   }
 
+  console.log(
+  station.name,
+  latestWind.utctime,
+  latestWind.winddirection
+);
+
+
+
 });
 
 
