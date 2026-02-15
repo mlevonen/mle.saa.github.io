@@ -1,13 +1,46 @@
+export async function fetchObservationByFmisid(fmisid, parameters) {
+
+  const now = new Date();
+  const start = new Date(now.getTime() - 6 * 3600_000).toISOString();
+  const end = now.toISOString();
+
+  const params = new URLSearchParams({
+    service: "WFS",
+    version: "2.0.0",
+    request: "GetFeature",
+    storedquery_id: "fmi::observations::weather::timevaluepair",
+    fmisid: fmisid,
+    parameters,
+    starttime: start,
+    endtime: end,
+    timestep: "60",
+    outputFormat: "application/json"
+  });
+
+  const res = await fetch(`https://opendata.fmi.fi/wfs/fin?${params}`);
+
+  if (!res.ok) throw new Error("Observation fetch failed");
+
+  return res.json();
+}
+
+
+
+
 import {
   fetchTimeSeriesREST,
   fetchForecastREST
 } from "../api/fmiApi.js";
+
+import { fetchHarmonieForecastByFmisid } 
+  from "../api/fetchHarmonieForecastByFmisid.js";
 
 import { fetchSeaLevel } from "../api/sealevel.js";
 
 import { fetchPressureByFmisid } from "../api/fetchPressureByPlace.js";
 
 import { fetchSunTimes } from "../api/sunApi.js";
+
 
 
 const popupCache = {};
@@ -19,7 +52,9 @@ export async function loadPopupData({
   weatherFmisid,
   seaLevelFmisid
   
-}) {
+})
+
+{
 
   const cacheKey = `${lat},${lon}`;
 
@@ -27,25 +62,49 @@ export async function loadPopupData({
       return popupCache[cacheKey];
   }
 
-  const obsTemp = await fetchTimeSeriesREST(lat, lon, {
-    param: "utctime,temperature,weathercode"
-  });
 
+let obsTemp = null;
+let obsWindSpeed = null;
+let obsWeather = null;
+
+if (weatherFmisid) {
+
+  const tempData = await fetchObservationByFmisid(
+    weatherFmisid,
+    "utctime,temperature,weathercode"
+  );
+
+  const windData = await fetchObservationByFmisid(
+    weatherFmisid,
+    "utctime,windspeedms,winddirection,windgust,pressure"
+  );
+
+  const weatherData = await fetchObservationByFmisid(
+    weatherFmisid,
+    "utctime,smartsymbol"
+  );
+
+  obsTemp = tempData;
+  obsWindSpeed = windData;
+  obsWeather = weatherData;
+
+  console.log(data.obsWindSpeed?.at(-1));
+
+}
+
+
+
+  
   const fcTemp = await fetchForecastREST(lat, lon, {
     param: "utctime,temperature"
   });
 
-  const obsWindSpeed = await fetchTimeSeriesREST(lat, lon, {
-    param: "utctime,windspeedms,winddirection,windgust,pressurehpa"
-  });
 
   const obsPressure = weatherFmisid
   ? await fetchPressureByFmisid(weatherFmisid)
   : null;
 
-  const obsWeather = await fetchTimeSeriesREST(lat, lon, {
-  param: "utctime,smartsymbol"
-  });
+
 
   const sunTimes = await fetchSunTimes(lat, lon);
 
