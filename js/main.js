@@ -166,6 +166,14 @@ stations.forEach(async station => {
     const latestWind = data.obsWindSpeed?.at(-1);
     if (!latestWind) return;
 
+    console.log(
+    station.name,
+    latestWind.utctime,
+    latestWind.winddirection
+
+
+
+
     const icon = createWindIcon(
       latestWind.windspeedms,
       latestWind.winddirection
@@ -178,10 +186,7 @@ stations.forEach(async station => {
     console.error("Wind marker error:", err);
   }
 
-  console.log(
-  station.name,
-  latestWind.utctime,
-  latestWind.winddirection
+ 
 );
 
 
