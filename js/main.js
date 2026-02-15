@@ -158,7 +158,7 @@ stations.forEach(async station => {
     const data = await loadPopupData({
       lat: station.lat,
       lon: station.lon,
-      weatherPlace: null,          // EI REST place-hakua
+      weatherPlace: null,
       weatherFmisid: station.fmisid,
       seaLevelFmisid: null
     });
@@ -167,12 +167,13 @@ stations.forEach(async station => {
     if (!latestWind) return;
 
     console.log(
-    station.name,
-    latestWind.utctime,
-    latestWind.winddirection
-
-
-
+      "Station:",
+      station.name,
+      "Time:",
+      latestWind.utctime,
+      "Direction:",
+      latestWind.winddirection
+    );
 
     const icon = createWindIcon(
       latestWind.windspeedms,
@@ -185,11 +186,6 @@ stations.forEach(async station => {
   } catch (err) {
     console.error("Wind marker error:", err);
   }
-
- 
-);
-
-
 
 });
 
