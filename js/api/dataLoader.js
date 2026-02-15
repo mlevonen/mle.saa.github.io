@@ -1,4 +1,4 @@
-export async function fetchObservationByFmisid(fmisid, parameters) {
+export async function fetchObservationByFmisid(fmisid, parameter) {
 
   const now = new Date();
   const start = new Date(now.getTime() - 6 * 3600_000).toISOString();
@@ -10,18 +10,32 @@ export async function fetchObservationByFmisid(fmisid, parameters) {
     request: "GetFeature",
     storedquery_id: "fmi::observations::weather::timevaluepair",
     fmisid: fmisid,
-    parameters: "windspeedms,winddirection",
+    parameters: parameter,
     starttime: start,
-    endtime: end,
-    outputFormat: "application/json"
+    endtime: end
   });
 
   const res = await fetch(`https://opendata.fmi.fi/wfs/fin?${params}`);
-
   if (!res.ok) throw new Error("Observation fetch failed");
 
-  return res.json();
+  const xmlText = await res.text();
+  const parser = new DOMParser();
+  const xml = parser.parseFromString(xmlText, "application/xml");
+
+  const points = [...xml.getElementsByTagName("*")]
+    .filter(el => el.localName === "MeasurementTVP");
+
+  return points.map(p => {
+    const time = [...p.children].find(c => c.localName === "time");
+    const value = [...p.children].find(c => c.localName === "value");
+
+    return {
+      utctime: time?.textContent,
+      value: Number(value?.textContent)
+    };
+  }).filter(p => Number.isFinite(p.value));
 }
+
 
 
 
