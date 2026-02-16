@@ -46,10 +46,18 @@ stations.forEach(station => {
 
     const style = getMarkerStyle(station.type);
 
-    const marker = L.circleMarker(
-    [station.lat, station.lon],
-    style
-  );
+  const marker = L.marker(
+  [station.lat, station.lon],
+  {
+    icon: L.divIcon({
+      className: "station-dot",
+      html: `<div class="dot dot-${station.type}"></div>`,
+      iconSize: [12, 12],
+      iconAnchor: [6, 6]
+    })
+  }
+);
+
 
     marker.station = station;
 
