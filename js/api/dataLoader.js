@@ -53,10 +53,6 @@ export async function fetchLatestObservationByFmisid(fmisid) {
 
 
 
-
-
-
-
 import {
   fetchTimeSeriesREST,
   fetchForecastREST

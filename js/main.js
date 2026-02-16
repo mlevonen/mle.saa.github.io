@@ -41,17 +41,20 @@ L.control.layers(null, {
 
 stations.forEach(station => {
 
+  if (station.featured) return;   // 🔴 estää tuplamarkerin
+
   const style = getMarkerStyle(station.type);
-
-  let marker;
-
-  if (station.featured) {
-    marker = L.marker([station.lat, station.lon]);
-  } else {
-    marker = L.circleMarker([station.lat, station.lon], style);
-  }
+  const marker = L.circleMarker(
+    [station.lat, station.lon],
+    style
+  );
 
   marker.station = station;
+
+});
+
+
+
   markerRegistry[station.fmisid] = marker;
 
 
@@ -180,14 +183,22 @@ stations.forEach(async station => {
       latestWind.winddirection
     );
 
-    L.marker([station.lat, station.lon], { icon })
-      .addTo(map);
+    const marker = L.marker(
+      [station.lat, station.lon],
+      { icon }
+    );
+
+    marker.station = station;
+
+    // 🔴 Lisää oikeaan layeriin
+    weatherLayer.addLayer(marker);
 
   } catch (err) {
     console.error("Wind marker error:", err);
   }
 
 });
+
 
 
 
@@ -468,14 +479,20 @@ function getMarkerStyle(type) {
 
 function createWindIcon(speed, direction) {
 
-  const rotation = direction - 90;
+  const rotation = direction; // EI +180, EI -90
 
   const svg = `
-    <svg width="36" height="36" viewBox="0 0 24 24">
-      <g transform="rotate(${rotation} 12 12)">
-        <polygon points="12,2 6,14 18,14"
-                 fill="#111"/>
-      </g>
+    <svg width="36" height="36" viewBox="0 0 24 24"
+      style="
+        transform: rotate(${rotation}deg);
+        transform-origin: 50% 50%;
+      ">
+      <path d="M12 2 L12 16 M6 10 L12 16 L18 10"
+        stroke="#111"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        fill="none"/>
     </svg>
   `;
 
@@ -491,6 +508,7 @@ function createWindIcon(speed, direction) {
     iconAnchor: [20, 20]
   });
 }
+
 
 
 
