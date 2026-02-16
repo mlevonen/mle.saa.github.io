@@ -83,47 +83,43 @@ export async function loadPopupData({
     return popupCache[cacheKey];
   }
 
-  let obsWindSpeed = null;
-  let obsTemp = null;
-  let obsPressure = null;
 
-  if (weatherFmisid) {
 
-let obsSeries = null;
+let obsTemp = null;
+let obsWindSpeed = null;
+let obsPressure = null;
 
 if (weatherFmisid) {
-  obsSeries = await fetchObservationSeriesByFmisid(weatherFmisid);
 
-  if (!obsSeries || !obsSeries.length) {
-    obsSeries = null;
+  const series =
+    await fetchObservationSeriesByFmisid(weatherFmisid);
+
+  if (Array.isArray(series) && series.length) {
+
+    obsTemp = series.map(p => ({
+      utctime: p.utctime,
+      temperature: p.temperature
+    }));
+
+    obsWindSpeed = series.map(p => ({
+      utctime: p.utctime,
+      windspeedms: p.windspeedms,
+      winddirection: p.winddirection,
+      windgust: p.windgust
+    }));
+
+    obsPressure = series.map(p => ({
+      utctime: p.utctime,
+      pressurehpa: p.pressure
+    }));
   }
-
-  console.log("OBS SERIES for fmisid:", weatherFmisid, obsSeries);
 }
 
 
-const obsTemp = obsSeries;
-const obsWindSpeed = obsSeries;
-const obsPressure = obsSeries;
-
-  }
-
-  const sunTimes = await fetchSunTimes(lat, lon);
-
-  let seaLevel = null;
-
-  if (seaLevelFmisid) {
-    try {
-      seaLevel = await fetchSeaLevel(seaLevelFmisid);
-    } catch (e) {
-      seaLevel = null;
-    }
-  }
-
 const data = {
-  obsTemp: obsSeries,
-  obsWindSpeed: obsSeries,
-  obsPressure: obsSeries,
+  obsTemp,
+  obsWindSpeed,
+  obsPressure,
   seaLevel,
   sunTimes,
   fcTemp: null,
@@ -131,6 +127,7 @@ const data = {
   fcWindDir: null,
   fcWindGust: null
 };
+
 
   popupCache[cacheKey] = data;
   return data;
