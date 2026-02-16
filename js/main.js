@@ -53,13 +53,11 @@ stations.forEach(station => {
 
   markerRegistry[station.fmisid] = marker;
 
+});
 
   // 🔹 Hover-nimi
   // Alustetaan preview-cache
   marker.previewData = null;
-
-});
-
 
   // Tyhjä tooltip – sisältö asetetaan hoverissa
   marker.bindTooltip("", {
