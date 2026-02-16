@@ -29,7 +29,9 @@ const windArrowPlugin = {
 
         ctx.save();
         ctx.translate(x, y);
-        ctx.rotate((dir + 180) * Math.PI / 180);
+        const angle = (dir + 90) * Math.PI / 180;
+        ctx.rotate(angle);
+
 
         ctx.fillStyle = color;
         ctx.font = "13px sans-serif";

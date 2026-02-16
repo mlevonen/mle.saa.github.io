@@ -483,7 +483,7 @@ function getMarkerStyle(type) {
   }
 }
 
-//CREATEWINDICON  const rotation = (direction + 180) % 360;
+//CREATEWINDICON
 function createWindIcon(speed, direction) {
 
   const rotation = (direction + 180) % 360;
@@ -515,16 +515,6 @@ function createWindIcon(speed, direction) {
     iconAnchor: [20, 20]
   });
 }
-
-
-
-
-
-
-
-
-
-
 
 
 // ==========================
