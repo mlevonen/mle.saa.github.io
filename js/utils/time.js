@@ -1,11 +1,19 @@
-export function parseFmiUtc(s) {
+export function parseFmiUtc(str) {
+  if (!str) return null;
+
+  // ISO-muoto
+  if (str.includes("-")) {
+    return new Date(str);
+  }
+
+  // Vanha FMI-muoto 20260216T131100
   return new Date(
-    s.slice(0, 4) + "-" +
-    s.slice(4, 6) + "-" +
-    s.slice(6, 8) + "T" +
-    s.slice(9, 11) + ":" +
-    s.slice(11, 13) + ":" +
-    s.slice(13, 15) + "Z"
+    str.slice(0,4) + "-" +
+    str.slice(4,6) + "-" +
+    str.slice(6,8) + "T" +
+    str.slice(9,11) + ":" +
+    str.slice(11,13) + ":" +
+    str.slice(13,15) + "Z"
   );
 }
 
