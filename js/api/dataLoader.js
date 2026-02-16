@@ -81,102 +81,64 @@ export async function loadPopupData({
   weatherPlace,
   weatherFmisid,
   seaLevelFmisid
-  
-})
-
-{
+}) {
 
   const cacheKey = `${lat},${lon}`;
 
   if (popupCache[cacheKey]) {
-      return popupCache[cacheKey];
+    return popupCache[cacheKey];
   }
 
+  let obsWindSpeed = null;
+  let obsTemp = null;
+  let obsPressure = null;
 
-let obsWindSpeed = null;
-let obsTemp = null;
-let obsPressure = null;
+  if (weatherFmisid) {
 
-if (weatherFmisid) {
+    const latestObservation =
+      await fetchLatestObservationByFmisid(weatherFmisid);
 
-  const latestObservation =
-    await fetchLatestObservationByFmisid(weatherFmisid);
+    if (latestObservation) {
 
-  if (latestObservation) {
+      obsWindSpeed = [{
+        utctime: latestObservation.time,
+        windspeedms: latestObservation.windspeedms,
+        winddirection: latestObservation.winddirection,
+        windgust: latestObservation.windgust
+      }];
 
-    obsWindSpeed = [{
-      utctime: latestObservation.time,
-      windspeedms: latestObservation.windspeedms,
-      winddirection: latestObservation.winddirection,
-      windgust: latestObservation.windgust
-    }];
+      obsTemp = [{
+        utctime: latestObservation.time,
+        temperature: latestObservation.temperature
+      }];
 
-    obsTemp = [{
-      utctime: latestObservation.time,
-      temperature: latestObservation.temperature
-    }];
-
-    obsPressure = [{
-      utctime: latestObservation.time,
-      pressurehpa: latestObservation.pressure
-    }];
-
+      obsPressure = [{
+        utctime: latestObservation.time,
+        pressurehpa: latestObservation.pressure
+      }];
+    }
   }
-}
 
-
-  obsTemp = tempData;
-  obsWindSpeed = windData;
-  obsWeather = weatherData;
-
-  
-
-}
-
-
-
-  
   const sunTimes = await fetchSunTimes(lat, lon);
-
-  const fcTemp = await fetchForecastREST(lat, lon, {
-    param: "temperature"
-  });
-
-  const fcWindSpeed = await fetchForecastREST(lat, lon, {
-    param: "windspeedms"
-  });
-
-  const fcWindDir = await fetchForecastREST(lat, lon, {
-    param: "winddirection"
-  });
-
-  const fcWindGust = await fetchForecastREST(lat, lon, {
-    param: "hourlymaximumgust"
-  });
 
   let seaLevel = null;
 
   if (seaLevelFmisid) {
-  try {
-    seaLevel = await fetchSeaLevel(seaLevelFmisid);
-  } catch (e) {
-    seaLevel = null;
+    try {
+      seaLevel = await fetchSeaLevel(seaLevelFmisid);
+    } catch (e) {
+      seaLevel = null;
+    }
   }
-  }
 
+  const data = {
+    obsTemp,
+    obsWindSpeed,
+    obsPressure,
+    seaLevel,
+    sunTimes
+  };
 
-const data = {
-  obsTemp,
-  obsWindSpeed,
-  obsPressure,
-  seaLevel,
-  sunTimes,
-  fcTemp,
-  fcWindSpeed,
-  fcWindDir,
-  fcWindGust
-};
-
-popupCache[cacheKey] = data;
-return data;
-
+  popupCache[cacheKey] = data;
+  return data;
+}
