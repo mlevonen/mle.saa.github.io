@@ -83,11 +83,14 @@ export async function loadPopupData({
     return popupCache[cacheKey];
   }
 
-let obsTemp = null;
-let obsWindSpeed = null;
-let obsPressure = null;
-let seaLevel = null;
+  let obsTemp = null;
+  let obsWindSpeed = null;
+  let obsPressure = null;
+  let seaLevel = null;
 
+  // ==========================
+  // HAVAINNOT
+  // ==========================
   if (weatherFmisid) {
 
     const series =
@@ -114,6 +117,9 @@ let seaLevel = null;
     }
   }
 
+  // ==========================
+  // VEDENKORKEUS
+  // ==========================
   if (seaLevelFmisid) {
     try {
       seaLevel = await fetchSeaLevel(seaLevelFmisid);
@@ -122,19 +128,25 @@ let seaLevel = null;
     }
   }
 
+  // ==========================
+  // AURINGON NOUSU / LASKU
+  // ==========================
+  const sunTimes = await fetchSunTimes(lat, lon);
 
-const data = {
-  obsTemp,
-  obsWindSpeed,
-  obsPressure,
-  seaLevel,
-  sunTimes,
-  fcTemp: null,
-  fcWindSpeed: null,
-  fcWindDir: null,
-  fcWindGust: null
-};
-
+  // ==========================
+  // DATA OBJEKTI
+  // ==========================
+  const data = {
+    obsTemp,
+    obsWindSpeed,
+    obsPressure,
+    seaLevel,
+    sunTimes,
+    fcTemp: null,
+    fcWindSpeed: null,
+    fcWindDir: null,
+    fcWindGust: null
+  };
 
   popupCache[cacheKey] = data;
   return data;
