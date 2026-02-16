@@ -115,13 +115,18 @@ const obsPressure = obsSeries;
     }
   }
 
-  const data = {
-    obsTemp,
-    obsWindSpeed,
-    obsPressure,
-    seaLevel,
-    sunTimes
-  };
+const data = {
+  obsTemp: obsSeries,
+  obsWindSpeed: obsSeries,
+  obsPressure: obsSeries,
+  seaLevel,
+  sunTimes,
+  fcTemp,
+  fcWindSpeed,
+  fcWindDir,
+  fcWindGust
+};
+
 
   popupCache[cacheKey] = data;
   return data;

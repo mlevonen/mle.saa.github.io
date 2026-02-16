@@ -564,6 +564,11 @@ map.on("popupopen", async e => {
 
      const marker = e.popup._source;
 
+
+
+    console.log("Latest obsTemp:", data.obsTemp?.at(-1));
+    console.log("Latest obsWind:", data.obsWindSpeed?.at(-1));
+
     // hae latest helperilla tai suoraan arrayn lopusta
   marker.previewData = {
   temp: data.obsTemp?.at(-1)?.temperature ?? null,
