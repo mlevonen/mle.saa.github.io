@@ -93,7 +93,8 @@ let obsSeries = null;
 
 if (weatherFmisid) {
   obsSeries = await fetchObservationSeriesByFmisid(weatherFmisid);
-  console.log("OBS SERIES:", station?.name, obsSeries);
+  console.log("OBS SERIES for fmisid:", weatherFmisid, obsSeries);
+
 }
 
 const obsTemp = obsSeries;
