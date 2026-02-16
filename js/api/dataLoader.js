@@ -93,9 +93,14 @@ let obsSeries = null;
 
 if (weatherFmisid) {
   obsSeries = await fetchObservationSeriesByFmisid(weatherFmisid);
-  console.log("OBS SERIES for fmisid:", weatherFmisid, obsSeries);
 
+  if (!obsSeries || !obsSeries.length) {
+    obsSeries = null;
+  }
+
+  console.log("OBS SERIES for fmisid:", weatherFmisid, obsSeries);
 }
+
 
 const obsTemp = obsSeries;
 const obsWindSpeed = obsSeries;
@@ -121,12 +126,11 @@ const data = {
   obsPressure: obsSeries,
   seaLevel,
   sunTimes,
-  fcTemp,
-  fcWindSpeed,
-  fcWindDir,
-  fcWindGust
+  fcTemp: null,
+  fcWindSpeed: null,
+  fcWindDir: null,
+  fcWindGust: null
 };
-
 
   popupCache[cacheKey] = data;
   return data;
