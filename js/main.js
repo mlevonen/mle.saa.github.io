@@ -109,7 +109,7 @@ stations.forEach(station => {
     coastalLayer.addLayer(marker);
   }
 
-});
+
 
   marker.bindPopup(`
     <div class="popup-title">${station.name}</div>
@@ -149,6 +149,7 @@ stations.forEach(station => {
   if (station.type === "coastal") {
     coastalLayer.addLayer(marker);
   }
+  });
 
   
 
