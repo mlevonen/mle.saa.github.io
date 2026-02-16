@@ -4,7 +4,7 @@ export function renderTemperatureChart(popupEl, data) {
 
   const { obsTemp, fcTemp } = data;
 
-  if (!Array.isArray(obsTemp) || !Array.isArray(fcTemp)) return;
+  if (!Array.isArray(obsTemp)) return;
 
   const nowUtc = new Date();
   const OBS_TOLERANCE_MIN = 15;
@@ -21,12 +21,15 @@ export function renderTemperatureChart(popupEl, data) {
     }))
     .filter(p => p.x <= obsCutoffUtc);
 
-  const rawFcPoints = fcTemp
-    .map(p => ({
-      x: parseFmiUtc(p.utctime),
-      y: p.temperature
-    }))
-    .filter(p => p.x > obsCutoffUtc);
+const rawFcPoints = Array.isArray(fcTemp)
+  ? fcTemp
+      .map(p => ({
+        x: parseFmiUtc(p.utctime),
+        y: p.temperature
+      }))
+      .filter(p => p.x > obsCutoffUtc)
+  : [];
+
 
   // --- tihennys 30 min välein ---
   const obsPoints =

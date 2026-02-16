@@ -10,7 +10,8 @@ export function renderWindChart(popupEl, data) {
     fcWindGust
   } = data;
 
-  if (!Array.isArray(obsWindSpeed) || !Array.isArray(fcWindSpeed)) return;
+  if (!Array.isArray(obsWindSpeed)) return;
+
 
   const nowUtc = new Date();
   const OBS_TOLERANCE_MIN = 15;
@@ -28,13 +29,16 @@ export function renderWindChart(popupEl, data) {
     }))
     .filter(p => p.x <= obsCutoffUtc);
 
-  const rawFcWind = fcWindSpeed
-    .map((p, i) => ({
-      x: parseFmiUtc(p.utctime),
-      y: p.windspeedms,
-      dir: fcWindDir?.[i]?.winddirection
-    }))
-    .filter(p => p.x > obsCutoffUtc);
+  const rawFcWind = Array.isArray(fcWindSpeed)
+  ? fcWindSpeed
+      .map((p, i) => ({
+        x: parseFmiUtc(p.utctime),
+        y: p.windspeedms,
+        dir: fcWindDir?.[i]?.winddirection
+      }))
+      .filter(p => p.x > obsCutoffUtc)
+  : [];
+
 
   // --- tihennys (vain nopeus) ---
   const obsWind =
