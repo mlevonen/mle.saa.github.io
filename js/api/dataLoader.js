@@ -1,4 +1,4 @@
-export async function fetchLatestObservationByFmisid(fmisid) {
+export async function fetchObservationSeriesByFmisid(fmisid) {
 
   const params = new URLSearchParams({
     service: "WFS",
@@ -10,11 +10,7 @@ export async function fetchLatestObservationByFmisid(fmisid) {
 
   const res = await fetch(`https://opendata.fmi.fi/wfs/fin?${params}`);
 
-  if (!res.ok) {
-    const text = await res.text();
-    console.error("FMI error response:", text);
-    throw new Error("Observation fetch failed");
-  }
+  if (!res.ok) throw new Error("Observation fetch failed");
 
   const xmlText = await res.text();
   const parser = new DOMParser();
@@ -22,8 +18,7 @@ export async function fetchLatestObservationByFmisid(fmisid) {
 
   const elements = [...xml.getElementsByTagName("BsWfs:BsWfsElement")];
 
-  const obs = {};
-  let latestTime = null;
+  const series = {};
 
   elements.forEach(el => {
 
@@ -37,19 +32,22 @@ export async function fetchLatestObservationByFmisid(fmisid) {
     const name = nameNode.textContent;
     const value = Number(valueNode.textContent);
 
-    latestTime = time;
+    if (!series[time]) {
+      series[time] = { utctime: time };
+    }
 
-    if (name === "t2m") obs.temperature = value;
-    if (name === "ws_10min") obs.windspeedms = value;
-    if (name === "wg_10min") obs.windgust = value;
-    if (name === "wd_10min") obs.winddirection = value;
-    if (name === "pressure") obs.pressure = value;
+    if (name === "t2m") series[time].temperature = value;
+    if (name === "ws_10min") series[time].windspeedms = value;
+    if (name === "wd_10min") series[time].winddirection = value;
+    if (name === "wg_10min") series[time].windgust = value;
+    if (name === "pressure") series[time].pressurehpa = value;
   });
 
-  obs.time = latestTime;
-
-  return obs;
+  return Object.values(series).sort(
+    (a, b) => new Date(a.utctime) - new Date(b.utctime)
+  );
 }
+
 
 
 
@@ -91,28 +89,16 @@ export async function loadPopupData({
 
   if (weatherFmisid) {
 
-    const latestObservation =
-      await fetchLatestObservationByFmisid(weatherFmisid);
+let obsSeries = null;
 
-    if (latestObservation) {
+if (weatherFmisid) {
+  obsSeries = await fetchObservationSeriesByFmisid(weatherFmisid);
+}
 
-      obsWindSpeed = [{
-        utctime: latestObservation.time,
-        windspeedms: latestObservation.windspeedms,
-        winddirection: latestObservation.winddirection,
-        windgust: latestObservation.windgust
-      }];
+const obsTemp = obsSeries;
+const obsWindSpeed = obsSeries;
+const obsPressure = obsSeries;
 
-      obsTemp = [{
-        utctime: latestObservation.time,
-        temperature: latestObservation.temperature
-      }];
-
-      obsPressure = [{
-        utctime: latestObservation.time,
-        pressurehpa: latestObservation.pressure
-      }];
-    }
   }
 
   const sunTimes = await fetchSunTimes(lat, lon);
