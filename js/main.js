@@ -486,7 +486,7 @@ function getMarkerStyle(type) {
 //CREATEWINDICON
 function createWindIcon(speed, direction) {
 
-  const rotation = direction;
+  const rotation = (direction + 180) % 360;
 
   const svg = `
     <svg width="36" height="36" viewBox="0 0 24 24"
@@ -515,6 +515,7 @@ function createWindIcon(speed, direction) {
     iconAnchor: [20, 20]
   });
 }
+
 
 
 
