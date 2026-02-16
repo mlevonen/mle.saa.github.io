@@ -65,9 +65,9 @@ import { fetchPressureByFmisid } from "../api/fetchPressureByPlace.js";
 
 import { fetchSunTimes } from "../api/sunApi.js";
 
-
-
 const popupCache = {};
+
+//LOADPOPUPDATA
 
 export async function loadPopupData({
   lat,
@@ -83,37 +83,44 @@ export async function loadPopupData({
     return popupCache[cacheKey];
   }
 
-
-
 let obsTemp = null;
 let obsWindSpeed = null;
 let obsPressure = null;
+let seaLevel = null;
 
-if (weatherFmisid) {
+  if (weatherFmisid) {
 
-  const series =
-    await fetchObservationSeriesByFmisid(weatherFmisid);
+    const series =
+      await fetchObservationSeriesByFmisid(weatherFmisid);
 
-  if (Array.isArray(series) && series.length) {
+    if (Array.isArray(series) && series.length) {
 
-    obsTemp = series.map(p => ({
-      utctime: p.utctime,
-      temperature: p.temperature
-    }));
+      obsTemp = series.map(p => ({
+        utctime: p.utctime,
+        temperature: p.temperature
+      }));
 
-    obsWindSpeed = series.map(p => ({
-      utctime: p.utctime,
-      windspeedms: p.windspeedms,
-      winddirection: p.winddirection,
-      windgust: p.windgust
-    }));
+      obsWindSpeed = series.map(p => ({
+        utctime: p.utctime,
+        windspeedms: p.windspeedms,
+        winddirection: p.winddirection,
+        windgust: p.windgust
+      }));
 
-    obsPressure = series.map(p => ({
-      utctime: p.utctime,
-      pressurehpa: p.pressure
-    }));
+      obsPressure = series.map(p => ({
+        utctime: p.utctime,
+        pressurehpa: p.pressure
+      }));
+    }
   }
-}
+
+  if (seaLevelFmisid) {
+    try {
+      seaLevel = await fetchSeaLevel(seaLevelFmisid);
+    } catch (e) {
+      seaLevel = null;
+    }
+  }
 
 
 const data = {
