@@ -51,12 +51,8 @@ stations.forEach(station => {
 
   marker.station = station;
 
-});
-
-
-
   markerRegistry[station.fmisid] = marker;
-
+});
 
   // 🔹 Hover-nimi
   // Alustetaan preview-cache
