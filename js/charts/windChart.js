@@ -39,17 +39,53 @@ export function renderWindChart(popupEl, data) {
       .filter(p => p.x > obsCutoffUtc)
   : [];
 
+// ==========================
+// INTERPOLOI VAIN NOPEUS
+// ==========================
+function interpolateWindSpeedOnly(rawPoints, stepMinutes) {
+  if (rawPoints.length < 2) return rawPoints;
 
-  // --- tihennys (vain nopeus) ---
+  // Interpoloidaan vain x + y (NOPEUS)
+  const interpolated = interpolateTimeSeries(
+    rawPoints.map(p => ({ x: p.x, y: p.y })),
+    stepMinutes
+  );
+
+  // Liitetään lähimmän mittauspisteen suunta
+  return interpolated.map(p => {
+    let closest = rawPoints[0];
+    let minDiff = Math.abs(p.x - closest.x);
+
+    for (const r of rawPoints) {
+      const diff = Math.abs(p.x - r.x);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closest = r;
+      }
+    }
+
+    return {
+      x: p.x,
+      y: p.y,
+      dir: closest.dir
+    };
+  });
+}
+
+
+
+
+// --- tihennys (vain nopeus) ---
   const obsWind =
-    rawObsWind.length >= 2
-      ? interpolateTimeSeries(rawObsWind, 30)
-      : rawObsWind;
+  rawObsWind.length >= 2
+    ? interpolateWindSpeedOnly(rawObsWind, 30)
+    : rawObsWind;
 
   const fcWind =
-    rawFcWind.length >= 2
-      ? interpolateTimeSeries(rawFcWind, 30)
-      : rawFcWind;
+  rawFcWind.length >= 2
+    ? interpolateWindSpeedOnly(rawFcWind, 30)
+    : rawFcWind;
+
 
   // ==========================
   // YHDISTETTY TUULISARJA
