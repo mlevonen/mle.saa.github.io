@@ -159,7 +159,6 @@ stations.forEach(station => {
  
 
 // FEATURED-LOOPPI
-
 stations.forEach(async station => {
 
   if (!station.featured) return;
@@ -191,21 +190,19 @@ stations.forEach(async station => {
       latestWind.winddirection
     );
 
-    const marker = L.marker(
-      [station.lat, station.lon],
-      { icon }
-    );
+    // 🔥 HAE OLEMASSA OLEVA MARKER
+    const baseMarker = markerRegistry[station.fmisid];
+    if (!baseMarker) return;
 
-    marker.station = station;
-
-    // 🔴 Lisää oikeaan layeriin
-    weatherLayer.addLayer(marker);
+    // 🔥 VAIHDA SEN IKONI
+    baseMarker.setIcon(icon);
 
   } catch (err) {
     console.error("Wind marker error:", err);
   }
 
 });
+
 
 
 
