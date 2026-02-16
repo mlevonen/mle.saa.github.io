@@ -39,67 +39,77 @@ L.control.layers(null, {
 // Asemat kartalle
 // ==========================
 
+
 stations.forEach(station => {
 
-  if (station.featured) return;   // 🔴 estää tuplamarkerin
+  if (station.featured) return;  // estä tuplamarkerit
 
-  const style = getMarkerStyle(station.type);
-  const marker = L.circleMarker(
+    const style = getMarkerStyle(station.type);
+
+    const marker = L.circleMarker(
     [station.lat, station.lon],
     style
   );
 
-  marker.station = station;
+    marker.station = station;
 
-  markerRegistry[station.fmisid] = marker;
+    markerRegistry[station.fmisid] = marker;
 
-});
+  // 🔹 Hover preview
+    marker.previewData = null;
 
-  // 🔹 Hover-nimi
-  // Alustetaan preview-cache
-  marker.previewData = null;
+    marker.bindTooltip("", {
+      direction: "top",
+      offset: [0, -8],
+      opacity: 0.9
+    });
 
-  // Tyhjä tooltip – sisältö asetetaan hoverissa
-  marker.bindTooltip("", {
-  direction: "top",
-  offset: [0, -8],
-  opacity: 0.9
-  });
+    marker.on("mouseover", function () {
 
-  marker.on("mouseover", function () {
+    let content = `<strong>${station.name}</strong>`;
+    const preview = this.previewData;
 
-  let content = `<strong>${station.name}</strong>`;
+    if (!preview) {
+      this.setTooltipContent(content);
+      this.openTooltip();
+      return;
+    }
 
-  const preview = this.previewData;
+    if (station.type === "weather" && preview.temp != null) {
+      content += `<br>${preview.temp.toFixed(1)} °C`;
+    }
 
-  if (!preview) {
+    else if (station.type === "coastal" && preview.wind != null) {
+      content += `<br>${preview.wind.toFixed(1)} m/s`;
+    }
+
+    else if (station.type === "sealevel" && preview.sea != null) {
+      const sign = preview.sea > 0 ? "+" : "";
+      content += `<br>${sign}${preview.sea} cm`;
+    }
+
     this.setTooltipContent(content);
     this.openTooltip();
-    return;
-  }
-
-  if (station.type === "weather" && preview.temp != null) {
-    content += `<br>${preview.temp.toFixed(1)} °C`;
-  }
-
-  else if (station.type === "coastal" && preview.wind != null) {
-    content += `<br>${preview.wind.toFixed(1)} m/s`;
-  }
-
-  else if (station.type === "sealevel" && preview.sea != null) {
-    const sign = preview.sea > 0 ? "+" : "";
-    content += `<br>${sign}${preview.sea} cm`;
-  }
-
-  this.setTooltipContent(content);
-  this.openTooltip();
   });
-
 
   marker.on("mouseout", function () {
-  this.closeTooltip();
+    this.closeTooltip();
   });
 
+  // Lisää oikeaan layeriin
+  if (station.type === "weather") {
+    weatherLayer.addLayer(marker);
+  }
+
+  if (station.type === "sealevel") {
+    seaLevelLayer.addLayer(marker);
+  }
+
+  if (station.type === "coastal") {
+    coastalLayer.addLayer(marker);
+  }
+
+});
 
   marker.bindPopup(`
     <div class="popup-title">${station.name}</div>
