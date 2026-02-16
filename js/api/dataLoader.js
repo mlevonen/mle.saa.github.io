@@ -1,18 +1,11 @@
-export async function fetchObservationByFmisid(fmisid, parameter) {
-
-  const now = new Date();
-  const start = new Date(now.getTime() - 6 * 3600_000).toISOString();
-  const end = now.toISOString();
+export async function fetchLatestObservationByFmisid(fmisid) {
 
   const params = new URLSearchParams({
     service: "WFS",
     version: "2.0.0",
     request: "GetFeature",
-    storedquery_id: "fmi::observations::weather::timevaluepair",
-    fmisid,
-    parameters: parameter,
-    starttime: start,
-    endtime: end
+    storedquery_id: "fmi::observations::weather::simple",
+    fmisid
   });
 
   const res = await fetch(`https://opendata.fmi.fi/wfs/fin?${params}`);
@@ -27,19 +20,37 @@ export async function fetchObservationByFmisid(fmisid, parameter) {
   const parser = new DOMParser();
   const xml = parser.parseFromString(xmlText, "application/xml");
 
-  const series = [...xml.getElementsByTagName("*")]
-    .filter(el => el.localName === "MeasurementTVP");
+  const elements = [...xml.getElementsByTagName("BsWfs:BsWfsElement")];
 
-  return series.map(p => {
-    const time = [...p.children].find(c => c.localName === "time");
-    const value = [...p.children].find(c => c.localName === "value");
+  const obs = {};
+  let latestTime = null;
 
-    return {
-      utctime: time?.textContent,
-      value: Number(value?.textContent)
-    };
-  }).filter(p => Number.isFinite(p.value));
+  elements.forEach(el => {
+
+    const timeNode = el.getElementsByTagName("BsWfs:Time")[0];
+    const nameNode = el.getElementsByTagName("BsWfs:ParameterName")[0];
+    const valueNode = el.getElementsByTagName("BsWfs:ParameterValue")[0];
+
+    if (!timeNode || !nameNode || !valueNode) return;
+
+    const time = timeNode.textContent;
+    const name = nameNode.textContent;
+    const value = Number(valueNode.textContent);
+
+    latestTime = time;
+
+    if (name === "t2m") obs.temperature = value;
+    if (name === "ws_10min") obs.windspeedms = value;
+    if (name === "wg_10min") obs.windgust = value;
+    if (name === "wd_10min") obs.winddirection = value;
+    if (name === "pressure") obs.pressure = value;
+  });
+
+  obs.time = latestTime;
+
+  return obs;
 }
+
 
 
 
@@ -82,50 +93,54 @@ export async function loadPopupData({
   }
 
 
-let obsTemp = null;
 let obsWindSpeed = null;
-let obsWeather = null;
+let obsTemp = null;
+let obsPressure = null;
 
 if (weatherFmisid) {
 
-  const tempData = await fetchObservationByFmisid(
-    weatherFmisid,
-    "temperature,weathercode"
-  );
+  const latestObservation =
+    await fetchLatestObservationByFmisid(weatherFmisid);
 
-  const windData = await fetchObservationByFmisid(
-    weatherFmisid,
-    "windspeedms,winddirection,windgust,pressure"
-  );
+  if (latestObservation) {
 
-  const weatherData = await fetchObservationByFmisid(
-    weatherFmisid,
-    "smartsymbol"
-  );
+    obsWindSpeed = [{
+      utctime: latestObservation.time,
+      windspeedms: latestObservation.windspeedms,
+      winddirection: latestObservation.winddirection,
+      windgust: latestObservation.windgust
+    }];
+
+    obsTemp = [{
+      utctime: latestObservation.time,
+      temperature: latestObservation.temperature
+    }];
+
+    obsPressure = [{
+      utctime: latestObservation.time,
+      pressurehpa: latestObservation.pressure
+    }];
+
+  }
+}
+
 
   obsTemp = tempData;
   obsWindSpeed = windData;
   obsWeather = weatherData;
 
-  console.log(data.obsWindSpeed?.at(-1));
+  
 
 }
 
 
 
   
+  const sunTimes = await fetchSunTimes(lat, lon);
+
   const fcTemp = await fetchForecastREST(lat, lon, {
     param: "temperature"
   });
-
-
-  const obsPressure = weatherFmisid
-  ? await fetchPressureByFmisid(weatherFmisid)
-  : null;
-
-
-
-  const sunTimes = await fetchSunTimes(lat, lon);
 
   const fcWindSpeed = await fetchForecastREST(lat, lon, {
     param: "windspeedms"
@@ -150,19 +165,18 @@ if (weatherFmisid) {
   }
 
 
-  const data = {
-    obsTemp,
-    fcTemp,
-    obsWindSpeed,
-    obsPressure,
-    obsWeather,
-    fcWindSpeed,
-    fcWindDir,
-    fcWindGust,
-    seaLevel,
-    sunTimes
-  };
+const data = {
+  obsTemp,
+  obsWindSpeed,
+  obsPressure,
+  seaLevel,
+  sunTimes,
+  fcTemp,
+  fcWindSpeed,
+  fcWindDir,
+  fcWindGust
+};
 
-  popupCache[cacheKey] = data;
-  return data;
-}
+popupCache[cacheKey] = data;
+return data;
+
