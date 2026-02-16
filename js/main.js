@@ -143,7 +143,7 @@ stations.forEach(station => {
     coastalLayer.addLayer(marker);
   }
 
-  });
+  
 
   if (weatherLayer.getLayers().length > 0) {
   map.fitBounds(weatherLayer.getBounds(), { padding: [30, 30] });
