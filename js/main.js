@@ -114,7 +114,7 @@ stations.forEach(station => {
     coastalLayer.addLayer(marker);
   }
 
-});
+
 
   marker.bindPopup(`
     <div class="popup-title">${station.name}</div>
@@ -155,13 +155,10 @@ stations.forEach(station => {
     coastalLayer.addLayer(marker);
   }
  
-
-  
-
   if (weatherLayer.getLayers().length > 0) {
   map.fitBounds(weatherLayer.getBounds(), { padding: [30, 30] });
   }
- 
+ });
 
 // FEATURED-LOOPPI
 stations.forEach(async station => {
