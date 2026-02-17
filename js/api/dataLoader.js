@@ -65,6 +65,10 @@ import { fetchPressureByFmisid } from "../api/fetchPressureByPlace.js";
 
 import { fetchSunTimes } from "../api/sunApi.js";
 
+import { fetchWindGustObservations } 
+  from "../api/fetchWindGustObservations.js";
+
+
 const popupCache = {};
 
 //LOADPOPUPDATA
@@ -76,6 +80,11 @@ export async function loadPopupData({
   weatherFmisid,
   seaLevelFmisid
 }) {
+
+
+  const obsWindGust =
+  await fetchWindGustObservations(weatherFmisid);
+
 
   const cacheKey = `${lat},${lon}`;
 
@@ -156,7 +165,8 @@ export async function loadPopupData({
     fcTemp,
     fcWindSpeed,
     fcWindDir,
-    fcWindGust
+    fcWindGust,
+    obsWindGust
 
   };
   console.log("Forecast sample:", fcWindSpeed?.slice(0,3));

@@ -3,12 +3,14 @@ import { parseFmiUtc, interpolateTimeSeries } from "../utils/time.js";
 export function renderWindChart(popupEl, data) {
   console.log("Chart wind data:", data.obsWindSpeed);
 
-  const {
-    obsWindSpeed,
-    fcWindSpeed,
-    fcWindDir,
-    fcWindGust
-  } = data;
+const {
+  obsWindSpeed,
+  fcWindSpeed,
+  fcWindDir,
+  fcWindGust,
+  obsWindGust
+} = data;
+
 
   if (!Array.isArray(obsWindSpeed)) return;
 
@@ -44,7 +46,7 @@ export function renderWindChart(popupEl, data) {
 // ==========================
 // PUUSKAHAVAINNOT
 // ==========================
-const rawObsGust = obsWindSpeed
+const rawObsGust = (obsWindGust ?? [])
   .map(p => ({
     x: parseFmiUtc(p.utctime),
     y: p.windgust
@@ -54,6 +56,7 @@ const rawObsGust = obsWindSpeed
     !isNaN(p.y) &&
     p.x <= obsCutoffUtc
   );
+console.log("Gust obs from API:", rawObsGust.length);
 
 // ==========================
 // PUUSKAENNUSTE
