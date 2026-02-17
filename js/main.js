@@ -566,16 +566,10 @@ map.on("popupopen", async e => {
 
     updatePopupTitles(popupEl, data);
     renderPopupExtras(popupEl, data);
-    renderTempChart(popupEl, data);
+    renderTemperatureChart(popupEl, data);
     renderWindCharts(popupEl, data);
     
-
-
      const marker = e.popup._source;
-
-
-
-
 
     // hae latest helperilla tai suoraan arrayn lopusta
   marker.previewData = {
@@ -584,9 +578,10 @@ map.on("popupopen", async e => {
   sea: data.seaLevel ?? null
   };
 
-  } catch (err) {
-    
-  }
+} catch (err) {
+  console.error("Popup error:", err);
+}
+
 });
 
 
