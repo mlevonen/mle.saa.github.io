@@ -39,6 +39,27 @@ export function renderWindChart(popupEl, data) {
       .filter(p => p.x > obsCutoffUtc)
   : [];
 
+const rawObsGust = obsWindSpeed
+  .map(p => ({
+    x: parseFmiUtc(p.utctime),
+    y: p.windgust
+  }))
+  .filter(p => p.y != null && p.x <= obsCutoffUtc);
+
+const rawFcGust = Array.isArray(fcWindGust)
+  ? fcWindGust
+      .map(p => ({
+        x: parseFmiUtc(p.utctime),
+        y: p.windgust
+      }))
+      .filter(p => p.y != null && p.x > obsCutoffUtc)
+  : [];
+
+
+
+
+
+
 // ==========================
 // INTERPOLOI VAIN NOPEUS
 // ==========================
