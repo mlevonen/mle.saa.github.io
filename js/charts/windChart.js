@@ -124,22 +124,7 @@ function interpolateWindSpeedOnly(rawPoints, stepMinutes) {
     }))
   ];
 
-  // ==========================
-  // PUUSKAT
-  // ==========================
-  const gustObs = obsWindSpeed
-    .filter(p => p.windgust != null)
-    .map(p => ({
-      x: parseFmiUtc(p.utctime),
-      y: p.windgust
-    }));
 
-  const gustFc = (fcWindGust ?? [])
-    .filter(p => p.hourlymaximumgust != null)
-    .map(p => ({
-      x: parseFmiUtc(p.utctime),
-      y: p.hourlymaximumgust
-    }));
 
   const windCanvas = popupEl.querySelector(
     'canvas[data-type="wind"]'
