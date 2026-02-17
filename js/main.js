@@ -585,7 +585,7 @@ map.on("popupopen", async e => {
   };
 
   } catch (err) {
-    console.error("Popup error:", err);
+    
   }
 });
 
