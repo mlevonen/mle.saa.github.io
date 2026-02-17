@@ -106,6 +106,14 @@ export function renderWindCharts(popupEl, data) {
     }))
     .filter(p => p.x > obsCutoffUtc);
 
+
+    console.log("WindSeries:", windSeries.length);
+    console.log("GustObs:", gustObs.length);
+    console.log("GustFc:", gustFc.length);
+
+
+
+
   // ======================================================
   // RENDERÖIDÄÄN PANEELIT
   // ======================================================
@@ -119,6 +127,7 @@ export function renderWindCharts(popupEl, data) {
 // ======================================================
 function renderWindObsChart(popupEl, windSeries, gustObs) {
 console.log("Obs canvas:", popupEl.querySelector('canvas[data-type="wind-obs"]'));
+console.log("Rendering OBS chart");
 
   const canvas = popupEl.querySelector(
     'canvas[data-type="wind-obs"]'
@@ -181,6 +190,7 @@ console.log("Obs canvas:", popupEl.querySelector('canvas[data-type="wind-obs"]')
 // ======================================================
 function renderWindFcChart(popupEl, windSeries, gustFc) {
 console.log("Fc canvas:", popupEl.querySelector('canvas[data-type="wind-fc"]'));
+console.log("Rendering FC chart");
 
   const canvas = popupEl.querySelector(
     'canvas[data-type="wind-fc"]'
