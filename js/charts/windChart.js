@@ -118,6 +118,7 @@ export function renderWindCharts(popupEl, data) {
 // HAVAINTOPANEELI
 // ======================================================
 function renderWindObsChart(popupEl, windSeries, gustObs) {
+console.log("Obs canvas:", popupEl.querySelector('canvas[data-type="wind-obs"]'));
 
   const canvas = popupEl.querySelector(
     'canvas[data-type="wind-obs"]'
@@ -179,6 +180,7 @@ function renderWindObsChart(popupEl, windSeries, gustObs) {
 // ENNUSTEPANEELI
 // ======================================================
 function renderWindFcChart(popupEl, windSeries, gustFc) {
+console.log("Fc canvas:", popupEl.querySelector('canvas[data-type="wind-fc"]'));
 
   const canvas = popupEl.querySelector(
     'canvas[data-type="wind-fc"]'
