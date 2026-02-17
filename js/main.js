@@ -55,13 +55,13 @@ stations.forEach(station => {
   ).addTo(map);
 
   markerRegistry[station.fmisid] = marker;
-
+  marker.station = station;
 });
 
 
-    marker.station = station;
+    
 
-    markerRegistry[station.fmisid] = marker;
+    
 
   // 🔹 Hover preview
     marker.previewData = null;
