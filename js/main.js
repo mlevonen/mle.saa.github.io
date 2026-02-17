@@ -157,7 +157,7 @@ stations.forEach(station => {
   if (station.type === "coastal") {
     coastalLayer.addLayer(marker);
   }
-  });
+ 
 
   
 
