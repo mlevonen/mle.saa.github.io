@@ -20,6 +20,27 @@ export function renderWindChart(popupEl, data) {
     nowUtc.getTime() + OBS_TOLERANCE_MIN * 60_000
   );
 
+  // ==========================
+  // RAAKA TUULIDATA
+  // ==========================
+  const rawObsWind = obsWindSpeed
+  .map(p => ({
+    x: parseFmiUtc(p.utctime),
+    y: p.windspeedms,
+    dir: p.winddirection
+  }))
+  .filter(p => p.x <= obsCutoffUtc);
+
+  const rawFcWind = Array.isArray(fcWindSpeed)
+  ? fcWindSpeed
+      .map((p, i) => ({
+        x: parseFmiUtc(p.utctime),
+        y: p.windspeedms,
+        dir: fcWindDir?.[i]?.winddirection
+      }))
+      .filter(p => p.x > obsCutoffUtc)
+  : [];
+
 // ==========================
 // PUUSKAHAVAINNOT
 // ==========================
@@ -90,8 +111,6 @@ function interpolateWindSpeedOnly(rawPoints, stepMinutes) {
     };
   });
 }
-
-
 
 
 // --- tihennys (vain nopeus) ---
