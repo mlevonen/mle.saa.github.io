@@ -12,6 +12,10 @@ const windArrowPlugin = {
       const meta = chart.getDatasetMeta(datasetIndex);
 
       meta.data.forEach((point, i) => {
+
+      // Näytä nuoli vain joka 6. piste (esim 10min data → 60min välein)
+      if (i % 6 !== 0) return;
+
         const dir = dataset.windDirections[i];
         const raw = dataset.data[i];
 
