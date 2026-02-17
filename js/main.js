@@ -56,12 +56,9 @@ stations.forEach(station => {
 
   markerRegistry[station.fmisid] = marker;
   marker.station = station;
-});
 
 
-    
 
-    
 
   // 🔹 Hover preview
     marker.previewData = null;
@@ -117,7 +114,7 @@ stations.forEach(station => {
     coastalLayer.addLayer(marker);
   }
 
-
+});
 
   marker.bindPopup(`
     <div class="popup-title">${station.name}</div>
