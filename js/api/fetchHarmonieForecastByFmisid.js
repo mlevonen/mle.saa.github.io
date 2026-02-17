@@ -1,61 +1,76 @@
 export async function fetchHarmonieForecastByFmisid(fmisid) {
 
-  const url = `
-    https://opendata.fmi.fi/wfs
-    ?service=WFS
-    &version=2.0.0
-    &request=getFeature
-    &storedquery_id=fmi::forecast::harmonie::surface::point::multipointcoverage
-    &fmisid=${fmisid}
-  `.replace(/\s+/g, "");
+  const url = `https://opendata.fmi.fi/wfs?service=WFS&version=2.0.0&request=getFeature&storedquery_id=fmi::forecast::harmonie::surface::point::multipointcoverage&fmisid=${fmisid}`;
 
   const res = await fetch(url);
-  if (!res.ok) throw new Error("Harmonie forecast fetch failed");
+  const text = await res.text();
 
-  const xmlText = await res.text();
   const parser = new DOMParser();
-  const xml = parser.parseFromString(xmlText, "application/xml");
+  const xml = parser.parseFromString(text, "text/xml");
 
-  // 1️⃣ Hae unix-aikaleimat
-  const positionsNode = xml.querySelector("gmlcov\\:positions");
-  if (!positionsNode) return [];
+  // ==========================
+  // AIKALEIMAT
+  // ==========================
+  const positionsText =
+    xml.querySelector("gmlcov\\:positions")?.textContent.trim();
 
-  const posValues = positionsNode.textContent.trim().split(/\s+/);
+  if (!positionsText) return null;
+
+  const posValues = positionsText.split(/\s+/);
 
   const times = [];
   for (let i = 2; i < posValues.length; i += 3) {
-    times.push(Number(posValues[i]));
+    times.push(Number(posValues[i]) * 1000); // unix → ms
   }
 
-  // 2️⃣ Hae tupleList
-  const tupleNode = xml.querySelector("gml\\:doubleOrNilReasonTupleList");
-  if (!tupleNode) return [];
+  // ==========================
+  // DATA ARVOT
+  // ==========================
+  const valuesText =
+    xml.querySelector("gml\\:doubleOrNilReasonTupleList")?.textContent.trim();
 
-  const values = tupleNode.textContent.trim().split(/\s+/).map(v =>
+  if (!valuesText) return null;
+
+  const values = valuesText.split(/\s+/).map(v =>
     v === "NaN" ? null : Number(v)
   );
 
-  // 3️⃣ Kenttiä on 21 kappaletta (kuten dokumentissa)
-  const FIELD_COUNT = 21;
+  const blockSize = 21;
 
-  const forecast = [];
+  const fcTemp = [];
+  const fcWindSpeed = [];
+  const fcWindDir = [];
+  const fcWindGust = [];
 
-  for (let i = 0; i < times.length; i++) {
+  times.forEach((time, i) => {
+    const offset = i * blockSize;
 
-    const base = i * FIELD_COUNT;
-    const slot = values.slice(base, base + FIELD_COUNT);
-
-    if (slot.length !== FIELD_COUNT) continue;
-
-    forecast.push({
-      time: new Date(times[i] * 1000),
-      pressure: slot[0],
-      temperature: slot[2],
-      windDirection: slot[5],
-      windSpeed: slot[6],
-      windGust: slot[20]
+    fcTemp.push({
+      utctime: new Date(time).toISOString(),
+      temperature: values[offset + 2]
     });
-  }
 
-  return forecast;
+    fcWindDir.push({
+      utctime: new Date(time).toISOString(),
+      winddirection: values[offset + 5]
+    });
+
+    fcWindSpeed.push({
+      utctime: new Date(time).toISOString(),
+      windspeedms: values[offset + 6]
+    });
+
+    fcWindGust.push({
+      utctime: new Date(time).toISOString(),
+      windgust: values[offset + 20]
+    });
+  });
+
+  return {
+    fcTemp,
+    fcWindSpeed,
+    fcWindDir,
+    fcWindGust
+  };
 }
+

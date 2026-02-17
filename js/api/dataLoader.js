@@ -118,6 +118,17 @@ export async function loadPopupData({
   }
 
   // ==========================
+  // ENNUSTEET
+  // ==========================
+
+  const harmonie = await fetchHarmonieForecastByFmisid(weatherFmisid);
+
+  const fcTemp = harmonie?.fcTemp ?? [];
+  const fcWindSpeed = harmonie?.fcWindSpeed ?? [];
+  const fcWindDir = harmonie?.fcWindDir ?? [];
+  const fcWindGust = harmonie?.fcWindGust ?? [];
+
+  // ==========================
   // VEDENKORKEUS
   // ==========================
   if (seaLevelFmisid) {
@@ -142,11 +153,13 @@ export async function loadPopupData({
     obsPressure,
     seaLevel,
     sunTimes,
-    fcTemp: null,
-    fcWindSpeed: null,
-    fcWindDir: null,
-    fcWindGust: null
+    fcTemp,
+    fcWindSpeed,
+    fcWindDir,
+    fcWindGust
+
   };
+  console.log("Forecast sample:", fcWindSpeed?.slice(0,3));
 
   popupCache[cacheKey] = data;
   return data;
