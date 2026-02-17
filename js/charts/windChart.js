@@ -184,13 +184,15 @@ function interpolateWindSpeedOnly(rawPoints, stepMinutes) {
           windDirections: windSeries.map(p => p.dir)
         },
         {
-          label: "Havainto",
-          data: gustObs,
-          showLine: false,
-          pointRadius: 4,
-          pointBackgroundColor: "rgba(0,140,0,0.9)",
-          pointBorderWidth: 0
-        },
+        label: "Puuska (havainto)",
+        data: gustObs,
+        showLine: true,
+        pointRadius: 0,
+        borderWidth: 1,
+        tension: 0,
+        borderColor: "rgba(0,140,0,0.6)"
+        }
+,
         {
           label: "Ennuste (puuskaennuste katkoviivalla)",
           data: gustFc,
