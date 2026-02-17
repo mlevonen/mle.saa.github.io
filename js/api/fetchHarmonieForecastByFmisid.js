@@ -1,6 +1,7 @@
 export async function fetchHarmonieForecastByFmisid(fmisid) {
 
-  const url = `https://opendata.fmi.fi/wfs?service=WFS&version=2.0.0&request=getFeature&storedquery_id=fmi::forecast::harmonie::surface::point::multipointcoverage&fmisid=${fmisid}`;
+  const url =
+    `https://opendata.fmi.fi/wfs?service=WFS&version=2.0.0&request=getFeature&storedquery_id=fmi::forecast::harmonie::surface::point::multipointcoverage&fmisid=${fmisid}`;
 
   const res = await fetch(url);
   const text = await res.text();
@@ -9,31 +10,38 @@ export async function fetchHarmonieForecastByFmisid(fmisid) {
   const xml = parser.parseFromString(text, "text/xml");
 
   // ==========================
-  // AIKALEIMAT
+  // POSITIONS (AIKA)
   // ==========================
-  const positionsText =
-    xml.querySelector("gmlcov\\:positions")?.textContent.trim();
+  const positionsNode =
+    xml.getElementsByTagNameNS("*", "positions")[0];
 
-  if (!positionsText) return null;
+  if (!positionsNode) {
+    console.error("No positions found in XML");
+    return null;
+  }
 
-  const posValues = positionsText.split(/\s+/);
+  const posValues = positionsNode.textContent.trim().split(/\s+/);
 
   const times = [];
   for (let i = 2; i < posValues.length; i += 3) {
-    times.push(Number(posValues[i]) * 1000); // unix → ms
+    times.push(Number(posValues[i]) * 1000);
   }
 
   // ==========================
-  // DATA ARVOT
+  // DATA VALUES
   // ==========================
-  const valuesText =
-    xml.querySelector("gml\\:doubleOrNilReasonTupleList")?.textContent.trim();
+  const valuesNode =
+    xml.getElementsByTagNameNS("*", "doubleOrNilReasonTupleList")[0];
 
-  if (!valuesText) return null;
+  if (!valuesNode) {
+    console.error("No values block found in XML");
+    return null;
+  }
 
-  const values = valuesText.split(/\s+/).map(v =>
-    v === "NaN" ? null : Number(v)
-  );
+  const values = valuesNode.textContent
+    .trim()
+    .split(/\s+/)
+    .map(v => (v === "NaN" ? null : Number(v)));
 
   const blockSize = 21;
 
@@ -73,4 +81,3 @@ export async function fetchHarmonieForecastByFmisid(fmisid) {
     fcWindGust
   };
 }
-
