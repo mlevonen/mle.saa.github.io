@@ -111,9 +111,6 @@ export function renderWindCharts(popupEl, data) {
     console.log("GustObs:", gustObs.length);
     console.log("GustFc:", gustFc.length);
 
-
-
-
   // ======================================================
   // RENDERÖIDÄÄN PANEELIT
   // ======================================================
