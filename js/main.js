@@ -42,21 +42,21 @@ L.control.layers(null, {
 
 stations.forEach(station => {
 
-  if (station.featured) return;  // estä tuplamarkerit
-
-    const style = getMarkerStyle(station.type);
-
   const marker = L.marker(
-  [station.lat, station.lon],
-  {
-    icon: L.divIcon({
-      className: "station-dot",
-      html: `<div class="dot dot-${station.type}"></div>`,
-      iconSize: [12, 12],
-      iconAnchor: [6, 6]
-    })
-  }
-);
+    [station.lat, station.lon],
+    {
+      icon: L.divIcon({
+        className: "station-dot",
+        html: `<div class="dot dot-${station.type}"></div>`,
+        iconSize: [12, 12],
+        iconAnchor: [6, 6]
+      })
+    }
+  ).addTo(map);
+
+  markerRegistry[station.fmisid] = marker;
+
+});
 
 
     marker.station = station;
@@ -207,6 +207,8 @@ stations.forEach(async station => {
 
   } catch (err) {
     console.error("Wind marker error:", err);
+    console.log("Base marker:", station.fmisid, baseMarker);
+
   }
 
 });
