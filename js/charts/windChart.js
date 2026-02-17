@@ -20,43 +20,41 @@ export function renderWindChart(popupEl, data) {
     nowUtc.getTime() + OBS_TOLERANCE_MIN * 60_000
   );
 
-  // --- raakapisteet ---
-  const rawObsWind = obsWindSpeed
-    .map(p => ({
-      x: parseFmiUtc(p.utctime),
-      y: p.windspeedms,
-      dir: p.winddirection
-    }))
-    .filter(p => p.x <= obsCutoffUtc);
-
-  const rawFcWind = Array.isArray(fcWindSpeed)
-  ? fcWindSpeed
-      .map((p, i) => ({
-        x: parseFmiUtc(p.utctime),
-        y: p.windspeedms,
-        dir: fcWindDir?.[i]?.winddirection
-      }))
-      .filter(p => p.x > obsCutoffUtc)
-  : [];
-
+// ==========================
+// PUUSKAHAVAINNOT
+// ==========================
 const rawObsGust = obsWindSpeed
   .map(p => ({
     x: parseFmiUtc(p.utctime),
     y: p.windgust
   }))
-  .filter(p => p.y != null && p.x <= obsCutoffUtc);
+  .filter(p =>
+    typeof p.y === "number" &&
+    !isNaN(p.y) &&
+    p.x <= obsCutoffUtc
+  );
 
+// ==========================
+// PUUSKAENNUSTE
+// ==========================
 const rawFcGust = Array.isArray(fcWindGust)
   ? fcWindGust
       .map(p => ({
         x: parseFmiUtc(p.utctime),
         y: p.windgust
       }))
-      .filter(p => p.y != null && p.x > obsCutoffUtc)
+      .filter(p =>
+        typeof p.y === "number" &&
+        !isNaN(p.y) &&
+        p.x > obsCutoffUtc
+      )
   : [];
 
+const gustObs = rawObsGust;
+const gustFc = rawFcGust;
 
-
+console.log("gustObs:", gustObs.length);
+console.log("gustFc:", gustFc.length);
 
 
 
