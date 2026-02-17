@@ -1,7 +1,7 @@
 import { loadPopupData } from "./api/dataLoader.js";
 import { updatePopupTitles } from "./popup/popupTitles.js";
 import { renderTemperatureChart } from "./charts/temperatureChart.js";
-import { renderWindChart } from "./charts/windChart.js";
+import { renderWindObsChart, renderWindFcChart } from "./charts/windChart.js";
 import { renderPopupExtras } from "./popup/popupExtras.js";
 import "./charts/plugins.js";
 
@@ -130,16 +130,28 @@ stations.forEach(station => {
       data-type="temp"
     ></canvas>
 
-    <div style="margin-top:8px;"><strong>Tuuli</strong></div>
-    <canvas
+      <div style="margin-top:8px;"><strong>Tuuli (havainto)</strong></div>
+      <canvas
       class="popup-chart"
       width="650"
-      height="160"
+      height="140"
       data-lat="${station.lat}"
       data-lon="${station.lon}"
       data-fmisid="${station.fmisid}"
-      data-type="wind"
+      data-type="wind-obs"
     ></canvas>
+
+    <div style="margin-top:8px;"><strong>Tuuli (ennuste)</strong></div>
+    <canvas
+    class="popup-chart"
+    width="650"
+    height="140"
+    data-lat="${station.lat}"
+    data-lon="${station.lon}"
+    data-fmisid="${station.fmisid}"
+    data-type="wind-fc"
+    ></canvas>
+
   `);
 
   // Lisää oikeaan layeriin
@@ -554,15 +566,16 @@ map.on("popupopen", async e => {
 
     updatePopupTitles(popupEl, data);
     renderPopupExtras(popupEl, data);
-    renderTemperatureChart(popupEl, data);
-    renderWindChart(popupEl, data);
+    renderTempChart(popupEl, data);
+    renderWindObsChart(popupEl, data);
+    renderWindFcChart(popupEl, data);
+
 
      const marker = e.popup._source;
 
 
 
-    console.log("Latest obsTemp:", data.obsTemp?.at(-1));
-    console.log("Latest obsWind:", data.obsWindSpeed?.at(-1));
+
 
     // hae latest helperilla tai suoraan arrayn lopusta
   marker.previewData = {

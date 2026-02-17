@@ -169,90 +169,126 @@ function interpolateWindSpeedOnly(rawPoints, stepMinutes) {
     ? Math.ceil((Math.max(...allWindValues) + 2) / 5) * 5
     : 15;
 
-  new Chart(windCanvas, {
+  function renderWindObsChart(popupEl, windSeries, gustObs) {
+
+  const canvas = popupEl.querySelector(
+    'canvas[data-type="wind-obs"]'
+  );
+  if (!canvas) return;
+
+  const obsSeries = windSeries.filter(p => p.phase === "obs");
+
+  const allValues = [
+    ...obsSeries.map(p => p.y),
+    ...gustObs.map(p => p.y)
+  ].filter(v => typeof v === "number");
+
+  const yMax = allValues.length
+    ? Math.ceil((Math.max(...allValues) + 2) / 5) * 5
+    : 15;
+
+  new Chart(canvas, {
     type: "line",
     data: {
       datasets: [
         {
-          label: "Tuuli",
-          data: windSeries,
-          borderColor: "rgba(0,0,0,0.15)",
-          borderWidth: 1,
+          label: "Tuuli (havainto)",
+          data: obsSeries,
+          borderColor: "rgba(0,140,0,0.9)",
+          borderWidth: 2,
           pointRadius: 0,
-          tension: 0.45,
-          cubicInterpolationMode: "monotone",
-          windDirections: windSeries.map(p => p.dir)
+          tension: 0.4,
+          windDirections: obsSeries.map(p => p.dir)
         },
         {
-        label: "Puuska (havainto)",
-        data: gustObs,
-        showLine: true,
-        pointRadius: 0,
-        borderWidth: 1,
-        tension: 0,
-        borderColor: "rgba(0,140,0,0.6)"
-        }
-,
-        {
-          label: "Ennuste (puuskaennuste katkoviivalla)",
-          data: gustFc,
-          showLine: true,
+          label: "Puuska",
+          data: gustObs,
+          borderColor: "rgba(0,140,0,0.5)",
+          borderWidth: 1,
           pointRadius: 0,
-          borderWidth: 1.5,
-          tension: 0,
-          borderColor: "rgba(220,0,0,0.7)",
-          borderDash: [2, 3]
+          tension: 0
         }
       ]
     },
     options: {
       responsive: false,
       plugins: {
-        legend: {
-          display: true,
-          position: "top",
-          align: "start",
-          labels: {
-            usePointStyle: true,
-            pointStyle: "circle",
-            boxWidth: 6,
-            boxHeight: 6,
-            filter(item) {
-              return item.text !== "Tuuli";
-            },
-            generateLabels(chart) {
-              const labels =
-                Chart.defaults.plugins.legend.labels.generateLabels(chart);
-
-              labels.forEach(label => {
-                if (label.text.includes("Puuska")) {
-                  label.fillStyle = label.strokeStyle;
-                  label.lineWidth = 0;
-                }
-              });
-
-              return labels;
-            }
-          }
-        },
+        legend: { display: false },
         windArrowPlugin: true,
         nowLine: true
       },
       scales: {
-        x: {
-          type: "time",
-          time: {
-            unit: "hour",
-            displayFormats: { hour: "HH" }
-          }
-        },
+        x: { type: "time" },
         y: {
           min: 0,
-          max: yMaxWind,
-          ticks: { stepSize: 3 },
+          max: yMax,
           title: { display: true, text: "m/s" }
         }
       }
     }
   });
+}
+  function renderWindFcChart(popupEl, windSeries, gustFc) {
+
+    const canvas = popupEl.querySelector(
+      'canvas[data-type="wind-fc"]'
+    );
+    if (!canvas) return;
+
+    const fcSeries = windSeries.filter(p => p.phase === "fc");
+
+    const allValues = [
+      ...fcSeries.map(p => p.y),
+      ...gustFc.map(p => p.y)
+    ].filter(v => typeof v === "number");
+
+    const yMax = allValues.length
+      ? Math.ceil((Math.max(...allValues) + 2) / 5) * 5
+      : 15;
+
+    new Chart(canvas, {
+      type: "line",
+      data: {
+        datasets: [
+          {
+            label: "Tuuli (ennuste)",
+            data: fcSeries,
+            borderColor: "rgba(220,0,0,0.9)",
+            borderWidth: 2,
+            pointRadius: 0,
+            tension: 0.4,
+            windDirections: fcSeries.map(p => p.dir)
+          },
+          {
+            label: "Puuska (ennuste)",
+            data: gustFc,
+            borderColor: "rgba(220,0,0,0.5)",
+            borderWidth: 1,
+            pointRadius: 0,
+            tension: 0,
+            borderDash: [3,3]
+          }
+        ]
+      },
+      options: {
+        responsive: false,
+        plugins: {
+          legend: { display: false },
+          windArrowPlugin: true
+        },
+        scales: {
+          x: { type: "time" },
+          y: {
+            min: 0,
+            max: yMax,
+            title: { display: true, text: "m/s" }
+          }
+        }
+      }
+    });
+  }
+
+
+
+
 }
