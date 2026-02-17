@@ -5,18 +5,24 @@ export function updatePopupTitles(popupEl, data) {
   const wind = getLatestObservation(data.obsWindSpeed, "utctime", "windspeedms");
   const gust = getLatestObservation(data.obsWindSpeed, "utctime", "windgust");
 
-  if (temp) {
-    popupEl.querySelector(
-      'div:has(+ canvas[data-type="temp"])'
-    ).textContent = `Lämpötila ${temp.v.toFixed(1)} °C`;
+  const tempTitle = popupEl.querySelector(
+  'canvas[data-type="temp"]'
+  )?.previousElementSibling;
+
+  if (temp && tempTitle) {
+  tempTitle.textContent =
+    `Lämpötila ${temp.v.toFixed(1)} °C`;
   }
 
   
-  if (wind) {
-    popupEl.querySelector(
-      'div:has(+ canvas[data-type="wind"])'
-    ).textContent =
+ if (wind) {
+  const windObsTitle = popupEl.querySelector(
+    'canvas[data-type="wind-obs"]'
+  )?.previousElementSibling;
+
+  if (windObsTitle) {
+    windObsTitle.textContent =
       `Tuuli ${wind.v.toFixed(1)} m/s` +
       (gust ? ` (puuskat ${gust.v.toFixed(1)} m/s)` : "");
   }
-}
+}}
