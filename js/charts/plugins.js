@@ -11,10 +11,21 @@ const windArrowPlugin = {
 
       const meta = chart.getDatasetMeta(datasetIndex);
 
+      let lastTime = null;
+
       meta.data.forEach((point, i) => {
 
-      // Näytä nuoli vain joka 6. piste (esim 10min data → 60min välein)
-      if (i % 6 !== 0) return;
+      const raw = dataset.data[i];
+      if (!raw) return;
+
+      const currentTime = raw.x;
+
+      if (lastTime && (currentTime - lastTime) < 60 * 60 * 1000) {
+      return;
+      }
+
+  lastTime = currentTime;
+
 
         const dir = dataset.windDirections[i];
         const raw = dataset.data[i];
