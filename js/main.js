@@ -1,7 +1,7 @@
 import { loadPopupData } from "./api/dataLoader.js";
 import { updatePopupTitles } from "./popup/popupTitles.js";
 import { renderTemperatureChart } from "./charts/temperatureChart.js";
-import { renderWindObsChart, renderWindFcChart } from "./charts/windChart.js";
+import { renderWindCharts } from "./charts/windChart.js";
 import { renderPopupExtras } from "./popup/popupExtras.js";
 import "./charts/plugins.js";
 
@@ -567,8 +567,8 @@ map.on("popupopen", async e => {
     updatePopupTitles(popupEl, data);
     renderPopupExtras(popupEl, data);
     renderTempChart(popupEl, data);
-    renderWindObsChart(popupEl, data);
-    renderWindFcChart(popupEl, data);
+    renderWindCharts(popupEl, data);
+    
 
 
      const marker = e.popup._source;
