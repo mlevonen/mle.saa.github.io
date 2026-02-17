@@ -20,41 +20,36 @@ const windArrowPlugin = {
 
       const currentTime = raw.x;
 
+      // Näytä nuoli vain 1h välein
       if (lastTime && (currentTime - lastTime) < 60 * 60 * 1000) {
       return;
       }
 
-  lastTime = currentTime;
+      lastTime = currentTime;
 
+      const dir = dataset.windDirections[i];
+      if (dir == null) return;
 
-        const dir = dataset.windDirections[i];
-        const raw = dataset.data[i];
+      const { x, y } = point.getProps(["x", "y"], true);
 
-        if (dir == null || !raw) return;
+      const color =
+      raw.phase === "fc"
+      ? "rgba(220,0,0,0.9)"
+      : "rgba(0,140,0,0.9)";
 
-        const { x, y } = point.getProps(["x", "y"], true);
+      ctx.save();
+      ctx.translate(x, y);
 
-        // ==========================
-        // VÄRI HAVAINTO vs ENNUSTE
-        // ==========================
-        const color =
-          raw.phase === "fc"
-            ? "rgba(220,0,0,0.9)"   // ennuste
-            : "rgba(0,140,0,0.9)";  // havainto
+      const angle = (dir + 90) * Math.PI / 180;
+      ctx.rotate(angle);
 
-        ctx.save();
-        ctx.translate(x, y);
-        const angle = (dir + 90) * Math.PI / 180;
-        ctx.rotate(angle);
+      ctx.fillStyle = color;
+      ctx.font = "13px sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("➤", 0, 0);
 
-
-        ctx.fillStyle = color;
-        ctx.font = "13px sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("➤", 0, 0);
-
-        ctx.restore();
+      ctx.restore();
       });
     });
   }
