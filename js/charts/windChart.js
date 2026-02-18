@@ -209,9 +209,8 @@ console.log("Rendering OBS chart");
   },
   y: { min: 0, max: yMax }
 }
-
-      }
-    },
+}
+},
   
 
 
@@ -248,53 +247,55 @@ console.log("Rendering FC chart");
     ? Math.ceil((Math.max(...allValues) + 2) / 5) * 5
     : 15;
 
-  new Chart(canvas, {
-    type: "line",
-    data: {
-      datasets: [
-        {
-          data: fcSeries,
-          borderColor: "rgba(220,0,0,0.9)",
-          borderWidth: 2,
-          pointRadius: 0,
-          tension: 0.4,
-          windDirections: fcSeries.map(p => p.dir)
-        },
-        {
-          data: gustFc,
-          borderColor: "rgba(220,0,0,0.5)",
-          borderWidth: 1,
-          pointRadius: 0,
-          tension: 0,
-          borderDash: [3, 3]
-        }
-      ]
-    },
-    options: {
-      responsive: false,
-      plugins: {
-        legend: { display: false },
-        windArrowPlugin: true
+new Chart(canvas, {
+  type: "line",
+  data: {
+    datasets: [
+      {
+        data: fcSeries,
+        borderColor: "rgba(220,0,0,0.9)",
+        borderWidth: 2,
+        pointRadius: 0,
+        tension: 0.4,
+        windDirections: fcSeries.map(p => p.dir)
       },
-
-      scales: {
+      {
+        data: gustFc,
+        borderColor: "rgba(220,0,0,0.5)",
+        borderWidth: 1,
+        pointRadius: 0,
+        tension: 0,
+        borderDash: [3, 3]
+      }
+    ]
+  },
+  options: {
+    responsive: false,
+    plugins: {
+      legend: { display: false },
+      windArrowPlugin: true
+    },
+    scales: {
       x: {
-      type: "time",
-      min: fcStart,
-      max: fcEnd,
-      time: {
-      unit: "hour",
-      displayFormats: { hour: "HH" }
+        type: "time",
+        min: fcStart,
+        max: fcEnd,
+        time: {
+          unit: "hour",
+          displayFormats: { hour: "HH" }
+        },
+        ticks: {
+          autoSkip: true,
+          maxTicksLimit: 9,
+          maxRotation: 0,
+          minRotation: 0
+        }
       },
-      ticks: {
-      autoSkip: true,
-      maxTicksLimit: 9,
-      maxRotation: 0,
-      minRotation: 0
+      y: {
+        min: 0,
+        max: yMax
       }
-      },
-      y: { min: 0, max: yMax }
-      }
-    },
-  })
-  })}
+    }
+  }
+});
+}
