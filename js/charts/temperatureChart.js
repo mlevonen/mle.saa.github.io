@@ -7,6 +7,11 @@ export function renderTemperatureChart(popupEl, data) {
   if (!Array.isArray(obsTemp)) return;
 
   const nowUtc = new Date();
+
+  const startTime = new Date(now.getTime() - 12 * 60 * 60 * 1000);
+  const endTime   = new Date(now.getTime() + 36 * 60 * 60 * 1000);
+
+
   const OBS_TOLERANCE_MIN = 15;
 
   const obsCutoffUtc = new Date(
@@ -41,11 +46,6 @@ const rawFcPoints = Array.isArray(fcTemp)
     rawFcPoints.length >= 2
       ? interpolateTimeSeries(rawFcPoints, 30)
       : rawFcPoints;
-
-
-  const startTime = new Date(now.getTime() - 12 * 60 * 60 * 1000);
-  const endTime   = new Date(now.getTime() + 36 * 60 * 60 * 1000);
-
 
 
   // ==========================
