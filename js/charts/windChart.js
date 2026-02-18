@@ -277,7 +277,6 @@ console.log("Rendering FC chart");
         legend: { display: false },
         windArrowPlugin: true
       },
-      scales: {
 
       scales: {
         x: {
@@ -298,4 +297,5 @@ console.log("Rendering FC chart");
         y: { min: 0, max: yMax }
       }
     },
-  }})}
+  })
+  };
