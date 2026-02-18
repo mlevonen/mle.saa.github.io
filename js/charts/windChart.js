@@ -139,10 +139,10 @@ function renderWindObsChart(
   gustObs,
   obsStart,
   obsEnd
-)
- {
-console.log("Obs canvas:", popupEl.querySelector('canvas[data-type="wind-obs"]'));
-console.log("Rendering OBS chart");
+) {
+
+  console.log("Obs canvas:", popupEl.querySelector('canvas[data-type="wind-obs"]'));
+  console.log("Rendering OBS chart");
 
   const canvas = popupEl.querySelector(
     'canvas[data-type="wind-obs"]'
@@ -192,28 +192,31 @@ console.log("Rendering OBS chart");
         nowLine: true
       },
       scales: {
-      x: {
-      type: "time",
-      min: obsStart,
-      max: obsEnd,
-      time: {
-      unit: "hour",
-      displayFormats: { hour: "HH" }
-      },
-      ticks: {
-      autoSkip: true,
-      maxTicksLimit: 7,
-      maxRotation: 0,
-      minRotation: 0
+        x: {
+          type: "time",
+          min: obsStart,
+          max: obsEnd,
+          time: {
+            unit: "hour",
+            displayFormats: { hour: "HH" }
+          },
+          ticks: {
+            autoSkip: true,
+            maxTicksLimit: 7,
+            maxRotation: 0,
+            minRotation: 0
+          }
+        },
+        y: {
+          min: 0,
+          max: yMax
+        }
+      }
     }
-  },
-  y: { min: 0, max: yMax }
+  });
 }
-}
-},
+
   
-
-
 // ======================================================
 // ENNUSTEPANEELI
 // ======================================================
