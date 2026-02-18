@@ -206,7 +206,7 @@ console.log("Rendering OBS chart");
       }
     },
   }
-}
+)}
 
 // ======================================================
 // ENNUSTEPANEELI
