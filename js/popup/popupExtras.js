@@ -87,7 +87,6 @@ function getSeaLevel(data) {
 /* =========================================================
    RENDER
    ========================================================= */
-console.log("renderPopupExtras CALLED");
 
 export function renderPopupExtras(popupEl, data) {
 
@@ -113,18 +112,15 @@ export function renderPopupExtras(popupEl, data) {
 
   container.innerHTML += `<div class="popup-inline-metrics">`;
 
-  const symbol = getSmartSymbol(data.obsWeather);
+  if (symbolCode != null) {
+  const icon = document.createElement("img");
+  icon.src = `./js/assets/weather-icons/${symbolCode}.svg`;
+  icon.className = "popup-weather-icon";
+  icon.alt = "Sääsymboli";
 
-  if (symbol !== null) {
-    container.innerHTML += `
-      <div class="popup-inline-item">
-        <img
-          src="./js/assets/weather-icons/SmartSymbol/${symbol}.svg"
-          class="popup-weather-icon"
-        />
-      </div>
-    `;
+  container.prepend(icon);
   }
+
 
   // ... kaikki muu mittarikoodi ...
 
