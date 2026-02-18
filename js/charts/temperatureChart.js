@@ -91,8 +91,11 @@ const rawFcPoints = Array.isArray(fcTemp)
           borderWidth: 1.5,
           pointRadius: 0,
           pointHoverRadius: 0,
-          tension: 0.4
+          tension: 0.4,
+          cubicInterpolationMode: "monotone",
+          spanGaps: true
         },
+        
         {
           label: "Ennuste",
           data: fcPoints,
