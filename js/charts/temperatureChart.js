@@ -42,6 +42,12 @@ const rawFcPoints = Array.isArray(fcTemp)
       ? interpolateTimeSeries(rawFcPoints, 30)
       : rawFcPoints;
 
+
+  const startTime = new Date(now.getTime() - 12 * 60 * 60 * 1000);
+  const endTime   = new Date(now.getTime() + 36 * 60 * 60 * 1000);
+
+
+
   // ==========================
   // SILLAN LUONTI havainto → ennuste
   // ==========================
@@ -141,6 +147,11 @@ const rawFcPoints = Array.isArray(fcTemp)
             displayFormats: { hour: "HH" }
           }
         },
+          ticks: {
+          maxRotation: 0,
+          minRotation: 0
+        }
+
         y: {
           min: yMinTemp,
           max: yMaxTemp,
