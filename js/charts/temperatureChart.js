@@ -86,26 +86,25 @@ const rawFcPoints = Array.isArray(fcTemp)
       datasets: [
         {
           label: "Havainto",
-          data: obsPoints,
-          borderColor: "blue",
-          tension: 0.45,
-          cubicInterpolationMode: "monotone",
-          pointRadius: 2
+          data: obsSeries,
+          borderColor: "rgba(0,140,0,0.9)",
+          borderWidth: 1.5,
+          pointRadius: 0,
+          pointHoverRadius: 0,
+          tension: 0.4
         },
         {
           label: "Ennuste",
-          data: fcPoints,
-          borderColor: "red",
-          borderDash: [6, 4],
-          segment: {
-            borderDash: ctx =>
-              ctx.p0.raw?._bridge ? [2, 4] : [6, 4]
+          data: fcSeries,
+          borderColor: "rgba(220,0,0,0.9)",
+          borderWidth: 1.5,
+          pointRadius: 0,
+          pointHoverRadius: 0,
+          tension: 0.4,
+          borderDash: [4, 4] // jos käytät katkoviivaa
           },
-          tension: 0.45,
-          cubicInterpolationMode: "monotone",
-          pointRadius: 0
-        }
-      ]
+
+         ]
     },
     options: {
       responsive: false,
