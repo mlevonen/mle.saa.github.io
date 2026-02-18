@@ -143,14 +143,16 @@ const rawFcPoints = Array.isArray(fcTemp)
       scales: {
         x: {
           type: "time",
+          min: startTime,
+          max: endTime,
           time: {
             unit: "hour",
             displayFormats: { hour: "HH" }
-          }
-        },
+          },
           ticks: {
-          maxRotation: 0,
-          minRotation: 0
+            maxRotation: 0,
+            minRotation: 0
+          }
         },
 
         y: {
@@ -160,6 +162,7 @@ const rawFcPoints = Array.isArray(fcTemp)
           title: { display: false }
         }
       }
+
     }
   });
 }
