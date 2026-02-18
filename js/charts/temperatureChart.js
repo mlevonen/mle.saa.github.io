@@ -143,7 +143,7 @@ const rawFcPoints = Array.isArray(fcTemp)
           min: yMinTemp,
           max: yMaxTemp,
           ticks: { stepSize: 5 },
-          title: { display: true, text: "°C" }
+          title: { display: false }
         }
       }
     }
