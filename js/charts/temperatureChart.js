@@ -86,7 +86,7 @@ const rawFcPoints = Array.isArray(fcTemp)
       datasets: [
         {
           label: "Havainto",
-          data: obsSeries,
+          data: obsPoints,
           borderColor: "rgba(0,140,0,0.9)",
           borderWidth: 1.5,
           pointRadius: 0,
@@ -95,7 +95,7 @@ const rawFcPoints = Array.isArray(fcTemp)
         },
         {
           label: "Ennuste",
-          data: fcSeries,
+          data: fcPoints,
           borderColor: "rgba(220,0,0,0.9)",
           borderWidth: 1.5,
           pointRadius: 0,
