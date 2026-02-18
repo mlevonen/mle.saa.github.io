@@ -198,11 +198,11 @@ function renderWindObsChart(
           max: obsEnd,
           time: {
             unit: "hour",
+            stepSize: 1,
             displayFormats: { hour: "HH" }
           },
           ticks: {
-            autoSkip: true,
-            maxTicksLimit: 7,
+            autoSkip: false,
             maxRotation: 0,
             minRotation: 0
           }
