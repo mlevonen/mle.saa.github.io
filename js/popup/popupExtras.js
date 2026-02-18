@@ -90,27 +90,25 @@ function getSeaLevel(data) {
 
 export function renderPopupExtras(popupEl, data) {
 
-  const content = popupEl.querySelector(".leaflet-popup-content");
-  if (!content) return;
-
-  let container = content.querySelector(".popup-extras");
-  if (!container) {
-    container = document.createElement("div");
-    container.className = "popup-extras";
-    content.prepend(container);
-  }
+  const container = popupEl.querySelector(".popup-extras");
+  if (!container) return;
 
   container.innerHTML = "";
 
-  container.innerHTML += `
-    <div class="popup-header">
-      <div class="popup-location">
-        ${data.locationName ?? ""}
-      </div>
-    </div>
-  `;
+  // ==========================
+  // SÄÄSYMBOLI
+  // ==========================
 
-  container.innerHTML += `<div class="popup-inline-metrics">`;
+  const rawSymbol = data.obsWeatherSymbol?.at(-1)?.smartsymbol;
+
+  let symbolCode = null;
+
+  if (rawSymbol != null) {
+    symbolCode = rawSymbol >= 100
+      ? rawSymbol % 100
+      : rawSymbol;
+  }
+
 
   if (symbolCode != null) {
   const icon = document.createElement("img");
