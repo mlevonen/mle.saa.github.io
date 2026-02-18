@@ -5,6 +5,16 @@ import { parseFmiUtc, interpolateTimeSeries } from "../utils/time.js";
 // ======================================================
 export function renderWindCharts(popupEl, data) {
 
+  const now = new Date();
+
+  const obsStart = new Date(now.getTime() - 12 * 60 * 60 * 1000);
+  const obsEnd   = now;
+
+  const fcStart = now;
+  const fcEnd   = new Date(now.getTime() + 36 * 60 * 60 * 1000);
+
+
+
   const {
     obsWindSpeed,
     fcWindSpeed,
@@ -174,13 +184,29 @@ console.log("Rendering OBS chart");
         nowLine: true
       },
       scales: {
-        x: { type: "time" },
-        y: { min: 0, max: yMax }
-      }
-    }
-  });
-}
+        scales: {
+        x: {
+          type: "time",
+          min: obsStart,
+          max: obsEnd,
+          time: {
+            unit: "hour",
+            displayFormats: { hour: "HH" }
+          },
+          ticks: {
+            autoSkip: true,
+            maxTicksLimit: 7,
+            maxRotation: 0,
+            minRotation: 0
+          }
+        },
 
+        y: { min: 0, max: yMax }
+        }
+      }
+    },
+  }
+}
 
 // ======================================================
 // ENNUSTEPANEELI
@@ -237,9 +263,24 @@ console.log("Rendering FC chart");
         windArrowPlugin: true
       },
       scales: {
-        x: { type: "time" },
+
+      scales: {
+        x: {
+          type: "time",
+          min: fcStart,
+          max: fcEnd,
+          time: {
+            unit: "hour",
+            displayFormats: { hour: "HH" }
+          },
+          ticks: {
+            autoSkip: true,
+            maxTicksLimit: 9,
+            maxRotation: 0,
+            minRotation: 0
+          }
+        },
         y: { min: 0, max: yMax }
       }
-    }
-  });
-}
+    },
+  }})}
