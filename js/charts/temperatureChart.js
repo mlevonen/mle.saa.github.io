@@ -150,7 +150,7 @@ const rawFcPoints = Array.isArray(fcTemp)
           ticks: {
           maxRotation: 0,
           minRotation: 0
-        }
+        },
 
         y: {
           min: yMinTemp,
