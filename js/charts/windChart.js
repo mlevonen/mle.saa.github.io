@@ -124,15 +124,23 @@ export function renderWindCharts(popupEl, data) {
   // ======================================================
   // RENDERÖIDÄÄN PANEELIT
   // ======================================================
-  renderWindObsChart(popupEl, windSeries, gustObs);
-  renderWindFcChart(popupEl, windSeries, gustFc);
+  renderWindObsChart(popupEl, windSeries, gustObs, obsStart, obsEnd);
+  renderWindFcChart(popupEl, windSeries, gustFc, fcStart, fcEnd);
+
 }
 
 
 // ======================================================
 // HAVAINTOPANEELI
 // ======================================================
-function renderWindObsChart(popupEl, windSeries, gustObs) {
+function renderWindObsChart(
+  popupEl,
+  windSeries,
+  gustObs,
+  obsStart,
+  obsEnd
+)
+ {
 console.log("Obs canvas:", popupEl.querySelector('canvas[data-type="wind-obs"]'));
 console.log("Rendering OBS chart");
 
@@ -211,7 +219,14 @@ console.log("Rendering OBS chart");
 // ======================================================
 // ENNUSTEPANEELI
 // ======================================================
-function renderWindFcChart(popupEl, windSeries, gustFc) {
+function renderWindFcChart(
+  popupEl,
+  windSeries,
+  gustFc,
+  fcStart,
+  fcEnd
+)
+ {
 console.log("Fc canvas:", popupEl.querySelector('canvas[data-type="wind-fc"]'));
 console.log("Rendering FC chart");
 
