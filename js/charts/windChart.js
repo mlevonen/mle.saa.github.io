@@ -192,29 +192,28 @@ console.log("Rendering OBS chart");
         nowLine: true
       },
       scales: {
-        scales: {
-        x: {
-          type: "time",
-          min: obsStart,
-          max: obsEnd,
-          time: {
-            unit: "hour",
-            displayFormats: { hour: "HH" }
-          },
-          ticks: {
-            autoSkip: true,
-            maxTicksLimit: 7,
-            maxRotation: 0,
-            minRotation: 0
-          }
-        },
+      x: {
+      type: "time",
+      min: obsStart,
+      max: obsEnd,
+      time: {
+      unit: "hour",
+      displayFormats: { hour: "HH" }
+      },
+      ticks: {
+      autoSkip: true,
+      maxTicksLimit: 7,
+      maxRotation: 0,
+      minRotation: 0
+    }
+  },
+  y: { min: 0, max: yMax }
+}
 
-        y: { min: 0, max: yMax }
-        }
       }
     },
-  }
-)}
+  
+
 
 // ======================================================
 // ENNUSTEPANEELI
@@ -279,23 +278,23 @@ console.log("Rendering FC chart");
       },
 
       scales: {
-        x: {
-          type: "time",
-          min: fcStart,
-          max: fcEnd,
-          time: {
-            unit: "hour",
-            displayFormats: { hour: "HH" }
-          },
-          ticks: {
-            autoSkip: true,
-            maxTicksLimit: 9,
-            maxRotation: 0,
-            minRotation: 0
-          }
-        },
-        y: { min: 0, max: yMax }
+      x: {
+      type: "time",
+      min: fcStart,
+      max: fcEnd,
+      time: {
+      unit: "hour",
+      displayFormats: { hour: "HH" }
+      },
+      ticks: {
+      autoSkip: true,
+      maxTicksLimit: 9,
+      maxRotation: 0,
+      minRotation: 0
+      }
+      },
+      y: { min: 0, max: yMax }
       }
     },
   })
-  };
+  })}
