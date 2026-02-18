@@ -285,7 +285,7 @@ new Chart(canvas, {
         max: fcEnd,
         time: {
           unit: "hour",
-          stepSize: 1,
+          stepSize: 2,
           displayFormats: { hour: "HH" }
         },
         ticks: {
