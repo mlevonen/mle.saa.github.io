@@ -118,6 +118,7 @@ stations.forEach(station => {
 
   marker.bindPopup(`
     <div class="popup-title">${station.name}</div>
+    <div class="popup-extras"></div>
 
     <div><strong>Lämpötila</strong></div>
     <canvas
