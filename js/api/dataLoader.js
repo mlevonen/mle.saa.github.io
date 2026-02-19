@@ -138,6 +138,29 @@ export async function loadPopupData({
   const fcWindGust = harmonie?.fcWindGust ?? [];
 
   // ==========================
+  // SÄÄSYMBOLI (smartsymbol)
+  // ==========================
+
+  let obsWeatherSymbol = [];
+
+  try {
+    const symbolUrl =
+      `https://opendata.fmi.fi/wfs?service=WFS&version=2.0.0` +
+      `&request=getFeature` +
+      `&storedquery_id=fmi::observations::weather::timevaluepair` +
+      `&fmisid=${weatherFmisid}` +
+      `&parameters=smartsymbol`;
+
+    const response = await fetch(symbolUrl);
+    const text = await response.text();
+
+    obsWeatherSymbol = parseTimeValuePair(text, "smartsymbol");
+
+  } catch (err) {
+    console.warn("Weather symbol fetch failed:", err);
+  }
+
+  // ==========================
   // VEDENKORKEUS
   // ==========================
   if (seaLevelFmisid) {
@@ -160,6 +183,7 @@ export async function loadPopupData({
     obsTemp,
     obsWindSpeed,
     obsPressure,
+    obsWeatherSymbol,
     seaLevel,
     sunTimes,
     fcTemp,
@@ -169,7 +193,27 @@ export async function loadPopupData({
     obsWindGust
 
   };
-  console.log("Forecast sample:", fcWindSpeed?.slice(0,3));
+  // ======================================================
+  // PARSE TIMEVALUEPAIR (FMI WFS)
+  // ======================================================
+
+  function parseTimeValuePair(xmlText, parameterName) {
+
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(xmlText, "text/xml");
+
+    const points = [
+      ...xml.querySelectorAll("wml2\\:MeasurementTVP")
+    ];
+
+    return points.map(p => ({
+      utctime: p.querySelector("wml2\\:time")?.textContent,
+      [parameterName]: Number(
+        p.querySelector("wml2\\:value")?.textContent
+      )
+    })).filter(p => p.utctime);
+  }
+
 
   popupCache[cacheKey] = data;
   return data;
