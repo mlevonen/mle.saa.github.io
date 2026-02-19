@@ -160,6 +160,7 @@ export async function loadPopupData({
     obsTemp,
     obsWindSpeed,
     obsPressure,
+    obsWeatherSymbol,
     seaLevel,
     sunTimes,
     fcTemp,
