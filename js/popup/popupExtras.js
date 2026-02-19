@@ -93,7 +93,7 @@ export function renderPopupExtras(popupEl, data) {
   const container = popupEl.querySelector(".popup-extras");
   if (!container) return;
 
-  container.innerHTML = "";
+  
 
   // ==========================
   // SÄÄSYMBOLI
@@ -101,23 +101,19 @@ export function renderPopupExtras(popupEl, data) {
 
   const rawSymbol = data.obsWeatherSymbol?.at(-1)?.smartsymbol;
 
-  let symbolCode = null;
-
   if (rawSymbol != null) {
-    symbolCode = rawSymbol >= 100
-      ? rawSymbol % 100
-      : rawSymbol;
-  }
+  const symbolCode = rawSymbol >= 100
+    ? rawSymbol % 100
+    : rawSymbol;
 
-
-  if (symbolCode != null) {
   const icon = document.createElement("img");
   icon.src = `./js/assets/weather-icons/${symbolCode}.svg`;
   icon.className = "popup-weather-icon";
   icon.alt = "Sääsymboli";
 
-  container.prepend(icon);
+  container.prepend(icon); // tärkeä: prepend, ei append
   }
+
 
 
   // ... kaikki muu mittarikoodi ...
