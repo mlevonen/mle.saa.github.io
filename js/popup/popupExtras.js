@@ -1,3 +1,5 @@
+console.log("Extras container:", container);
+console.log("Data:", data);
 
 import { getLatestObservation } from "../utils/helpers.js";
 
@@ -187,6 +189,6 @@ export function renderPopupExtras(popupEl, data) {
     `;
   }
 
-  
+
   container.innerHTML = html;
 }
