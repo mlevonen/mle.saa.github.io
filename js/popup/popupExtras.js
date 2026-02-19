@@ -28,8 +28,6 @@ function getSmartSymbol(series) {
   return latestPast ? latestPast.smartsymbol : null;
 }
 
-console.log("Extras container:", container);
-console.log("Data:", data);
 
 function getPressure(series) {
   if (!Array.isArray(series) || series.length === 0) return null;
@@ -85,7 +83,8 @@ function getSeaLevel(data) {
 /* =========================================================
    RENDER
    ========================================================= */
-
+console.log("Extras container:", container);
+console.log("Data:", data);
 export function renderPopupExtras(popupEl, data) {
 
   const container = popupEl.querySelector(".popup-extras");
