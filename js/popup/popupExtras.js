@@ -187,5 +187,6 @@ export function renderPopupExtras(popupEl, data) {
     `;
   }
 
+  
   container.innerHTML = html;
 }
