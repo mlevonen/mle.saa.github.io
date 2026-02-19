@@ -167,6 +167,8 @@ if (weatherFmisid) {
     obsWeatherSymbol =
       parseTimeValuePair(text, "smartsymbol");
 
+console.log("Parsed smartsymbol:", obsWeatherSymbol.slice(0,3));
+
   } catch (err) {
     console.warn("Weather symbol fetch failed:", err);
   }
