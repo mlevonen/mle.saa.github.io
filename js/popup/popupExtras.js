@@ -93,7 +93,7 @@ export function renderPopupExtras(popupEl, data) {
   const container = popupEl.querySelector(".popup-extras");
   if (!container) return;
 
-  
+  container.innerHTML = ""; // tyhjennetään alussa vain kerran
 
   // ==========================
   // SÄÄSYMBOLI
@@ -102,24 +102,20 @@ export function renderPopupExtras(popupEl, data) {
   const rawSymbol = data.obsWeatherSymbol?.at(-1)?.smartsymbol;
 
   if (rawSymbol != null) {
-  const symbolCode = rawSymbol >= 100
-    ? rawSymbol % 100
-    : rawSymbol;
+    const symbolCode = rawSymbol >= 100
+      ? rawSymbol % 100
+      : rawSymbol;
 
-  const icon = document.createElement("img");
-  icon.src = `./js/assets/weather-icons/${symbolCode}.svg`;
-  icon.className = "popup-weather-icon";
-  icon.alt = "Sääsymboli";
-
-  container.prepend(icon); // tärkeä: prepend, ei append
+    container.innerHTML += `
+      <div class="popup-inline-item">
+        <img
+          src="./js/assets/weather-icons/${symbolCode}.svg"
+          class="popup-weather-icon"
+          alt="Sääsymboli"
+        />
+      </div>
+    `;
   }
-
-
-
-  // ... kaikki muu mittarikoodi ...
-
-  container.innerHTML += `</div>`;
-
 
 
 /* === ILMANPAINE === */
@@ -197,5 +193,4 @@ if (data.sunTimes) {
   `;
 }
 
-container.innerHTML += `</div>`;
 }
