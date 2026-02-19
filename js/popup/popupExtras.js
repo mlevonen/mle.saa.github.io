@@ -9,10 +9,6 @@ import { getLatestObservation } from "../utils/helpers.js";
 function getSmartSymbol(series) {
   if (!Array.isArray(series)) return null;
 
-console.log("Extras container:", container);
-console.log("Data:", data);
-
-
   const now = Date.now();
 
   const latestPast = [...series]
@@ -32,6 +28,8 @@ console.log("Data:", data);
   return latestPast ? latestPast.smartsymbol : null;
 }
 
+console.log("Extras container:", container);
+console.log("Data:", data);
 
 function getPressure(series) {
   if (!Array.isArray(series) || series.length === 0) return null;
