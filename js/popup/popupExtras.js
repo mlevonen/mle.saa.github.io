@@ -83,12 +83,19 @@ function getSeaLevel(data) {
 /* =========================================================
    RENDER
    ========================================================= */
-console.log("Extras container:", container);
-console.log("Data:", data);
+
 export function renderPopupExtras(popupEl, data) {
 
+  console.log("=== renderPopupExtras CALLED ===");
+  console.log("popupEl:", popupEl);
+  console.log("data:", data);
+
   const container = popupEl.querySelector(".popup-extras");
+
+  console.log("Extras container:", container);
+
   if (!container) return;
+
 
   let html = "";
 
