@@ -213,8 +213,7 @@ stations.forEach(async station => {
     baseMarker.setIcon(icon);
 
   } catch (err) {
-    console.error("Wind marker error:", err);
-    console.log("Base marker:", station.fmisid, baseMarker);
+
 
   }
 
