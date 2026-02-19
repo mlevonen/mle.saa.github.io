@@ -152,22 +152,26 @@ export async function loadPopupData({
 
   let obsWeatherSymbol = [];
 
+if (weatherFmisid) {
   try {
     const symbolUrl =
       `https://opendata.fmi.fi/wfs?service=WFS&version=2.0.0` +
       `&request=getFeature` +
       `&storedquery_id=fmi::observations::weather::timevaluepair` +
       `&fmisid=${weatherFmisid}` +
-      `&parameters=smartsymbol`;
+      `&parameters=ws_10min,t2m,smartsymbol`;
 
     const response = await fetch(symbolUrl);
     const text = await response.text();
 
-    obsWeatherSymbol = parseTimeValuePair(text, "smartsymbol");
+    obsWeatherSymbol =
+      parseTimeValuePair(text, "smartsymbol");
 
   } catch (err) {
     console.warn("Weather symbol fetch failed:", err);
   }
+}
+
 
   // ==========================
   // VEDENKORKEUS
