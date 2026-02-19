@@ -50,8 +50,6 @@ export async function fetchObservationSeriesByFmisid(fmisid) {
 }
 
 
-
-
 import {
   fetchTimeSeriesREST,
   fetchForecastREST
