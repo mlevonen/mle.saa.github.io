@@ -1,6 +1,3 @@
-console.log("Extras container:", container);
-console.log("Data:", data);
-
 import { getLatestObservation } from "../utils/helpers.js";
 
 /* =========================================================
@@ -11,6 +8,10 @@ import { getLatestObservation } from "../utils/helpers.js";
 
 function getSmartSymbol(series) {
   if (!Array.isArray(series)) return null;
+
+console.log("Extras container:", container);
+console.log("Data:", data);
+
 
   const now = Date.now();
 
