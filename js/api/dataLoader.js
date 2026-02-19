@@ -212,24 +212,33 @@ console.log("Parsed smartsymbol:", obsWeatherSymbol.slice(0,3));
   // PARSE TIMEVALUEPAIR (FMI WFS)
   // ======================================================
 
-  function parseTimeValuePair(xmlText, parameterName) {
+ function parseTimeValuePair(xmlText, parameterName) {
 
-    const parser = new DOMParser();
-    const xml = parser.parseFromString(xmlText, "text/xml");
+  const parser = new DOMParser();
+  const xml = parser.parseFromString(xmlText, "text/xml");
 
-    const points = [
-      ...xml.querySelectorAll("wml2\\:MeasurementTVP")
-    ];
+  const seriesList =
+    xml.getElementsByTagNameNS("*", "MeasurementTimeseries");
 
-    return points.map(p => ({
-      utctime: p.querySelector("wml2\\:time")?.textContent,
-      [parameterName]: Number(
-        p.querySelector("wml2\\:value")?.textContent
-      )
-    })).filter(p => p.utctime);
+  for (let s of seriesList) {
+
+    const id = s.getAttributeNS("*", "id");
+
+    if (id && id.includes(parameterName)) {
+
+      const points =
+        s.getElementsByTagNameNS("*", "MeasurementTVP");
+
+      return Array.from(points).map(p => ({
+        utctime:
+          p.getElementsByTagNameNS("*", "time")[0]?.textContent,
+        [parameterName]: Number(
+          p.getElementsByTagNameNS("*", "value")[0]?.textContent
+        )
+      })).filter(p => p.utctime);
+    }
   }
 
-
-  popupCache[cacheKey] = data;
-  return data;
+  return [];
 }
+
