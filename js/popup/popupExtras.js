@@ -30,9 +30,6 @@ function getSmartSymbol(series) {
 }
 
 
-
-
-
 function getPressure(series) {
   if (!Array.isArray(series) || series.length === 0) return null;
 
@@ -93,11 +90,9 @@ export function renderPopupExtras(popupEl, data) {
   const container = popupEl.querySelector(".popup-extras");
   if (!container) return;
 
-  container.innerHTML = ""; // tyhjennetään alussa vain kerran
+  let html = "";
 
-  // ==========================
-  // SÄÄSYMBOLI
-  // ==========================
+  /* === SÄÄSYMBOLI === */
 
   const rawSymbol = data.obsWeatherSymbol?.at(-1)?.smartsymbol;
 
@@ -106,7 +101,7 @@ export function renderPopupExtras(popupEl, data) {
       ? rawSymbol % 100
       : rawSymbol;
 
-    container.innerHTML += `
+    html += `
       <div class="popup-inline-item">
         <img
           src="./js/assets/weather-icons/${symbolCode}.svg"
@@ -117,80 +112,80 @@ export function renderPopupExtras(popupEl, data) {
     `;
   }
 
+  /* === ILMANPAINE === */
 
-/* === ILMANPAINE === */
+  const pressure = getPressure(data.obsPressure);
+  const trend = getPressureTrend(data.obsPressure);
 
-const pressure = getPressure(data.obsPressure);
-const trend = getPressureTrend(data.obsPressure);
+  if (pressure != null) {
+    const arrow =
+      trend === "up" ? "▲" :
+      trend === "down" ? "▼" :
+      "▬";
 
-if (pressure != null) {
-  const arrow =
-    trend === "up" ? "▲" :
-    trend === "down" ? "▼" :
-    "▬";
+    html += `
+      <div class="popup-inline-item">
+        <img
+          src="./js/assets/icons/pressure.svg"
+          class="popup-icon"
+          alt="Ilmanpaine"
+        />
+        ${pressure.toFixed(0)} hPa ${arrow}
+      </div>
+    `;
+  }
 
-  container.innerHTML += `
-    <div class="popup-inline-item">
-      <img
-        src="./js/assets/icons/pressure.svg"
-        class="popup-icon"
-        alt="Ilmanpaine"
-      />
-      ${pressure.toFixed(0)} hPa ${arrow}
-    </div>
-  `;
-}
+  /* === MERIVEDENKORKEUS === */
 
-/* === MERIVEDENKORKEUS === */
+  const sea = getSeaLevel(data);
 
-const sea = getSeaLevel(data);
+  if (sea != null) {
+    html += `
+      <div class="popup-inline-item">
+        <img
+          src="./js/assets/icons/sealevel.svg"
+          class="popup-icon"
+          alt="Merivedenkorkeus"
+        />
+        ${sea > 0 ? "+" : ""}${sea} cm
+      </div>
+    `;
+  }
 
-if (sea != null) {
-  container.innerHTML += `
-    <div class="popup-inline-item">
-      <img
-        src="./js/assets/icons/sealevel.svg"
-        class="popup-icon"
-        alt="Merivedenkorkeus"
-      />
-      ${sea > 0 ? "+" : ""}${sea} cm
-    </div>
-  `;
-}
+  /* === AURINGONNOUSU / -LASKU === */
 
-/* === AURINGONNOUSU / -LASKU === */
+  if (data.sunTimes) {
+    const sunrise = new Date(data.sunTimes.sunrise);
+    const sunset = new Date(data.sunTimes.sunset);
 
-if (data.sunTimes) {
-  const sunrise = new Date(data.sunTimes.sunrise);
-  const sunset = new Date(data.sunTimes.sunset);
+    const format = (d) =>
+      d.toLocaleTimeString("fi-FI", {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
 
-  const format = (d) =>
-    d.toLocaleTimeString("fi-FI", {
-      hour: "2-digit",
-      minute: "2-digit"
-    });
+    html += `
+      <div class="popup-inline-item">
+        <img
+          src="./js/assets/icons/sunrise.svg"
+          class="popup-icon"
+          alt="Auringonnousu"
+        />
+        ${format(sunrise)}
+      </div>
+    `;
 
-  container.innerHTML += `
-    <div class="popup-inline-item">
-      <img
-        src="./js/assets/icons/sunrise.svg"
-        class="popup-icon"
-        alt="Auringonnousu"
-      />
-      ${format(sunrise)}
-    </div>
-  `;
+    html += `
+      <div class="popup-inline-item">
+        <img
+          src="./js/assets/icons/sunset.svg"
+          class="popup-icon"
+          alt="Auringonlasku"
+        />
+        ${format(sunset)}
+      </div>
+    `;
+  }
 
-  container.innerHTML += `
-    <div class="popup-inline-item">
-      <img
-        src="./js/assets/icons/sunset.svg"
-        class="popup-icon"
-        alt="Auringonlasku"
-      />
-      ${format(sunset)}
-    </div>
-  `;
-}
-
+  container.innerHTML = html;
 }
