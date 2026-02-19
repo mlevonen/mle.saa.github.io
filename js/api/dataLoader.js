@@ -137,6 +137,7 @@ export async function loadPopupData({
   const fcWindDir = harmonie?.fcWindDir ?? [];
   const fcWindGust = harmonie?.fcWindGust ?? [];
 
+  
   // ==========================
   // SÄÄSYMBOLI (smartsymbol)
   // ==========================
