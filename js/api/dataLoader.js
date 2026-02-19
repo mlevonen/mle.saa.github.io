@@ -1,14 +1,12 @@
 export async function fetchObservationSeriesByFmisid(fmisid) {
 
-const params = new URLSearchParams({
-  service: "WFS",
-  version: "2.0.0",
-  request: "GetFeature",
-  storedquery_id: "fmi::observations::weather::timevaluepair",
-  fmisid,
-  parameters: "ws_10min,t2m,wd_10min,wg_10min,pressure,smartsymbol"
-});
-
+  const params = new URLSearchParams({
+    service: "WFS",
+    version: "2.0.0",
+    request: "GetFeature",
+    storedquery_id: "fmi::observations::weather::simple",
+    fmisid
+  });
 
   const res = await fetch(`https://opendata.fmi.fi/wfs/fin?${params}`);
 
