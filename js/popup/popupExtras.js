@@ -96,6 +96,10 @@ export function renderPopupExtras(popupEl, data) {
 
   if (!container) return;
 
+  console.log("obsWeatherSymbol:", data.obsWeatherSymbol);
+  console.log("obsPressure:", data.obsPressure);
+  console.log("seaLevel:", data.seaLevel);
+
 
   let html = "";
 
