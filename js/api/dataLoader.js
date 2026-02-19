@@ -240,5 +240,4 @@ console.log("Parsed smartsymbol:", obsWeatherSymbol.slice(0,3));
   }
 
   return [];
-}
-
+}}
