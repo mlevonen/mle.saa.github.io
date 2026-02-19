@@ -41,6 +41,7 @@ export async function fetchObservationSeriesByFmisid(fmisid) {
     if (name === "wd_10min") series[time].winddirection = value;
     if (name === "wg_10min") series[time].windgust = value;
     if (name === "pressure") series[time].pressurehpa = value;
+    if (name === "smartsymbol") series[time].smartsymbol = value;
   });
 
   return Object.values(series).sort(
@@ -123,6 +124,15 @@ export async function loadPopupData({
         utctime: p.utctime,
         pressurehpa: p.pressure
       }));
+
+      obsWindSpeed = series.map(p => ({
+      utctime: p.utctime,
+      windspeedms: p.windspeedms,
+      winddirection: p.winddirection,
+      windgust: p.windgust,
+      smartsymbol: p.smartsymbol   // ← LISÄÄ TÄMÄ
+      }));
+
     }
   }
 
@@ -137,7 +147,7 @@ export async function loadPopupData({
   const fcWindDir = harmonie?.fcWindDir ?? [];
   const fcWindGust = harmonie?.fcWindGust ?? [];
 
-  
+
   // ==========================
   // SÄÄSYMBOLI (smartsymbol)
   // ==========================

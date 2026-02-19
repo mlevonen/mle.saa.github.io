@@ -105,7 +105,9 @@ export function renderPopupExtras(popupEl, data) {
 
   /* === SÄÄSYMBOLI === */
 
-  const rawSymbol = data.obsWeatherSymbol?.at(-1)?.smartsymbol;
+  const rawSymbol =
+  data.obsWindSpeed?.at(-1)?.smartsymbol;
+
 
   if (rawSymbol != null) {
     const symbolCode = rawSymbol >= 100
