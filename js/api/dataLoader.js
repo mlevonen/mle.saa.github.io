@@ -1,11 +1,11 @@
-export async function fetchObservationSeriesByFmisid(fmisid) {
+export async function fetchObservationSeriesByPlace(place) {
 
   const params = new URLSearchParams({
     service: "WFS",
     version: "2.0.0",
     request: "GetFeature",
     storedquery_id: "fmi::observations::weather::timevaluepair",
-    fmisid,
+    place,
     parameters: "ws_10min,t2m,smartsymbol,pressure,wd_10min,wg_10min"
   });
 
@@ -14,7 +14,10 @@ export async function fetchObservationSeriesByFmisid(fmisid) {
   const res = await fetch(url);
   const text = await res.text();
 
-  return parseTimeValuePairSeries(text);
+  const parsed = parseTimeValuePairSeries(text);
+  console.log("PARSED SERIES:", parsed.slice(0,5));
+
+  return parsed;
 }
 
 import {
@@ -69,7 +72,7 @@ export async function loadPopupData({
   if (weatherFmisid) {
 
     const series =
-      await fetchObservationSeriesByFmisid(weatherFmisid);
+    await fetchObservationSeriesByPlace(weatherPlace);
 
     if (Array.isArray(series) && series.length) {
 
