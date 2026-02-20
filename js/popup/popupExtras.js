@@ -124,7 +124,8 @@ export function renderPopupExtras(popupEl, data) {
       </div>
     `;
   }
-
+console.log("Raw symbol:", rawSymbol);
+console.log("Symbol code:", symbolCode);
   /* === ILMANPAINE === */
 
   const pressure = getPressure(data.obsPressure);
