@@ -55,6 +55,10 @@ function getPressureTrend(series, hours = 3) {
   if (diff > 0.5) return "up";
   if (diff < -0.5) return "down";
   return "steady";
+
+  const pressure = getPressure(data.obsPressure);
+  const trend = getPressureTrend(data.obsPressure);
+
 }
 
 
@@ -123,13 +127,12 @@ export function renderPopupExtras(popupEl, data) {
         />
       </div>
     `;
-  }
-console.log("Raw symbol:", rawSymbol);
+    console.log("Raw symbol:", rawSymbol);
 console.log("Symbol code:", symbolCode);
+  }
+
   /* === ILMANPAINE === */
 
-  const pressure = getPressure(data.obsPressure);
-  const trend = getPressureTrend(data.obsPressure);
 
   if (pressure != null) {
     const arrow =
