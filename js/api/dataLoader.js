@@ -147,7 +147,7 @@ export async function loadPopupData({
   };
   popupCache[cacheKey] = data;
   return data;
-
+}
 // ======================================================
 // PARSE TIMEVALUEPAIR SERIES
 // ======================================================
@@ -204,4 +204,4 @@ function parseTimeValuePairSeries(xmlText) {
     .sort((a, b) =>
       new Date(a.utctime) - new Date(b.utctime)
     );
-}}
+}
