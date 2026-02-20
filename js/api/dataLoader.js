@@ -4,51 +4,18 @@ export async function fetchObservationSeriesByFmisid(fmisid) {
     service: "WFS",
     version: "2.0.0",
     request: "GetFeature",
-    storedquery_id: "fmi::observations::weather::simple",
-    fmisid
+    storedquery_id: "fmi::observations::weather::timevaluepair",
+    fmisid,
+    parameters: "ws_10min,t2m,smartsymbol,pressure,wd_10min,wg_10min"
   });
 
-  const res = await fetch(`https://opendata.fmi.fi/wfs/fin?${params}`);
+  const url = `https://opendata.fmi.fi/wfs/fin?${params}`;
 
-  if (!res.ok) throw new Error("Observation fetch failed");
+  const res = await fetch(url);
+  const text = await res.text();
 
-  const xmlText = await res.text();
-  const parser = new DOMParser();
-  const xml = parser.parseFromString(xmlText, "application/xml");
-
-  const elements = [...xml.getElementsByTagName("BsWfs:BsWfsElement")];
-
-  const series = {};
-
-  elements.forEach(el => {
-
-    const timeNode = el.getElementsByTagName("BsWfs:Time")[0];
-    const nameNode = el.getElementsByTagName("BsWfs:ParameterName")[0];
-    const valueNode = el.getElementsByTagName("BsWfs:ParameterValue")[0];
-
-    if (!timeNode || !nameNode || !valueNode) return;
-
-    const time = timeNode.textContent;
-    const name = nameNode.textContent;
-    const value = Number(valueNode.textContent);
-
-    if (!series[time]) {
-      series[time] = { utctime: time };
-    }
-
-    if (name === "t2m") series[time].temperature = value;
-    if (name === "ws_10min") series[time].windspeedms = value;
-    if (name === "wd_10min") series[time].winddirection = value;
-    if (name === "wg_10min") series[time].windgust = value;
-    if (name === "pressure") series[time].pressurehpa = value;
-    if (name === "smartsymbol") series[time].smartsymbol = value;
-  });
-
-  return Object.values(series).sort(
-    (a, b) => new Date(a.utctime) - new Date(b.utctime)
-  );
+  return parseTimeValuePairSeries(text);
 }
-
 
 import {
   fetchTimeSeriesREST,
@@ -212,32 +179,57 @@ console.log("Parsed smartsymbol:", obsWeatherSymbol.slice(0,3));
   // PARSE TIMEVALUEPAIR (FMI WFS)
   // ======================================================
 
- function parseTimeValuePair(xmlText, parameterName) {
+ function parseTimeValuePairSeries(xmlText) {
 
   const parser = new DOMParser();
   const xml = parser.parseFromString(xmlText, "text/xml");
 
-  const seriesList =
+  const seriesNodes =
     xml.getElementsByTagNameNS("*", "MeasurementTimeseries");
 
-  for (let s of seriesList) {
+  const combined = {};
+
+  for (let s of seriesNodes) {
 
     const id = s.getAttributeNS("*", "id");
+    if (!id) continue;
 
-    if (id && id.includes(parameterName)) {
+    let name = null;
 
-      const points =
-        s.getElementsByTagNameNS("*", "MeasurementTVP");
+    if (id.includes("ws_10min")) name = "windspeedms";
+    else if (id.includes("wd_10min")) name = "winddirection";
+    else if (id.includes("wg_10min")) name = "windgust";
+    else if (id.includes("t2m")) name = "temperature";
+    else if (id.includes("pressure")) name = "pressure";
+    else if (id.includes("smartsymbol")) name = "smartsymbol";
 
-      return Array.from(points).map(p => ({
-        utctime:
-          p.getElementsByTagNameNS("*", "time")[0]?.textContent,
-        [parameterName]: Number(
-          p.getElementsByTagNameNS("*", "value")[0]?.textContent
-        )
-      })).filter(p => p.utctime);
+    if (!name) continue;
+
+    const points =
+      s.getElementsByTagNameNS("*", "MeasurementTVP");
+
+    for (let p of points) {
+
+      const time =
+        p.getElementsByTagNameNS("*", "time")[0]?.textContent;
+
+      const value =
+        p.getElementsByTagNameNS("*", "value")[0]?.textContent;
+
+      if (!time) continue;
+
+      if (!combined[time]) {
+        combined[time] = { utctime: time };
+      }
+
+      combined[time][name] =
+        value === "NaN" ? null : Number(value);
     }
   }
 
-  return [];
-}}
+  return Object.values(combined)
+    .sort((a, b) =>
+      new Date(a.utctime) - new Date(b.utctime)
+    );
+    }
+}
