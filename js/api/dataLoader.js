@@ -162,51 +162,53 @@ function parseTimeValuePairSeries(xmlText) {
   const parser = new DOMParser();
   const xml = parser.parseFromString(xmlText, "text/xml");
 
-  const seriesNodes =
-    xml.getElementsByTagNameNS("*", "MeasurementTimeseries");
-
   const combined = {};
 
-  for (let s of seriesNodes) {
+  const seriesNodes = xml.querySelectorAll("*|MeasurementTimeseries");
 
-    const id = s.getAttributeNS("*", "id");
-    if (!id) continue;
+  seriesNodes.forEach(series => {
 
-    let name = null;
+    const id = series.getAttribute("gml:id") || "";
+    if (!id) return;
 
-    if (id.includes("ws_10min")) name = "windspeedms";
-    else if (id.includes("wd_10min")) name = "winddirection";
-    else if (id.includes("wg_10min")) name = "windgust";
-    else if (id.includes("t2m")) name = "temperature";
-    else if (id.includes("pressure")) name = "pressure";
-    else if (id.includes("smartsymbol")) name = "smartsymbol";
+    let key = null;
 
-    if (!name) continue;
+    if (id.includes("ws_10min")) key = "windspeedms";
+    else if (id.includes("wd_10min")) key = "winddirection";
+    else if (id.includes("wg_10min")) key = "windgust";
+    else if (id.includes("t2m")) key = "temperature";
+    else if (id.includes("pressure")) key = "pressure";
+    else if (id.includes("smartsymbol")) key = "smartsymbol";
 
-    const points =
-      s.getElementsByTagNameNS("*", "MeasurementTVP");
+    if (!key) return;
 
-    for (let p of points) {
+    const points = series.querySelectorAll("*|MeasurementTVP");
 
-      const time =
-        p.getElementsByTagNameNS("*", "time")[0]?.textContent;
+    points.forEach(point => {
 
-      const value =
-        p.getElementsByTagNameNS("*", "value")[0]?.textContent;
+      const timeNode = point.querySelector("*|time");
+      const valueNode = point.querySelector("*|value");
 
-      if (!time) continue;
+      if (!timeNode || !valueNode) return;
+
+      const time = timeNode.textContent;
+      const value = valueNode.textContent;
 
       if (!combined[time]) {
         combined[time] = { utctime: time };
       }
 
-      combined[time][name] =
+      combined[time][key] =
         value === "NaN" ? null : Number(value);
-    }
-  }
+    });
+  });
 
-  return Object.values(combined)
+  const result = Object.values(combined)
     .sort((a, b) =>
       new Date(a.utctime) - new Date(b.utctime)
     );
+
+  console.log("PARSED SERIES LENGTH:", result.length);
+
+  return result;
 }
