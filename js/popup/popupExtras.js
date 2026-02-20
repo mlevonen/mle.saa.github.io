@@ -121,7 +121,7 @@ export function renderPopupExtras(popupEl, data) {
     html += `
       <div class="popup-inline-item">
         <img
-          src="./js/assets/weather-icons/${symbolCode}.svg"
+          src="./js/assets/weather-icons/SmartSymbol/${symbolCode}.svg"
           class="popup-weather-icon"
           alt="Sääsymboli"
         />
