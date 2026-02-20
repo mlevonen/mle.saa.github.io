@@ -102,7 +102,7 @@ export async function loadPopupData({
       windgust: p.windgust,
       smartsymbol: p.smartsymbol   // ← LISÄÄ TÄMÄ
       }));
-    console.log("Response status:", res.status);
+    
     }
   }
 
