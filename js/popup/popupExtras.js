@@ -132,7 +132,8 @@ export function renderPopupExtras(popupEl, data) {
 
   /* === ILMANPAINE === */
 
-
+  const pressure = getPressure(data.obsPressure);
+  const trend = getPressureTrend(data.obsPressure);
   if (pressure != null) {
     const arrow =
       trend === "up" ? "▲" :
