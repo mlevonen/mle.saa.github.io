@@ -1,11 +1,13 @@
-export async function fetchObservationSeriesByPlace(place) {
+export async function fetchObservationSeriesByFmisid(fmisid) {
+console.log("Using FMISID:", fmisid);
+  if (!fmisid) return [];
 
   const params = new URLSearchParams({
     service: "WFS",
     version: "2.0.0",
     request: "GetFeature",
     storedquery_id: "fmi::observations::weather::timevaluepair",
-    place,
+    fmisid,
     parameters: "ws_10min,t2m,smartsymbol,pressure,wd_10min,wg_10min"
   });
 
@@ -71,8 +73,8 @@ export async function loadPopupData({
   // ==========================
   if (weatherFmisid) {
 
-    const series =
-    await fetchObservationSeriesByPlace(weatherPlace);
+  const series =
+  await fetchObservationSeriesByFmisid(weatherFmisid);
 
     if (Array.isArray(series) && series.length) {
 
@@ -100,7 +102,7 @@ export async function loadPopupData({
       windgust: p.windgust,
       smartsymbol: p.smartsymbol   // ← LISÄÄ TÄMÄ
       }));
-
+    console.log("Response status:", res.status);
     }
   }
 
