@@ -145,7 +145,8 @@ export async function loadPopupData({
     obsWindGust
 
   };
-
+  popupCache[cacheKey] = data;
+  return data;
 
 // ======================================================
 // PARSE TIMEVALUEPAIR SERIES
