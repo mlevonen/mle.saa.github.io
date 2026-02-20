@@ -114,35 +114,6 @@ export async function loadPopupData({
 
 
   // ==========================
-  // SÄÄSYMBOLI (smartsymbol)
-  // ==========================
-
-  let obsWeatherSymbol = [];
-
-if (weatherFmisid) {
-  try {
-    const symbolUrl =
-      `https://opendata.fmi.fi/wfs?service=WFS&version=2.0.0` +
-      `&request=getFeature` +
-      `&storedquery_id=fmi::observations::weather::timevaluepair` +
-      `&fmisid=${weatherFmisid}` +
-      `&parameters=ws_10min,t2m,smartsymbol`;
-
-    const response = await fetch(symbolUrl);
-    const text = await response.text();
-
-    obsWeatherSymbol =
-      parseTimeValuePair(text, "smartsymbol");
-
-console.log("Parsed smartsymbol:", obsWeatherSymbol.slice(0,3));
-
-  } catch (err) {
-    console.warn("Weather symbol fetch failed:", err);
-  }
-}
-
-
-  // ==========================
   // VEDENKORKEUS
   // ==========================
   if (seaLevelFmisid) {
@@ -165,7 +136,6 @@ console.log("Parsed smartsymbol:", obsWeatherSymbol.slice(0,3));
     obsTemp,
     obsWindSpeed,
     obsPressure,
-    obsWeatherSymbol,
     seaLevel,
     sunTimes,
     fcTemp,
@@ -175,11 +145,13 @@ console.log("Parsed smartsymbol:", obsWeatherSymbol.slice(0,3));
     obsWindGust
 
   };
-  // ======================================================
-  // PARSE TIMEVALUEPAIR (FMI WFS)
-  // ======================================================
 
- function parseTimeValuePairSeries(xmlText) {
+}
+// ======================================================
+// PARSE TIMEVALUEPAIR SERIES
+// ======================================================
+
+function parseTimeValuePairSeries(xmlText) {
 
   const parser = new DOMParser();
   const xml = parser.parseFromString(xmlText, "text/xml");
@@ -231,5 +203,4 @@ console.log("Parsed smartsymbol:", obsWeatherSymbol.slice(0,3));
     .sort((a, b) =>
       new Date(a.utctime) - new Date(b.utctime)
     );
-    }
 }
