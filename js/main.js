@@ -188,6 +188,11 @@ stations.forEach(async station => {
       seaLevelFmisid: null
     });
 
+    const seaLevelFmisid =
+    station.type === "sealevel" || station.type === "coastal"
+    ? station.fmisid
+    : null;
+
     const latestWind = data.obsWindSpeed?.at(-1);
     if (!latestWind) return;
 
