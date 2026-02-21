@@ -174,7 +174,14 @@ stations.forEach(station => {
  });
 
 // FEATURED-LOOPPI
+
 stations.forEach(async station => {
+
+  if (station.type === "coastal") {
+  renderCoastalPopup(e.popup, station);
+  return;
+  }
+
 
   if (!station.featured) return;
 
@@ -588,5 +595,25 @@ map.on("popupopen", async e => {
 }
 
 });
+
+// ==========================
+// Coastal popup render
+// ==========================
+
+function renderCoastalPopup(popup, station) {
+  const el = popup.getElement();
+  if (!el) return;
+
+  el.innerHTML = `
+    <h3>${station.name}</h3>
+    <canvas id="waterlevel-chart"></canvas>
+    <canvas id="watertemp-chart"></canvas>
+  `;
+
+  loadCoastalData(station).then(data => {
+    drawWaterLevelChart("waterlevel-chart", data.waterLevel);
+    drawWaterTempChart("watertemp-chart", data.waterTemp);
+  });
+}
 
 
