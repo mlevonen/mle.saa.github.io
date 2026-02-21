@@ -177,12 +177,6 @@ stations.forEach(station => {
 
 stations.forEach(async station => {
 
-  if (station.type === "coastal") {
-  renderCoastalPopup(e.popup, station);
-  return;
-  }
-
-
   if (!station.featured) return;
 
   try {
@@ -554,6 +548,10 @@ map.on("popupopen", async e => {
   const station = e.popup._source.station;
   if (!station) return;
 
+  if (station.type === "coastal") {
+  renderCoastalPopup(e.popup, station);
+  return;
+  }
 
   // 🔑 2. Lat/lon edelleen canvasista (ok)
   const lat = canvases[0].dataset.lat;
