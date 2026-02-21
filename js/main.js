@@ -174,7 +174,6 @@ stations.forEach(station => {
  });
 
 // FEATURED-LOOPPI
-
 stations.forEach(async station => {
 
   if (!station.featured) return;
@@ -188,11 +187,6 @@ stations.forEach(async station => {
       weatherFmisid: station.fmisid,
       seaLevelFmisid: null
     });
-
-    const seaLevelFmisid =
-    station.type === "sealevel" || station.type === "coastal"
-    ? station.fmisid
-    : null;
 
     const latestWind = data.obsWindSpeed?.at(-1);
     if (!latestWind) return;
@@ -548,10 +542,6 @@ map.on("popupopen", async e => {
   const station = e.popup._source.station;
   if (!station) return;
 
-  if (station.type === "coastal") {
-  renderCoastalPopup(e.popup, station);
-  return;
-  }
 
   // 🔑 2. Lat/lon edelleen canvasista (ok)
   const lat = canvases[0].dataset.lat;
@@ -593,30 +583,5 @@ map.on("popupopen", async e => {
 }
 
 });
-
-// ==========================
-// Coastal popup render
-// ==========================
-
-async function renderCoastalPopup(popup, station) {
-
-  const el = popup.getElement();
-  if (!el) return;
-
-  el.innerHTML = `
-    <h3>${station.name}</h3>
-    <canvas id="waterlevel-chart"></canvas>
-  `;
-
-  const data = await loadPopupData({
-    lat: station.lat,
-    lon: station.lon,
-    weatherPlace: null,
-    weatherFmisid: null,
-    seaLevelFmisid: station.fmisid
-  });
-
-  drawWaterLevelChart("waterlevel-chart", data.seaLevel);
-}
 
 
