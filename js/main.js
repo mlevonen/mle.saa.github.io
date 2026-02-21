@@ -598,20 +598,25 @@ map.on("popupopen", async e => {
 // Coastal popup render
 // ==========================
 
-function renderCoastalPopup(popup, station) {
+async function renderCoastalPopup(popup, station) {
+
   const el = popup.getElement();
   if (!el) return;
 
   el.innerHTML = `
     <h3>${station.name}</h3>
     <canvas id="waterlevel-chart"></canvas>
-    <canvas id="watertemp-chart"></canvas>
   `;
 
-  loadCoastalData(station).then(data => {
-    drawWaterLevelChart("waterlevel-chart", data.waterLevel);
-    drawWaterTempChart("watertemp-chart", data.waterTemp);
+  const data = await loadPopupData({
+    lat: station.lat,
+    lon: station.lon,
+    weatherPlace: null,
+    weatherFmisid: null,
+    seaLevelFmisid: station.fmisid
   });
+
+  drawWaterLevelChart("waterlevel-chart", data.seaLevel);
 }
 
 
