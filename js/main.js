@@ -678,42 +678,42 @@ async function renderSeaLevelPopup(popup, station) {
 
   } else {
 
-  const tempCtx = contentEl
+ const tempCtx = contentEl
   .querySelector("#sea-temp-chart")
   .getContext("2d");
 
   new Chart(tempCtx, {
-  type: "line",
-  data: {
-    labels: series.waterTemp.map(p =>
-      new Date(p.time).toLocaleTimeString("fi-FI", {
-        hour: "2-digit",
-        minute: "2-digit"
-      })
-    ),
-    datasets: [{
-    labels: series.waterTemp.map(p => {
-      const d = new Date(p.time);
-      return d.getHours().toString().padStart(2, "0");
-    }),
-  options: {
-    responsive: true,
-    plugins: {
-      legend: { display: false }
+    type: "line",
+    data: {
+      labels: series.waterTemp.map(p => {
+        const d = new Date(p.time);
+        return d.getHours().toString().padStart(2, "0");
+      }),
+      datasets: [{
+        label: "Veden lämpötila (°C)",
+        data: series.waterTemp.map(p => p.value),
+        tension: 0.3,
+        pointRadius: 0,
+      }]
     },
-  scales: {
-    y: {
-      title: {
-        display: true,
-        text: "°C"
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false }
       },
-      grid: {
-        color: ctx => ctx.tick.value === 0 ? "#000" : "#eee",
-        lineWidth: ctx => ctx.tick.value === 0 ? 2 : 1
+      scales: {
+        y: {
+          title: {
+            display: true,
+            text: "°C"
+          },
+          grid: {
+            color: ctx => ctx.tick.value === 0 ? "#000" : "#eee",
+            lineWidth: ctx => ctx.tick.value === 0 ? 2 : 1
+          }
+        }
       }
     }
-  }
-  }
 });
 
 }}
