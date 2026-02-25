@@ -590,10 +590,13 @@ map.on("popupopen", async e => {
 });
 function renderSeaLevelPopup(popup, station) {
 
-  const el = popup.getElement();
-  if (!el) return;
+  const popupEl = popup.getElement();
+  if (!popupEl) return;
 
-  el.innerHTML = `
+  const contentEl = popupEl.querySelector(".leaflet-popup-content");
+  if (!contentEl) return;
+
+  contentEl.innerHTML = `
     <h3>${station.name}</h3>
     <p>Sealevel popup toimii</p>
   `;
