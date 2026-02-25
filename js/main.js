@@ -601,8 +601,9 @@ async function renderSeaLevelPopup(popup, station) {
 
   
   contentEl.innerHTML = `
+    <div style="width:460px;">
     <h3>${station.name}</h3>
-
+    
     <div style="margin-bottom: 16px;">
       <strong>Vedenkorkeus (havainto + ennuste)</strong>
       <canvas id="sea-level-chart" height="180"></canvas>
@@ -612,9 +613,10 @@ async function renderSeaLevelPopup(popup, station) {
       <strong>Veden lämpötila</strong>
       <canvas id="sea-temp-chart" height="140"></canvas>
     </div>
+    </div>
   `;
-  contentEl.style.width = "480px";
   
+
   const series = await fetchSeaLevelSeries(station.fmisid);
 
 
