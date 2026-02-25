@@ -613,22 +613,6 @@ async function renderSeaLevelPopup(popup, station) {
   `;
   const series = await fetchSeaLevelSeries(station.fmisid);
   console.log(series);
-  
-  // 🔵 Haetaan data
-  try {
 
-    const data = await loadPopupData({
-      lat: station.lat,
-      lon: station.lon,
-      weatherPlace: null,
-      weatherFmisid: null,
-      seaLevelFmisid: station.fmisid
-    });
-
-    console.log("Sealevel data:", data);
-
-  } catch (err) {
-    console.error("Sealevel popup error:", err);
-  }
 }
 
