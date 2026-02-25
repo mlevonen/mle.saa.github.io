@@ -599,6 +599,8 @@ async function renderSeaLevelPopup(popup, station) {
   const contentEl = popupEl.querySelector(".leaflet-popup-content");
   if (!contentEl) return;
 
+  contentEl.style.width = "420px";
+
   contentEl.innerHTML = `
     <h3>${station.name}</h3>
 
@@ -618,9 +620,6 @@ async function renderSeaLevelPopup(popup, station) {
   const ctx = contentEl
     .querySelector("#sea-level-chart")
     .getContext("2d");
-
-  contentEl.style.width = "420px";
-
 
   new Chart(ctx, {
     type: "line",
