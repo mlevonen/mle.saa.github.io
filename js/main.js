@@ -613,6 +613,7 @@ async function renderSeaLevelPopup(popup, station) {
   `;
   const series = await fetchSeaLevelSeries(station.fmisid);
   console.log(series);
+  console.log("ParameterName:", name);
 
   const ctx = contentEl
     .querySelector("#sea-level-chart")
