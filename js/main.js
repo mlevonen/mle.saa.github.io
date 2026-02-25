@@ -614,5 +614,41 @@ async function renderSeaLevelPopup(popup, station) {
   const series = await fetchSeaLevelSeries(station.fmisid);
   console.log(series);
 
+  const ctx = contentEl
+    .querySelector("#sea-level-chart")
+    .getContext("2d");
+
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: series.waterLevel.map(p => 
+        new Date(p.time).toLocaleTimeString("fi-FI", {
+          hour: "2-digit",
+          minute: "2-digit"
+        })
+      ),
+      datasets: [{
+        label: "Vedenkorkeus (cm)",
+        data: series.waterLevel.map(p => p.value),
+        tension: 0.3,
+        pointRadius: 0,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: {
+          title: {
+            display: true,
+            text: "cm"
+          }
+        }
+      }
+    }
+  });
+
 }
 
