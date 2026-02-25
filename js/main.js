@@ -650,5 +650,41 @@ async function renderSeaLevelPopup(popup, station) {
     }
   });
 
+  const tempCtx = contentEl
+  .querySelector("#sea-temp-chart")
+  .getContext("2d");
+
+  new Chart(tempCtx, {
+  type: "line",
+  data: {
+    labels: series.waterTemp.map(p =>
+      new Date(p.time).toLocaleTimeString("fi-FI", {
+        hour: "2-digit",
+        minute: "2-digit"
+      })
+    ),
+    datasets: [{
+      label: "Veden lämpötila (°C)",
+      data: series.waterTemp.map(p => p.value),
+      tension: 0.3,
+      pointRadius: 0,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      y: {
+        title: {
+          display: true,
+          text: "°C"
+        }
+      }
+    }
+  }
+});
+
 }
 
