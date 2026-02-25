@@ -598,7 +598,16 @@ function renderSeaLevelPopup(popup, station) {
 
   contentEl.innerHTML = `
     <h3>${station.name}</h3>
-    <p>Sealevel popup toimii</p>
+
+    <div style="margin-bottom: 16px;">
+      <strong>Vedenkorkeus (havainto + ennuste)</strong>
+      <canvas id="sea-level-chart" height="120"></canvas>
+    </div>
+
+    <div>
+      <strong>Veden lämpötila</strong>
+      <canvas id="sea-temp-chart" height="100"></canvas>
+    </div>
   `;
 }
 
