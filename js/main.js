@@ -675,14 +675,18 @@ async function renderSeaLevelPopup(popup, station) {
     plugins: {
       legend: { display: false }
     },
-    scales: {
-      y: {
-        title: {
-          display: true,
-          text: "°C"
-        }
+  scales: {
+    y: {
+      title: {
+        display: true,
+        text: "cm"
+      },
+      grid: {
+        color: ctx => ctx.tick.value === 0 ? "#000" : "#eee",
+        lineWidth: ctx => ctx.tick.value === 0 ? 2 : 1
       }
     }
+  }
   }
 });
 
