@@ -4,6 +4,7 @@ import { renderTemperatureChart } from "./charts/temperatureChart.js";
 import { renderWindCharts } from "./charts/windChart.js";
 import { renderPopupExtras } from "./popup/popupExtras.js";
 import "./charts/plugins.js";
+import { fetchSeaLevelSeries } from "./sealevel.js";
 
 
 "use strict";
@@ -595,6 +596,9 @@ async function renderSeaLevelPopup(popup, station) {
 
   const contentEl = popupEl.querySelector(".leaflet-popup-content");
   if (!contentEl) return;
+
+  const series = await fetchSeaLevelSeries(station.fmisid);
+  console.log(series);
 
   contentEl.innerHTML = `
     <h3>${station.name}</h3>
