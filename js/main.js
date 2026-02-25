@@ -601,7 +601,7 @@ async function renderSeaLevelPopup(popup, station) {
 
   
   contentEl.innerHTML = `
-    <div style="width:460px;">
+    <div style="width:480px;">
     <h3>${station.name}</h3>
     
     <div style="margin-bottom: 16px;">
