@@ -84,56 +84,42 @@ export async function fetchSeaLevelSeries(fmisid) {
   );
 
   const waterLevel = [];
+  const waterLevelN2000 = [];
   const waterTemp = [];
 
-  for (const el of elements) {
+for (const el of elements) {
 
-    const timeNode = el.querySelector(
-      "BsWfs\\:Time, Time"
-    );
+  const timeNode = el.querySelector(
+    "BsWfs\\:Time, Time"
+  );
 
-    const nameNode = el.querySelector(
-      "BsWfs\\:ParameterName, ParameterName"
-    );
+  const nameNode = el.querySelector(
+    "BsWfs\\:ParameterName, ParameterName"
+  );
 
-    const waterLevelN2000 = [];
+  const valueNode = el.querySelector(
+    "BsWfs\\:ParameterValue, ParameterValue"
+  );
 
-    const valueNode = el.querySelector(
-      "BsWfs\\:ParameterValue, ParameterValue"
-    );
+  if (!timeNode || !nameNode || !valueNode) continue;
 
-    if (!timeNode || !nameNode || !valueNode) continue;
+  const time = timeNode.textContent.trim();
+  const name = nameNode.textContent.trim();
+  const value = Number(valueNode.textContent);
 
-    const time = timeNode.textContent.trim();
-    const name = nameNode.textContent.trim();
-    const value = Number(valueNode.textContent);
+  if (!Number.isFinite(value)) continue;
 
-    if (!Number.isFinite(value)) continue;
-
-    // 🔵 Vedenkorkeus (mm → cm)
-    if (name === "WATLEV") {
-      waterLevel.push({
-        time,
-        value: value / 10
-      });
-    }
-
-    // 🔵 N2000 (mm → cm)
-    if (name === "WLEVN2K_PT1S_INSTANT") {
-      waterLevelN2000.push({
-        time,
-        value: value / 10
-      });
-    }
-
-    // 🔵 Veden lämpötila (°C)
-    if (name === "TW_PT1H_AVG" || name === "TW") {
-      waterTemp.push({
-        time,
-        value
-      });
-    }
+  if (name === "WATLEV") {
+    waterLevel.push({ time, value: value / 10 });
   }
 
-  return { waterLevel, waterTemp };
+  if (name === "WLEVN2K_PT1S_INSTANT") {
+    waterLevelN2000.push({ time, value: value / 10 });
+  }
+
+  if (name.startsWith("TW")) {
+    waterTemp.push({ time, value });
+  }
 }
+
+return { waterLevel, waterLevelN2000, waterTemp }};
