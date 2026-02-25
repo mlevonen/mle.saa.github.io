@@ -542,6 +542,10 @@ map.on("popupopen", async e => {
   const station = e.popup._source.station;
   if (!station) return;
 
+  if (station.type === "sealevel") {
+  renderSeaLevelPopup(e.popup, station);
+  return;
+  }
 
   // 🔑 2. Lat/lon edelleen canvasista (ok)
   const lat = canvases[0].dataset.lat;
@@ -583,5 +587,14 @@ map.on("popupopen", async e => {
 }
 
 });
+function renderSeaLevelPopup(popup, station) {
 
+  const el = popup.getElement();
+  if (!el) return;
+
+  el.innerHTML = `
+    <h3>${station.name}</h3>
+    <p>Sealevel popup toimii</p>
+  `;
+}
 
