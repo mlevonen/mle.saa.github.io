@@ -545,8 +545,6 @@ map.on("popupopen", async e => {
   return;
   }
 
-  const series = await fetchSeaLevelSeries(station.fmisid);
-  console.log(series);
 
   const canvases = popupEl.querySelectorAll("canvas");
   if (!canvases.length) return;
@@ -613,7 +611,9 @@ async function renderSeaLevelPopup(popup, station) {
       <canvas id="sea-temp-chart" height="100"></canvas>
     </div>
   `;
-
+  const series = await fetchSeaLevelSeries(station.fmisid);
+  console.log(series);
+  
   // 🔵 Haetaan data
   try {
 
