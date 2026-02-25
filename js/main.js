@@ -599,19 +599,18 @@ async function renderSeaLevelPopup(popup, station) {
   const contentEl = popupEl.querySelector(".leaflet-popup-content");
   if (!contentEl) return;
 
-  contentEl.style.width = "420px";
-
+  
   contentEl.innerHTML = `
     <h3>${station.name}</h3>
 
     <div style="margin-bottom: 16px;">
       <strong>Vedenkorkeus (havainto + ennuste)</strong>
-      <canvas id="sea-level-chart" height="120"></canvas>
+      <canvas id="sea-level-chart" height="180"></canvas>
     </div>
 
     <div>
       <strong>Veden lämpötila</strong>
-      <canvas id="sea-temp-chart" height="100"></canvas>
+      <canvas id="sea-temp-chart" height="140"></canvas>
     </div>
   `;
   const series = await fetchSeaLevelSeries(station.fmisid);
