@@ -588,7 +588,7 @@ map.on("popupopen", async e => {
 }
 
 });
-function renderSeaLevelPopup(popup, station) {
+async function renderSeaLevelPopup(popup, station) {
 
   const popupEl = popup.getElement();
   if (!popupEl) return;
@@ -609,5 +609,22 @@ function renderSeaLevelPopup(popup, station) {
       <canvas id="sea-temp-chart" height="100"></canvas>
     </div>
   `;
+
+  // 🔵 Haetaan data
+  try {
+
+    const data = await loadPopupData({
+      lat: station.lat,
+      lon: station.lon,
+      weatherPlace: null,
+      weatherFmisid: null,
+      seaLevelFmisid: station.fmisid
+    });
+
+    console.log("Sealevel data:", data);
+
+  } catch (err) {
+    console.error("Sealevel popup error:", err);
+  }
 }
 
