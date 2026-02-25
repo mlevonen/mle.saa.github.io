@@ -545,7 +545,6 @@ map.on("popupopen", async e => {
   return;
   }
 
-
   const canvases = popupEl.querySelectorAll("canvas");
   if (!canvases.length) return;
 
@@ -590,6 +589,8 @@ map.on("popupopen", async e => {
 }
 
 });
+
+
 async function renderSeaLevelPopup(popup, station) {
 
   const popupEl = popup.getElement();
@@ -651,6 +652,28 @@ async function renderSeaLevelPopup(popup, station) {
     }
   });
 
+
+  const validTemp = series.waterTemp
+    .filter(p => Number.isFinite(p.value));
+
+  if (validTemp.length === 0) {
+
+    const tempContainer = contentEl
+      .querySelector("#sea-temp-chart")
+      .parentElement;
+
+    tempContainer.innerHTML = `
+      <strong>Veden lämpötila</strong>
+      <div style="padding:20px 0; color:#666; font-size:14px;">
+        Veden lämpötiladataa ei saatavilla
+      </div>
+    `;
+
+  } else {
+
+
+
+
   const tempCtx = contentEl
   .querySelector("#sea-temp-chart")
   .getContext("2d");
@@ -691,5 +714,4 @@ async function renderSeaLevelPopup(popup, station) {
   }
 });
 
-}
-
+}}
