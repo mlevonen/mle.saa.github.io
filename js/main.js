@@ -627,12 +627,10 @@ async function renderSeaLevelPopup(popup, station) {
   new Chart(ctx, {
     type: "line",
     data: {
-      labels: series.waterLevel.map(p =>
-        new Date(p.time).toLocaleTimeString("fi-FI", {
-          hour: "2-digit",
-          minute: "2-digit"
-        })
-      ),
+    labels: series.waterLevel.map(p => {
+      const d = new Date(p.time);
+      return d.getHours().toString().padStart(2, "0");
+    }),
       datasets: [
         {
           label: "Vedenkorkeus (cm)",
@@ -694,12 +692,10 @@ async function renderSeaLevelPopup(popup, station) {
       })
     ),
     datasets: [{
-      label: "Veden lämpötila (°C)",
-      data: series.waterTemp.map(p => p.value),
-      tension: 0.3,
-      pointRadius: 0,
-    }]
-  },
+    labels: series.waterTemp.map(p => {
+      const d = new Date(p.time);
+      return d.getHours().toString().padStart(2, "0");
+    }),
   options: {
     responsive: true,
     plugins: {
@@ -709,7 +705,7 @@ async function renderSeaLevelPopup(popup, station) {
     y: {
       title: {
         display: true,
-        text: "cm"
+        text: "°C"
       },
       grid: {
         color: ctx => ctx.tick.value === 0 ? "#000" : "#eee",
