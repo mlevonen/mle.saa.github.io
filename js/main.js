@@ -545,6 +545,9 @@ map.on("popupopen", async e => {
   return;
   }
 
+  const series = await fetchSeaLevelSeries(station.fmisid);
+  console.log(series);
+
   const canvases = popupEl.querySelectorAll("canvas");
   if (!canvases.length) return;
 
@@ -596,9 +599,6 @@ async function renderSeaLevelPopup(popup, station) {
 
   const contentEl = popupEl.querySelector(".leaflet-popup-content");
   if (!contentEl) return;
-
-  const series = await fetchSeaLevelSeries(station.fmisid);
-  console.log(series);
 
   contentEl.innerHTML = `
     <h3>${station.name}</h3>
