@@ -619,6 +619,9 @@ async function renderSeaLevelPopup(popup, station) {
     .querySelector("#sea-level-chart")
     .getContext("2d");
 
+  contentEl.style.width = "420px";
+
+
   new Chart(ctx, {
     type: "line",
     data: {
