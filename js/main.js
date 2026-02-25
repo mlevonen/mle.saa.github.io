@@ -535,9 +535,6 @@ map.on("popupopen", async e => {
   const popupEl = e.popup.getElement();
   if (!popupEl) return;
 
-  const canvases = popupEl.querySelectorAll("canvas");
-  if (!canvases.length) return;
-
   // 🔑 1. Ota feature.properties ENSIN
   const station = e.popup._source.station;
   if (!station) return;
@@ -546,6 +543,10 @@ map.on("popupopen", async e => {
   renderSeaLevelPopup(e.popup, station);
   return;
   }
+
+  const canvases = popupEl.querySelectorAll("canvas");
+  if (!canvases.length) return;
+
 
   // 🔑 2. Lat/lon edelleen canvasista (ok)
   const lat = canvases[0].dataset.lat;
