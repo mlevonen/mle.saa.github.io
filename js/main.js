@@ -613,6 +613,8 @@ async function renderSeaLevelPopup(popup, station) {
       <canvas id="sea-temp-chart" height="140"></canvas>
     </div>
   `;
+  contentEl.style.width = "480px";
+  
   const series = await fetchSeaLevelSeries(station.fmisid);
 
 
