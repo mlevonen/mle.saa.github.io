@@ -51,6 +51,11 @@ for (const el of elements) {
 console.warn("Sea level TW value not found for fmisid", fmisid);
 return null;}
 
+
+
+
+
+
 export async function fetchSeaLevelSeries(fmisid) {
 
   const params = new URLSearchParams({
@@ -91,6 +96,8 @@ export async function fetchSeaLevelSeries(fmisid) {
       "BsWfs\\:ParameterName, ParameterName"
     );
 
+    const waterLevelN2000 = [];
+
     const valueNode = el.querySelector(
       "BsWfs\\:ParameterValue, ParameterValue"
     );
@@ -106,6 +113,14 @@ export async function fetchSeaLevelSeries(fmisid) {
     // 🔵 Vedenkorkeus (mm → cm)
     if (name === "WATLEV") {
       waterLevel.push({
+        time,
+        value: value / 10
+      });
+    }
+
+    // 🔵 N2000 (mm → cm)
+    if (name === "WLEVN2K_PT1S_INSTANT") {
+      waterLevelN2000.push({
         time,
         value: value / 10
       });

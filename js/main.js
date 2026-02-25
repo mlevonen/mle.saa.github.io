@@ -613,8 +613,7 @@ async function renderSeaLevelPopup(popup, station) {
     </div>
   `;
   const series = await fetchSeaLevelSeries(station.fmisid);
-  console.log(series);
-  console.log("ParameterName:", name);
+
 
   const ctx = contentEl
     .querySelector("#sea-level-chart")
@@ -623,30 +622,35 @@ async function renderSeaLevelPopup(popup, station) {
   new Chart(ctx, {
     type: "line",
     data: {
-      labels: series.waterLevel.map(p => 
+      labels: series.waterLevel.map(p =>
         new Date(p.time).toLocaleTimeString("fi-FI", {
           hour: "2-digit",
           minute: "2-digit"
         })
       ),
-      datasets: [{
-        label: "Vedenkorkeus (cm)",
-        data: series.waterLevel.map(p => p.value),
-        tension: 0.3,
-        pointRadius: 0,
-      }]
+      datasets: [
+        {
+          label: "Vedenkorkeus (cm)",
+          data: series.waterLevel.map(p => p.value),
+          tension: 0.3,
+          pointRadius: 0,
+          borderWidth: 2
+        },
+        {
+          label: "N2000 (cm)",
+          data: series.waterLevelN2000.map(p => p.value),
+          tension: 0.3,
+          pointRadius: 0,
+          borderDash: [6, 4],
+          borderWidth: 2
+        }
+      ]
     },
     options: {
       responsive: true,
       plugins: {
-        legend: { display: false }
-      },
-      scales: {
-        y: {
-          title: {
-            display: true,
-            text: "cm"
-          }
+        legend: {
+          display: true
         }
       }
     }
@@ -670,9 +674,6 @@ async function renderSeaLevelPopup(popup, station) {
     `;
 
   } else {
-
-
-
 
   const tempCtx = contentEl
   .querySelector("#sea-temp-chart")
