@@ -337,15 +337,6 @@ const stations = [
 
   {
     type: "coastal",
-    id: "raasepori-jussarö",
-    name: "Raasepori Jussarö",
-    fmisid: 100965,
-    lat: 59.82,
-    lon: 23.57
-  },
-
-  {
-    type: "coastal",
     id: "hanko-russarö",
     name: "Hanko Russarö",
     fmisid: 100932,
