@@ -606,6 +606,27 @@ async function renderSeaLevelPopup(popup, station) {
 
     <h3 style="margin-top:0;">${station.name}</h3>
 
+    <div style="
+      display:flex;
+      gap:16px;
+      align-items:center;
+      font-size:15px;
+      margin-bottom:14px;
+    ">
+      <span>
+        <img src="icons/wave.svg" 
+             style="height:16px; vertical-align:middle; margin-right:4px;">
+        ${latestLevel !== null ? latestLevel + " cm" : "–"}
+      </span>
+
+      <span>
+        <img src="icons/thermometer.svg" 
+             style="height:16px; vertical-align:middle; margin-right:4px;">
+        ${latestTemp !== null ? latestTemp + " °C" : "–"}
+      </span>
+    </div>
+
+
     <div style="margin-bottom:20px;">
       <strong>Vedenkorkeus (havainto)</strong>
       <canvas id="sea-level-obs-chart" height="180"></canvas>
@@ -626,6 +647,15 @@ async function renderSeaLevelPopup(popup, station) {
   
 
   const series = await fetchSeaLevelSeries(station.fmisid);
+
+
+  //OTSIKKOINFOT
+  const latestLevel =
+  series.waterLevel.at(-1)?.value ?? null;
+
+  const latestTemp =
+  series.waterTemp.at(-1)?.value ?? null;
+
 
   const forecastData = await fetchSeaLevelForecast(station.fmisid);
 
