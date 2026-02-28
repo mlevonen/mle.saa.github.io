@@ -633,7 +633,7 @@ async function renderSeaLevelPopup(popup, station) {
           style="width:18px; height:18px;">
       ${latestTemp !== null ? latestTemp + " °C" : "–"}
     </span>
-
+    </div>
 
     <div style="margin-bottom:20px;">
       <strong>Vedenkorkeus (havainto)</strong>
