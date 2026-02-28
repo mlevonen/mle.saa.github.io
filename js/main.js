@@ -663,14 +663,20 @@ async function renderSeaLevelPopup(popup, station) {
       ]
 
     },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: {
-          display: true
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: true }
+        },
+        scales: {
+          y: {
+            title: {
+              display: true,
+              text: "cm"
+            }
+          }
         }
       }
-    }
   });
 
 
