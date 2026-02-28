@@ -5,6 +5,7 @@ import { renderWindCharts } from "./charts/windChart.js";
 import { renderPopupExtras } from "./popup/popupExtras.js";
 import "./charts/plugins.js";
 import { fetchSeaLevelSeries } from "./api/sealevel.js";
+import { fetchSeaLevelForecast } from "./sealevel.js";
 
 
 "use strict";
@@ -619,6 +620,7 @@ async function renderSeaLevelPopup(popup, station) {
 
   const series = await fetchSeaLevelSeries(station.fmisid);
 
+  const forecastData = await fetchSeaLevelForecast(station.fmisid);
 
   const ctx = contentEl
     .querySelector("#sea-level-chart")
@@ -646,7 +648,27 @@ async function renderSeaLevelPopup(popup, station) {
           pointRadius: 0,
           borderDash: [6, 4],
           borderWidth: 2
+        },
+
+        {
+          label: "Ennuste",
+          data: forecastData.forecast.map(p => p.value),
+          tension: 0.3,
+          pointRadius: 0,
+          borderDash: [4, 4],
+          borderWidth: 2
+        },
+
+        {
+          label: "Ennuste N2000",
+          data: forecastData.forecastN2000.map(p => p.value),
+          tension: 0.3,
+          pointRadius: 0,
+          borderDash: [2, 6],
+          borderWidth: 2
         }
+
+
       ]
     },
     options: {
