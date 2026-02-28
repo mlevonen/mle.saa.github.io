@@ -600,12 +600,21 @@ async function renderSeaLevelPopup(popup, station) {
   const contentEl = popupEl.querySelector(".leaflet-popup-content");
   if (!contentEl) return;
 
+  const series = await fetchSeaLevelSeries(station.fmisid);
+  const forecastData = await fetchSeaLevelForecast(station.fmisid);
+
+  //OTSIKKOINFOT
+  const latestLevel =
+  series.waterLevel.at(-1)?.value ?? null;
+
+  const latestTemp =
+  series.waterTemp.at(-1)?.value ?? null;
   
   contentEl.innerHTML = `
   <div style="width:460px;">
 
     <h3 style="margin-top:0;">${station.name}</h3>
-
+    
     <div style="
       display:flex;
       gap:16px;
@@ -614,15 +623,11 @@ async function renderSeaLevelPopup(popup, station) {
       margin-bottom:14px;
     ">
       <span>
-        <img src="icons/wave.svg" 
-             style="height:16px; vertical-align:middle; margin-right:4px;">
-        ${latestLevel !== null ? latestLevel + " cm" : "–"}
+        🌊 ${latestLevel !== null ? latestLevel + " cm" : "–"}
       </span>
 
       <span>
-        <img src="icons/thermometer.svg" 
-             style="height:16px; vertical-align:middle; margin-right:4px;">
-        ${latestTemp !== null ? latestTemp + " °C" : "–"}
+        🌡 ${latestTemp !== null ? latestTemp + " °C" : "–"}
       </span>
     </div>
 
@@ -645,21 +650,6 @@ async function renderSeaLevelPopup(popup, station) {
   </div>
   `;
   
-
-  const series = await fetchSeaLevelSeries(station.fmisid);
-
-
-  //OTSIKKOINFOT
-  const latestLevel =
-  series.waterLevel.at(-1)?.value ?? null;
-
-  const latestTemp =
-  series.waterTemp.at(-1)?.value ?? null;
-
-
-  const forecastData = await fetchSeaLevelForecast(station.fmisid);
-
-
 
   //HAVAINTOGRAAFIT
   const ctx = contentEl
