@@ -623,7 +623,7 @@ async function renderSeaLevelPopup(popup, station) {
       margin-bottom:14px;
     ">
     <span style="display:flex; align-items:center; gap:6px;">
-      <img src="/js/assets/icons/sealevel.svg"
+      <img src="/js/assets/icons/sea-level.svg"
           style="width:18px; height:18px;">
       ${latestLevel !== null ? latestLevel + " cm" : "–"}
     </span>
