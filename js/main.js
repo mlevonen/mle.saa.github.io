@@ -622,14 +622,17 @@ async function renderSeaLevelPopup(popup, station) {
       font-size:15px;
       margin-bottom:14px;
     ">
-      <span>
-        🌊 ${latestLevel !== null ? latestLevel + " cm" : "–"}
-      </span>
+    <span style="display:flex; align-items:center; gap:6px;">
+      <img src="/js/assets/icons/sealevel.svg"
+          style="width:18px; height:18px;">
+      ${latestLevel !== null ? latestLevel + " cm" : "–"}
+    </span>
 
-      <span>
-        🌡 ${latestTemp !== null ? latestTemp + " °C" : "–"}
-      </span>
-    </div>
+    <span style="display:flex; align-items:center; gap:6px;">
+      <img src="/js/assets/icons/temp2.svg"
+          style="width:18px; height:18px;">
+      ${latestTemp !== null ? latestTemp + " °C" : "–"}
+    </span>
 
 
     <div style="margin-bottom:20px;">
