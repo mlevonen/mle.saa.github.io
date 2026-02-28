@@ -602,19 +602,26 @@ async function renderSeaLevelPopup(popup, station) {
 
   
   contentEl.innerHTML = `
-    <div style="width:480px;">
-    <h3>${station.name}</h3>
-    
-    <div style="margin-bottom: 16px;">
-      <strong>Vedenkorkeus (havainto + ennuste)</strong>
-      <canvas id="sea-level-chart" height="180"></canvas>
+  <div style="width:460px;">
+
+    <h3 style="margin-top:0;">${station.name}</h3>
+
+    <div style="margin-bottom:20px;">
+      <strong>Vedenkorkeus (havainto)</strong>
+      <canvas id="sea-level-obs-chart" height="180"></canvas>
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <strong>Vedenkorkeus (ennuste)</strong>
+      <canvas id="sea-level-fc-chart" height="180"></canvas>
     </div>
 
     <div>
       <strong>Veden lämpötila</strong>
       <canvas id="sea-temp-chart" height="140"></canvas>
     </div>
-    </div>
+
+  </div>
   `;
   
 
@@ -622,8 +629,11 @@ async function renderSeaLevelPopup(popup, station) {
 
   const forecastData = await fetchSeaLevelForecast(station.fmisid);
 
+
+
+  //HAVAINTOGRAAFIT
   const ctx = contentEl
-    .querySelector("#sea-level-chart")
+    .querySelector("#sea-level-obs-chart")
     .getContext("2d");
 
   new Chart(ctx, {
@@ -648,34 +658,64 @@ async function renderSeaLevelPopup(popup, station) {
           pointRadius: 0,
           borderDash: [6, 4],
           borderWidth: 2
-        },
-
-        {
-          label: "Ennuste",
-          data: forecastData.forecast.map(p => p.value),
-          tension: 0.3,
-          pointRadius: 0,
-          borderDash: [4, 4],
-          borderWidth: 2
-        },
-
-        {
-          label: "Ennuste N2000",
-          data: forecastData.forecastN2000.map(p => p.value),
-          tension: 0.3,
-          pointRadius: 0,
-          borderDash: [2, 6],
-          borderWidth: 2
         }
 
-
       ]
+
     },
     options: {
       responsive: true,
       plugins: {
         legend: {
           display: true
+        }
+      }
+    }
+  });
+
+
+//ENNUSTEGRAAFIT
+
+  const fcCtx = contentEl
+    .querySelector("#sea-level-fc-chart")
+    .getContext("2d");
+
+  new Chart(fcCtx, {
+    type: "line",
+    data: {
+      labels: forecastData.forecast.map(p => {
+        const d = new Date(p.time);
+        return d.getHours().toString().padStart(2, "0");
+      }),
+      datasets: [
+        {
+          label: "Ennuste (cm)",
+          data: forecastData.forecast.map(p => p.value),
+          tension: 0.3,
+          pointRadius: 0,
+          borderWidth: 2
+        },
+        {
+          label: "Ennuste N2000 (cm)",
+          data: forecastData.forecastN2000.map(p => p.value),
+          tension: 0.3,
+          pointRadius: 0,
+          borderDash: [6, 4],
+          borderWidth: 2
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: true }
+      },
+      scales: {
+        y: {
+          title: {
+            display: true,
+            text: "cm"
+          }
         }
       }
     }
