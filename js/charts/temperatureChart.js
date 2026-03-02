@@ -1,7 +1,7 @@
 import { parseFmiUtc, interpolateTimeSeries } from "../utils/time.js";
 export function renderTemperatureChart(popupEl, data) {
   console.log("Chart temp data:", data.obsTemp);
-  console.log("Sample x:", obsPoints[0]);
+  
   const { obsTemp, fcTemp } = data;
 
   if (!Array.isArray(obsTemp)) return;
@@ -47,7 +47,8 @@ const rawFcPoints = Array.isArray(fcTemp)
     rawFcPoints.length >= 2
       ? interpolateTimeSeries(rawFcPoints, 30)
       : rawFcPoints;
-
+console.log("obsPoints sample:", obsPoints[0]);
+console.log("fcPoints sample:", fcPoints[0]);
 
   // ==========================
   // SILLAN LUONTI havainto → ennuste
