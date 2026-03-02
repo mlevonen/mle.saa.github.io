@@ -468,7 +468,7 @@ function getMarkerStyle(type) {
       return {
         radius: 5,
         color: "#cc7306",
-        fillColor: "#aecc06",
+        fillColor: "#cc7306",
         fillOpacity: 0.9,
         weight: 1
       };
