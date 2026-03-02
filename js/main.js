@@ -496,33 +496,30 @@ function getMarkerStyle(type) {
 //CREATEWINDICON
 function createWindIcon(speed, direction) {
 
-  const rotation = direction;
+  const roundedSpeed = Math.round(speed);
 
-  const svg = `
-    <svg width="36" height="36" viewBox="0 0 24 24"
-      style="
-        transform: rotate(${rotation}deg);
-        transform-origin: 50% 50%;
-      ">
-      <path d="M12 2 L12 16 M6 10 L12 16 L18 10"
-        stroke="#111"
-        stroke-width="2.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        fill="none"/>
-    </svg>
-  `;
+  // 🎨 Väri nopeuden mukaan
+  const color =
+    roundedSpeed < 5  ? "#4CAF50" :   // vihreä
+    roundedSpeed < 10 ? "#FFC107" :   // keltainen
+    roundedSpeed < 15 ? "#FF9800" :   // oranssi
+                       "#F44336";     // punainen
 
   return L.divIcon({
-    className: "wind-marker",
+    className: "wind-wrapper",
     html: `
-      <div class="wind-wrapper">
-        ${svg}
-        <div class="wind-speed">${speed.toFixed(0)}</div>
+      <div class="wind-marker" style="background:${color};">
+        <div class="wind-arrow"
+             style="transform: rotate(${direction}deg);">
+          ▲
+        </div>
+        <div class="wind-speed">
+          ${roundedSpeed}
+        </div>
       </div>
     `,
-    iconSize: [40, 40],
-    iconAnchor: [20, 20]
+    iconSize: [54, 54],
+    iconAnchor: [27, 27]
   });
 }
 
