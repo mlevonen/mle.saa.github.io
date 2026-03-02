@@ -286,8 +286,7 @@ const stations = [
     name: "Porvoo Kalbådagrund",
     fmisid: 101022,
     lat: 59.99,
-    lon: 25.6,
-    featured: true
+    lon: 25.6
   },
 
   {
@@ -305,7 +304,16 @@ const stations = [
     name: "Helsinki Harmaja",
     fmisid: 100996,
     lat: 60.11,
-    lon: 24.98,
+    lon: 24.98
+  },
+
+  {
+    type: "coastal",
+    id: "helsinki-helsingin-majakka",
+    name: "Helsinki Helsingin majakka",
+    fmisid: 101003,
+    lat: 59.95,
+    lon: 24.93,
     featured: true
   },
 
@@ -315,8 +323,7 @@ const stations = [
     name: "Kirkkonummi Mäkiluoto",
     fmisid: 100997,
     lat: 59.92,
-    lon: 24.35,
-    featured: true
+    lon: 24.35
   },
 
   {
@@ -325,8 +332,7 @@ const stations = [
     name: "Inkoo Bågaskär",
     fmisid: 100969,
     lat: 59.93,
-    lon: 24.01,
-    featured: true
+    lon: 24.01
   },
 
   {
@@ -345,8 +351,7 @@ const stations = [
     name: "Kemiönsaari Vänö",
     fmisid: 100945,
     lat: 59.87,
-    lon: 22.19,
-    featured: true
+    lon: 22.19
   },
 
   {
@@ -374,8 +379,7 @@ const stations = [
     name: "Turku Rajakari",
     fmisid: 100947,
     lat: 60.38,
-    lon: 22.1,
-    featured: true
+    lon: 22.1
   },
 
   {
@@ -395,8 +399,7 @@ const stations = [
     name: "Lumparland Långnäs satama",
     fmisid: 151048,
     lat: 60.12,
-    lon: 20.3,
-    featured: true
+    lon: 20.3
   },
 
   {
@@ -433,8 +436,7 @@ const stations = [
     name: "Hammarland Märket",
     fmisid: 100919,
     lat: 60.3,
-    lon: 19.13,
-    featured: true
+    lon: 19.13
   },
 
   {
@@ -511,8 +513,7 @@ const stations = [
     name: "Mustasaari Valassaaret",
     fmisid: 101464,
     lat: 63.44,
-    lon: 21.07,
-    featured: true
+    lon: 21.07
   },
 
   {
@@ -531,8 +532,7 @@ const stations = [
     name: "Kokkola Tankar",
     fmisid: 101661,
     lat: 63.95,
-    lon: 22.85,
-    featured: true
+    lon: 22.85
   },
 
   {
@@ -541,8 +541,7 @@ const stations = [
     name: "Kalajoki Ulkokalla",
     fmisid: 101673,
     lat: 64.33,
-    lon: 23.45,
-    featured: true
+    lon: 23.45
   },
 
   {
