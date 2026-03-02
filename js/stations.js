@@ -511,7 +511,8 @@ const stations = [
     name: "Mustasaari Valassaaret",
     fmisid: 101464,
     lat: 63.44,
-    lon: 21.07
+    lon: 21.07,
+    featured: true
   },
 
   {
@@ -530,7 +531,8 @@ const stations = [
     name: "Kokkola Tankar",
     fmisid: 101661,
     lat: 63.95,
-    lon: 22.85
+    lon: 22.85,
+    featured: true
   },
 
   {
@@ -539,7 +541,8 @@ const stations = [
     name: "Kalajoki Ulkokalla",
     fmisid: 101673,
     lat: 64.33,
-    lon: 23.45
+    lon: 23.45,
+    featured: true
   },
 
   {
