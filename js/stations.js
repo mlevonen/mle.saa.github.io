@@ -305,16 +305,7 @@ const stations = [
     name: "Helsinki Harmaja",
     fmisid: 100996,
     lat: 60.11,
-    lon: 24.98
-  },
-
-  {
-    type: "coastal",
-    id: "helsinki-helsingin-majakka",
-    name: "Helsinki Helsingin majakka",
-    fmisid: 101003,
-    lat: 59.95,
-    lon: 24.93,
+    lon: 24.98,
     featured: true
   },
 
