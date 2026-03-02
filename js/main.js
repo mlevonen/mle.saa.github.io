@@ -594,6 +594,8 @@ console.log("Wind fc canvas:", popupEl.querySelector('[data-type="wind-fc"]'));
 
     const marker = e.popup._source;
 
+console.log("Temp data:", data.obsTemp);
+
     marker.previewData = {
       temp: data.obsTemp?.at(-1)?.temperature ?? null,
       wind: data.obsWindSpeed?.at(-1)?.windspeedms ?? null,
