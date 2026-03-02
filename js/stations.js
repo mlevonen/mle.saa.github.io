@@ -286,7 +286,8 @@ const stations = [
     name: "Porvoo Kalbådagrund",
     fmisid: 101022,
     lat: 59.99,
-    lon: 25.6
+    lon: 25.6,
+    featured: true
   },
 
   {
