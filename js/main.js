@@ -49,7 +49,7 @@ stations.forEach(station => {
   if (station.type === "sealevel") {
 
     icon = L.icon({
-      iconUrl: "/js/assets/icons/sealevel.svg",
+      iconUrl: "/js/assets/icons/temp1.svg",
       iconSize: [28, 28],
       iconAnchor: [14, 14],
       popupAnchor: [0, -14]
