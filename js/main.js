@@ -500,10 +500,10 @@ function createWindIcon(speed, direction) {
 
   // 🎨 Väri nopeuden mukaan
   const color =
-    roundedSpeed < 5  ? "rgba(76,175,80,0.85)" :
-    roundedSpeed < 10 ? "rgba(255,193,7,0.85)" :
-    roundedSpeed < 15 ? "rgba(255,152,0,0.85)" :
-                        "rgba(244,67,54,0.85)";
+    roundedSpeed < 5  ? "rgba(76,175,80,0.65)" :
+    roundedSpeed < 10 ? "rgba(255,193,7,0.65)" :
+    roundedSpeed < 15 ? "rgba(255,152,0,0.65)" :
+                        "rgba(244,67,54,0.65)";
 
   return L.divIcon({
     className: "wind-wrapper",
