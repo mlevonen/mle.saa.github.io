@@ -83,6 +83,10 @@ stations.forEach(station => {
   if (station.type === "coastal") {
     coastalLayer.addLayer(marker);
   }
+  if (weatherLayer.getLayers().length > 0) {
+  map.fitBounds(weatherLayer.getBounds(), { padding: [30, 30] });
+  }
+ ;
 
 
   marker.previewData = null;
@@ -126,13 +130,6 @@ stations.forEach(station => {
   });
 
 
-  markerRegistry[station.fmisid] = marker;
-  marker.station = station;
-
-  });
-
-
-
   marker.bindPopup(`
     <div class="popup-title">${station.name}</div>
     <div class="popup-extras"></div>
@@ -172,23 +169,12 @@ stations.forEach(station => {
 
   `);
 
-  // Lisää oikeaan layeriin
-  if (station.type === "weather") {
-    weatherLayer.addLayer(marker);
-  }
+  markerRegistry[station.fmisid] = marker;
+  marker.station = station;
 
-  if (station.type === "sealevel") {
-    seaLevelLayer.addLayer(marker);
-  }
+  });
 
-  if (station.type === "coastal") {
-    coastalLayer.addLayer(marker);
-  }
- 
-  if (weatherLayer.getLayers().length > 0) {
-  map.fitBounds(weatherLayer.getBounds(), { padding: [30, 30] });
-  }
- ;
+
 
 // FEATURED-LOOPPI
 stations.forEach(async station => {
