@@ -568,6 +568,11 @@ map.on("popupopen", async e => {
   const weatherFmisid = station.fmisid ?? null;
   const seaLevelFmisid = null;
 
+console.log("Temp canvas:", popupEl.querySelector('[data-type="temp"]'));
+console.log("Wind obs canvas:", popupEl.querySelector('[data-type="wind-obs"]'));
+console.log("Wind fc canvas:", popupEl.querySelector('[data-type="wind-fc"]'));
+
+
   try {
 
     const data = await loadPopupData({
@@ -577,10 +582,6 @@ map.on("popupopen", async e => {
       weatherFmisid,
       seaLevelFmisid
     });
-
-console.log("Temp canvas:", popupEl.querySelector('[data-type="temp"]'));
-console.log("Wind obs canvas:", popupEl.querySelector('[data-type="wind-obs"]'));
-console.log("Wind fc canvas:", popupEl.querySelector('[data-type="wind-fc"]'));
 
     updatePopupTitles(popupEl, data);
     renderPopupExtras(popupEl, data);
