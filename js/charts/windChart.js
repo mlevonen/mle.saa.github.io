@@ -185,7 +185,8 @@ function renderWindObsChart(
       ]
     },
     options: {
-      responsive: false,
+      responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         legend: { display: false },
         windArrowPlugin: true,
@@ -272,7 +273,8 @@ new Chart(canvas, {
     ]
   },
   options: {
-    responsive: false,
+    responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
       windArrowPlugin: true
