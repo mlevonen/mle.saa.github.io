@@ -44,20 +44,39 @@ L.control.layers(null, {
 
 stations.forEach(station => {
 
+  let icon;
+
+  // 🔵 SEALEVEL → oma SVG-ikoni
+  if (station.type === "sealevel") {
+
+    icon = L.icon({
+      iconUrl: "/js/assets/icons/sealevel.svg",
+      iconSize: [28, 28],
+      iconAnchor: [14, 14],
+      popupAnchor: [0, -14]
+    });
+
+  } else {
+
+    // 🔵 Muut asemat → nykyinen dot-rakenne
+    icon = L.divIcon({
+      className: "station-dot",
+      html: `<div class="dot dot-${station.type}"></div>`,
+      iconSize: [12, 12],
+      iconAnchor: [6, 6]
+    });
+
+  }
+
   const marker = L.marker(
     [station.lat, station.lon],
-    {
-      icon: L.divIcon({
-        className: "station-dot",
-        html: `<div class="dot dot-${station.type}"></div>`,
-        iconSize: [12, 12],
-        iconAnchor: [6, 6]
-      })
-    }
+    { icon }
   ).addTo(map);
 
   markerRegistry[station.fmisid] = marker;
   marker.station = station;
+
+});
 
 
 
@@ -173,7 +192,7 @@ stations.forEach(station => {
   if (weatherLayer.getLayers().length > 0) {
   map.fitBounds(weatherLayer.getBounds(), { padding: [30, 30] });
   }
- });
+ ;
 
 // FEATURED-LOOPPI
 stations.forEach(async station => {
