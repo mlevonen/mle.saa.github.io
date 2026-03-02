@@ -46,7 +46,6 @@ stations.forEach(station => {
 
   let icon;
 
-  // 🔵 SEALEVEL → oma SVG-ikoni
   if (station.type === "sealevel") {
 
     icon = L.icon({
@@ -58,7 +57,6 @@ stations.forEach(station => {
 
   } else {
 
-    // 🔵 Muut asemat → nykyinen dot-rakenne
     icon = L.divIcon({
       className: "station-dot",
       html: `<div class="dot dot-${station.type}"></div>`,
@@ -68,27 +66,25 @@ stations.forEach(station => {
 
   }
 
+  // 🔵 LUODAAN marker TÄSSÄ
   const marker = L.marker(
     [station.lat, station.lon],
     { icon }
   ).addTo(map);
 
+  // 🔵 NYT marker on olemassa
+  marker.previewData = null;
+
+  marker.bindTooltip("", {
+    direction: "top",
+    offset: [0, -8],
+    opacity: 0.9
+  });
+
   markerRegistry[station.fmisid] = marker;
   marker.station = station;
 
 });
-
-
-
-
-  // 🔹 Hover preview
-    marker.previewData = null;
-
-    marker.bindTooltip("", {
-      direction: "top",
-      offset: [0, -8],
-      opacity: 0.9
-    });
 
     marker.on("mouseover", function () {
 
