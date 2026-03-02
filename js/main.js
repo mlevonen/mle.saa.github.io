@@ -547,12 +547,14 @@ console.log("Popup source:", e.popup._source);
 console.log("Popup element:", popupEl);
 console.log("Canvas count:", popupEl.querySelectorAll("canvas").length);
 
-  const popupEl = e.popup.getElement();
-  if (!popupEl) return;
 
   // 🔑 1. Ota feature.properties ENSIN
   const station = e.popup._source.station;
   if (!station) return;
+
+  const popupEl = e.popup.getElement();
+  if (!popupEl) return;
+
 
   if (station.type === "sealevel") {
   renderSeaLevelPopup(e.popup, station);
