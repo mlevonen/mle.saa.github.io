@@ -324,7 +324,8 @@ const stations = [
     name: "Kirkkonummi Mäkiluoto",
     fmisid: 100997,
     lat: 59.92,
-    lon: 24.35
+    lon: 24.35,
+    featured: true
   },
 
   {
@@ -333,7 +334,8 @@ const stations = [
     name: "Inkoo Bågaskär",
     fmisid: 100969,
     lat: 59.93,
-    lon: 24.01
+    lon: 24.01,
+    featured: true
   },
 
   {
