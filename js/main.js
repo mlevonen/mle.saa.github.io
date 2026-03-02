@@ -44,60 +44,34 @@ L.control.layers(null, {
 
 stations.forEach(station => {
 
-  let icon;
-
-  if (station.type === "sealevel") {
-
-    icon = L.icon({
-      iconUrl: "/js/assets/icons/temp1.svg",
-      iconSize: [32, 32],
-      iconAnchor: [16, 16],
-      popupAnchor: [0, -14]
-    });
-
-  } else {
-
-    icon = L.divIcon({
-      className: "station-dot",
-      html: `<div class="dot dot-${station.type}"></div>`,
-      iconSize: [12, 12],
-      iconAnchor: [6, 6]
-    });
-
-  }
-
   const marker = L.marker(
     [station.lat, station.lon],
-    { icon }
+    {
+      icon: L.divIcon({
+        className: "station-dot",
+        html: `<div class="dot dot-${station.type}"></div>`,
+        iconSize: [12, 12],
+        iconAnchor: [6, 6]
+      })
+    }
   ).addTo(map);
 
-  // Lisää oikeaan layeriin
-  if (station.type === "weather") {
-    weatherLayer.addLayer(marker);
-  }
-
-  if (station.type === "sealevel") {
-    seaLevelLayer.addLayer(marker);
-  }
-
-  if (station.type === "coastal") {
-    coastalLayer.addLayer(marker);
-  }
-  if (weatherLayer.getLayers().length > 0) {
-  map.fitBounds(weatherLayer.getBounds(), { padding: [30, 30] });
-  }
- ;
+  markerRegistry[station.fmisid] = marker;
+  marker.station = station;
 
 
-  marker.previewData = null;
 
-  marker.bindTooltip("", {
-    direction: "top",
-    offset: [0, -8],
-    opacity: 0.9
-  });
 
-  marker.on("mouseover", function () {
+  // 🔹 Hover preview
+    marker.previewData = null;
+
+    marker.bindTooltip("", {
+      direction: "top",
+      offset: [0, -8],
+      opacity: 0.9
+    });
+
+    marker.on("mouseover", function () {
 
     let content = `<strong>${station.name}</strong>`;
     const preview = this.previewData;
@@ -128,6 +102,20 @@ stations.forEach(station => {
   marker.on("mouseout", function () {
     this.closeTooltip();
   });
+
+  // Lisää oikeaan layeriin
+  if (station.type === "weather") {
+    weatherLayer.addLayer(marker);
+  }
+
+  if (station.type === "sealevel") {
+    seaLevelLayer.addLayer(marker);
+  }
+
+  if (station.type === "coastal") {
+    coastalLayer.addLayer(marker);
+  }
+
 
 
   marker.bindPopup(`
@@ -169,12 +157,23 @@ stations.forEach(station => {
 
   `);
 
-  markerRegistry[station.fmisid] = marker;
-  marker.station = station;
+  // Lisää oikeaan layeriin
+  if (station.type === "weather") {
+    weatherLayer.addLayer(marker);
+  }
 
-  });
+  if (station.type === "sealevel") {
+    seaLevelLayer.addLayer(marker);
+  }
 
-
+  if (station.type === "coastal") {
+    coastalLayer.addLayer(marker);
+  }
+ 
+  if (weatherLayer.getLayers().length > 0) {
+  map.fitBounds(weatherLayer.getBounds(), { padding: [30, 30] });
+  }
+ });
 
 // FEATURED-LOOPPI
 stations.forEach(async station => {
@@ -540,49 +539,63 @@ function createWindIcon(speed, direction) {
 // ==========================
 // Popup → lämpötila + tuuli (havainto + ennuste)
 // ==========================
-//POPUPOPENIN RENDER
 
 map.on("popupopen", async e => {
-
-  const station = e.popup._source.station;
-  if (!station) return;
 
   const popupEl = e.popup.getElement();
   if (!popupEl) return;
 
+  // 🔑 1. Ota feature.properties ENSIN
+  const station = e.popup._source.station;
+  if (!station) return;
+
   if (station.type === "sealevel") {
-    renderSeaLevelPopup(e.popup, station);
-    return;
+  renderSeaLevelPopup(e.popup, station);
+  return;
   }
 
   const canvases = popupEl.querySelectorAll("canvas");
   if (!canvases.length) return;
 
+
+  // 🔑 2. Lat/lon edelleen canvasista (ok)
   const lat = canvases[0].dataset.lat;
   const lon = canvases[0].dataset.lon;
 
-  try {
+  // 🔑 3. Ota FMISID:t propertiesista (EI canvasista)
+  const weatherFmisid = station.fmisid ?? null;
 
+  const seaLevelFmisid =
+  station.type === "sealevel" ? station.fmisid : null;
+
+
+  try {
+    // 🔑 4. Kutsu loadPopupDataa UUDESSA muodossa
     const data = await loadPopupData({
       lat,
       lon,
-      weatherPlace: station.type === "weather" ? station.name : null,
-      weatherFmisid: station.fmisid,
-      seaLevelFmisid: null
+      weatherPlace:station.type === "weather" ? station.name : null,
+      weatherFmisid,
+      seaLevelFmisid
     });
 
     updatePopupTitles(popupEl, data);
     renderPopupExtras(popupEl, data);
+    renderTemperatureChart(popupEl, data);
+    renderWindCharts(popupEl, data);
+    
+     const marker = e.popup._source;
 
-    // 🔥 Render vasta kun popup on oikeasti näkyvä
-    requestAnimationFrame(() => {
-      renderTemperatureChart(popupEl, data);
-      renderWindCharts(popupEl, data);
-    });
+    // hae latest helperilla tai suoraan arrayn lopusta
+  marker.previewData = {
+  temp: data.obsTemp?.at(-1)?.temperature ?? null,
+  wind: data.obsWindSpeed?.at(-1)?.windspeedms ?? null,
+  sea: data.seaLevel ?? null
+  };
 
-  } catch (err) {
-    console.error("Popup error:", err);
-  }
+} catch (err) {
+  console.error("Popup error:", err);
+}
 
 });
 

@@ -2,8 +2,6 @@ import { parseFmiUtc, interpolateTimeSeries } from "../utils/time.js";
 export function renderTemperatureChart(popupEl, data) {
   console.log("Chart temp data:", data.obsTemp);
 
-
-  
   const { obsTemp, fcTemp } = data;
 
   if (!Array.isArray(obsTemp)) return;
@@ -119,8 +117,7 @@ const rawFcPoints = Array.isArray(fcTemp)
          ]
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
+      responsive: false,
       plugins: {
         legend: {
           display: true,
