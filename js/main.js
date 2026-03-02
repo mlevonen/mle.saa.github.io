@@ -50,8 +50,8 @@ stations.forEach(station => {
 
     icon = L.icon({
       iconUrl: "/js/assets/icons/temp1.svg",
-      iconSize: [28, 28],
-      iconAnchor: [14, 14],
+      iconSize: [32, 32],
+      iconAnchor: [16, 16],
       popupAnchor: [0, -14]
     });
 
