@@ -510,7 +510,7 @@ function createWindIcon(speed, direction) {
     html: `
       <div class="wind-marker" style="background:${color};">
         <div class="wind-arrow"
-            style="transform: rotate(${direction}deg);">
+            style="transform: rotate(${(direction + 180) % 360}deg);">
           <svg width="22" height="22" viewBox="0 0 24 24">
             <path d="M12 2 L12 16" 
                   stroke="white" 
