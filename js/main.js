@@ -517,7 +517,7 @@ function createWindIcon(speed, direction) {
                   stroke-width="3"
                   stroke-linecap="round"/>
             <path d="M8 6 L12 2 L16 6"
-                  stroke="white"
+                  stroke="#222"
                   stroke-width="2"
                   fill="none"
                   stroke-linecap="round"
