@@ -71,6 +71,20 @@ stations.forEach(station => {
     { icon }
   ).addTo(map);
 
+  // Lisää oikeaan layeriin
+  if (station.type === "weather") {
+    weatherLayer.addLayer(marker);
+  }
+
+  if (station.type === "sealevel") {
+    seaLevelLayer.addLayer(marker);
+  }
+
+  if (station.type === "coastal") {
+    coastalLayer.addLayer(marker);
+  }
+
+
   marker.previewData = null;
 
   marker.bindTooltip("", {
@@ -110,19 +124,6 @@ stations.forEach(station => {
   marker.on("mouseout", function () {
     this.closeTooltip();
   });
-
-  // Lisää oikeaan layeriin
-  if (station.type === "weather") {
-    weatherLayer.addLayer(marker);
-  }
-
-  if (station.type === "sealevel") {
-    seaLevelLayer.addLayer(marker);
-  }
-
-  if (station.type === "coastal") {
-    coastalLayer.addLayer(marker);
-  }
 
 
   markerRegistry[station.fmisid] = marker;
