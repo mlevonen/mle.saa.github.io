@@ -142,9 +142,7 @@ const rawFcPoints = Array.isArray(fcTemp)
       },
       scales: {
         x: {
-          type: "time",
-          min: startTime,
-          max: endTime,
+          type: "linear",
           time: {
             unit: "hour",
             displayFormats: { hour: "HH" }
