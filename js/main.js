@@ -542,67 +542,62 @@ function createWindIcon(speed, direction) {
 // ==========================
 
 map.on("popupopen", async e => {
-console.log("Popup source:", e.popup._source);
 
-console.log("Popup element:", popupEl);
-console.log("Canvas count:", popupEl.querySelectorAll("canvas").length);
-
-
-  // 🔑 1. Ota feature.properties ENSIN
   const station = e.popup._source.station;
   if (!station) return;
 
   const popupEl = e.popup.getElement();
   if (!popupEl) return;
 
+  console.log("Popup source:", e.popup._source);
+  console.log("Popup element:", popupEl);
+  console.log("Canvas count:", popupEl.querySelectorAll("canvas").length);
 
+  // 🔵 Sealevel käsitellään erikseen
   if (station.type === "sealevel") {
-  renderSeaLevelPopup(e.popup, station);
-  return;
+    renderSeaLevelPopup(e.popup, station);
+    return;
   }
 
   const canvases = popupEl.querySelectorAll("canvas");
   if (!canvases.length) return;
 
-
-  // 🔑 2. Lat/lon edelleen canvasista (ok)
   const lat = canvases[0].dataset.lat;
   const lon = canvases[0].dataset.lon;
 
-  // 🔑 3. Ota FMISID:t propertiesista (EI canvasista)
   const weatherFmisid = station.fmisid ?? null;
-
-  const seaLevelFmisid =
-  station.type === "sealevel" ? station.fmisid : null;
-
+  const seaLevelFmisid = null;
 
   try {
-    // 🔑 4. Kutsu loadPopupDataa UUDESSA muodossa
+
     const data = await loadPopupData({
       lat,
       lon,
-      weatherPlace:station.type === "weather" ? station.name : null,
+      weatherPlace: station.type === "weather" ? station.name : null,
       weatherFmisid,
       seaLevelFmisid
     });
 
     updatePopupTitles(popupEl, data);
     renderPopupExtras(popupEl, data);
-    renderTemperatureChart(popupEl, data);
-    renderWindCharts(popupEl, data);
-    
-     const marker = e.popup._source;
 
-    // hae latest helperilla tai suoraan arrayn lopusta
-  marker.previewData = {
-  temp: data.obsTemp?.at(-1)?.temperature ?? null,
-  wind: data.obsWindSpeed?.at(-1)?.windspeedms ?? null,
-  sea: data.seaLevel ?? null
-  };
+    // pieni viive varmistaa että DOM on valmis
+    setTimeout(() => {
+      renderTemperatureChart(popupEl, data);
+      renderWindCharts(popupEl, data);
+    }, 0);
 
-} catch (err) {
-  console.error("Popup error:", err);
-}
+    const marker = e.popup._source;
+
+    marker.previewData = {
+      temp: data.obsTemp?.at(-1)?.temperature ?? null,
+      wind: data.obsWindSpeed?.at(-1)?.windspeedms ?? null,
+      sea: data.seaLevel ?? null
+    };
+
+  } catch (err) {
+    console.error("Popup error:", err);
+  }
 
 });
 
