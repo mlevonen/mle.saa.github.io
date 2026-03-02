@@ -345,7 +345,8 @@ const stations = [
     name: "Kemiönsaari Vänö",
     fmisid: 100945,
     lat: 59.87,
-    lon: 22.19
+    lon: 22.19,
+    featured: true
   },
 
   {
@@ -373,7 +374,8 @@ const stations = [
     name: "Turku Rajakari",
     fmisid: 100947,
     lat: 60.38,
-    lon: 22.1
+    lon: 22.1,
+    featured: true
   },
 
   {
@@ -393,7 +395,8 @@ const stations = [
     name: "Lumparland Långnäs satama",
     fmisid: 151048,
     lat: 60.12,
-    lon: 20.3
+    lon: 20.3,
+    featured: true
   },
 
   {
@@ -430,7 +433,8 @@ const stations = [
     name: "Hammarland Märket",
     fmisid: 100919,
     lat: 60.3,
-    lon: 19.13
+    lon: 19.13,
+    featured: true
   },
 
   {
