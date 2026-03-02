@@ -2,6 +2,31 @@ import { parseFmiUtc, interpolateTimeSeries } from "../utils/time.js";
 export function renderTemperatureChart(popupEl, data) {
   console.log("Chart temp data:", data.obsTemp);
 
+function renderTemperatureChart(popupEl, data) {
+
+  console.log("🔥 renderTemperatureChart called");
+  
+  const canvas = popupEl.querySelector('[data-type="temp"]');
+  console.log("Canvas inside render:", canvas);
+
+  if (!canvas) {
+    console.log("❌ No canvas found");
+    return;
+  }
+
+  console.log("Data passed in:", data);
+
+  const ctx = canvas.getContext("2d");
+  console.log("CTX:", ctx);
+
+  // älä muuta muuta vielä
+}
+
+
+
+
+
+
   const { obsTemp, fcTemp } = data;
 
   if (!Array.isArray(obsTemp)) return;
