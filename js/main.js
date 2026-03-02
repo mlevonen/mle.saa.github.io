@@ -114,7 +114,7 @@ stations.forEach(station => {
   markerRegistry[station.fmisid] = marker;
   marker.station = station;
 
-
+  });
 
   // Lisää oikeaan layeriin
   if (station.type === "weather") {
@@ -129,7 +129,7 @@ stations.forEach(station => {
     coastalLayer.addLayer(marker);
   }
 
-});
+
 
   marker.bindPopup(`
     <div class="popup-title">${station.name}</div>
