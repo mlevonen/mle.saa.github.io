@@ -111,11 +111,6 @@ stations.forEach(station => {
     this.closeTooltip();
   });
 
-  markerRegistry[station.fmisid] = marker;
-  marker.station = station;
-
-  });
-
   // Lisää oikeaan layeriin
   if (station.type === "weather") {
     weatherLayer.addLayer(marker);
@@ -128,6 +123,12 @@ stations.forEach(station => {
   if (station.type === "coastal") {
     coastalLayer.addLayer(marker);
   }
+
+
+  markerRegistry[station.fmisid] = marker;
+  marker.station = station;
+
+  });
 
 
 
