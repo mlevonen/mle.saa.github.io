@@ -540,6 +540,7 @@ function createWindIcon(speed, direction) {
 // ==========================
 // Popup → lämpötila + tuuli (havainto + ennuste)
 // ==========================
+//POPUPOPENIN RENDER
 
 map.on("popupopen", async e => {
 
@@ -549,11 +550,6 @@ map.on("popupopen", async e => {
   const popupEl = e.popup.getElement();
   if (!popupEl) return;
 
-  console.log("Popup source:", e.popup._source);
-  console.log("Popup element:", popupEl);
-  console.log("Canvas count:", popupEl.querySelectorAll("canvas").length);
-
-  // 🔵 Sealevel käsitellään erikseen
   if (station.type === "sealevel") {
     renderSeaLevelPopup(e.popup, station);
     return;
@@ -565,42 +561,24 @@ map.on("popupopen", async e => {
   const lat = canvases[0].dataset.lat;
   const lon = canvases[0].dataset.lon;
 
-  const weatherFmisid = station.fmisid ?? null;
-  const seaLevelFmisid = null;
-
-console.log("Temp canvas:", popupEl.querySelector('[data-type="temp"]'));
-console.log("Wind obs canvas:", popupEl.querySelector('[data-type="wind-obs"]'));
-console.log("Wind fc canvas:", popupEl.querySelector('[data-type="wind-fc"]'));
-
-
   try {
 
     const data = await loadPopupData({
       lat,
       lon,
       weatherPlace: station.type === "weather" ? station.name : null,
-      weatherFmisid,
-      seaLevelFmisid
+      weatherFmisid: station.fmisid,
+      seaLevelFmisid: null
     });
 
     updatePopupTitles(popupEl, data);
     renderPopupExtras(popupEl, data);
 
-    // pieni viive varmistaa että DOM on valmis
-    setTimeout(() => {
+    // 🔥 Render vasta kun popup on oikeasti näkyvä
+    requestAnimationFrame(() => {
       renderTemperatureChart(popupEl, data);
       renderWindCharts(popupEl, data);
-    }, 50);
-
-    const marker = e.popup._source;
-
-console.log("Temp data:", data.obsTemp);
-
-    marker.previewData = {
-      temp: data.obsTemp?.at(-1)?.temperature ?? null,
-      wind: data.obsWindSpeed?.at(-1)?.windspeedms ?? null,
-      sea: data.seaLevel ?? null
-    };
+    });
 
   } catch (err) {
     console.error("Popup error:", err);
