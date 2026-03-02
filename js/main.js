@@ -543,6 +543,10 @@ function createWindIcon(speed, direction) {
 
 map.on("popupopen", async e => {
 console.log("Popup source:", e.popup._source);
+
+console.log("Popup element:", popupEl);
+console.log("Canvas count:", popupEl.querySelectorAll("canvas").length);
+
   const popupEl = e.popup.getElement();
   if (!popupEl) return;
 
