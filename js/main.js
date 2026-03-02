@@ -66,13 +66,11 @@ stations.forEach(station => {
 
   }
 
-  // 🔵 LUODAAN marker TÄSSÄ
   const marker = L.marker(
     [station.lat, station.lon],
     { icon }
   ).addTo(map);
 
-  // 🔵 NYT marker on olemassa
   marker.previewData = null;
 
   marker.bindTooltip("", {
@@ -81,12 +79,7 @@ stations.forEach(station => {
     opacity: 0.9
   });
 
-  markerRegistry[station.fmisid] = marker;
-  marker.station = station;
-
-});
-
-    marker.on("mouseover", function () {
+  marker.on("mouseover", function () {
 
     let content = `<strong>${station.name}</strong>`;
     const preview = this.previewData;
@@ -117,6 +110,11 @@ stations.forEach(station => {
   marker.on("mouseout", function () {
     this.closeTooltip();
   });
+
+  markerRegistry[station.fmisid] = marker;
+  marker.station = station;
+
+});
 
   // Lisää oikeaan layeriin
   if (station.type === "weather") {
