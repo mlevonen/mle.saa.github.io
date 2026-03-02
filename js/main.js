@@ -590,7 +590,7 @@ console.log("Wind fc canvas:", popupEl.querySelector('[data-type="wind-fc"]'));
     setTimeout(() => {
       renderTemperatureChart(popupEl, data);
       renderWindCharts(popupEl, data);
-    }, 0);
+    }, 50);
 
     const marker = e.popup._source;
 
