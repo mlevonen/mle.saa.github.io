@@ -37,6 +37,37 @@ L.control.layers(null, {
 }, { collapsed: false }).addTo(map);
 
 
+//IKONIFUNKTIOT
+
+function createStationIcon(station) {
+
+  if (station.type === "sealevel") {
+    return L.divIcon({
+      className: "station-sealevel",
+      html: `<div class="sealevel-marker">H<sub>2</sub>O</div>`,
+      iconSize: [46, 46],
+      iconAnchor: [23, 23],
+      popupAnchor: [0, -23]
+    });
+  }
+
+  if (station.type === "coastal") {
+    return L.divIcon({
+      className: "station-dot",
+      html: `<div class="dot dot-coastal"></div>`,
+      iconSize: [12, 12],
+      iconAnchor: [6, 6]
+    });
+  }
+
+  // default = weather
+  return L.divIcon({
+    className: "station-dot",
+    html: `<div class="dot dot-weather"></div>`,
+    iconSize: [12, 12],
+    iconAnchor: [6, 6]
+  });
+}
 // ==========================
 // Asemat kartalle
 // ==========================
@@ -47,12 +78,7 @@ stations.forEach(station => {
   const marker = L.marker(
     [station.lat, station.lon],
     {
-      icon: L.divIcon({
-        className: "station-dot",
-        html: `<div class="dot dot-${station.type}"></div>`,
-        iconSize: [12, 12],
-        iconAnchor: [6, 6]
-      })
+      icon: createStationIcon(station)
     }
   ).addTo(map);
 
