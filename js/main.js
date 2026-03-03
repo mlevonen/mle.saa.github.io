@@ -529,8 +529,8 @@ function createWindIcon(speed, direction) {
         </div>
       </div>
       `,
-    iconSize: [46, 46],
-    iconAnchor: [23, 23]
+    iconSize: [54, 54],
+    iconAnchor: [27, 27]
   });
 }
 
