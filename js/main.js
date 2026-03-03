@@ -513,11 +513,11 @@ function createWindIcon(speed, direction) {
             style="transform: rotate(${(direction + 180) % 360}deg);">
           <svg width="22" height="22" viewBox="0 0 24 24">
             <path d="M12 2 L12 16" 
-                  stroke="white" 
+                  stroke="#222" 
                   stroke-width="2"
                   stroke-linecap="round"/>
             <path d="M8 6 L12 2 L16 6"
-                  stroke="white"
+                  stroke="#222"
                   stroke-width="2"
                   fill="none"
                   stroke-linecap="round"
