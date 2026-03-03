@@ -500,10 +500,10 @@ function createWindIcon(speed, direction) {
 
   // 🎨 Väri nopeuden mukaan
   const color =
-  roundedSpeed < 5  ? "rgba(76,175,80,0.55)" :
-  roundedSpeed < 10 ? "rgba(255,193,7,0.55)" :
-  roundedSpeed < 15 ? "rgba(255,152,0,0.55)" :
-                      "rgba(244,67,54,0.55)";
+  roundedSpeed < 5  ? "rgba(76,175,80,0.65)" :
+  roundedSpeed < 10 ? "rgba(255,193,7,0.65)" :
+  roundedSpeed < 15 ? "rgba(255,152,0,0.65)" :
+                      "rgba(244,67,54,0.65)";
 
   return L.divIcon({
     className: "wind-wrapper",
@@ -514,11 +514,11 @@ function createWindIcon(speed, direction) {
           <svg width="22" height="22" viewBox="0 0 24 24">
             <path d="M12 2 L12 16" 
                   stroke="#222" 
-                  stroke-width="2"
+                  stroke-width="4"
                   stroke-linecap="round"/>
             <path d="M8 6 L12 2 L16 6"
                   stroke="#222"
-                  stroke-width="2"
+                  stroke-width="4"
                   fill="none"
                   stroke-linecap="round"
                   stroke-linejoin="round"/>
