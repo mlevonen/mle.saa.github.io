@@ -142,13 +142,21 @@ const rawFcPoints = Array.isArray(fcTemp)
         annotation: {
           annotations: {
             zeroLine: {
-              type: "line",
-              yMin: 0,
-              yMax: 0,
-              borderColor: "rgba(0,0,0,0.6)",
-              borderWidth: 1,
-              borderDash: [4,4]
+            type: "line",
+            yMin: 0,
+            yMax: 0,
+            borderColor: "rgba(0,0,0,0.6)",
+            borderWidth: 1,
+            borderDash: [4,4],
+
+            label: {
+              display: true,
+              content: "0°C",
+              position: "end",
+              backgroundColor: "rgba(255,255,255,0.7)",
+              font: { size: 10 }
             }
+          }
           }
         }
       },
