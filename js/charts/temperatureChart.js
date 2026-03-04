@@ -142,16 +142,16 @@ const rawFcPoints = Array.isArray(fcTemp)
       },
       scales: {
         x: {
-          type: "linear",
-          time: {
-            unit: "hour",
-            displayFormats: { hour: "HH" }
-          },
-          ticks: {
-            maxRotation: 0,
-            minRotation: 0
-          }
+        type: "time",
+        time: {
+          unit: "hour",
+          displayFormats: { hour: "HH" }
         },
+        ticks: {
+          source: "auto",
+          maxRotation: 0
+        }
+      },
 
         y: {
           min: yMinTemp,
