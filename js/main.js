@@ -41,6 +41,10 @@ L.control.layers(null, {
 
 function createStationIcon(station) {
 
+if (station.type === "sealevel") {
+  console.log("Sealevel station:", station);
+}
+
   if (station.type === "sealevel") {
 
     const level = station.sealevel ?? "";
