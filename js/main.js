@@ -42,9 +42,18 @@ L.control.layers(null, {
 function createStationIcon(station) {
 
   if (station.type === "sealevel") {
+
+    const level = station.sealevel ?? "";
+    const levelText = level !== "" ? `${Math.round(level)} cm` : "";
+
     return L.divIcon({
       className: "station-sealevel",
-      html: `<div class="sealevel-marker">H<sub>2</sub>O</div>`,
+      html: `
+        <div class="sealevel-marker">
+          <div class="sealevel-title">H<sub>2</sub>O</div>
+          <div class="sealevel-value">${levelText}</div>
+        </div>
+      `,
       iconSize: [46, 46],
       iconAnchor: [23, 23],
       popupAnchor: [0, -23]
@@ -60,7 +69,6 @@ function createStationIcon(station) {
     });
   }
 
-  // default = weather
   return L.divIcon({
     className: "station-dot",
     html: `<div class="dot dot-weather"></div>`,
