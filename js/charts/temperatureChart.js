@@ -138,7 +138,19 @@ const rawFcPoints = Array.isArray(fcTemp)
             }
           }
         },
-        nowLine: true
+        nowLine: true,
+        annotation: {
+          annotations: {
+            zeroLine: {
+              type: "line",
+              yMin: 0,
+              yMax: 0,
+              borderColor: "rgba(0,0,0,0.6)",
+              borderWidth: 1,
+              borderDash: [4,4]
+            }
+          }
+        }
       },
       scales: {
         x: {
