@@ -39,16 +39,11 @@ L.control.layers(null, {
 
 //IKONIFUNKTIOT
 
-function createStationIcon(station) {
-
-if (station.type === "sealevel") {
-  console.log("Sealevel station:", station);
-}
+function createStationIcon(station, sealevel = null) {
 
   if (station.type === "sealevel") {
 
-    const level = station.sealevel ?? "";
-    const levelText = level !== "" ? `${Math.round(level)} cm` : "";
+    const levelText = sealevel !== null ? `${Math.round(sealevel)} cm` : "";
 
     return L.divIcon({
       className: "station-sealevel",
