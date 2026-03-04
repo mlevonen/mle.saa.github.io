@@ -153,7 +153,7 @@ const rawFcPoints = Array.isArray(fcTemp)
               display: true,
               content: "0°C",
               position: "end",
-              backgroundColor: "rgba(36, 30, 30, 0.7)",
+              backgroundColor: "rgba(126, 118, 118, 0.7)",
               font: { size: 10 }
             }
           }
