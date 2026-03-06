@@ -294,7 +294,7 @@ async function updateSeaLevelMarkers() {
       console.log("Sea level update:", station.name, level);
 
     } catch (err) {
-      console.warn("Sea level update failed", station.name);
+      console.warn("Sea level update failed", station.name,err);
     }
 
   }
