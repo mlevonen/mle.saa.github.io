@@ -4,8 +4,7 @@ import { renderTemperatureChart } from "./charts/temperatureChart.js";
 import { renderWindCharts } from "./charts/windChart.js";
 import { renderPopupExtras } from "./popup/popupExtras.js";
 import "./charts/plugins.js";
-import { fetchSeaLevelSeries } from "./api/sealevel.js";
-import { fetchSeaLevelForecast } from "./api/sealevel.js";
+import { fetchSeaLevel, fetchSeaLevelSeries, fetchSeaLevelForecast } from "./api/sealevel.js";
 
 
 "use strict";
