@@ -196,7 +196,7 @@ export async function fetchSeaLevelMulti(fmisids) {
     service: "WFS",
     version: "2.0.0",
     request: "GetFeature",
-    storedquery_id: "fmi::observations::mareograph::instant::simple",
+    storedquery_id: "fmi::observations::mareograph::simple",
     fmisid: fmisids.join(",")
   });
 
@@ -239,11 +239,14 @@ export async function fetchSeaLevelMulti(fmisids) {
 
     if (!Number.isFinite(value)) continue;
 
-    if (name === "WATLEV" || name === "TW") {
+    if (name === "WATLEV") {
 
+      // koska data tulee järjestyksessä
+      // viimeinen jää automaattisesti voimaan
       result[id] = Math.round(value / 10);
 
     }
+
   }
 
   return result;
