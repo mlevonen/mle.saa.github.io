@@ -303,6 +303,7 @@ async function updateSeaLevelMarkers() {
         createStationIcon(station, level)
       );
       console.log("Sea preview:", station.name, level);
+      console.log("SEA DATA:", data);
     }
 
   } catch (err) {

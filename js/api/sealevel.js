@@ -192,6 +192,7 @@ export async function fetchSeaLevelForecast(fmisid) {
 
 export async function fetchSeaLevelMulti(fmisids, stations) {
 
+  console.log("MULTI SEA LEVEL START", fmisids);
   const params = new URLSearchParams({
     service: "WFS",
     version: "2.0.0",
@@ -201,6 +202,8 @@ export async function fetchSeaLevelMulti(fmisids, stations) {
   });
 
   const url = `https://opendata.fmi.fi/wfs/fin?${params}`;
+
+  console.log("SEA MULTI URL:", url);
 
   const res = await fetch(url);
   if (!res.ok) return {};
