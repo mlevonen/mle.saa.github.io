@@ -5,6 +5,7 @@ import { renderWindCharts } from "./charts/windChart.js";
 import { renderPopupExtras } from "./popup/popupExtras.js";
 import "./charts/plugins.js";
 import { fetchSeaLevel, fetchSeaLevelSeries, fetchSeaLevelForecast } from "./api/sealevel.js";
+import { fetchSeaLevelMulti } from "./api/sealevel.js";
 
 
 "use strict";
@@ -282,11 +283,15 @@ async function updateSeaLevelMarkers() {
 
   const seaStations = stations.filter(s => s.type === "sealevel");
 
-  for (const station of seaStations) {
+  const ids = seaStations.map(s => s.fmisid);
 
-    try {
+  try {
 
-      const level = await fetchSeaLevel(station.fmisid);
+    const data = await fetchSeaLevelMulti(ids);
+
+    for (const station of seaStations) {
+
+      const level = data[station.fmisid] ?? null;
 
       const marker = markerRegistry[station.fmisid];
       if (!marker) continue;
@@ -298,11 +303,11 @@ async function updateSeaLevelMarkers() {
         createStationIcon(station, level)
       );
 
-      console.log("Sea level update:", station.name, level);
-
-    } catch (err) {
-      console.warn("Sea level update failed", station.name,err);
     }
+
+  } catch (err) {
+
+    console.warn("Sea level multi update failed", err);
 
   }
 }

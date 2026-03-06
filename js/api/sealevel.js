@@ -187,3 +187,64 @@ export async function fetchSeaLevelForecast(fmisid) {
 
   return { forecast, forecastN2000 };
 }
+
+//MULTILEVELHAKU
+
+export async function fetchSeaLevelMulti(fmisids) {
+
+  const params = new URLSearchParams({
+    service: "WFS",
+    version: "2.0.0",
+    request: "GetFeature",
+    storedquery_id: "fmi::observations::mareograph::instant::simple",
+    fmisid: fmisids.join(",")
+  });
+
+  const url = `https://opendata.fmi.fi/wfs/fin?${params}`;
+  console.log("SEA LEVEL MULTI REQUEST:", url);
+
+  const res = await fetch(url);
+  if (!res.ok) return {};
+
+  const text = await res.text();
+
+  const parser = new DOMParser();
+  const xml = parser.parseFromString(text, "application/xml");
+
+  const elements = xml.querySelectorAll(
+    "BsWfs\\:BsWfsElement, BsWfsElement"
+  );
+
+  const result = {};
+
+  for (const el of elements) {
+
+    const idNode = el.querySelector(
+      "BsWfs\\:fmisid, fmisid"
+    );
+
+    const nameNode = el.querySelector(
+      "BsWfs\\:ParameterName, ParameterName"
+    );
+
+    const valueNode = el.querySelector(
+      "BsWfs\\:ParameterValue, ParameterValue"
+    );
+
+    if (!idNode || !nameNode || !valueNode) continue;
+
+    const id = idNode.textContent.trim();
+    const name = nameNode.textContent.trim();
+    const value = Number(valueNode.textContent);
+
+    if (!Number.isFinite(value)) continue;
+
+    if (name === "WATLEV" || name === "TW") {
+
+      result[id] = Math.round(value / 10);
+
+    }
+  }
+
+  return result;
+}
