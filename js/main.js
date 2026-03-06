@@ -287,7 +287,7 @@ async function updateSeaLevelMarkers() {
 
   try {
 
-    const data = await fetchSeaLevelMulti(ids);
+    const data = await fetchSeaLevelMulti(ids, seaStations);
 
     for (const station of seaStations) {
 

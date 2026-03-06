@@ -190,7 +190,7 @@ export async function fetchSeaLevelForecast(fmisid) {
 
 //MULTILEVELHAKU
 
-export async function fetchSeaLevelMulti(fmisids) {
+export async function fetchSeaLevelMulti(fmisids, stations) {
 
   const params = new URLSearchParams({
     service: "WFS",
@@ -201,7 +201,6 @@ export async function fetchSeaLevelMulti(fmisids) {
   });
 
   const url = `https://opendata.fmi.fi/wfs/fin?${params}`;
-  console.log("SEA LEVEL MULTI REQUEST:", url);
 
   const res = await fetch(url);
   if (!res.ok) return {};
@@ -219,10 +218,6 @@ export async function fetchSeaLevelMulti(fmisids) {
 
   for (const el of elements) {
 
-    const idNode = el.querySelector(
-      "BsWfs\\:fmisid, fmisid"
-    );
-
     const nameNode = el.querySelector(
       "BsWfs\\:ParameterName, ParameterName"
     );
@@ -231,21 +226,33 @@ export async function fetchSeaLevelMulti(fmisids) {
       "BsWfs\\:ParameterValue, ParameterValue"
     );
 
-    if (!idNode || !nameNode || !valueNode) continue;
+    const posNode = el.querySelector(
+      "gml\\:pos, pos"
+    );
 
-    const id = idNode.textContent.trim();
+    if (!nameNode || !valueNode || !posNode) continue;
+
     const name = nameNode.textContent.trim();
-    const value = Number(valueNode.textContent);
+    if (name !== "WATLEV") continue;
 
+    const value = Number(valueNode.textContent);
     if (!Number.isFinite(value)) continue;
 
-    if (name === "WATLEV") {
+    const [lat, lon] = posNode.textContent
+      .trim()
+      .split(/\s+/)
+      .map(Number);
 
-      // koska data tulee järjestyksessä
-      // viimeinen jää automaattisesti voimaan
-      result[id] = Math.round(value / 10);
+    // etsi asema koordinaatin perusteella
+    const station = stations.find(
+      s =>
+        Math.abs(s.lat - lat) < 0.01 &&
+        Math.abs(s.lon - lon) < 0.01
+    );
 
-    }
+    if (!station) continue;
+
+    result[station.fmisid] = Math.round(value / 10);
 
   }
 
