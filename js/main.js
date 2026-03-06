@@ -39,35 +39,53 @@ L.control.layers(null, {
 
 //IKONIFUNKTIOT
 
-function createStationIcon(station, sealevel = null) {
+function createStationIcon(station, level = null) {
 
   if (station.type === "sealevel") {
 
-  let arrow = "";
-  let value = "";
+    let arrow = "";
+    let value = "";
 
-  if (level != null) {
+    if (level !== null) {
+      if (level > 0) arrow = "↑";
+      else if (level < 0) arrow = "↓";
+      else arrow = "•";
 
-    if (level > 0) arrow = "↑";
-    else if (level < 0) arrow = "↓";
-    else arrow = "•";
+      value = Math.round(level);
+    }
 
-    value = Math.round(level);
+    return L.divIcon({
+      className: "station-sealevel",
+      html: `
+        <div class="sealevel-marker">
+          <div class="sealevel-arrow">${arrow}</div>
+          <div class="sealevel-value">${value}</div>
+        </div>
+      `,
+      iconSize: [46, 46],
+      iconAnchor: [23, 23],
+      popupAnchor: [0, -23]
+    });
   }
 
+  if (station.type === "coastal") {
+    return L.divIcon({
+      className: "station-dot",
+      html: `<div class="dot dot-coastal"></div>`,
+      iconSize: [12, 12],
+      iconAnchor: [6, 6]
+    });
+  }
+
+  // weather
   return L.divIcon({
-    className: "station-sealevel",
-    html: `
-      <div class="sealevel-marker">
-        <div class="sealevel-arrow">${arrow}</div>
-        <div class="sealevel-value">${value}</div>
-      </div>
-    `,
-    iconSize: [46, 46],
-    iconAnchor: [23, 23],
-    popupAnchor: [0, -23]
+    className: "station-dot",
+    html: `<div class="dot dot-weather"></div>`,
+    iconSize: [12, 12],
+    iconAnchor: [6, 6]
   });
-}}
+
+}
 
 // ==========================
 // Asemat kartalle
