@@ -190,7 +190,7 @@ export async function fetchSeaLevelForecast(fmisid) {
 
 //MULTILEVELHAKU
 
-export async function fetchSeaLevelMulti(fmisids, stations) {
+export async function fetchSeaLevelMulti(fmisids) {
 
   const params = new URLSearchParams({
     service: "WFS",
@@ -215,6 +215,8 @@ export async function fetchSeaLevelMulti(fmisids, stations) {
   );
 
   const result = {};
+  let stationIndex = 0;
+  let lastLevel = null;
 
   for (const el of elements) {
 
@@ -226,34 +228,31 @@ export async function fetchSeaLevelMulti(fmisids, stations) {
       "BsWfs\\:ParameterValue, ParameterValue"
     );
 
-    const posNode = el.querySelector(
-      "gml\\:pos, pos"
-    );
-
-    if (!nameNode || !valueNode || !posNode) continue;
+    if (!nameNode || !valueNode) continue;
 
     const name = nameNode.textContent.trim();
-    if (name !== "WATLEV") continue;
-
     const value = Number(valueNode.textContent);
+
     if (!Number.isFinite(value)) continue;
 
-    const [lat, lon] = posNode.textContent
-      .trim()
-      .split(/\s+/)
-      .map(Number);
+    if (name === "WATLEV") {
+      lastLevel = Math.round(value / 10);
+    }
 
-    // etsi asema koordinaatin perusteella
-    const station = stations.find(
-      s =>
-        Math.abs(s.lat - lat) < 0.01 &&
-        Math.abs(s.lon - lon) < 0.01
-    );
+    // kun seuraava asema alkaa (Time menee takaisin alkuun)
+    const timeNode = el.querySelector("BsWfs\\:Time, Time");
+    const time = timeNode?.textContent;
 
-    if (!station) continue;
+    if (time && time.includes("T00:00:00")) {
 
-    result[station.fmisid] = Math.round(value / 10);
+      const id = fmisids[stationIndex];
+      if (id != null && lastLevel != null) {
+        result[id] = lastLevel;
+      }
 
+      stationIndex++;
+      lastLevel = null;
+    }
   }
 
   return result;
