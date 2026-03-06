@@ -281,20 +281,18 @@ stations.forEach(async station => {
 
 async function updateSeaLevelMarkers() {
 
-  const seaStations = stations.filter(s => s.type === "sealevel");
+  const seaStations = stations.filter(
+    s => s.type === "sealevel"
+  );
 
-  const ids = seaStations.map(s => s.fmisid);
+  const requests = seaStations.map(async station => {
 
-  try {
+    try {
 
-    const data = await fetchSeaLevelMulti(ids, seaStations);
-
-    for (const station of seaStations) {
-
-      const level = data[station.fmisid.toString()] ?? null;
+      const level = await fetchSeaLevel(station.fmisid);
 
       const marker = markerRegistry[station.fmisid];
-      if (!marker) continue;
+      if (!marker) return;
 
       marker.previewData = marker.previewData || {};
       marker.previewData.sea = level;
@@ -302,17 +300,26 @@ async function updateSeaLevelMarkers() {
       marker.setIcon(
         createStationIcon(station, level)
       );
-      console.log("Sea preview:", station.name, level);
-      console.log("SEA DATA:", data);
+
+      console.log(
+        "Sea preview:",
+        station.name,
+        level
+      );
+
+    } catch (err) {
+
+      console.warn(
+        "Sea level update failed",
+        station.name
+      );
+
     }
 
-  } catch (err) {
+  });
 
-    console.warn("Sea level multi update failed", err);
-
-  }
+  await Promise.all(requests);
 }
-
 
 // ==========================
 // KÄYNNISTYS
