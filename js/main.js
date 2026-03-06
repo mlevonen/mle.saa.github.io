@@ -42,29 +42,37 @@ function createStationIcon(station, level = null) {
 
   if (station.type === "sealevel") {
 
-    let arrow = "";
-    let value = "";
+  let arrow = "";
+  let value = "";
+  let color = "#6e6e6e"; // neutraali
 
-    if (level !== null) {
-      if (level > 0) arrow = "↑";
-      else if (level < 0) arrow = "↓";
-      else arrow = "•";
+  if (level != null) {
 
-      value = Math.round(level);
-    }
+    if (level > 0) arrow = "▲";
+    else if (level < 0) arrow = "▼";
+    else arrow = "●";
 
-    return L.divIcon({
-      className: "station-sealevel",
-      html: `
-        <div class="sealevel-marker">
-          <div class="sealevel-arrow">${arrow}</div>
-          <div class="sealevel-value">${value}</div>
+    value = Math.round(level);
+
+    // värit
+    if (level > 30) color = "#d73027";      // korkea vesi
+    else if (level < -30) color = "#2b6cb0"; // matala vesi
+  }
+
+  return L.divIcon({
+    className: "station-sealevel",
+    html: `
+      <div class="sealevel-marker">
+        <div class="sealevel-arrow" style="color:${color}">
+          ${arrow}
         </div>
-      `,
-      iconSize: [46, 46],
-      iconAnchor: [23, 23],
-      popupAnchor: [0, -23]
-    });
+        <div class="sealevel-value">${value}</div>
+      </div>
+    `,
+    iconSize: [46, 46],
+    iconAnchor: [23, 23],
+    popupAnchor: [0, -23]
+  });
   }
 
   if (station.type === "coastal") {
