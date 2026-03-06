@@ -291,7 +291,7 @@ async function updateSeaLevelMarkers() {
 
     for (const station of seaStations) {
 
-      const level = data[String(station.fmisid)] ?? null;
+      const level = data[station.fmisid.toString()] ?? null;
 
       const marker = markerRegistry[station.fmisid];
       if (!marker) continue;
