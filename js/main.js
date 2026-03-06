@@ -43,38 +43,32 @@ function createStationIcon(station, sealevel = null) {
 
   if (station.type === "sealevel") {
 
-    const levelText = sealevel !== null ? `${Math.round(sealevel)} cm` : "";
+  let arrow = "";
+  let value = "";
 
-    return L.divIcon({
-      className: "station-sealevel",
-      html: `
-        <div class="sealevel-marker">
-          <div class="sealevel-title">H<sub>2</sub>O</div>
-          <div class="sealevel-value">${levelText}</div>
-        </div>
-      `,
-      iconSize: [46, 46],
-      iconAnchor: [23, 23],
-      popupAnchor: [0, -23]
-    });
-  }
+  if (level != null) {
 
-  if (station.type === "coastal") {
-    return L.divIcon({
-      className: "station-dot",
-      html: `<div class="dot dot-coastal"></div>`,
-      iconSize: [12, 12],
-      iconAnchor: [6, 6]
-    });
+    if (level > 0) arrow = "↑";
+    else if (level < 0) arrow = "↓";
+    else arrow = "•";
+
+    value = Math.round(level);
   }
 
   return L.divIcon({
-    className: "station-dot",
-    html: `<div class="dot dot-weather"></div>`,
-    iconSize: [12, 12],
-    iconAnchor: [6, 6]
+    className: "station-sealevel",
+    html: `
+      <div class="sealevel-marker">
+        <div class="sealevel-arrow">${arrow}</div>
+        <div class="sealevel-value">${value}</div>
+      </div>
+    `,
+    iconSize: [46, 46],
+    iconAnchor: [23, 23],
+    popupAnchor: [0, -23]
   });
-}
+}}
+
 // ==========================
 // Asemat kartalle
 // ==========================
