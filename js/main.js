@@ -255,7 +255,46 @@ stations.forEach(async station => {
 });
 
 
+// ==========================
+// Sealevel marker päivitys
+// ==========================
 
+async function updateSeaLevelMarkers() {
+
+  const seaStations = stations.filter(s => s.type === "sealevel");
+
+  for (const station of seaStations) {
+
+    try {
+
+      const level = await fetchSeaLevel(station.fmisid);
+
+      const marker = markerRegistry[station.fmisid];
+      if (!marker) continue;
+
+      marker.previewData = marker.previewData || {};
+      marker.previewData.sea = level;
+
+      marker.setIcon(
+        createStationIcon(station, level)
+      );
+
+      console.log("Sea level update:", station.name, level);
+
+    } catch (err) {
+      console.warn("Sea level update failed", station.name);
+    }
+
+  }
+}
+
+
+// ==========================
+// KÄYNNISTYS
+// ==========================
+
+updateSeaLevelMarkers();
+setInterval(updateSeaLevelMarkers, 60000);
 
 // ==========================
 // FMI aikasarja (JSON TUETTU)
