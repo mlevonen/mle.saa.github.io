@@ -121,8 +121,6 @@ function updateMarkers(values, markerRegistry, createWindIcon) {
     const marker = markerRegistry[fmisid];
     if (!marker) return;
 
-    const station = marker.station;
-
     marker.previewData = marker.previewData || {};
     marker.previewData.wind = data.wind;
 
