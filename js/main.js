@@ -326,7 +326,7 @@ async function updateSeaLevelMarkers() {
 // ==========================
 
 updateSeaLevelMarkers();
-setInterval(updateSeaLevelMarkers, 60000);
+setInterval(updateSeaLevelMarkers, 900000);
 
 // ==========================
 // FMI aikasarja (JSON TUETTU)
