@@ -382,7 +382,6 @@ setInterval(() => {
   updateCoastalPreview(
     stations,
     markerRegistry,
-    loadPopupData,
     createWindIcon
   );
 
