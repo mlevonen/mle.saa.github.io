@@ -6,6 +6,7 @@ import { renderPopupExtras } from "./popup/popupExtras.js";
 import "./charts/plugins.js";
 import { fetchSeaLevel, fetchSeaLevelSeries, fetchSeaLevelForecast } from "./api/sealevel.js";
 import { fetchSeaLevelMulti } from "./api/sealevel.js";
+import { updateCoastalPreview, loadCoastalPreviewCache} from "./api/coastalPreview.js";
 
 
 "use strict";
@@ -362,6 +363,34 @@ async function fetchTimeSeries(lat, lon, parameter) {
 
   return JSON.parse(text);
 }
+
+
+
+// cache näkyviin heti
+loadCoastalPreviewCache(markerRegistry, createWindIcon);
+
+// hae uusi data
+updateCoastalPreview(
+  stations,
+  markerRegistry,
+  loadPopupData,
+  createWindIcon
+);
+
+// päivitys 5 min välein
+setInterval(() => {
+
+  updateCoastalPreview(
+    stations,
+    markerRegistry,
+    loadPopupData,
+    createWindIcon
+  );
+
+}, 300000);
+
+
+
 
 
 // ==========================
