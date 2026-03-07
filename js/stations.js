@@ -286,7 +286,8 @@ const stations = [
     name: "Porvoo Kalbådagrund",
     fmisid: 101022,
     lat: 59.99,
-    lon: 25.6
+    lon: 25.6,
+    featured: true
   },
 
   {
@@ -323,7 +324,8 @@ const stations = [
     name: "Kirkkonummi Mäkiluoto",
     fmisid: 100997,
     lat: 59.92,
-    lon: 24.35
+    lon: 24.35,
+    featured: true
   },
 
   {
@@ -332,7 +334,8 @@ const stations = [
     name: "Inkoo Bågaskär",
     fmisid: 100969,
     lat: 59.93,
-    lon: 24.01
+    lon: 24.01,
+    featured: true
   },
 
   {
@@ -370,7 +373,8 @@ const stations = [
     name: "Kökar Bogskär",
     fmisid: 100921,
     lat: 59.5,
-    lon: 20.35
+    lon: 20.35,
+    featured: true
   },
 
   {
@@ -436,7 +440,8 @@ const stations = [
     name: "Hammarland Märket",
     fmisid: 100919,
     lat: 60.3,
-    lon: 19.13
+    lon: 19.13,
+    featured: true
   },
 
   {
@@ -469,15 +474,6 @@ const stations = [
     featured: true
   },
 
-  {
-    type: "coastal",
-    id: "kristiinankaupunki-majakka",
-    name: "Kristiinankaupunki Majakka",
-    fmisid: 101268,
-    lat: 62.2,
-    lon: 21.17,
-    featured: true
-  },
 
   {
     type: "coastal",
@@ -541,7 +537,8 @@ const stations = [
     name: "Kalajoki Ulkokalla",
     fmisid: 101673,
     lat: 64.33,
-    lon: 23.45
+    lon: 23.45,
+    featured: true
   },
 
   {
