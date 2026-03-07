@@ -203,7 +203,6 @@ export async function updateCoastalPreview(
 
   await Promise.all(requests);
 
-  updateMarkers(values, markerRegistry, createWindIcon);
 
   saveCache(values);
 
