@@ -44,6 +44,76 @@ function saveCache(values) {
 
 }
 
+
+async function fetchCoastalMulti(fmisids) {
+
+  const params = new URLSearchParams({
+    service: "WFS",
+    version: "2.0.0",
+    request: "GetFeature",
+    storedquery_id: "fmi::observations::weather::simple",
+    fmisid: fmisids.join(",")
+  });
+
+  const url = `https://opendata.fmi.fi/wfs/fin?${params}`;
+
+  const res = await fetch(url);
+  if (!res.ok) return {};
+
+  const text = await res.text();
+
+  const parser = new DOMParser();
+  const xml = parser.parseFromString(text, "application/xml");
+
+  const elements = xml.querySelectorAll(
+    "BsWfs\\:BsWfsElement, BsWfsElement"
+  );
+
+  const result = {};
+
+  for (const el of elements) {
+
+    const idNode = el.querySelector(
+      "BsWfs\\:fmisid, fmisid"
+    );
+
+    const nameNode = el.querySelector(
+      "BsWfs\\:ParameterName, ParameterName"
+    );
+
+    const valueNode = el.querySelector(
+      "BsWfs\\:ParameterValue, ParameterValue"
+    );
+
+    if (!idNode || !nameNode || !valueNode) continue;
+
+    const id = idNode.textContent.trim();
+    const name = nameNode.textContent.trim();
+    const value = Number(valueNode.textContent);
+
+    if (!Number.isFinite(value)) continue;
+
+    if (!result[id]) result[id] = {};
+
+    if (name === "WS_PT10M_AVG") {
+      result[id].wind = value;
+    }
+
+    if (name === "WD_PT10M_AVG") {
+      result[id].dir = value;
+    }
+
+  }
+
+  return result;
+
+}
+
+
+
+
+
+
 function updateMarkers(values, markerRegistry, createWindIcon) {
 
   Object.entries(values).forEach(([fmisid, data]) => {
@@ -70,9 +140,38 @@ function updateMarkers(values, markerRegistry, createWindIcon) {
 export async function updateCoastalPreview(
   stations,
   markerRegistry,
-  loadPopupData,
   createWindIcon
 ) {
+
+  const coastalStations = stations.filter(
+    s => s.type === "coastal" && s.featured
+  );
+
+  const ids = coastalStations.map(s => s.fmisid);
+
+  const data = await fetchCoastalMulti(ids);
+
+  const values = {};
+
+  coastalStations.forEach(station => {
+
+    const d = data[station.fmisid];
+    if (!d || d.wind == null || d.dir == null) return;
+
+    values[station.fmisid] = {
+      wind: d.wind,
+      dir: d.dir
+    };
+
+  });
+
+  updateMarkers(values, markerRegistry, createWindIcon);
+
+  saveCache(values);
+
+}
+
+{
 
   const values = {};
 

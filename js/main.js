@@ -373,7 +373,6 @@ loadCoastalPreviewCache(markerRegistry, createWindIcon);
 updateCoastalPreview(
   stations,
   markerRegistry,
-  loadPopupData,
   createWindIcon
 );
 
