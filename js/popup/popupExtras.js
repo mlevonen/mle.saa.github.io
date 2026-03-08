@@ -113,17 +113,17 @@ export function renderPopupExtras(popupEl, data) {
 
 const rawSymbol = getSmartSymbol(data.obsWindSpeed);
 
-if (rawSymbol) {
+const symbolCode = rawSymbol ?? 4; {
 
-  html += `
-    <div class="popup-inline-item">
-      <img
-        src="/js/assets/weather-icons/SmartSymbol/${rawSymbol}.svg"
-        class="popup-weather-icon"
-        alt="Sääsymboli"
-      />
-    </div>
-  `;
+html += `
+  <div class="popup-inline-item">
+    <img
+      src="/js/assets/weather-icons/SmartSymbol/${symbolCode}.svg"
+      class="popup-weather-icon"
+      alt="Sääsymboli"
+    />
+  </div>
+`;
 
 }
 
