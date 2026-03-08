@@ -1,3 +1,5 @@
+import { updateWeatherPreview } from "./api/weatherPreview.js";
+
 export async function fetchObservationSeriesByFmisid(fmisid) {
 console.log("Using FMISID:", fmisid);
   if (!fmisid) return [];
