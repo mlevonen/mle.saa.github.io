@@ -96,9 +96,9 @@ function getSeaLevel(data) {
 /* =========================================================
    RENDER
    ========================================================= */
-
-export function renderPopupExtras(popupEl, data) {
 console.log("Popup data:", data);
+export function renderPopupExtras(popupEl, data) {
+
 
   const container = popupEl.querySelector(".popup-extras");
 
