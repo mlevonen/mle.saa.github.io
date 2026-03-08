@@ -76,13 +76,6 @@ export async function loadPopupData({
   if (weatherFmisid) {
 
   const series = await fetchObservationSeriesByFmisid(weatherFmisid);
-  const latest = series[series.length - 1];
-
-      updateWeatherPreview(
-        map,
-        station,
-        latest
-      );
 
     if (Array.isArray(series) && series.length) {
 
@@ -215,8 +208,6 @@ function parseTimeValuePairSeries(xmlText) {
     .sort((a, b) =>
       new Date(a.utctime) - new Date(b.utctime)
     );
-
-  console.log("PARSED SERIES LENGTH:", result.length);
 
   return result;
 }
