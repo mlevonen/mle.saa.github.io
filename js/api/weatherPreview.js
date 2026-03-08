@@ -1,13 +1,10 @@
 import { fetchObservationSeriesByFmisid } from "./dataLoader.js";
 import { getSmartSymbol, smartSymbolIcon } from "../popup/popupExtras.js";
 
-const symbolCode = getSmartSymbol(series);
 
-const icon = smartSymbolIcon(symbolCode);
+function createWeatherIcon(temp, symbol) {
 
-function createWeatherIcon(temp, symbolCode) {
-
-  const iconUrl = smartSymbolIcon(symbolCode);
+  const iconUrl = smartSymbolIcon(symbol);
 
   const html = `
     <div class="weather-marker">
@@ -19,20 +16,23 @@ function createWeatherIcon(temp, symbolCode) {
   return L.divIcon({
     className: "weather-marker",
     html,
-    iconSize: [42,42]
+    iconSize: [42, 42]
   });
 
 }
 
-function updateWeatherMarkers(values, markerRegistry, createWeatherIcon) {
+
+function updateWeatherMarkers(values, markerRegistry) {
 
   Object.entries(values).forEach(([fmisid, data]) => {
 
     const marker = markerRegistry[fmisid];
     if (!marker) return;
 
-    if (marker.previewData?.temp === data.temp &&
-        marker.previewData?.symbol === data.symbol) {
+    if (
+      marker.previewData?.temp === data.temp &&
+      marker.previewData?.symbol === data.symbol
+    ) {
       return;
     }
 
@@ -54,8 +54,7 @@ function updateWeatherMarkers(values, markerRegistry, createWeatherIcon) {
 
 export async function updateWeatherPreview(
   stations,
-  markerRegistry,
-  createWeatherIcon
+  markerRegistry
 ) {
 
   const weatherStations = stations.filter(
@@ -85,43 +84,8 @@ export async function updateWeatherPreview(
 
   updateWeatherMarkers(
     values,
-    markerRegistry,
-    createWeatherIcon
+    markerRegistry
   );
 
-}
-
-function createWeatherIcon(temp, symbol) {
-
-  const iconUrl = smartSymbolIcon(symbol);
-
-  const html = `
-    <div class="weather-marker">
-      <img src="${iconUrl}" class="weather-icon">
-      <div class="weather-temp">${Math.round(temp)}°</div>
-    </div>
-  `;
-
-  return L.divIcon({
-    className: "weather-marker",
-    html,
-    iconSize: [42,42]
-  });
-
-}
-
-function updateWeatherMarker(
-  station,
-  value,
-  markerRegistry,
-  createWeatherIcon
-) {
-
-  const marker = markerRegistry[station.fmisid];
-  if (!marker) return;
-
-  marker.setIcon(
-    createWeatherIcon(value)
-  );
 }
 

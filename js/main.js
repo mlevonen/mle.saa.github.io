@@ -391,8 +391,7 @@ setInterval(() => {
 
 updateWeatherPreview(
   stations,
-  markerRegistry,
-  createWeatherIcon
+  markerRegistry
 );
 
 
