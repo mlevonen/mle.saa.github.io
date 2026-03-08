@@ -16,7 +16,7 @@ function getSmartSymbol(series) {
 
     const code = Number(series[i].smartsymbol);
 
-    if (Number.isFinite(code)) {
+    if (Number.isFinite(code) && code > 0) {
       return code;
     }
 
@@ -111,19 +111,20 @@ export function renderPopupExtras(popupEl, data) {
 
   /* === SÄÄSYMBOLI === */
 
-const rawSymbol = getSmartSymbol(data.obsWindSpeed);
+const rawSymbol = getSmartSymbol(data.obsTemp);
 
-if (rawSymbol != null) {
+if (rawSymbol) {
 
   html += `
     <div class="popup-inline-item">
       <img
-        src="./js/assets/weather-icons/SmartSymbol/${rawSymbol}.svg"
+        src="/js/assets/weather-icons/SmartSymbol/${rawSymbol}.svg"
         class="popup-weather-icon"
         alt="Sääsymboli"
       />
     </div>
   `;
+
 }
 
   /* === ILMANPAINE === */
