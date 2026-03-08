@@ -36,6 +36,37 @@ function smartSymbolIcon(code) {
 }
 
 
+export function getSmartSymbol(series) {
+
+  if (!Array.isArray(series) || !series.length) {
+    return null;
+  }
+
+  for (let i = series.length - 1; i >= 0; i--) {
+
+    const code = Number(series[i].smartsymbol);
+
+    if (Number.isFinite(code) && code > 0) {
+      return code;
+    }
+
+  }
+
+  return null;
+}
+
+export function smartSymbolIcon(code) {
+
+  if (!Number.isFinite(code)) {
+    return "/js/assets/weather-icons/SmartSymbol/1.svg";
+  }
+
+  return `/js/assets/weather-icons/SmartSymbol/${code}.svg`;
+}
+
+
+
+
 
 
 function getPressure(series) {

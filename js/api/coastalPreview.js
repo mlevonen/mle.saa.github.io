@@ -109,11 +109,6 @@ async function fetchCoastalMulti(fmisids) {
 
 }
 
-
-
-
-
-
 function updateMarkers(values, markerRegistry, createWindIcon) {
 
   Object.entries(values).forEach(([fmisid, data]) => {
