@@ -3,7 +3,7 @@ import { getLatestObservation } from "../utils/helpers.js";
 /* =========================================================
    DATA-HELPERIT
    ========================================================= */
-
+console.log("TEMP SAMPLE", data.obsTemp.slice(-3));
 // --- Sääsymbolin haku ---
 
 function getSmartSymbol(series) {
@@ -110,7 +110,7 @@ export function renderPopupExtras(popupEl, data) {
 
   /* === SÄÄSYMBOLI === */
 
-const rawSymbol = getSmartSymbol(data.obsTemp);
+const rawSymbol = getSmartSymbol(data.obsWindSpeed);
 
 if (rawSymbol != null) {
 
