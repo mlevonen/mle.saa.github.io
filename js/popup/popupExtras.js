@@ -111,7 +111,7 @@ export function renderPopupExtras(popupEl, data) {
 
   /* === SÄÄSYMBOLI === */
 
-const rawSymbol = getSmartSymbol(data.obsTemp);
+const rawSymbol = getSmartSymbol(data.obsWindSpeed);
 
 if (rawSymbol) {
 
