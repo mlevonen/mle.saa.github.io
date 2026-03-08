@@ -7,26 +7,35 @@ import { getLatestObservation } from "../utils/helpers.js";
 // --- Sääsymbolin haku ---
 
 function getSmartSymbol(series) {
-  if (!Array.isArray(series)) return null;
 
-  const now = Date.now();
+  if (!Array.isArray(series) || !series.length) {
+    return null;
+  }
 
-  const latestPast = [...series]
-    .filter(s => Number.isFinite(s.smartsymbol))
-    .map(s => ({
-      ...s,
-      time: Date.parse(
-        s.utctime.replace(
-          /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})$/,
-          "$1-$2-$3T$4:$5:$6Z"
-        )
-      )
-    }))
-    .filter(s => !Number.isNaN(s.time) && s.time <= now)
-    .sort((a, b) => b.time - a.time)[0];
+  for (let i = series.length - 1; i >= 0; i--) {
 
-  return latestPast ? latestPast.smartsymbol : null;
+    const code = Number(series[i].smartsymbol);
+
+    if (Number.isFinite(code)) {
+      return code;
+    }
+
+  }
+
+  return null;
 }
+
+function smartSymbolIcon(code) {
+
+  if (!Number.isFinite(code)) {
+    return "/js/assets/weather-icons/SmartSymbol/1.svg";
+  }
+
+  return `/js/assets/weather-icons/SmartSymbol/${code}.svg`;
+
+}
+
+
 
 
 function getPressure(series) {
@@ -90,9 +99,6 @@ function getSeaLevel(data) {
 
 export function renderPopupExtras(popupEl, data) {
 
-  console.log("=== renderPopupExtras CALLED ===");
-  console.log("popupEl:", popupEl);
-  console.log("data:", data);
 
   const container = popupEl.querySelector(".popup-extras");
 
@@ -100,35 +106,24 @@ export function renderPopupExtras(popupEl, data) {
 
   if (!container) return;
 
-  console.log("obsWeatherSymbol:", data.obsWeatherSymbol);
-  console.log("obsPressure:", data.obsPressure);
-  console.log("seaLevel:", data.seaLevel);
-
-
   let html = "";
 
   /* === SÄÄSYMBOLI === */
 
-  const rawSymbol =
-  data.obsWindSpeed?.at(-1)?.smartsymbol;
+const rawSymbol = getSmartSymbol(data.obsTemp);
 
+if (rawSymbol != null) {
 
-  if (rawSymbol != null) {
-    const symbolCode = rawSymbol >= 100
-      ? rawSymbol % 100
-      : rawSymbol;
-
-    html += `
-      <div class="popup-inline-item">
-        <img
-          src="./js/assets/weather-icons/SmartSymbol/${symbolCode}.svg"
-          class="popup-weather-icon"
-          alt="Sääsymboli"
-        />
-      </div>
-    `;
-
-  }
+  html += `
+    <div class="popup-inline-item">
+      <img
+        src="./js/assets/weather-icons/SmartSymbol/${rawSymbol}.svg"
+        class="popup-weather-icon"
+        alt="Sääsymboli"
+      />
+    </div>
+  `;
+}
 
   /* === ILMANPAINE === */
 
