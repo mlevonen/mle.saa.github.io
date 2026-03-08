@@ -73,8 +73,14 @@ export async function loadPopupData({
   // ==========================
   if (weatherFmisid) {
 
-  const series =
-  await fetchObservationSeriesByFmisid(weatherFmisid);
+  const series = await fetchObservationSeriesByFmisid(weatherFmisid);
+  const latest = series[series.length - 1];
+
+      updateWeatherPreview(
+        map,
+        station,
+        latest
+      );
 
     if (Array.isArray(series) && series.length) {
 

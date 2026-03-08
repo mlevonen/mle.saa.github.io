@@ -7,11 +7,13 @@ import "./charts/plugins.js";
 import { fetchSeaLevel, fetchSeaLevelSeries, fetchSeaLevelForecast } from "./api/sealevel.js";
 import { fetchSeaLevelMulti } from "./api/sealevel.js";
 import { updateCoastalPreview, loadCoastalPreviewCache} from "./api/coastalPreview.js";
+import { updateWeatherPreview } from "./api/weatherPreview.js";
 
 
 "use strict";
 
 const map = L.map("map").setView([60, 25], 6);
+
 
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "&copy; OpenStreetMap"
@@ -387,7 +389,11 @@ setInterval(() => {
 
 }, 300000);
 
-
+updateWeatherPreview(
+  stations,
+  markerRegistry,
+  createWeatherIcon
+);
 
 
 
