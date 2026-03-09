@@ -39,7 +39,8 @@ const stations = [
     name: "Luhanka Judinsalo",
     fmisid: 101362,
     lat: 61.7,
-    lon: 25.51
+    lon: 25.51,
+    featured: true
   },
 
   {
@@ -48,7 +49,8 @@ const stations = [
     name: "Tampere Siilinkari",
     fmisid: 101311,
     lat: 61.52,
-    lon: 23.75
+    lon: 23.75,
+    featured: true
   },
 
   {
