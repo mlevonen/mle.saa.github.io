@@ -792,7 +792,7 @@ async function renderSeaLevelPopup(popup, station) {
 
     <div>
       <strong>Veden lämpötila</strong>
-      <canvas id="sea-temp-chart" height="110"></canvas>
+      <canvas id="sea-temp-chart" height="80"></canvas>
     </div>
 
   </div>
