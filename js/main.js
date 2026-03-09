@@ -756,7 +756,7 @@ async function renderSeaLevelPopup(popup, station) {
   series.waterTemp.at(-1)?.value ?? null;
   
   contentEl.innerHTML = `
-  <div style="width:460px;">
+  <div style="width:500px;">
 
     <h3 style="margin-top:0;">${station.name}</h3>
     
