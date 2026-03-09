@@ -110,7 +110,7 @@ stations.forEach(station => {
     {
       icon: createStationIcon(station)
     }
-  ).addTo(map);
+  );
 
   markerRegistry[station.fmisid] = marker;
   marker.station = station;
