@@ -218,9 +218,9 @@ stations.forEach(station => {
     weatherLayer.addLayer(marker);
   }
 
-  //if (station.type === "sealevel") {
-  //  seaLevelLayer.addLayer(marker);
-  //}
+  if (station.type === "sealevel") {
+    seaLevelLayer.addLayer(marker);
+  }
 
   if (station.type === "coastal") {
     coastalLayer.addLayer(marker);
