@@ -104,7 +104,8 @@ const stations = [
     name: "Kumlinge kirkonkylä",
     fmisid: 100928,
     lat: 60.26,
-    lon: 20.75
+    lon: 20.75,
+    featured: true
   },
 
   /*
