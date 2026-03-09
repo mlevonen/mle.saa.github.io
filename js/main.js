@@ -28,7 +28,7 @@ const FMI_WFS = "https://opendata.fmi.fi/wfs";
 
 
 const weatherLayer = L.featureGroup().addTo(map);
-const seaLevelLayer = L.featureGroup().addTo(map);
+const seaLevelLayer = L.featureGroup(); // EI oletuksena kartalla
 const coastalLayer = L.featureGroup().addTo(map);
 
 const markerRegistry = {};
