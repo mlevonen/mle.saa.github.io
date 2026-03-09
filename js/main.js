@@ -782,17 +782,17 @@ async function renderSeaLevelPopup(popup, station) {
 
     <div style="margin-bottom:20px;">
       <strong>Vedenkorkeus (havainto)</strong>
-      <canvas id="sea-level-obs-chart" height="130"></canvas>
+      <canvas id="sea-level-obs-chart" height="110"></canvas>
     </div>
 
     <div style="margin-bottom:20px;">
       <strong>Vedenkorkeus (ennuste)</strong>
-      <canvas id="sea-level-fc-chart" height="130"></canvas>
+      <canvas id="sea-level-fc-chart" height="110"></canvas>
     </div>
 
     <div>
       <strong>Veden lämpötila</strong>
-      <canvas id="sea-temp-chart" height="130"></canvas>
+      <canvas id="sea-temp-chart" height="110"></canvas>
     </div>
 
   </div>
