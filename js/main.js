@@ -643,7 +643,7 @@ function createWindIcon(speed, dir, symbolUrl) {
 
   const html = `
     <div class="wind-marker" style="background:${color}">
-      <img class="marker-weather-icon" src="${symbolUrl || '/js/assets/weather-icons/SmartSymbol/na.svg'}">
+      <img class="marker-weather-icon" src="/js/assets/weather-icons/SmartSymbol/na.svg">
       <div class="marker-arrow" style="transform: rotate(${dir + 180}deg)">▲</div>
       <div class="marker-speed">${roundedSpeed}</div>
     </div>

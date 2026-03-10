@@ -126,15 +126,10 @@ function updateMarkers(values, markerRegistry, createWindIcon) {
     marker.previewData = marker.previewData || {};
     marker.previewData.wind = data.wind;
 
-const symbolUrl = smartSymbolIcon(
-  Number(data.symbol)
-);
-
-const icon = createWindIcon(
-  data.wind,
-  data.dir,
-  symbolUrl
-);
+    const icon = createWindIcon(
+      data.wind,
+      data.dir
+    );
 
     marker.setIcon(icon);
 
@@ -163,11 +158,10 @@ export async function updateCoastalPreview(
     const d = data[station.fmisid];
     if (!d || d.wind == null || d.dir == null) return;
 
-    values[station.fmisid] = {
-      wind: d.wind,
-      dir: d.dir,
-      symbol: d.symbol
-    };
+  values[station.fmisid] = {
+    wind: d.wind,
+    dir: d.dir
+  };
     console.log("coastal symbol:", station.name, d.symbol);
   });
 
