@@ -137,7 +137,7 @@ const icon = createWindIcon(
     marker.setIcon(icon);
 
   });
-
+console.log("marker symbol:", data.symbol);
 }
 
 export async function updateCoastalPreview(
