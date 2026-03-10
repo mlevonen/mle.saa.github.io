@@ -1,3 +1,5 @@
+import { smartSymbolIcon } from "../popup/popupExtras.js";
+
 // ==========================
 // COASTAL PREVIEW SYSTEM
 // ==========================
@@ -124,10 +126,13 @@ function updateMarkers(values, markerRegistry, createWindIcon) {
     marker.previewData = marker.previewData || {};
     marker.previewData.wind = data.wind;
 
-    const icon = createWindIcon(
-      data.wind,
-      data.dir
-    );
+const symbolUrl = smartSymbolIcon(data.symbol);
+
+const icon = createWindIcon(
+  data.wind,
+  data.dir,
+  symbolUrl
+);
 
     marker.setIcon(icon);
 
@@ -158,7 +163,8 @@ export async function updateCoastalPreview(
 
     values[station.fmisid] = {
       wind: d.wind,
-      dir: d.dir
+      dir: d.dir,
+      symbol: d.symbol
     };
 
   });
