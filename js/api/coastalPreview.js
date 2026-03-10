@@ -166,7 +166,7 @@ export async function updateCoastalPreview(
       dir: d.dir,
       symbol: d.symbol
     };
-
+    console.log("coastal symbol:", station.name, d.symbol);
   });
 
   updateMarkers(values, markerRegistry, createWindIcon);
