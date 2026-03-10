@@ -164,7 +164,7 @@ export async function updateCoastalPreview(
     values[station.fmisid] = {
       wind: d.wind,
       dir: d.dir,
-      symbol: d.symbol
+      symbol: d.smartsymbol
     };
     console.log("coastal symbol:", station.name, d.symbol);
   });
