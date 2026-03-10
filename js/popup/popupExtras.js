@@ -29,10 +29,11 @@ export function getSmartSymbol(series) {
 export function smartSymbolIcon(code) {
 
   if (!Number.isFinite(code)) {
-    return "/js/assets/weather-icons/SmartSymbol/1.svg";
+    return "/js/assets/weather-icons/SmartSymbol/na.svg";
   }
 
   return `/js/assets/weather-icons/SmartSymbol/${code}.svg`;
+
 }
 
 

@@ -633,20 +633,29 @@ function getMarkerStyle(type) {
 //CREATEWINDICON
 function createWindIcon(speed, dir, symbolUrl) {
 
+  const roundedSpeed = Math.round(speed);
+
+  const color =
+    roundedSpeed < 5  ? "rgba(76,175,80,0.65)" :
+    roundedSpeed < 10 ? "rgba(255,193,7,0.65)" :
+    roundedSpeed < 15 ? "rgba(255,152,0,0.65)" :
+                        "rgba(244,67,54,0.65)";
+
   const html = `
-    <div class="wind-marker">
-      <img class="weather-icon" src="${symbolUrl}">
-      <div class="wind-arrow" style="transform: rotate(${dir}deg)">▲</div>
-      <div class="wind-speed">${Math.round(speed)}</div>
+    <div class="wind-marker" style="background:${color}">
+      <img class="marker-weather-icon" src="${symbolUrl}">
+      <div class="marker-arrow" style="transform: rotate(${dir}deg)">▲</div>
+      <div class="marker-speed">${roundedSpeed}</div>
     </div>
   `;
 
   return L.divIcon({
-    className: "custom-marker",
+    className: "wind-marker-wrapper",
     html,
-    iconSize: [46, 70],
-    iconAnchor: [23, 60]
+    iconSize: [46,72],
+    iconAnchor: [23,62]
   });
+
 }
 
 
