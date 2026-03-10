@@ -47,14 +47,8 @@ for (const el of elements) {
   }
 }
 
-
 console.warn("Sea level TW value not found for fmisid", fmisid);
 return null;}
-
-
-
-
-
 
 export async function fetchSeaLevelSeries(fmisid) {
 

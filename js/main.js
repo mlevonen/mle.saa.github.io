@@ -631,43 +631,21 @@ function getMarkerStyle(type) {
 }
 
 //CREATEWINDICON
-function createWindIcon(speed, direction) {
+function createWindIcon(speed, dir, symbolUrl) {
 
-  const roundedSpeed = Math.round(speed);
-
-  // 🎨 Väri nopeuden mukaan
-  const color =
-  roundedSpeed < 5  ? "rgba(76,175,80,0.60)" :
-  roundedSpeed < 10 ? "rgba(255,193,7,0.60)" :
-  roundedSpeed < 15 ? "rgba(255,152,0,0.60)" :
-                      "rgba(244,67,54,0.60)";
+  const html = `
+    <div class="wind-marker">
+      <img class="weather-icon" src="${symbolUrl}">
+      <div class="wind-arrow" style="transform: rotate(${dir}deg)">▲</div>
+      <div class="wind-speed">${Math.round(speed)}</div>
+    </div>
+  `;
 
   return L.divIcon({
-    className: "wind-wrapper",
-    html: `
-      <div class="wind-marker" style="background:${color};">
-        <div class="wind-arrow"
-            style="transform: rotate(${(direction + 180) % 360}deg);">
-          <svg width="22" height="22" viewBox="0 0 24 24">
-            <path d="M12 2 L12 16" 
-                  stroke="#222" 
-                  stroke-width="4"
-                  stroke-linecap="round"/>
-            <path d="M8 6 L12 2 L16 6"
-                  stroke="#222"
-                  stroke-width="4"
-                  fill="none"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div class="wind-speed">
-          ${roundedSpeed}
-        </div>
-      </div>
-      `,
-    iconSize: [54, 54],
-    iconAnchor: [27, 27]
+    className: "custom-marker",
+    html,
+    iconSize: [46, 70],
+    iconAnchor: [23, 60]
   });
 }
 
