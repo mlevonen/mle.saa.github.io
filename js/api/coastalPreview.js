@@ -130,7 +130,7 @@ function updateMarkers(values, markerRegistry, createWindIcon) {
 
     const symbol = marker.previewData?.symbol;
 
-    const symbolUrl = smartSymbolIcon(data.symbol);
+    const symbolUrl = smartSymbolIcon(marker.previewData?.symbol);
 
     const icon = createWindIcon(
       data.wind,
