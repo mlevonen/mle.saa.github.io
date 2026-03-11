@@ -36,6 +36,21 @@ function updateWeatherMarkers(values, markerRegistry) {
       return;
     }
 
+    if (marker.previewData.wind !== undefined) {
+
+      const symbolUrl = smartSymbolIcon(data.symbol);
+
+      const icon = createWindIcon(
+        marker.previewData.wind,
+        marker.previewData.dir,
+        symbolUrl
+      );
+
+      marker.setIcon(icon);
+
+    }
+
+
     marker.previewData = marker.previewData || {};
     marker.previewData.temp = data.temp;
     marker.previewData.symbol = data.symbol;
