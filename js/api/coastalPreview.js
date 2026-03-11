@@ -108,7 +108,7 @@ async function fetchCoastalMulti(fmisids) {
   }
 
   return result;
-  
+
 
 }
 
@@ -205,6 +205,10 @@ console.log("Coastal station:", station.name);
         dir: latestWind.winddirection,
         symbol: latestWind.smartsymbol
       };
+
+      console.log("COASTAL SYMBOL:", station.name, latestWind.smartsymbol);
+
+
 
     } catch {}
 
