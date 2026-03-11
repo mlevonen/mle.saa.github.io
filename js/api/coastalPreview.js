@@ -173,7 +173,7 @@ export async function updateCoastalPreview(
     symbol: d.smartsymbol
   };
 
-  console.log("coastal symbol:", station.name, d.smartsymbol);
+  console.log("coastal data:", station.name, d);
 
 });
 
