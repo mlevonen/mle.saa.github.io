@@ -108,6 +108,7 @@ async function fetchCoastalMulti(fmisids) {
   }
 
   return result;
+  
 
 }
 
