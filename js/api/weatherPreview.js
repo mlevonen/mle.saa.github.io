@@ -36,7 +36,7 @@ function updateWeatherMarkers(values, markerRegistry) {
       return;
     }
 
-    if (marker.previewData && marker.previewData.wind !== undefined) {
+    if (marker.previewData?.wind !== undefined) {
 
       const symbolUrl = smartSymbolIcon(data.symbol);
 
