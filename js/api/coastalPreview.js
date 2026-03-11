@@ -1,4 +1,4 @@
-import { smartSymbolIcon } from "../popup/popupExtras.js";
+//import { smartSymbolIcon } from "../popup/popupExtras.js";
 import { fetchObservationSeriesByFmisid } from "./dataLoader.js";
 
 // ==========================
