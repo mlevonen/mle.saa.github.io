@@ -29,27 +29,15 @@ function updateWeatherMarkers(values, markerRegistry) {
     const marker = markerRegistry[fmisid];
     if (!marker) return;
 
+    // WeatherPreview saa muuttaa vain weather-markkereita
+    if (marker.station?.type !== "weather") return;
+
     if (
       marker.previewData?.temp === data.temp &&
       marker.previewData?.symbol === data.symbol
     ) {
       return;
     }
-
-    if (marker.previewData?.wind !== undefined) {
-
-      const symbolUrl = smartSymbolIcon(data.symbol);
-
-      const icon = createWindIcon(
-        marker.previewData.wind,
-        marker.previewData.dir,
-        symbolUrl
-      );
-
-      marker.setIcon(icon);
-
-    }
-
 
     marker.previewData = marker.previewData || {};
     marker.previewData.temp = data.temp;
@@ -65,6 +53,7 @@ function updateWeatherMarkers(values, markerRegistry) {
   });
 
 }
+
 
 
 export async function updateWeatherPreview(
