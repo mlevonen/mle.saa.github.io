@@ -157,7 +157,7 @@ export async function updateCoastalPreview(
   const ids = coastalStations.map(s => s.fmisid);
 
   const data = await fetchCoastalMulti(ids);
-
+  console.log("COASTAL DATA KEYS:", Object.keys(data));
   const values = {};
 
 coastalStations.forEach(station => {
