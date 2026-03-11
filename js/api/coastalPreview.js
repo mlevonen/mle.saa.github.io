@@ -197,9 +197,6 @@ console.log("Coastal station:", station.name);
 
       const latestWind = data.obsWindSpeed?.at(-1);
 
-      console.log("latestWind:", latestWind);
-
-
       if (!latestWind) return;
 
       values[station.fmisid] = {
