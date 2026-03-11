@@ -127,7 +127,7 @@ function updateMarkers(values, markerRegistry, createWindIcon) {
     marker.previewData.wind = data.wind;
 
     const symbol = marker.previewData?.symbol;
-    const symbolUrl = smartSymbolIcon(symbol);
+    const symbolUrl = smartSymbolIcon(data.symbol);
 
     const icon = createWindIcon(
       data.wind,
@@ -200,7 +200,8 @@ export async function updateCoastalPreview(
 
       values[station.fmisid] = {
         wind: latestWind.windspeedms,
-        dir: latestWind.winddirection
+        dir: latestWind.winddirection,
+        symbol: latestWind.smartsymbol
       };
 
     } catch {}
