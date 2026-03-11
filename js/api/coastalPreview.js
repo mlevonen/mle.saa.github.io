@@ -158,7 +158,7 @@ export async function updateCoastalPreview(
   const values = {};
 
   coastalStations.forEach(station => {
-
+console.log("Coastal station:", station.name);
     const d = data[station.fmisid];
     if (!d || d.wind == null || d.dir == null) return;
 
