@@ -116,6 +116,7 @@ function updateMarkers(values, markerRegistry, createWindIcon) {
 
   Object.entries(values).forEach(([fmisid, data]) => {
 
+    console.log("UPDATE MARKER DATA:", data);
     const marker = markerRegistry[fmisid];
     if (!marker) return;
 
