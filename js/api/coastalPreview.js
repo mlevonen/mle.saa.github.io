@@ -165,11 +165,11 @@ export async function updateCoastalPreview(
   console.log("Coastal station:", station.name);
 
   const d = data[station.fmisid];
-  if (!d || d.wind == null || d.dir == null) return;
+  if (!d || d.windspeedms == null || d.winddirection == null) return;
 
   values[station.fmisid] = {
-    wind: d.wind,
-    dir: d.dir,
+    wind: d.windspeedms,
+    dir: d.winddirection,
     symbol: d.smartsymbol
   };
 
