@@ -1,4 +1,4 @@
-//import { smartSymbolIcon } from "../popup/popupExtras.js";
+import { smartSymbolIcon } from "../popup/popupExtras.js";
 import { fetchObservationSeriesByFmisid } from "./dataLoader.js";
 
 // ==========================
@@ -115,32 +115,22 @@ async function fetchCoastalMulti(fmisids) {
 
 function updateMarkers(values, markerRegistry, createWindIcon) {
 
-  Object.entries(values).forEach(([fmisid, data]) => {
+Object.entries(values).forEach(([fmisid, data]) => {
 
-    console.log("UPDATE MARKER DATA:", data);
-    const marker = markerRegistry[fmisid];
-    if (!marker) return;
+  const marker = markerRegistry[fmisid];
+  if (!marker) return;
 
-    if (marker.previewData?.wind === data.wind &&
-        marker.previewData?.dir === data.dir) {
-      return;
-    }
+  const symbolUrl = smartSymbolIcon(data.symbol);
 
-    marker.previewData = marker.previewData || {};
-    marker.previewData.wind = data.wind;
+  const icon = createWindIcon(
+    data.wind,
+    data.dir,
+    symbolUrl
+  );
 
-    const symbol = marker.previewData?.symbol;
-    const symbolUrl = smartSymbolIcon(symbol);
+  marker.setIcon(icon);
 
-    const icon = createWindIcon(
-      data.wind,
-      data.dir,
-      symbolUrl
-    );
-
-    marker.setIcon(icon);
-
-  });
+});
 
 }
 
@@ -178,8 +168,8 @@ export async function updateCoastalPreview(
   if (!d || d.wind == null || d.dir == null) return;
 
   values[station.fmisid] = {
-    wind: d.wind,
-    dir: d.dir,
+    wind: d.windspeedms,
+    dir: d.winddirection,
     symbol: d.smartsymbol
   };
 
