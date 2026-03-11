@@ -160,16 +160,19 @@ export async function updateCoastalPreview(
 
   const values = {};
 
-  coastalStations.forEach(station => {
+coastalStations.forEach(station => {
 
   console.log("Coastal station:", station.name);
 
   const d = data[station.fmisid];
-  if (!d || d.windspeedms == null || d.winddirection == null) return;
+
+  console.log("RAW coastal object:", station.name, d);
+
+  if (!d || d.wind == null || d.dir == null) return;
 
   values[station.fmisid] = {
-    wind: d.windspeedms,
-    dir: d.winddirection,
+    wind: d.wind,
+    dir: d.dir,
     symbol: d.smartsymbol
   };
 
