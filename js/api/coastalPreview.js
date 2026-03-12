@@ -174,10 +174,6 @@ export async function updateCoastalPreview(
 
 }
 
-updateMarkers(values, markerRegistry, createWindIcon);
-
-saveCache(values);
-
 
 {
   const values = {};
