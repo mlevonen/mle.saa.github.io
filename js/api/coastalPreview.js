@@ -174,7 +174,7 @@ export async function updateCoastalPreview(
 
       }
 
-    console.log("RAW coastal object:", station.name, d);
+    
 
       if (!windRow) continue;
 
