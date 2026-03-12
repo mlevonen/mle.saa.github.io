@@ -129,7 +129,7 @@ Object.entries(values).forEach(([fmisid, data]) => {
   );
 
   marker.setIcon(icon);
-
+  console.log("MARKER SYMBOL:", data.symbol);
 });
 
 }
