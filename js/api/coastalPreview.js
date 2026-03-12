@@ -112,7 +112,7 @@ async function fetchCoastalMulti(fmisids) {
 
 
 }
-console.log("VALUES OBJECT:", values);
+
 
 updateMarkers(values, markerRegistry, createWindIcon);
 function updateMarkers(values, markerRegistry, createWindIcon) {
@@ -147,43 +147,37 @@ export async function updateCoastalPreview(
     s => s.type === "coastal" && s.featured
   );
 
-  const ids = coastalStations.map(s => s.fmisid);
-  console.log("COASTAL IDS:", ids);
-  
-  
-  const data = {};
+  const values = {};   // ← TÄMÄ TÄRKEÄ
 
   for (const station of coastalStations) {
+
     const series = await fetchObservationSeriesByFmisid(station.fmisid);
-    data[station.fmisid] = series.at(-1);
+    const d = series?.at(-1);
+
+    console.log("RAW coastal object:", station.name, d);
+
+    if (!d || d.windspeedms == null || d.winddirection == null) continue;
+
+    values[station.fmisid] = {
+      wind: d.windspeedms,
+      dir: d.winddirection,
+      symbol: d.smartsymbol
+    };
+
   }
-  console.log("COASTAL DATA KEYS:", Object.keys(data));
-  const values = {};
 
-  coastalStations.forEach(station => {
+  console.log("VALUES OBJECT:", values);
 
-  console.log("Coastal station:", station.name);
+  updateMarkers(values, markerRegistry, createWindIcon);
 
-  const d = data[station.fmisid];
+  saveCache(values);
 
-  console.log("RAW coastal object:", station.name, d);
-
-  if (!d || d.wind == null || d.dir == null) return;
-
-  values[station.fmisid] = {
-    wind: d.windspeedms,
-    dir: d.winddirection,
-    symbol: d.smartsymbol
-  };
-
-  console.log("coastal data:", station.name, d);
-
-});
+}
 
 updateMarkers(values, markerRegistry, createWindIcon);
 
 saveCache(values);
-}
+
 
 {
   const values = {};
