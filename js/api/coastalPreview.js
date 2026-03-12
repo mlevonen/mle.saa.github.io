@@ -1,5 +1,6 @@
 import { smartSymbolIcon } from "../popup/popupExtras.js";
 import { fetchObservationSeriesByFmisid } from "./dataLoader.js";
+import { getSmartSymbol } from "../popup/popupExtras.js";
 
 // ==========================
 // COASTAL PREVIEW SYSTEM
@@ -153,6 +154,7 @@ export async function updateCoastalPreview(
 
     const series = await fetchObservationSeriesByFmisid(station.fmisid);
     const d = series?.at(-1);
+    const symbol = getSmartSymbol(series);
 
     console.log("RAW coastal object:", station.name, d);
 
@@ -161,9 +163,8 @@ export async function updateCoastalPreview(
     values[station.fmisid] = {
       wind: d.windspeedms,
       dir: d.winddirection,
-      symbol: d.smartsymbol
+      symbol: symbol
     };
-
   }
 
   console.log("VALUES OBJECT:", values);
