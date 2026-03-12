@@ -153,18 +153,36 @@ export async function updateCoastalPreview(
   for (const station of coastalStations) {
 
     const series = await fetchObservationSeriesByFmisid(station.fmisid);
-    const d = series?.at(-1);
-    const symbol = getSmartSymbol(series);
+
+
+      let windRow = null;
+      let symbol = null;
+
+      for (let i = series.length - 1; i >= 0; i--) {
+
+        const row = series[i];
+
+        if (!windRow && row.windspeedms != null && row.winddirection != null) {
+          windRow = row;
+        }
+
+        if (symbol == null && Number.isFinite(row.smartsymbol) && row.smartsymbol > 0) {
+          symbol = row.smartsymbol;
+        }
+
+        if (windRow && symbol != null) break;
+
+      }
 
     console.log("RAW coastal object:", station.name, d);
 
-    if (!d || d.windspeedms == null || d.winddirection == null) continue;
+      if (!windRow) continue;
 
-    values[station.fmisid] = {
-      wind: d.windspeedms,
-      dir: d.winddirection,
-      symbol: symbol
-    };
+      values[station.fmisid] = {
+        wind: windRow.windspeedms,
+        dir: windRow.winddirection,
+        symbol: symbol
+      };
   }
 
   console.log("VALUES OBJECT:", values);
