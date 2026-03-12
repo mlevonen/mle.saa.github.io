@@ -115,9 +115,9 @@ async function fetchCoastalMulti(fmisids) {
 
 function updateMarkers(values, markerRegistry, createWindIcon) {
 
-console.log("MARKER SYMBOL:", data.symbol);
-Object.entries(values).forEach(([fmisid, data]) => {
 
+Object.entries(values).forEach(([fmisid, data]) => {
+console.log("MARKER SYMBOL:", data.symbol);
   const marker = markerRegistry[fmisid];
   if (!marker) return;
 
