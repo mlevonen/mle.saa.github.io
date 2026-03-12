@@ -112,7 +112,9 @@ async function fetchCoastalMulti(fmisids) {
 
 
 }
+console.log("VALUES OBJECT:", values);
 
+updateMarkers(values, markerRegistry, createWindIcon);
 function updateMarkers(values, markerRegistry, createWindIcon) {
 
 
