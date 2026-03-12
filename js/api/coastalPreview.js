@@ -154,11 +154,14 @@ export async function updateCoastalPreview(
 
     const series = await fetchObservationSeriesByFmisid(station.fmisid);
 
+      console.log("SERIES LENGTH:", station.name, series.length);
 
       let windRow = null;
       let symbol = null;
 
       for (let i = series.length - 1; i >= 0; i--) {
+
+        console.log("SYMBOL TEST:", station.name, symbol);
 
         const row = series[i];
 
