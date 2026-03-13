@@ -50,7 +50,8 @@ const stations = [
     fmisid: 101311,
     lat: 61.52,
     lon: 23.75,
-    featured: true
+    featured: true,
+    yr: "https://www.yr.no/en/content/2-634963/meteogram.svg"
   },
 
   {

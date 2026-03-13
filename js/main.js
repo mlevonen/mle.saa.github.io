@@ -249,15 +249,6 @@ stations.forEach(async station => {
     const latestWind = data.obsWindSpeed?.at(-1);
     if (!latestWind) return;
 
-    console.log(
-      "Station:",
-      station.name,
-      "Time:",
-      latestWind.utctime,
-      "Direction:",
-      latestWind.winddirection
-    );
-
     const icon = createWindIcon(
       latestWind.windspeedms,
       latestWind.winddirection
@@ -670,8 +661,28 @@ map.on("popupopen", async e => {
   if (!popupEl) return;
 
   // 🔑 1. Ota feature.properties ENSIN
-  const station = e.popup._source.station;
-  if (!station) return;
+const station = e.popup._source.station;
+if (!station) return;
+
+// Yr meteogram weather asemille
+if (station.type === "weather" && station.yr) {
+
+  const popupEl = e.popup.getElement();
+
+  popupEl.innerHTML = `
+    <div class="yr-popup">
+      <img src="${station.yr}" style="width:100%">
+    </div>
+  `;
+
+  return;
+}
+
+if (station.type === "sealevel") {
+  renderSeaLevelPopup(e.popup, station);
+  return;
+}
+
 
   if (station.type === "sealevel") {
   renderSeaLevelPopup(e.popup, station);
