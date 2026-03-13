@@ -665,7 +665,7 @@ const station = e.popup._source.station;
 if (!station) return;
 
 // ==========================
-// Weather → Yr meteogram (kokeilu)
+// Weather → Yr meteogram (iframe)
 // ==========================
 
 if (station.type === "weather" && station.yr) {
@@ -674,21 +674,22 @@ if (station.type === "weather" && station.yr) {
 
   const html = `
     <div class="yr-popup">
-      <img src="${station.yr}" style="width:650px;max-width:100%;display:block;">
+      <iframe
+        src="${station.yr}"
+        width="650"
+        height="360"
+        frameborder="0"
+        style="border:0;display:block;"
+        loading="lazy">
+      </iframe>
     </div>
   `;
 
-  popup.setContent(html);   // 🔑 oikea tapa muuttaa popup sisältöä
-  popup.update();           // pakottaa Leafletin laskemaan koon
+  popup.setContent(html);
+  popup.update();
 
   return;
 }
-
-if (station.type === "sealevel") {
-  renderSeaLevelPopup(e.popup, station);
-  return;
-}
-
 
   if (station.type === "sealevel") {
   renderSeaLevelPopup(e.popup, station);
