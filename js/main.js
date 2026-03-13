@@ -664,16 +664,26 @@ map.on("popupopen", async e => {
 const station = e.popup._source.station;
 if (!station) return;
 
-// Yr meteogram weather asemille
+// ==========================
+// Weather → Yr meteogram (kokeilu)
+// ==========================
+
 if (station.type === "weather" && station.yr) {
 
-  const popupEl = e.popup.getElement();
+  const popup = e.popup;
+  const popupEl = popup.getElement();
 
   popupEl.innerHTML = `
     <div class="yr-popup">
-      <img src="${station.yr}" style="width:100%">
+      <img id="yr-img" src="${station.yr}" style="width:100%">
     </div>
   `;
+
+  const img = popupEl.querySelector("#yr-img");
+
+  img.onload = () => {
+    popup.update();   // 🔑 pakottaa Leafletin laskemaan popupin koon uudelleen
+  };
 
   return;
 }
