@@ -12,7 +12,8 @@ const stations = [
     name: "Helsinki",
     fmisid: 100971,
     lat: 60.17,
-    lon: 24.95
+    lon: 24.95,
+    yr: "https://www.yr.no/en/content/2-13453572/meteogram.svg"
   },
 
   {
@@ -21,7 +22,8 @@ const stations = [
     name: "Porvoo",
     fmisid: 101004,
     lat: 60.39,
-    lon: 25.66
+    lon: 25.66,
+    yr: "https://www.yr.no/en/content/2-11978456/meteogram.svg"
   },
 
     {
@@ -30,7 +32,8 @@ const stations = [
     name: "Asikkala Pulkkilanharju",
     fmisid: 101185,
     lat: 61.27,
-    lon: 25.52
+    lon: 25.52,
+    yr: "https://www.yr.no/en/content/2-660949/meteogram.svg"
   },
 
   {
@@ -40,7 +43,8 @@ const stations = [
     fmisid: 101362,
     lat: 61.7,
     lon: 25.51,
-    featured: true
+    featured: true,
+    yr: "https://www.yr.no/en/content/2-647522/meteogram.svg"
   },
 
   {
@@ -61,7 +65,8 @@ const stations = [
     fmisid: 101252,
     lat: 61.2,
     lon: 28.47,
-    featured: true
+    featured: true,
+    yr: "https://www.yr.no/en/content/2-11978335/meteogram.svg"
   },
 
   {
@@ -71,7 +76,8 @@ const stations = [
     fmisid: 101436,
     lat: 62.06,
     lon: 28.57,
-    featured: true
+    featured: true,
+    yr: "https://www.yr.no/en/content/2-639906/meteogram.svg"
   },
 
   {
@@ -81,7 +87,8 @@ const stations = [
     fmisid: 101628,
     lat: 62.55,
     lon: 29.67,
-    featured: true
+    featured: true,
+    yr: "https://www.yr.no/en/content/2-647851/meteogram.svg"
   },
 
   {
@@ -91,7 +98,8 @@ const stations = [
     fmisid: 101580,
     lat: 62.8,
     lon: 27.9,
-    featured: true
+    featured: true,
+    yr: "https://www.yr.no/en/content/2-650224/meteogram.svg"
   },
 
   {
@@ -101,7 +109,8 @@ const stations = [
     fmisid: 129963,
     lat: 69.05,
     lon: 27.76,
-    featured: true
+    featured: true,
+    yr: "https://www.yr.no/en/content/2-656657/meteogram.svg"
   },
 
   {
@@ -111,7 +120,8 @@ const stations = [
     fmisid: 100928,
     lat: 60.26,
     lon: 20.75,
-    featured: true
+    featured: true,
+    yr: "https://www.yr.no/en/content/2-650395/meteogram.svg"
   },
 
   /*
