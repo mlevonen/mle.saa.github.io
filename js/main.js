@@ -671,19 +671,15 @@ if (!station) return;
 if (station.type === "weather" && station.yr) {
 
   const popup = e.popup;
-  const popupEl = popup.getElement();
 
-  popupEl.innerHTML = `
+  const html = `
     <div class="yr-popup">
-      <img id="yr-img" src="${station.yr}" style="width:100%">
+      <img src="${station.yr}" style="width:650px;max-width:100%;display:block;">
     </div>
   `;
 
-  const img = popupEl.querySelector("#yr-img");
-
-  img.onload = () => {
-    popup.update();   // 🔑 pakottaa Leafletin laskemaan popupin koon uudelleen
-  };
+  popup.setContent(html);   // 🔑 oikea tapa muuttaa popup sisältöä
+  popup.update();           // pakottaa Leafletin laskemaan koon
 
   return;
 }
