@@ -59,7 +59,8 @@ const stations = [
     name: "Lappeenranta Hiekkapakka",
     fmisid: 101252,
     lat: 61.2,
-    lon: 28.47
+    lon: 28.47,
+    featured: true
   },
 
   {
@@ -68,7 +69,8 @@ const stations = [
     name: "Rantasalmi Rukkasluoto",
     fmisid: 101436,
     lat: 62.06,
-    lon: 28.57
+    lon: 28.57,
+    featured: true
   },
 
   {
@@ -77,7 +79,8 @@ const stations = [
     name: "Liperi Tuiskavanluoto",
     fmisid: 101628,
     lat: 62.55,
-    lon: 29.67
+    lon: 29.67,
+    featured: true
   },
 
   {
@@ -86,7 +89,8 @@ const stations = [
     name: "Kuopio Ritoniemi",
     fmisid: 101580,
     lat: 62.8,
-    lon: 27.9
+    lon: 27.9,
+    featured: true
   },
 
   {
@@ -95,7 +99,8 @@ const stations = [
     name: "Inari Seitalaassa",
     fmisid: 129963,
     lat: 69.05,
-    lon: 27.76
+    lon: 27.76,
+    featured: true
   },
 
   {
