@@ -57,28 +57,32 @@ export const weatherSymbolsPlugin = {
   }
 
 };
+
 export function getCurrentSymbol(symbols) {
 
   if (!symbols?.length) return null;
 
   const now = Date.now();
 
-  let closest = null;
-  let diff = Infinity;
+  let current = null;
 
   for (const s of symbols) {
-
-    const d = Math.abs(s.time.getTime() - now);
-
-    if (d < diff) {
-      diff = d;
-      closest = s;
+    if (s.time.getTime() <= now) {
+      current = s;
+    } else {
+      break;
     }
-
   }
 
-  return closest?.symbol ?? null;
+  // jos kaikki symbolit ovat tulevaisuudessa
+  if (!current) {
+    return symbols[0].symbol;
+  }
+
+  return current.symbol;
 }
+
+
 export function getSymbolUrl(symbol) {
 
   if (!symbol) {
