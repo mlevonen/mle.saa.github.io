@@ -256,6 +256,14 @@ stations.forEach(async station => {
       getSymbolUrl(data.currentSymbol)
     );
 
+    console.log(
+      station.name,
+      "symbol:",
+      data.currentSymbol
+    );
+
+
+
     // 🔥 HAE OLEMASSA OLEVA MARKER
     const baseMarker = markerRegistry[station.fmisid];
     if (!baseMarker) return;
