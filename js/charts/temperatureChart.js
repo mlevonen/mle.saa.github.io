@@ -1,4 +1,4 @@
-import { weatherSymbolsPlugin } from "../plugins/weatherSymbols.js";
+import { weatherSymbolsPlugin } from "./plugins/weatherSymbols.js";
 
 Chart.register(weatherSymbolsPlugin);
 
