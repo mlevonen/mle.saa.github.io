@@ -135,7 +135,7 @@ console.log("fcTemp", fcTemp.length);
 console.log("symbols", smartSymbols);
 
 function attachSymbols(fcTemp, symbols) {
-
+console.log("fcTemp with symbols", fcTemp.slice(0,5));
   if (!symbols || !Array.isArray(symbols)) {
     return fcTemp;
   }
