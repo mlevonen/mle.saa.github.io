@@ -130,24 +130,28 @@ export async function loadPopupData({
     }
   }
 
-    function attachSymbols(fcTemp, symbols) {
+function attachSymbols(fcTemp, symbols) {
 
-      return fcTemp.map(p => {
+  if (!symbols || !Array.isArray(symbols)) {
+    return fcTemp;
+  }
 
-        const t = new Date(p.utctime).getTime();
+  return fcTemp.map(p => {
 
-        const match = symbols.find(s =>
-          Math.abs(s.time.getTime() - t) < 30 * 60 * 1000
-        );
+    const t = new Date(p.utctime).getTime();
 
-        return {
-          ...p,
-          symbol: match ? match.symbol : null
-        };
+    const match = symbols.find(s =>
+      Math.abs(s.time.getTime() - t) < 30 * 60 * 1000
+    );
 
-      });
+    return {
+      ...p,
+      symbol: match ? match.symbol : null
+    };
 
-    }
+  });
+
+}
 
 
 
