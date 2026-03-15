@@ -62,7 +62,7 @@ Chart.register(weatherSymbolsPlugin);
         }))
         .filter(p => p.x > obsCutoffUtc)
     : [];
-console.log("fcPoints sample", rawFcPoints.slice(0,5));
+  console.log("rawFcPoints", rawFcPoints.slice(0,5));
 
   // --- tihennys 30 min välein ---
   const obsPoints =

@@ -136,29 +136,31 @@ console.log("symbols", smartSymbols);
 
 function attachSymbols(fcTemp, symbols) {
 
-  if (!symbols?.length) return fcTemp;
+  if (!Array.isArray(fcTemp)) return [];
+  if (!Array.isArray(symbols) || symbols.length === 0) return fcTemp;
 
   return fcTemp.map(p => {
 
     const t = new Date(p.utctime).getTime();
 
     let closest = null;
-    let diff = Infinity;
+    let minDiff = Infinity;
 
     for (const s of symbols) {
 
       const d = Math.abs(s.time.getTime() - t);
 
-      if (d < diff) {
-        diff = d;
+      if (d < minDiff) {
+        minDiff = d;
         closest = s;
       }
 
     }
 
     return {
-      ...p,
-      symbol: closest?.symbol ?? null
+      utctime: p.utctime,
+      temperature: p.temperature,
+      symbol: closest ? closest.symbol : null
     };
 
   });
@@ -172,7 +174,7 @@ function attachSymbols(fcTemp, symbols) {
   // ==========================
   const sunTimes = await fetchSunTimes(lat, lon);
   fcTemp = attachSymbols(fcTemp, smartSymbols);
-
+  console.log("fcTemp after attachSymbols", fcTemp.slice(0,5));
   console.log("symbols sample", smartSymbols.slice(0,5));
 
   // ==========================
