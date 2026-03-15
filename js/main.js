@@ -263,12 +263,14 @@ stations.forEach(async station => {
     // 🔥 VAIHDA SEN IKONI
     baseMarker.setIcon(icon);
 
-  } catch (err) {
     console.log(
       station.name,
       "symbol:",
       data.currentSymbol
     );
+
+
+  } catch (err) {
 
   }
 
