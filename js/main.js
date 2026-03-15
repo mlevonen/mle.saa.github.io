@@ -8,6 +8,7 @@ import { fetchSeaLevel, fetchSeaLevelSeries, fetchSeaLevelForecast } from "./api
 import { fetchSeaLevelMulti } from "./api/sealevel.js";
 import { updateCoastalPreview, loadCoastalPreviewCache} from "./api/coastalPreview.js";
 import { updateWeatherPreview } from "./api/weatherPreview.js";
+import { getSymbolUrl } from "./utils/weatherSymbol.js";
 
 
 "use strict";
@@ -251,7 +252,8 @@ stations.forEach(async station => {
 
     const icon = createWindIcon(
       latestWind.windspeedms,
-      latestWind.winddirection
+      latestWind.winddirection,
+      getSymbolUrl(data.currentSymbol)
     );
 
     // 🔥 HAE OLEMASSA OLEVA MARKER

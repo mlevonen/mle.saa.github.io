@@ -1,5 +1,6 @@
 import { updateWeatherPreview } from "./weatherPreview.js";
 import { fetchSmartSymbolsByFmisid } from "../services/fetchSmartSymbolsByFmisid.js";
+import { getCurrentSymbol } from "../utils/weatherSymbol.js";
 
 export async function fetchObservationSeriesByFmisid(fmisid) {
 console.log("Using FMISID:", fmisid);
@@ -165,7 +166,7 @@ function attachSymbols(fcTemp, symbols) {
 
   });
 
-}
+  }
 
 
 
@@ -174,9 +175,8 @@ function attachSymbols(fcTemp, symbols) {
   // ==========================
   const sunTimes = await fetchSunTimes(lat, lon);
   fcTemp = attachSymbols(fcTemp, smartSymbols);
-  console.log("fcTemp after attachSymbols", fcTemp.slice(0,5));
-  console.log("symbols sample", smartSymbols.slice(0,5));
 
+  const currentSymbol = getCurrentSymbol(smartSymbols);
   // ==========================
   // DATA OBJEKTI
   // ==========================
@@ -190,7 +190,8 @@ function attachSymbols(fcTemp, symbols) {
     fcWindSpeed,
     fcWindDir,
     fcWindGust,
-    obsWindGust
+    obsWindGust,
+    currentSymbol
 
   };
   popupCache[cacheKey] = data;
