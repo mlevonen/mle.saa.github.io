@@ -623,6 +623,13 @@ function getMarkerStyle(type) {
   }
 }
 
+console.log("marker symbol", data.currentSymbol);
+console.log(
+  "marker symbolUrl",
+  `/js/assets/weather-icons/SmartSymbol/${data.currentSymbol}.svg`
+);
+
+
 //CREATEWINDICON
 function createWindIcon(speed, dir, symbolUrl) {
 
