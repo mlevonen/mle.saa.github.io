@@ -8,7 +8,7 @@ import { fetchSeaLevel, fetchSeaLevelSeries, fetchSeaLevelForecast } from "./api
 import { fetchSeaLevelMulti } from "./api/sealevel.js";
 import { updateCoastalPreview, loadCoastalPreviewCache} from "./api/coastalPreview.js";
 import { updateWeatherPreview } from "./api/weatherPreview.js";
-import { getCurrentSymbol } from "../charts/utils/weatherSymbols.js";
+import { getCurrentSymbol } from "../charts/plugins/weatherSymbols.js";
 
 
 "use strict";
