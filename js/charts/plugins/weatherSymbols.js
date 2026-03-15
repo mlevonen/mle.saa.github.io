@@ -27,7 +27,7 @@ export const weatherSymbolsPlugin = {
     const { ctx } = chart;
 
     const ICON_SIZE = 26;
-    const ICON_OFFSET = 8; // etäisyys chartin yläreunasta
+    const ICON_OFFSET = 6; // etäisyys chartin yläreunasta
 
     dataset.data.forEach((point, i) => {
 
