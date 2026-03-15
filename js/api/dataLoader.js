@@ -1,6 +1,6 @@
 import { updateWeatherPreview } from "./weatherPreview.js";
 import { fetchSmartSymbolsByFmisid } from "../services/fetchSmartSymbolsByFmisid.js";
-import { getCurrentSymbol } from "../utils/weatherSymbol.js";
+import { getCurrentSymbol } from "../utils/weatherSymbols.js";
 
 export async function fetchObservationSeriesByFmisid(fmisid) {
 console.log("Using FMISID:", fmisid);
