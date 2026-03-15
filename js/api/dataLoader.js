@@ -164,6 +164,9 @@ function attachSymbols(fcTemp, symbols) {
   // ==========================
   const sunTimes = await fetchSunTimes(lat, lon);
   fcTemp = attachSymbols(fcTemp, smartSymbols);
+
+  console.log("symbols sample", smartSymbols.slice(0,5));
+
   // ==========================
   // DATA OBJEKTI
   // ==========================
