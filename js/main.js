@@ -247,7 +247,10 @@ stations.forEach(async station => {
       seaLevelFmisid: null
     });
 
-    const latestWind = data.obsWindSpeed?.at(-1);
+    const latestWind = data.obsWindSpeed?.at(-1) ?? {
+      windspeedms: 0,
+      winddirection: 0
+    };
     if (!latestWind) return;
 
     const symbolUrl = getSymbolUrl(data.currentSymbol);
