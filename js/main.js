@@ -250,10 +250,16 @@ stations.forEach(async station => {
     const latestWind = data.obsWindSpeed?.at(-1);
     if (!latestWind) return;
 
+    const symbolUrl = getSymbolUrl(data.currentSymbol);
+
+    console.log("symbolUrl", symbolUrl);
+
+
+
     const icon = createWindIcon(
       latestWind.windspeedms,
       latestWind.winddirection,
-      getSymbolUrl(data.currentSymbol)
+      symbolUrl
     );
 
     // 🔥 HAE OLEMASSA OLEVA MARKER
