@@ -1,4 +1,5 @@
 import { updateWeatherPreview } from "./weatherPreview.js";
+import { fetchSmartSymbolsByFmisid } from "../services/fetchSmartSymbolsByFmisid.js";
 
 export async function fetchObservationSeriesByFmisid(fmisid) {
 console.log("Using FMISID:", fmisid);
@@ -112,7 +113,7 @@ export async function loadPopupData({
   // ==========================
 
   const harmonie = await fetchHarmonieForecastByFmisid(weatherFmisid);
-
+  const smartSymbols = await fetchSmartSymbolsByFmisid(fmisid);
   const fcTemp = harmonie?.fcTemp ?? [];
   const fcWindSpeed = harmonie?.fcWindSpeed ?? [];
   const fcWindDir = harmonie?.fcWindDir ?? [];
