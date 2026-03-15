@@ -130,6 +130,9 @@ export async function loadPopupData({
     }
   }
 
+console.log("fcTemp", fcTemp.length);
+console.log("symbols", smartSymbols);
+
 function attachSymbols(fcTemp, symbols) {
 
   if (!symbols || !Array.isArray(symbols)) {
