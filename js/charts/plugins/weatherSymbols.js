@@ -80,10 +80,13 @@ export function getCurrentSymbol(symbols) {
   }
 
   return current.symbol;
+
+  console.log("smartSymbols first", smartSymbols[0]);
+  console.log("smartSymbols last", smartSymbols.at(-1));
+  console.log("currentSymbol", currentSymbol);
+
+
 }
-console.log("smartSymbols first", smartSymbols[0]);
-console.log("smartSymbols last", smartSymbols.at(-1));
-console.log("currentSymbol", currentSymbol);
 
 export function getSymbolUrl(symbol) {
 
