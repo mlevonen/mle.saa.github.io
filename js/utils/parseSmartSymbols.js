@@ -7,7 +7,7 @@ if (!posNode || !symNode) {
   console.warn("smartsymbol XML parse failed");
   return [];
 }
-
+console.log("parsed symbols", result.slice(0,5));
 const pos = posNode.textContent.trim().split(/\s+/);
 const sym = symNode.textContent.trim().split(/\s+/).map(Number);
 
@@ -26,5 +26,5 @@ for (let i = 0; i < sym.length; i++) {
 
 return result;
 }
-console.log("parsed symbols", result.slice(0,5));
+
 
