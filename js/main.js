@@ -266,8 +266,7 @@ stations.forEach(async station => {
 
 
   } catch (err) {
-  console.error(err);
-
+  
   }
 
 });
