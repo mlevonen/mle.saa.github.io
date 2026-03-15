@@ -75,7 +75,7 @@ Chart.register(weatherSymbolsPlugin);
       ? interpolateTimeSeries(rawFcPoints, 30)
       : rawFcPoints;
 
-
+    console.log("fcPoints sample", rawFcPoints.slice(0,5));
   // ==========================
   // SILLAN LUONTI havainto → ennuste
   // ==========================
