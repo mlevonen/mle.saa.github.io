@@ -113,8 +113,8 @@ export async function loadPopupData({
   // ==========================
 
   const harmonie = await fetchHarmonieForecastByFmisid(weatherFmisid);
-  const smartSymbols = await fetchSmartSymbolsByFmisid(fmisid);
-  const fcTemp = harmonie?.fcTemp ?? [];
+  const smartSymbols = await fetchSmartSymbolsByFmisid(station.fmisid);
+  let fcTemp = harmonie?.fcTemp ?? [];
   const fcWindSpeed = harmonie?.fcWindSpeed ?? [];
   const fcWindDir = harmonie?.fcWindDir ?? [];
   const fcWindGust = harmonie?.fcWindGust ?? [];

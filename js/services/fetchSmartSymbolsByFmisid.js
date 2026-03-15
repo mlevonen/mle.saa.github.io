@@ -1,5 +1,5 @@
 export async function fetchSmartSymbolsByFmisid(fmisid) {
-
+console.log("fetch smartsymbol fmisid:", fmisid);
   const url =
     `https://opendata.fmi.fi/wfs?service=WFS&version=2.0.0` +
     `&request=getFeature` +
