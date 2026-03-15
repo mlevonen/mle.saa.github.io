@@ -135,22 +135,30 @@ console.log("fcTemp", fcTemp.length);
 console.log("symbols", smartSymbols);
 
 function attachSymbols(fcTemp, symbols) {
-console.log("fcTemp with symbols", fcTemp.slice(0,5));
-  if (!symbols || !Array.isArray(symbols)) {
-    return fcTemp;
-  }
+
+  if (!symbols?.length) return fcTemp;
 
   return fcTemp.map(p => {
 
     const t = new Date(p.utctime).getTime();
 
-    const match = symbols.find(s =>
-      Math.abs(s.time.getTime() - t) < 30 * 60 * 1000
-    );
+    let closest = null;
+    let diff = Infinity;
+
+    for (const s of symbols) {
+
+      const d = Math.abs(s.time.getTime() - t);
+
+      if (d < diff) {
+        diff = d;
+        closest = s;
+      }
+
+    }
 
     return {
       ...p,
-      symbol: match ? match.symbol : null
+      symbol: closest?.symbol ?? null
     };
 
   });
