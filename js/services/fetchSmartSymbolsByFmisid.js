@@ -10,28 +10,32 @@ console.log("fetch smartsymbol fmisid:", fmisid);
   const res = await fetch(url);
   const text = await res.text();
 
-  const xml = new DOMParser().parseFromString(text, "text/xml");
+const xml = new DOMParser().parseFromString(text, "text/xml");
 
-  const posNode = xml.querySelector("gmlcov\\:positions");
-  const symNode = xml.querySelector("gml\\:doubleOrNilReasonTupleList");
+// hae kaikki positions ja symbol-listat ilman namespace-riippuvuutta
+const positionsNode = xml.getElementsByTagNameNS("*", "positions")[0];
+const symbolsNode = xml.getElementsByTagNameNS("*", "doubleOrNilReasonTupleList")[0];
 
-  if (!posNode || !symNode) return [];
+if (!positionsNode || !symbolsNode) {
+  console.warn("SmartSymbol XML nodes not found");
+  return [];
+}
 
-  const pos = posNode.textContent.trim().split(/\s+/);
-  const sym = symNode.textContent.trim().split(/\s+/).map(Number);
+const pos = positionsNode.textContent.trim().split(/\s+/);
+const sym = symbolsNode.textContent.trim().split(/\s+/).map(Number);
 
-  const result = [];
+const result = [];
 
-  for (let i = 0; i < sym.length; i++) {
+for (let i = 0; i < sym.length; i++) {
+  const unix = Number(pos[i * 3 + 2]);
 
-    const unix = Number(pos[i * 3 + 2]);
+  result.push({
+    time: new Date(unix * 1000),
+    symbol: sym[i]
+  });
+}
 
-    result.push({
-      time: new Date(unix * 1000),
-      symbol: sym[i]
-    });
+console.log("SMART SYMBOLS PARSED:", result.slice(0,5));
 
-  }
-
-  return result;
+return result;
 }
