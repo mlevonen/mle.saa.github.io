@@ -263,14 +263,10 @@ stations.forEach(async station => {
     // 🔥 VAIHDA SEN IKONI
     baseMarker.setIcon(icon);
 
-    console.log(
-      station.name,
-      "symbol:",
-      data.currentSymbol
-    );
 
 
   } catch (err) {
+  console.error(err);
 
   }
 
@@ -629,12 +625,6 @@ function getMarkerStyle(type) {
   }
 }
 
-console.log("marker symbol", data.currentSymbol);
-console.log(
-  "marker symbolUrl",
-  `/js/assets/weather-icons/SmartSymbol/${data.currentSymbol}.svg`
-);
-
 
 //CREATEWINDICON
 function createWindIcon(speed, dir, symbolUrl) {
@@ -735,6 +725,11 @@ if (station.type === "weather" && station.yr) {
       weatherFmisid,
       seaLevelFmisid
     });
+
+    console.log("marker symbol", data.currentSymbol);
+
+
+
 
     updatePopupTitles(popupEl, data);
     renderPopupExtras(popupEl, data);
