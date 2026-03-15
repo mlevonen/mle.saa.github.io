@@ -57,3 +57,33 @@ export const weatherSymbolsPlugin = {
   }
 
 };
+export function getCurrentSymbol(symbols) {
+
+  if (!symbols?.length) return null;
+
+  const now = Date.now();
+
+  let closest = null;
+  let diff = Infinity;
+
+  for (const s of symbols) {
+
+    const d = Math.abs(s.time.getTime() - now);
+
+    if (d < diff) {
+      diff = d;
+      closest = s;
+    }
+
+  }
+
+  return closest?.symbol ?? null;
+}
+export function getSymbolUrl(symbol) {
+
+  if (!symbol) {
+    return "/js/assets/weather-icons/SmartSymbol/na.svg";
+  }
+
+  return `/js/assets/weather-icons/SmartSymbol/${symbol}.svg`;
+}
