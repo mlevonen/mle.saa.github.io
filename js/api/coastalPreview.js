@@ -158,8 +158,6 @@ export async function updateCoastalPreview(
 
       for (let i = series.length - 1; i >= 0; i--) {
 
-        console.log("SYMBOL TEST:", station.name, symbol);
-
         const row = series[i];
 
         if (!windRow && row.windspeedms != null && row.winddirection != null) {
