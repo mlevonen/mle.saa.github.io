@@ -40,7 +40,7 @@ export const weatherSymbolsPlugin = {
     const y = chart.chartArea.top + 6;
 
     if (img.complete && img.naturalWidth > 0) {
-    ctx.drawImage(img, pos.x - 10, y, 20, 20);
+    ctx.drawImage(img, pos.x - 12, y, 26, 26);
     }
 
     });
