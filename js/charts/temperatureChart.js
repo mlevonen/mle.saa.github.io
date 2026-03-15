@@ -1,5 +1,31 @@
-import { parseFmiUtc, interpolateTimeSeries } from "../utils/time.js";
-export function renderTemperatureChart(popupEl, data) {
+import { weatherSymbolsPlugin } from "../plugins/weatherSymbols.js";
+
+Chart.register(weatherSymbolsPlugin);
+
+
+  import { parseFmiUtc, interpolateTimeSeries } from "../utils/time.js";
+
+  function filterSymbols3h(points) {
+
+  return points.map(p => {
+
+    if (!p.symbol) return p;
+
+    const hour = p.x.getUTCHours();
+
+    return {
+      ...p,
+      symbol: hour % 3 === 0 ? p.symbol : null
+    };
+
+  });
+
+  }
+
+
+
+
+  export function renderTemperatureChart(popupEl, data) {
   
   
   const { obsTemp, fcTemp } = data;
@@ -27,14 +53,15 @@ export function renderTemperatureChart(popupEl, data) {
     }))
     .filter(p => p.x <= obsCutoffUtc);
 
-const rawFcPoints = Array.isArray(fcTemp)
-  ? fcTemp
-      .map(p => ({
-        x: parseFmiUtc(p.utctime),
-        y: p.temperature
-      }))
-      .filter(p => p.x > obsCutoffUtc)
-  : [];
+  const rawFcPoints = Array.isArray(fcTemp)
+    ? fcTemp
+        .map(p => ({
+          x: parseFmiUtc(p.utctime),
+          y: p.temperature,
+          symbol: p.symbol
+        }))
+        .filter(p => p.x > obsCutoffUtc)
+    : [];
 
 
   // --- tihennys 30 min välein ---
@@ -87,6 +114,8 @@ const rawFcPoints = Array.isArray(fcTemp)
   const yMinTemp = Math.floor((minTemp - padding) / 5) * 5;
   const yMaxTemp = Math.ceil((maxTemp + padding) / 5) * 5;
 
+  const fcPointsFiltered = filterSymbols3h(fcPoints);
+
   new Chart(tempCanvas, {
     type: "line",
     data: {
@@ -105,7 +134,7 @@ const rawFcPoints = Array.isArray(fcTemp)
         
         {
           label: "Ennuste",
-          data: fcPoints,
+          data: fcPointsFiltered,
           borderColor: "rgba(220,0,0,0.9)",
           borderWidth: 1.5,
           pointRadius: 0,
@@ -119,6 +148,7 @@ const rawFcPoints = Array.isArray(fcTemp)
     options: {
       responsive: false,
       plugins: {
+        weatherSymbols: true,
         legend: {
           display: true,
           position: "top",

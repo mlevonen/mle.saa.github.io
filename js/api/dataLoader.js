@@ -130,11 +130,32 @@ export async function loadPopupData({
     }
   }
 
+    function attachSymbols(fcTemp, symbols) {
+
+      return fcTemp.map(p => {
+
+        const t = new Date(p.utctime).getTime();
+
+        const match = symbols.find(s =>
+          Math.abs(s.time.getTime() - t) < 30 * 60 * 1000
+        );
+
+        return {
+          ...p,
+          symbol: match ? match.symbol : null
+        };
+
+      });
+
+    }
+
+
+
   // ==========================
   // AURINGON NOUSU / LASKU
   // ==========================
   const sunTimes = await fetchSunTimes(lat, lon);
-
+  fcTemp = attachSymbols(fcTemp, smartSymbols);
   // ==========================
   // DATA OBJEKTI
   // ==========================
