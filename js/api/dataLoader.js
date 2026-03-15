@@ -3,7 +3,7 @@ import { fetchSmartSymbolsByFmisid } from "../services/fetchSmartSymbolsByFmisid
 import { getCurrentSymbol } from "../charts/plugins/weatherSymbols.js";
 
 export async function fetchObservationSeriesByFmisid(fmisid) {
-console.log("Using FMISID:", fmisid);
+
   if (!fmisid) return [];
 
   const params = new URLSearchParams({
@@ -21,7 +21,6 @@ console.log("Using FMISID:", fmisid);
   const text = await res.text();
 
   const parsed = parseTimeValuePairSeries(text);
-  console.log("PARSED SERIES:", parsed.slice(0,5));
 
   return parsed;
 }
@@ -177,6 +176,12 @@ function attachSymbols(fcTemp, symbols) {
   fcTemp = attachSymbols(fcTemp, smartSymbols);
 
   const currentSymbol = getCurrentSymbol(smartSymbols);
+
+  console.log("smartSymbols first", smartSymbols[0]);
+  console.log("smartSymbols last", smartSymbols.at(-1));
+  console.log("currentSymbol", currentSymbol);
+
+
   // ==========================
   // DATA OBJEKTI
   // ==========================
