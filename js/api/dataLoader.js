@@ -119,7 +119,8 @@ export async function loadPopupData({
   const fcWindSpeed = harmonie?.fcWindSpeed ?? [];
   const fcWindDir = harmonie?.fcWindDir ?? [];
   const fcWindGust = harmonie?.fcWindGust ?? [];
-
+console.log("SMART SYMBOLS:", smartSymbols?.slice(0,5));
+console.log("symbolNow:", symbolNow);
 
   // ==========================
   // VEDENKORKEUS
