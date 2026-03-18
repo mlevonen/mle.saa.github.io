@@ -104,28 +104,27 @@ export function renderPopupExtras(popupEl, data) {
 
   /* === SÄÄSYMBOLI === */
 
-const symbolCode = data.symbolNow ?? null;
+  const symbolCode = data.symbolNow ?? null;
 
-html += `
-  <div class="popup-inline-item">
-    <img
-      src="${
-        symbolCode
-          ? `/js/assets/weather-icons/SmartSymbol/${symbolCode}.svg`
-          : "/js/assets/weather-icons/SmartSymbol/na.svg"
-      }"
-      class="popup-weather-icon"
-      alt="Sääsymboli"
-    />
-  </div>
-`;
-
-}
+  html += `
+    <div class="popup-inline-item">
+      <img
+        src="${
+          symbolCode
+            ? `/js/assets/weather-icons/SmartSymbol/${symbolCode}.svg`
+            : "/js/assets/weather-icons/SmartSymbol/na.svg"
+        }"
+        class="popup-weather-icon"
+        alt="Sääsymboli"
+      />
+    </div>
+  `;
 
   /* === ILMANPAINE === */
 
   const pressure = getPressure(data.obsPressure);
   const trend = getPressureTrend(data.obsPressure);
+
   if (pressure != null) {
     const arrow =
       trend === "up" ? "▲" :
@@ -194,8 +193,8 @@ html += `
         ${format(sunset)}
       </div>
     `;
-  
+  }
 
- 
+  // ✅ TÄMÄ KUULUU FUNKTION SISÄÄN
   container.innerHTML = html;
 }
