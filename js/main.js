@@ -761,13 +761,13 @@ if (station.type === "weather" && station.yr) {
   try {
     // 🔑 4. Kutsu loadPopupDataa UUDESSA muodossa
     const data = await loadPopupData({
-      lat,
-      lon,
-      weatherPlace:station.type === "weather" ? station.name : null,
-      weatherFmisid,
-      seaLevelFmisid
+      lat: station.lat,
+      lon: station.lon,
+      weatherPlace: null,
+      weatherFmisid: station.fmisid,
+      seaLevelFmisid: null
     });
-
+    console.log("STATION FMISID:", station.fmisid);
     console.log("marker symbol", data.currentSymbol);
 
 
