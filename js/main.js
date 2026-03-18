@@ -266,11 +266,11 @@ stations.forEach(async station => {
 
 
 
-    const icon = createWindIcon(
-    latestWind.windspeedms,
-    latestWind.winddirection,
-    `/js/assets/weather-icons/SmartSymbol/${data.symbolNow}.svg`
-    );
+const icon = createWindIcon(
+  latestWind.windspeedms,
+  latestWind.winddirection,
+  "/js/assets/weather-icons/SmartSymbol/7.svg"
+);
     console.log("COASTAL symbolNow:", data.symbolNow);
     
     // 🔥 HAE OLEMASSA OLEVA MARKER
