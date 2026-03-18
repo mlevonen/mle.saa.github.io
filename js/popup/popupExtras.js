@@ -101,23 +101,22 @@ export function renderPopupExtras(popupEl, data) {
 
   const container = popupEl.querySelector(".popup-extras");
 
-  console.log("Popup data:", data);
-  console.log("TEMP SAMPLE", data.obsTemp.slice(-3));
-
   if (!container) return;
 
   let html = "";
 
   /* === SÄÄSYMBOLI === */
 
-const rawSymbol = getSmartSymbol(data.obsWindSpeed);
-
-const symbolCode = rawSymbol ?? 4; {
+const symbolCode = data.symbolNow ?? null;
 
 html += `
   <div class="popup-inline-item">
     <img
-      src="/js/assets/weather-icons/SmartSymbol/${symbolCode}.svg"
+      src="${
+        symbolCode
+          ? `/js/assets/weather-icons/SmartSymbol/${symbolCode}.svg`
+          : "/js/assets/weather-icons/SmartSymbol/na.svg"
+      }"
       class="popup-weather-icon"
       alt="Sääsymboli"
     />
@@ -202,4 +201,4 @@ html += `
 
 
   container.innerHTML = html;
-}
+
