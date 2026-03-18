@@ -124,8 +124,7 @@ Object.entries(values).forEach(([fmisid, data]) => {
     const icon = createWindIcon(
     data.wind,
     data.dir,
-    symbolUrl
-  );
+    null);
 
   marker.setIcon(icon);
   
