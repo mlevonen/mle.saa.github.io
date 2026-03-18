@@ -210,6 +210,20 @@ function attachSymbols(fcTemp, symbols) {
   popupCache[cacheKey] = data;
   return data;
 }
+
+let symbolNow = null;
+
+if (weatherFmisid) {
+  const smartSymbols = await fetchSmartSymbolsByFmisid(weatherFmisid);
+
+  if (Array.isArray(smartSymbols) && smartSymbols.length) {
+    const last = smartSymbols[smartSymbols.length - 1];
+    symbolNow = last.symbol ?? last.value ?? null;
+  }
+}
+
+
+
 // ======================================================
 // PARSE TIMEVALUEPAIR SERIES
 // ======================================================

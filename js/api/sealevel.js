@@ -8,8 +8,7 @@ export async function fetchSeaLevel(fmisid) {
   });
 
   const url = `https://opendata.fmi.fi/wfs/fin?${params}`;
-  console.log("SEA LEVEL OBS REQUEST:", url);
-
+  
   const res = await fetch(url);
   if (!res.ok) {
     console.warn("Sea level observation not available for fmisid", fmisid);

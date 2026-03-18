@@ -104,7 +104,10 @@ export function renderPopupExtras(popupEl, data) {
 
   /* === SÄÄSYMBOLI === */
 
-  const symbolCode = data.symbolNow ?? null;
+  const symbolCode =
+  data.symbolNow ??
+  data.fcTemp?.[0]?.symbol ??
+  null;
 
   html += `
     <div class="popup-inline-item">
