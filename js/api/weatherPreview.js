@@ -50,7 +50,7 @@ function updateWeatherMarkers(values, markerRegistry) {
        1
     );
 
-    marker.setIcon(icon);
+    //marker.setIcon(icon);
 
   });
 

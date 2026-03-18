@@ -271,7 +271,7 @@ const icon = createWindIcon(
   latestWind.winddirection,
   "/js/assets/weather-icons/SmartSymbol/7.svg"
 );
-    console.log("COASTAL symbolNow:", data.symbolNow);
+    
     
     // 🔥 HAE OLEMASSA OLEVA MARKER
     const baseMarker = markerRegistry[station.fmisid];

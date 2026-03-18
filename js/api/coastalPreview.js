@@ -126,7 +126,7 @@ Object.entries(values).forEach(([fmisid, data]) => {
     data.dir,
     null);
 
-  marker.setIcon(icon);
+  //marker.setIcon(icon);
   
 });
 
