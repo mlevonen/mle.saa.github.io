@@ -121,10 +121,13 @@ Object.entries(values).forEach(([fmisid, data]) => {
   const marker = markerRegistry[fmisid];
   if (!marker) return;
 
-    const icon = createWindIcon(
+  const icon = createWindIcon(
     data.wind,
     data.dir,
-    null);
+    marker.options?.icon?.options?.html
+      ? null
+      : "/js/assets/weather-icons/SmartSymbol/na.svg"
+  );
 
   //marker.setIcon(icon);
   
@@ -176,11 +179,11 @@ export async function updateCoastalPreview(
       values[station.fmisid] = {
         wind: windRow.windspeedms,
         dir: windRow.winddirection,
-        symbol: symbol
+        symbolNow: symbolNow
       };
   }
 
-  console.log("VALUES OBJECT:", values);
+  
 
   updateMarkers(values, markerRegistry, createWindIcon);
 

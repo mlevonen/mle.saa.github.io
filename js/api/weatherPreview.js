@@ -47,7 +47,7 @@ function updateWeatherMarkers(values, markerRegistry) {
 
     const icon = createWeatherIcon(
       data.temp,
-       1
+      data.symbolNow ?? 4
     );
 
     //marker.setIcon(icon);
@@ -80,7 +80,8 @@ export async function updateWeatherPreview(
     const latest = series.at(-1);
 
     values[station.fmisid] = {
-      temp: latest.t2m
+      temp: latest.t2m,
+      symbolNow: data.symbolNow // ← TÄRKEÄ
     };
 
   }

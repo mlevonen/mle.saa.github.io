@@ -288,7 +288,33 @@ const icon = createWindIcon(
 
 });
 
+stations.forEach(async (station) => {
 
+  const data = await loadPopupData({
+    lat: station.lat,
+    lon: station.lon,
+    weatherPlace: null,
+    weatherFmisid: station.fmisid,
+    seaLevelFmisid: null
+  });
+
+  const latestWind = data.obsWindSpeed?.at(-1);
+  if (!latestWind) return;
+
+  const icon = createWindIcon(
+    latestWind.windspeedms,
+    latestWind.winddirection,
+    data.symbolNow
+      ? `/js/assets/weather-icons/SmartSymbol/${data.symbolNow}.svg`
+      : "/js/assets/weather-icons/SmartSymbol/na.svg"
+  );
+
+  const marker = markerRegistry[station.fmisid];
+  if (!marker) return;
+
+  marker.setIcon(icon);
+
+});
 
 // ==========================
 // Sealevel marker päivitys
