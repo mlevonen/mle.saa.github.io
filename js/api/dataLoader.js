@@ -121,7 +121,7 @@ export async function loadPopupData({
   const fcWindGust = harmonie?.fcWindGust ?? [];
 console.log("SMART SYMBOLS:", smartSymbols?.slice(0,5));
 console.log("symbolNow:", symbolNow);
-
+console.log("FIRST SYMBOL OBJECT:", smartSymbols[0]);
   // ==========================
   // VEDENKORKEUS
   // ==========================
