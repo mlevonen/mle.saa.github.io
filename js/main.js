@@ -269,9 +269,11 @@ stations.forEach(async station => {
     const icon = createWindIcon(
       latestWind.windspeedms,
       latestWind.winddirection,
-      getSymbolUrl(data.Symbol)
+      getSymbolUrl(data.SymbolNow)
+      
     );
-
+    console.log("COASTAL symbolNow:", data.symbolNow);
+    
     // 🔥 HAE OLEMASSA OLEVA MARKER
     const baseMarker = markerRegistry[station.fmisid];
     if (!baseMarker) return;
