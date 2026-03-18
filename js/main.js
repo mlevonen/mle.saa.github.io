@@ -285,14 +285,7 @@ stations.forEach(async station => {
   
   }
 
-  console.log(
-  station.name,
-  "currentSymbol:", data.currentSymbol,
-  "symbolNow:", data.symbolNow
-);
-
-
-
+  
 });
 
 
