@@ -85,9 +85,11 @@ export function getCurrentSymbol(symbols) {
 
 export function getSymbolUrl(symbol) {
 
-  if (!symbol) {
+  console.log("getSymbolUrl input:", symbol, typeof symbol);
+
+  if (symbol === null || symbol === undefined) {
     return "/js/assets/weather-icons/SmartSymbol/na.svg";
   }
 
-  return `/js/assets/weather-icons/SmartSymbol/${symbol}.svg`;
+  return `/js/assets/weather-icons/SmartSymbol/${Number(symbol)}.svg`;
 }

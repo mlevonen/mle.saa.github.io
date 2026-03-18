@@ -269,7 +269,7 @@ stations.forEach(async station => {
     const icon = createWindIcon(
       latestWind.windspeedms,
       latestWind.winddirection,
-      getSymbolUrl(data.currentSymbol)
+      getSymbolUrl(data.SymbolNow)
     );
 
     // 🔥 HAE OLEMASSA OLEVA MARKER
@@ -287,7 +287,11 @@ stations.forEach(async station => {
 
 });
 
-
+console.log(
+  station.name,
+  "currentSymbol:", data.currentSymbol,
+  "symbolNow:", data.symbolNow
+);
 
 // ==========================
 // Sealevel marker päivitys

@@ -108,6 +108,10 @@ export async function loadPopupData({
     }
   }
 
+
+  symbolNow: smartSymbols?.at(-1)?.symbol ?? null
+
+  
   // ==========================
   // ENNUSTEET
   // ==========================
