@@ -198,7 +198,7 @@ function attachSymbols(fcTemp, symbols) {
     fcWindDir,
     fcWindGust,
     obsWindGust,
-    currentSymbol
+    symbolNowmbol
 
   };
   popupCache[cacheKey] = data;
