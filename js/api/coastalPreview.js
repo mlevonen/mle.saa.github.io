@@ -117,13 +117,11 @@ function updateMarkers(values, markerRegistry, createWindIcon) {
 
 
 Object.entries(values).forEach(([fmisid, data]) => {
-console.log("MARKER SYMBOL:", data.symbol);
+
   const marker = markerRegistry[fmisid];
   if (!marker) return;
 
-  const symbolUrl = smartSymbolIcon(data.symbol);
-
-  const icon = createWindIcon(
+    const icon = createWindIcon(
     data.wind,
     data.dir,
     symbolUrl
