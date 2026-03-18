@@ -109,9 +109,6 @@ export async function loadPopupData({
   }
 
 
-  symbolNow: smartSymbols?.at(-1)?.symbol ?? null
-
-  
   // ==========================
   // ENNUSTEET
   // ==========================
@@ -135,8 +132,6 @@ export async function loadPopupData({
     }
   }
 
-console.log("fcTemp", fcTemp.length);
-console.log("symbols", smartSymbols);
 
 function attachSymbols(fcTemp, symbols) {
 
@@ -187,10 +182,7 @@ function attachSymbols(fcTemp, symbols) {
 
   const currentSymbol = getCurrentSymbol(smartSymbols);
 
-  console.log("smartSymbols first", smartSymbols[0]);
-  console.log("smartSymbols last", smartSymbols.at(-1));
-  console.log("currentSymbol", currentSymbol);
-
+  const symbolNow = smartSymbols?.at(-1)?.symbol ?? null;
 
   // ==========================
   // DATA OBJEKTI

@@ -269,7 +269,7 @@ stations.forEach(async station => {
     const icon = createWindIcon(
       latestWind.windspeedms,
       latestWind.winddirection,
-      getSymbolUrl(data.SymbolNow)
+      getSymbolUrl(data.Symbol)
     );
 
     // 🔥 HAE OLEMASSA OLEVA MARKER
@@ -285,8 +285,8 @@ stations.forEach(async station => {
   
   }
 
-  
 });
+
 
 
 // ==========================
