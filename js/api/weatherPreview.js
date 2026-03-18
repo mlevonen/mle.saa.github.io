@@ -4,7 +4,7 @@ import { getSmartSymbol, smartSymbolIcon } from "../popup/popupExtras.js";
 
 function createWeatherIcon(temp, symbol) {
 
-  const iconUrl = smartSymbolIcon(symbol);
+  const iconUrl = getSymbolUrl(data.symbolNow);
 
   const html = `
     <div class="weather-marker">
