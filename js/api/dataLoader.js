@@ -184,7 +184,7 @@ function attachSymbols(fcTemp, symbols) {
   const currentSymbol = getCurrentSymbol(smartSymbols);
 
   const symbolNow = smartSymbols?.at(-1)?.symbol ?? null;
-  console.log("FIRST SYMBOL OBJECT:", smartSymbols[0]);
+  
   // ==========================
   // DATA OBJEKTI
   // ==========================
@@ -199,7 +199,7 @@ function attachSymbols(fcTemp, symbols) {
     fcWindDir,
     fcWindGust,
     obsWindGust,
-    symbolNowmbol
+    symbolNow
 
   };
   popupCache[cacheKey] = data;
