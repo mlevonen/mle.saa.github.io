@@ -97,10 +97,7 @@ function getSeaLevel(data) {
    ========================================================= */
 
 export function renderPopupExtras(popupEl, data) {
-
-
   const container = popupEl.querySelector(".popup-extras");
-
   if (!container) return;
 
   let html = "";
@@ -197,8 +194,8 @@ html += `
         ${format(sunset)}
       </div>
     `;
-  }
+  
 
 
   container.innerHTML = html;
-
+}
