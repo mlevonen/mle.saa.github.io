@@ -20,7 +20,7 @@ function createWeatherIcon(temp, symbol) {
     html,
     iconSize: [42, 42]
   });
-console.log("weatherPreview symbol:", symbol);
+
 }
 
 
@@ -47,7 +47,7 @@ function updateWeatherMarkers(values, markerRegistry) {
 
     const icon = createWeatherIcon(
       data.temp,
-      data.symbolNow ?? data.symbol ?? 1
+       1
     );
 
     marker.setIcon(icon);
@@ -79,11 +79,8 @@ export async function updateWeatherPreview(
 
     const latest = series.at(-1);
 
-    const symbol = getSmartSymbol(series);
-
     values[station.fmisid] = {
-      temp: latest.t2m,
-      symbol
+      temp: latest.t2m
     };
 
   }
