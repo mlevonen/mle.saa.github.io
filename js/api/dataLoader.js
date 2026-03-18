@@ -172,7 +172,13 @@ function attachSymbols(fcTemp, symbols) {
   // ==========================
   // AURINGON NOUSU / LASKU
   // ==========================
-  const sunTimes = await fetchSunTimes(lat, lon);
+  let sunTimes = null;
+
+  try {
+    sunTimes = await fetchSunTimes(lat, lon);
+  } catch {
+    sunTimes = null;
+  }
   fcTemp = attachSymbols(fcTemp, smartSymbols);
 
   const currentSymbol = getCurrentSymbol(smartSymbols);
