@@ -47,7 +47,7 @@ function updateWeatherMarkers(values, markerRegistry) {
 
     const icon = createWeatherIcon(
       data.temp,
-      data.symbolNow ?? data.symbol ?? 1
+       1
     );
 
     marker.setIcon(icon);
