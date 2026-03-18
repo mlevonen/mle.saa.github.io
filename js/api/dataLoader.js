@@ -1,6 +1,5 @@
 import { updateWeatherPreview } from "./weatherPreview.js";
 import { fetchSmartSymbolsByFmisid } from "../services/fetchSmartSymbolsByFmisid.js";
-import { getCurrentSymbol } from "../charts/plugins/weatherSymbols.js";
 
 export async function fetchObservationSeriesByFmisid(fmisid) {
 
@@ -113,13 +112,24 @@ export async function loadPopupData({
   // ENNUSTEET
   // ==========================
 
-  const harmonie = await fetchHarmonieForecastByFmisid(weatherFmisid);
-  const smartSymbols = await fetchSmartSymbolsByFmisid(weatherFmisid);
-  let fcTemp = harmonie?.fcTemp ?? [];
-  const fcWindSpeed = harmonie?.fcWindSpeed ?? [];
-  const fcWindDir = harmonie?.fcWindDir ?? [];
-  const fcWindGust = harmonie?.fcWindGust ?? [];
+const harmonie = await fetchHarmonieForecastByFmisid(weatherFmisid);
+const smartSymbols = await fetchSmartSymbolsByFmisid(weatherFmisid);
+
+let fcTemp = harmonie?.fcTemp ?? [];
+const fcWindSpeed = harmonie?.fcWindSpeed ?? [];
+const fcWindDir = harmonie?.fcWindDir ?? [];
+const fcWindGust = harmonie?.fcWindGust ?? [];
+
 console.log("SMART SYMBOLS:", smartSymbols?.slice(0,5));
+
+let symbolNow = null;
+
+if (Array.isArray(smartSymbols) && smartSymbols.length) {
+  const last = smartSymbols[smartSymbols.length - 1];
+  symbolNow = last.symbol ?? last.value ?? null;
+}
+
+console.log("symbolNow:", symbolNow);
 
 
   // ==========================
@@ -167,8 +177,6 @@ function attachSymbols(fcTemp, symbols) {
 
   }
 
-
-
   // ==========================
   // AURINGON NOUSU / LASKU
   // ==========================
@@ -180,16 +188,7 @@ function attachSymbols(fcTemp, symbols) {
     sunTimes = null;
   }
   fcTemp = attachSymbols(fcTemp, smartSymbols);
-
-  const currentSymbol = getCurrentSymbol(smartSymbols);
-
-  let symbolNow = null;
-
-  if (Array.isArray(smartSymbols) && smartSymbols.length) {
-    const last = smartSymbols[smartSymbols.length - 1];
-    symbolNow = last.symbol ?? last.value ?? null;
-  }
-  console.log("symbolNow:", symbolNow);
+  
   // ==========================
   // DATA OBJEKTI
   // ==========================
@@ -209,17 +208,6 @@ function attachSymbols(fcTemp, symbols) {
   };
   popupCache[cacheKey] = data;
   return data;
-}
-
-let symbolNow = null;
-
-if (weatherFmisid) {
-  const smartSymbols = await fetchSmartSymbolsByFmisid(weatherFmisid);
-
-  if (Array.isArray(smartSymbols) && smartSymbols.length) {
-    const last = smartSymbols[smartSymbols.length - 1];
-    symbolNow = last.symbol ?? last.value ?? null;
-  }
 }
 
 
