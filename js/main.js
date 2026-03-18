@@ -251,11 +251,18 @@ stations.forEach(async station => {
       windspeedms: 0,
       winddirection: 0
     };
+
     if (!latestWind) return;
 
     const symbolUrl = getSymbolUrl(data.currentSymbol);
 
-    console.log("symbolUrl", symbolUrl);
+        console.log(
+      station.name,
+      "wind:",
+      !!data.obsWindSpeed?.length,
+      "symbol:",
+      data.currentSymbol
+    );
 
 
 
