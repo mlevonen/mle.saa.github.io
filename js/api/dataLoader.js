@@ -120,7 +120,7 @@ export async function loadPopupData({
   const fcWindDir = harmonie?.fcWindDir ?? [];
   const fcWindGust = harmonie?.fcWindGust ?? [];
 console.log("SMART SYMBOLS:", smartSymbols?.slice(0,5));
-console.log("symbolNow:", symbolNow);
+
 
   // ==========================
   // VEDENKORKEUS
@@ -183,8 +183,13 @@ function attachSymbols(fcTemp, symbols) {
 
   const currentSymbol = getCurrentSymbol(smartSymbols);
 
-  const symbolNow = smartSymbols?.at(-1)?.symbol ?? null;
-  
+  let symbolNow = null;
+
+  if (Array.isArray(smartSymbols) && smartSymbols.length) {
+    const last = smartSymbols[smartSymbols.length - 1];
+    symbolNow = last.symbol ?? last.value ?? null;
+  }
+  console.log("symbolNow:", symbolNow);
   // ==========================
   // DATA OBJEKTI
   // ==========================
