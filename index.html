@@ -196,18 +196,18 @@ html, body { margin: 0; height: 100%; }
 
 .wind-marker {
   position: relative;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
 }
 
 /* Sääikoni */
 .marker-weather-icon {
   position: absolute;
-  width: 26px;
-  height: 26px;
-  top: 2px;
-  left: 2px;
-  opacity: 0.9;
+  width: 28px;
+  height: 28px;
+  top: 1px;
+  left: 1px;
+  opacity: 0.95;
 }
 
 /* Nuoli */
@@ -219,17 +219,19 @@ html, body { margin: 0; height: 100%; }
   align-items: center;
   justify-content: center;
   pointer-events: none;
+
+  transform-origin: center center;
 }
 
 /* Nopeus */
 .marker-speed {
   position: absolute;
-  bottom: 0;
+  bottom: 1px;
   right: 2px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #2b2929;
-  text-shadow: 0 0 3px rgba(0,0,0,0.8);
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 0 3px rgba(0,0,0,0.9);
 }
 
 .yr-popup img {
