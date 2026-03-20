@@ -664,32 +664,48 @@ function getMarkerStyle(type) {
 }
 
 
-//CREATEWINDICON
 function createWindIcon(speed, dir, symbolUrl) {
 
   const roundedSpeed = Math.round(speed);
 
   const color =
-    roundedSpeed < 5  ? "rgba(76,175,80,0.65)" :
-    roundedSpeed < 10 ? "rgba(255,193,7,0.65)" :
-    roundedSpeed < 15 ? "rgba(255,152,0,0.65)" :
-                        "rgba(244,67,54,0.65)";
+    roundedSpeed < 5  ? "#4FC3F7" :
+    roundedSpeed < 10 ? "#81C784" :
+    roundedSpeed < 15 ? "#FFD54F" :
+                        "#E53935";
 
   const html = `
-    <div class="wind-marker" style="background:${color}">
-      <img class="marker-weather-icon" src="${symbolUrl || '/js/assets/weather-icons/SmartSymbol/na.svg'}">
-      <div class="marker-arrow" style="transform: rotate(${dir + 180}deg)">▲</div>
+    <div class="wind-marker">
+
+      <!-- SÄÄIKONI -->
+      <img class="marker-weather-icon"
+           src="${symbolUrl || '/js/assets/weather-icons/SmartSymbol/na.svg'}">
+
+      <!-- NUOLI -->
+      <div class="marker-arrow"
+           style="transform: rotate(${dir + 180}deg); color: ${color}">
+        <svg viewBox="0 0 24 24" width="22" height="22">
+          <path d="M12 2 L12 18 M12 2 L8 6 M12 2 L16 6"
+                stroke="currentColor"
+                stroke-width="2"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <!-- NOPEUS -->
       <div class="marker-speed">${roundedSpeed}</div>
+
     </div>
   `;
 
   return L.divIcon({
     className: "wind-marker-wrapper",
     html,
-    iconSize: [46,72],
-    iconAnchor: [23,62]
+    iconSize: [36, 36],
+    iconAnchor: [18, 18]
   });
-
 }
 
 
