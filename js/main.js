@@ -669,9 +669,9 @@ function createWindIcon(speed, dir, symbolUrl) {
   const roundedSpeed = Math.round(speed);
 
   const color =
-    roundedSpeed < 5  ? "#4FC3F7" :
-    roundedSpeed < 10 ? "#81C784" :
-    roundedSpeed < 15 ? "#FFD54F" :
+    roundedSpeed < 5  ? "#028b09" :
+    roundedSpeed < 10 ? "#025981" :
+    roundedSpeed < 15 ? "#b67e06" :
                         "#E53935";
 
   const html = `
