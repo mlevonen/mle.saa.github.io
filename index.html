@@ -203,11 +203,25 @@ html, body { margin: 0; height: 100%; }
 /* Sääikoni */
 .marker-weather-icon {
   position: absolute;
-  width: 38px;
-  height: 38px;
-  top: -2px;
-  left: -2px;
-  opacity: 0.95;
+  width: 22px;
+  height: 22px;
+  top: 2px;
+  left: 2px;
+  z-index: 2;
+}
+
+/* TAUSTA IKONIN ALLE */
+.marker-weather-icon::before {
+  content: "";
+  position: absolute;
+  inset: -3px; /* tekee hieman isomman kuin ikoni */
+
+  background: rgba(255,255,255,0.75);
+  border-radius: 50%;
+
+  backdrop-filter: blur(2px); /* moderni nice effect */
+  
+  z-index: -1;
 }
 
 /* Nuoli */
