@@ -704,8 +704,8 @@ function createWindIcon(speed, dir, symbolUrl) {
   return L.divIcon({
     className: "wind-marker-wrapper",
     html,
-    iconSize: [44, 44],
-    iconAnchor: [22, 22]
+    iconSize: [60, 60],
+    iconAnchor: [30, 30]
   });
 }
 
