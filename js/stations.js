@@ -391,9 +391,8 @@ const stations = [
     id: "kökar-bogskär",
     name: "Kökar Bogskär",
     fmisid: 100921,
-    lat: 59.5,
-    lon: 20.35,
-    featured: true
+    lat: 59.504544,
+    lon: 20.347475,
   },
 
   {
