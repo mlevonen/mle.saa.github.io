@@ -685,7 +685,7 @@ function createWindIcon(speed, dir, symbolUrl) {
       <!-- NUOLI -->
       <div class="marker-arrow"
            style="transform: rotate(${dir + 180}deg); color: ${color}">
-        <svg viewBox="0 0 24 24" width="38" height="38">
+        <svg viewBox="0 0 24 24" width="50" height="50">
           <path d="M12 2 L12 18 M12 2 L8 6 M12 2 L16 6"
                 stroke="currentColor"
                 stroke-width="2"
@@ -704,8 +704,8 @@ function createWindIcon(speed, dir, symbolUrl) {
   return L.divIcon({
     className: "wind-marker-wrapper",
     html,
-    iconSize: [44, 44],
-    iconAnchor: [22, 22]
+    iconSize: [50, 50],
+    iconAnchor: [25, 25]
   });
 }
 
