@@ -674,32 +674,33 @@ function createWindIcon(speed, dir, symbolUrl) {
     roundedSpeed < 15 ? "#b67e06" :
                         "#E53935";
 
-  const html = `
-    <div class="wind-marker">
+const html = `
+  <div class="wind-marker">
 
-      <div class="weather-icon-wrapper">
-        <img class="marker-weather-icon"
-            src="${symbolUrl || '/js/assets/weather-icons/SmartSymbol/na.svg'}">
-      </div>
-
-      <!-- NUOLI -->
-      <div class="marker-arrow"
-           style="transform: rotate(${dir + 180}deg); color: ${color}">
-        <svg viewBox="0 0 24 24" width="55" height="55">
-          <path d="M12 2 L12 18 M12 2 L8 6 M12 2 L16 6"
-                stroke="currentColor"
-                stroke-width="2"
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"/>
-        </svg>
-      </div>
-
-      <!-- NOPEUS -->
-      <div class="marker-speed">${roundedSpeed}</div>
-
+    <!-- SÄÄIKONI -->
+    <div class="weather-icon-wrapper">
+      <img class="marker-weather-icon"
+           src="${symbolUrl || '/js/assets/weather-icons/SmartSymbol/na.svg'}">
     </div>
-  `;
+
+    <!-- NUOLI (nyt viimeisenä) -->
+    <div class="marker-arrow"
+         style="transform: translate(4px,4px) rotate(${dir + 180}deg); color: ${color}">
+      <svg viewBox="0 0 24 24" width="55" height="55">
+        <path d="M12 2 L12 18 M12 2 L8 6 M12 2 L16 6"
+              stroke="currentColor"
+              stroke-width="2"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <!-- NOPEUS -->
+    <div class="marker-speed">${roundedSpeed}</div>
+
+  </div>
+`;
 
   return L.divIcon({
     className: "wind-marker-wrapper",
