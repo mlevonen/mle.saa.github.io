@@ -684,7 +684,7 @@ function createWindIcon(speed, dir, symbolUrl) {
 
       <!-- NUOLI -->
       <div class="marker-arrow"
-           style="transform: translate(4px, 4px) rotate(${dir + 180}deg); color: ${color}"
+           style="transform: rotate(${dir + 180}deg); color: ${color}">
         <svg viewBox="0 0 24 24" width="55" height="55">
           <path d="M12 2 L12 18 M12 2 L8 6 M12 2 L16 6"
                 stroke="currentColor"
