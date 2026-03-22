@@ -13,12 +13,20 @@ import { getCurrentSymbol } from "./charts/plugins/weatherSymbols.js";
 
 "use strict";
 
-const map = L.map("map").setView([60, 25], 6);
-
+const map = L.map("map");
 
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "&copy; OpenStreetMap"
 }).addTo(map);
+
+const bounds = L.latLngBounds(
+  [59.7, 20.0],
+  [62.2, 26.0]
+);
+
+map.fitBounds(bounds, {
+  padding: [20, 20]
+});
 
 const FMI_WFS = "https://opendata.fmi.fi/wfs";
 
