@@ -426,15 +426,6 @@ const stations = [
 
   {
     type: "coastal",
-    id: "maarianhamina-lotsberget",
-    name: "Maarianhamina Lotsberget",
-    fmisid: 107383,
-    lat: 60.09,
-    lon: 19.94
-  },
-
-  {
-    type: "coastal",
     id: "lemland-nyhamn",
     name: "Lemland Nyhamn",
     fmisid: 100909,
