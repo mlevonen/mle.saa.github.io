@@ -714,8 +714,8 @@ const html = `
   return L.divIcon({
     className: "wind-marker-wrapper",
     html,
-    iconSize: [60, 60],
-    iconAnchor: [30, 30]
+    iconSize: [80, 80],
+    iconAnchor: [40, 40]
   });
 }
 
