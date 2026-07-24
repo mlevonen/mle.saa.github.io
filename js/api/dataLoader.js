@@ -55,15 +55,14 @@ export async function loadPopupData({
 }) {
 
 
-  const obsWindGust =
-  await fetchWindGustObservations(weatherFmisid);
-
-
   const cacheKey = `${lat},${lon}`;
 
   if (popupCache[cacheKey]) {
     return popupCache[cacheKey];
   }
+
+  const obsWindGust =
+  await fetchWindGustObservations(weatherFmisid);
 
   let obsTemp = null;
   let obsWindSpeed = null;

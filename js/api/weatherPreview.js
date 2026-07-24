@@ -50,7 +50,7 @@ function updateWeatherMarkers(values, markerRegistry) {
       data.symbolNow ?? 4
     );
 
-    //marker.setIcon(icon);
+    marker.setIcon(icon);
 
   });
 
@@ -80,8 +80,8 @@ export async function updateWeatherPreview(
     const latest = series.at(-1);
 
     values[station.fmisid] = {
-      temp: latest.t2m,
-      symbolNow: data.symbolNow // ← TÄRKEÄ
+      temp: latest.temperature,
+      symbolNow: getSmartSymbol(series)
     };
 
   }

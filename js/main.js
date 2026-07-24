@@ -169,21 +169,6 @@ stations.forEach(station => {
     this.closeTooltip();
   });
 
-  // Lisää oikeaan layeriin
-  if (station.type === "weather") {
-    weatherLayer.addLayer(marker);
-  }
-
-  if (station.type === "sealevel") {
-    seaLevelLayer.addLayer(marker);
-  }
-
-  if (station.type === "coastal") {
-    coastalLayer.addLayer(marker);
-  }
-
-
-
   marker.bindPopup(`
     <div class="popup-title">${station.name}</div>
     <div class="popup-extras"></div>
@@ -235,67 +220,7 @@ stations.forEach(station => {
   if (station.type === "coastal") {
     coastalLayer.addLayer(marker);
   }
- 
-  if (weatherLayer.getLayers().length > 0) {
-  //map.fitBounds(weatherLayer.getBounds(), { padding: [30, 30] });
-  }
  });
-
-// FEATURED-LOOPPI
-stations.forEach(async station => {
-
-  if (!station.featured) return;
-
-  try {
-
-    const data = await loadPopupData({
-      lat: station.lat,
-      lon: station.lon,
-      weatherPlace: null,
-      weatherFmisid: station.fmisid,
-      seaLevelFmisid: null
-    });
-
-    const latestWind = data.obsWindSpeed?.at(-1) ?? {
-      windspeedms: 0,
-      winddirection: 0
-    };
-
-    if (!latestWind) return;
-
-    const symbolUrl = getSymbolUrl(data.currentSymbol);
-
-        console.log(
-      station.name,
-      "wind:",
-      !!data.obsWindSpeed?.length,
-      "symbol:",
-      data.currentSymbol
-    );
-
-
-
-const icon = createWindIcon(
-  latestWind.windspeedms,
-  latestWind.winddirection,
-  "/js/assets/weather-icons/SmartSymbol/7.svg"
-);
-    
-    
-    // 🔥 HAE OLEMASSA OLEVA MARKER
-    const baseMarker = markerRegistry[station.fmisid];
-    if (!baseMarker) return;
-
-    // 🔥 VAIHDA SEN IKONI
-    baseMarker.setIcon(icon);
-
-
-
-  } catch (err) {
-  
-  }
-
-});
 
 stations.forEach(async (station) => {
 
@@ -599,35 +524,6 @@ function getPressureTrend(data, minutes = 180) {
   if (diff > 1) return "up";
   if (diff < -1) return "down";
   return "steady";
-}
-
-export async function fetchPressureByFmisid (fmisid) {
-  const url = `
-  https://opendata.fmi.fi/wfs?service=WFS&version=2.0.0
-  &request=getFeature
-  &storedquery_id=fmi::observations::weather::simple
-  &fmisid=${fmisid}
-  &parameters=pressure
-  &starttime=${startTime}
-  &endtime=${endTime}
-  `.replace(/\s+/g, '');
-
-
-  const res = await fetch(url);
-  const xml = await res.text();
-
-  // 👉 tähän kevyt parseri:
-  // etsi viimeisin <BsWfs:ParameterValue>
-  // ja sitä vastaava <BsWfs:Time>
-
-  return [
-    {
-      utctime: "...",
-      pressurehpa: 1019.6
-    }
-  ];
-  console.log("Pressure URL:", url);
-
 }
 
 function getMarkerStyle(type) {

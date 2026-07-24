@@ -124,13 +124,11 @@ Object.entries(values).forEach(([fmisid, data]) => {
   const icon = createWindIcon(
     data.wind,
     data.dir,
-    marker.options?.icon?.options?.html
-      ? null
-      : "/js/assets/weather-icons/SmartSymbol/na.svg"
+    smartSymbolIcon(data.symbolNow)
   );
 
-  //marker.setIcon(icon);
-  
+  marker.setIcon(icon);
+
 });
 
 }
@@ -179,7 +177,7 @@ export async function updateCoastalPreview(
       values[station.fmisid] = {
         wind: windRow.windspeedms,
         dir: windRow.winddirection,
-        symbolNow: symbolNow
+        symbolNow: symbol
       };
   }
 

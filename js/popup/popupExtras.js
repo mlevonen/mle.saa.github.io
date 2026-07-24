@@ -63,10 +63,6 @@ function getPressureTrend(series, hours = 3) {
   if (diff > 0.5) return "up";
   if (diff < -0.5) return "down";
   return "steady";
-
-  const pressure = getPressure(data.obsPressure);
-  const trend = getPressureTrend(data.obsPressure);
-
 }
 
 
