@@ -43,10 +43,24 @@ const coastalLayer = L.featureGroup().addTo(map);
 
 const markerRegistry = {};
 
+// "Valeoverlay": ei lisää mitään karttaan, vain kytkee CSS-luokan
+// päälle/pois kartan säiliöstä, jolloin markereiden sääsymbolit
+// voidaan piilottaa/näyttää valintalaatikolla.
+const WeatherSymbolToggle = L.Layer.extend({
+  onAdd(map) {
+    map.getContainer().classList.add("show-weather-symbols");
+  },
+  onRemove(map) {
+    map.getContainer().classList.remove("show-weather-symbols");
+  }
+});
+const weatherSymbolLayer = new WeatherSymbolToggle();
+
 L.control.layers(null, {
   "🌤 Sääasemat": weatherLayer,
   "🌊 Vedenkorkeusasemat": seaLevelLayer,
-  "⚓ Rannikkoasemat": coastalLayer
+  "⚓ Rannikkoasemat": coastalLayer,
+  "☀️ Sääsymbolit": weatherSymbolLayer
 }, { collapsed: false }).addTo(map);
 
 

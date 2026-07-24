@@ -200,7 +200,7 @@ html, body { margin: 0; height: 100%; }
   height: 44px;
 }
 
-/* Sääikoni */
+/* Sääikoni – piilossa oletuksena, näkyy kun "Sääsymbolit"-valinta on päällä */
 .weather-icon-wrapper {
   position: absolute;
   top: -5px;
@@ -208,6 +208,11 @@ html, body { margin: 0; height: 100%; }
   width: 24px;
   height: 24px;
   z-index: 1;   /* alle */
+  display: none;
+}
+
+.show-weather-symbols .weather-icon-wrapper {
+  display: block;
 }
 
 /* tausta */
