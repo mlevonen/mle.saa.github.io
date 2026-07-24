@@ -592,12 +592,8 @@ const html = `
     <div class="marker-arrow"
          style="transform: translate(4px,4px) rotate(${dir + 180}deg); color: ${color}">
       <svg viewBox="0 0 24 24" width="55" height="55">
-        <path d="M12 2 L12 18 M12 2 L8 6 M12 2 L16 6"
-              stroke="currentColor"
-              stroke-width="2"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"/>
+        <path d="M12 1 L18 11 L14 11 L14 21 L10 21 L10 11 L6 11 Z"
+              fill="currentColor"/>
       </svg>
     </div>
 
