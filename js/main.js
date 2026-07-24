@@ -596,6 +596,10 @@ function createWindIcon(speed, dir, symbolUrl, gust = null) {
     roundedSpeed < 15 ? "#b67e06" :
                         "#E53935";
 
+  const speedLabel = roundedGust != null
+    ? `${roundedSpeed}/${roundedGust}`
+    : `${roundedSpeed}`;
+
   const speedTitle = roundedGust != null
     ? `Tuuli ${roundedSpeed} m/s, puuska ${roundedGust} m/s`
     : `Tuuli ${roundedSpeed} m/s`;
@@ -619,7 +623,7 @@ const html = `
     </div>
 
     <!-- NOPEUS -->
-    <div class="marker-speed" style="border-color:${color}" title="${speedTitle}">${roundedSpeed}</div>
+    <div class="marker-speed" style="border-color:${color}" title="${speedTitle}">${speedLabel}</div>
 
   </div>
 `;
