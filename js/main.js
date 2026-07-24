@@ -21,8 +21,8 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 
 // 👉 LISÄÄ TÄMÄ TÄHÄN
 const bounds = L.latLngBounds(
-  [59.7, 20.0],  // SW
-  [62.2, 26.0]   // NE
+  [58.8, 18.8],  // SW
+  [63.5, 27.8]   // NE
 );
 
 map.fitBounds(bounds, {
