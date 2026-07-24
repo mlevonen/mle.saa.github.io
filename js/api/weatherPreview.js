@@ -4,13 +4,15 @@ import { getSmartSymbol, smartSymbolIcon } from "../popup/popupExtras.js";
 
 function createWeatherIcon(temp, symbol) {
 
-  const iconUrl = symbol
-    ? `/js/assets/weather-icons/SmartSymbol/${symbol}.svg`
-    : "/js/assets/weather-icons/SmartSymbol/na.svg";
+  // Ei näytetä ikonia lainkaan jos symbolia ei ole saatavilla
+  // (ei "pilvi + N/A" -oletuskuvaketta)
+  const iconHtml = symbol
+    ? `<img src="/js/assets/weather-icons/SmartSymbol/${symbol}.svg" class="weather-icon">`
+    : "";
 
   const html = `
     <div class="weather-marker">
-      <img src="${iconUrl}" class="weather-icon">
+      ${iconHtml}
       <div class="weather-temp">${Math.round(temp)}°</div>
     </div>
   `;

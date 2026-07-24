@@ -254,7 +254,7 @@ stations.forEach(async (station) => {
     latestWind.winddirection,
     data.symbolNow
       ? `/js/assets/weather-icons/SmartSymbol/${data.symbolNow}.svg`
-      : "/js/assets/weather-icons/SmartSymbol/na.svg",
+      : null,
     latestWind.windgust
   );
 
@@ -604,14 +604,19 @@ function createWindIcon(speed, dir, symbolUrl, gust = null) {
     ? `Tuuli ${roundedSpeed} m/s, puuska ${roundedGust} m/s`
     : `Tuuli ${roundedSpeed} m/s`;
 
+  // Ei näytetä ikonia lainkaan jos symbolia ei ole saatavilla
+  // (ei "pilvi + N/A" -oletuskuvaketta)
+  const weatherIconHtml = symbolUrl
+    ? `<div class="weather-icon-wrapper">
+        <img class="marker-weather-icon" src="${symbolUrl}">
+      </div>`
+    : "";
+
 const html = `
   <div class="wind-marker">
 
     <!-- SÄÄIKONI -->
-    <div class="weather-icon-wrapper">
-      <img class="marker-weather-icon"
-           src="${symbolUrl || '/js/assets/weather-icons/SmartSymbol/na.svg'}">
-    </div>
+    ${weatherIconHtml}
 
     <!-- NUOLI (nyt viimeisenä) -->
     <div class="marker-arrow"
