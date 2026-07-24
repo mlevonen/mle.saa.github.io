@@ -203,11 +203,11 @@ html, body { margin: 0; height: 100%; }
 /* Sääikoni – piilossa oletuksena, näkyy kun "Sääsymbolit"-valinta on päällä */
 .weather-icon-wrapper {
   position: absolute;
-  top: -5px;
-  left: -6px;
+  top: -14px;
+  left: -16px;
   width: 24px;
   height: 24px;
-  z-index: 1;   /* alle */
+  z-index: 4;   /* nuolen (3) yläpuolella, jos ne osuvat päällekkäin */
   display: none;
 }
 
