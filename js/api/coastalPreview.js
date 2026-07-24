@@ -124,7 +124,8 @@ Object.entries(values).forEach(([fmisid, data]) => {
   const icon = createWindIcon(
     data.wind,
     data.dir,
-    smartSymbolIcon(data.symbolNow)
+    smartSymbolIcon(data.symbolNow),
+    data.gust
   );
 
   marker.setIcon(icon);
@@ -177,6 +178,7 @@ export async function updateCoastalPreview(
       values[station.fmisid] = {
         wind: windRow.windspeedms,
         dir: windRow.winddirection,
+        gust: windRow.windgust,
         symbolNow: symbol
       };
   }

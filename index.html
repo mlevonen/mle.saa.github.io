@@ -247,15 +247,25 @@ html, body { margin: 0; height: 100%; }
   z-index: 3;   /* päälle */
 }
 
-/* Nopeus */
+/* Nopeus – pallon sisällä, jotta erottuu karttataustasta */
 .marker-speed {
   position: absolute;
-  bottom: 1px;
-  right: 2px;
-  font-size: 13px;
+  bottom: -2px;
+  right: -4px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 3px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.95);
+  border: 2px solid #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
   font-weight: 700;
-  color: #524f4f;
-  text-shadow: 0 0 1px rgba(0,0,0,0.9);
+  color: #222;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  cursor: default;
 }
 
 .yr-popup img {

@@ -254,7 +254,8 @@ stations.forEach(async (station) => {
     latestWind.winddirection,
     data.symbolNow
       ? `/js/assets/weather-icons/SmartSymbol/${data.symbolNow}.svg`
-      : "/js/assets/weather-icons/SmartSymbol/na.svg"
+      : "/js/assets/weather-icons/SmartSymbol/na.svg",
+    latestWind.windgust
   );
 
   const marker = markerRegistry[station.fmisid];
@@ -583,15 +584,21 @@ function getMarkerStyle(type) {
 }
 
 
-function createWindIcon(speed, dir, symbolUrl) {
+function createWindIcon(speed, dir, symbolUrl, gust = null) {
 
   const roundedSpeed = Math.round(speed);
+  const roundedGust =
+    Number.isFinite(gust) ? Math.round(gust) : null;
 
   const color =
     roundedSpeed < 5  ? "#028b09" :
     roundedSpeed < 10 ? "#025981" :
     roundedSpeed < 15 ? "#b67e06" :
                         "#E53935";
+
+  const speedTitle = roundedGust != null
+    ? `Tuuli ${roundedSpeed} m/s, puuska ${roundedGust} m/s`
+    : `Tuuli ${roundedSpeed} m/s`;
 
 const html = `
   <div class="wind-marker">
@@ -612,7 +619,7 @@ const html = `
     </div>
 
     <!-- NOPEUS -->
-    <div class="marker-speed">${roundedSpeed}</div>
+    <div class="marker-speed" style="border-color:${color}" title="${speedTitle}">${roundedSpeed}</div>
 
   </div>
 `;
