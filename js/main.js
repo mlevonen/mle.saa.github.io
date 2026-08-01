@@ -227,8 +227,24 @@ stations.forEach(station => {
     data-type="wind-fc"
     ></canvas>
 
-    <div style="margin-top:8px; display:flex; align-items:center; justify-content:space-between; gap:8px;">
-      <strong>Tuuliennusteanimaatio</strong>
+    <div style="margin-top:8px;"><strong>Tuuliennusteanimaatio</strong></div>
+    <div style="display:flex; gap:10px; align-items:flex-start;">
+      <div class="wind-flow-wrapper" style="position:relative; width:320px; height:320px; flex-shrink:0;">
+        <canvas
+          class="wind-flow-bg"
+          width="320"
+          height="320"
+          style="position:absolute; top:0; left:0;"
+        ></canvas>
+        <canvas
+          class="wind-flow-canvas"
+          width="320"
+          height="320"
+          style="position:absolute; top:0; left:0;"
+          data-lat="${station.lat}"
+          data-lon="${station.lon}"
+        ></canvas>
+      </div>
       <div class="wind-flow-controls">
         <button type="button" class="wind-flow-btn" data-offset="2">💨 2h</button>
         <button type="button" class="wind-flow-btn" data-offset="6">💨 6h</button>
@@ -236,22 +252,6 @@ stations.forEach(station => {
         <button type="button" class="wind-flow-btn" data-offset="18">💨 18h</button>
         <button type="button" class="wind-flow-btn" data-offset="24">💨 24h</button>
       </div>
-    </div>
-    <div class="wind-flow-wrapper" style="position:relative; width:320px; height:320px;">
-      <canvas
-        class="wind-flow-bg"
-        width="320"
-        height="320"
-        style="position:absolute; top:0; left:0;"
-      ></canvas>
-      <canvas
-        class="wind-flow-canvas"
-        width="320"
-        height="320"
-        style="position:absolute; top:0; left:0;"
-        data-lat="${station.lat}"
-        data-lon="${station.lon}"
-      ></canvas>
     </div>
     <div style="display:flex; align-items:center; gap:8px; margin-top:6px; width:320px;">
       <input
