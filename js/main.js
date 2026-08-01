@@ -216,7 +216,10 @@ stations.forEach(station => {
     data-type="wind-fc"
     ></canvas>
 
-    <div style="margin-top:8px;"><strong>Tuuliennusteanimaatio</strong></div>
+    <div style="margin-top:8px; display:flex; align-items:baseline; gap:8px; flex-wrap:wrap;">
+      <strong>Tuuliennusteanimaatio</strong>
+      <span class="wind-flow-speed-label" style="font-size:12px; color:#444;"></span>
+    </div>
     <div style="display:flex; gap:10px; align-items:flex-start;">
       <div class="wind-flow-wrapper" style="position:relative; width:320px; height:320px; flex-shrink:0;">
         <canvas
@@ -836,6 +839,7 @@ if (station.type === "weather" && station.yr) {
     const flowSlider = popupEl.querySelector(".wind-flow-slider");
     const flowTimeLabel = popupEl.querySelector(".wind-flow-time-label");
     const flowTicksEl = popupEl.querySelector(".wind-flow-ticks");
+    const flowSpeedLabel = popupEl.querySelector(".wind-flow-speed-label");
 
     let windSeriesData = null;
 
@@ -884,6 +888,17 @@ if (station.type === "weather" && station.yr) {
         flowTimeLabel.textContent = idx === 0
           ? "Nyt"
           : `+${idx}h (${hourDate.toLocaleTimeString("fi-FI", { hour: "2-digit", minute: "2-digit" })})`;
+      }
+
+      if (flowSpeedLabel) {
+        const wind = windSeriesData.stationWind?.[idx];
+        if (wind && wind.speed != null) {
+          const speedTxt = wind.speed.toFixed(1);
+          const gustTxt = wind.gust != null ? `, puuskat ${wind.gust.toFixed(1)} m/s` : "";
+          flowSpeedLabel.textContent = `💨 ${speedTxt} m/s${gustTxt}`;
+        } else {
+          flowSpeedLabel.textContent = "";
+        }
       }
     }
 

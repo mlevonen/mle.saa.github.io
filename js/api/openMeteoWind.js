@@ -47,11 +47,18 @@ export async function fetchWindGridSeries(lat, lon) {
     }
   }
 
+  // Lisätään aseman oma piste hilan perään (viimeinen alkio) –
+  // sen avulla otsikkoriville saadaan tarkka nopeus/puuska-lukema
+  // hilan keskiarvon sijaan.
+  lats.push(lat.toFixed(4));
+  lons.push(lon.toFixed(4));
+  const stationIdx = lats.length - 1;
+
   const url =
     `https://api.open-meteo.com/v1/forecast` +
     `?latitude=${lats.join(",")}` +
     `&longitude=${lons.join(",")}` +
-    `&hourly=wind_speed_10m,wind_direction_10m` +
+    `&hourly=wind_speed_10m,wind_direction_10m,wind_gusts_10m` +
     `&wind_speed_unit=ms` +
     `&forecast_days=${FORECAST_DAYS}` +
     `&timezone=UTC`;
@@ -85,6 +92,9 @@ export async function fetchWindGridSeries(lat, lon) {
 
   const series = [];
   const hours = [];
+  const stationWind = [];
+
+  const stationPoint = list[stationIdx];
 
   for (let offset = 0; offset <= maxOffset; offset++) {
     const idx = startIdx + offset;
@@ -108,10 +118,16 @@ export async function fetchWindGridSeries(lat, lon) {
 
     series.push(grid);
     hours.push(new Date(referenceTimes[idx] + "Z"));
+
+    stationWind.push({
+      speed: stationPoint?.hourly?.wind_speed_10m?.[idx] ?? null,
+      gust: stationPoint?.hourly?.wind_gusts_10m?.[idx] ?? null
+    });
   }
 
   return {
     size: GRID_SIZE,
+    stationWind,
     bounds: {
       north: lat + latHalf,
       south: lat - latHalf,
