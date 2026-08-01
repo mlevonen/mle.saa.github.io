@@ -143,20 +143,6 @@ stations.forEach(station => {
     <div class="popup-title">${station.name}</div>
     <div class="popup-extras"></div>
 
-    <div class="popup-card popup-sun-card" style="display:none;">
-      <div><strong>Aurinko</strong></div>
-      <div class="popup-sun-row">
-        <div class="popup-inline-item">
-          <img src="./js/assets/icons/sunrise.svg" class="popup-icon" alt="Auringonnousu">
-          <span class="popup-sunrise-value">–</span>
-        </div>
-        <div class="popup-inline-item">
-          <img src="./js/assets/icons/sunset.svg" class="popup-icon" alt="Auringonlasku">
-          <span class="popup-sunset-value">–</span>
-        </div>
-      </div>
-    </div>
-
     <div class="popup-note">
       ℹ️ Graafit perustuvat Ilmatieteen laitoksen dataan, tuuliennusteanimaatio Open-Meteon (MET Nordic) malliin. Eri ennustemallien vuoksi tuulilukemat voivat poiketa hieman toisistaan.
     </div>
@@ -232,6 +218,20 @@ stations.forEach(station => {
             <div class="wind-flow-sealevel-row">
               <span class="wind-flow-sealevel-label">N2000</span>
               <span class="wind-flow-sealevel-value" data-kind="n2000">–</span>
+            </div>
+          </div>
+
+          <div class="popup-card-inner popup-sun-card" style="display:none;">
+            <div style="font-size:12px; font-weight:600; margin-bottom:2px;">Aurinko</div>
+            <div class="popup-sun-row">
+              <div class="popup-inline-item">
+                <img src="./js/assets/icons/sunrise.svg" class="popup-icon" alt="Auringonnousu">
+                <span class="popup-sunrise-value">–</span>
+              </div>
+              <div class="popup-inline-item">
+                <img src="./js/assets/icons/sunset.svg" class="popup-icon" alt="Auringonlasku">
+                <span class="popup-sunset-value">–</span>
+              </div>
             </div>
           </div>
         </div>
