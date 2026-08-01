@@ -227,7 +227,15 @@ stations.forEach(station => {
     data-type="wind-fc"
     ></canvas>
 
-    <div style="margin-top:8px;"><strong>Tuulen virtaus (lähialue)</strong></div>
+    <div style="margin-top:8px; display:flex; align-items:center; justify-content:space-between; gap:8px;">
+      <strong>Tuulen virtaus (lähialue)</strong>
+      <div class="wind-flow-controls">
+        <button type="button" class="wind-flow-btn" data-offset="0">Nyt</button>
+        <button type="button" class="wind-flow-btn" data-offset="6">+6h</button>
+        <button type="button" class="wind-flow-btn" data-offset="12">+12h</button>
+        <button type="button" class="wind-flow-btn" data-offset="24">+24h</button>
+      </div>
+    </div>
     <div class="wind-flow-wrapper" style="position:relative; width:320px; height:320px;">
       <canvas
         class="wind-flow-bg"
@@ -748,20 +756,31 @@ if (station.type === "weather" && station.yr) {
     renderTemperatureChart(popupEl, data);
     renderWindCharts(popupEl, data);
 
-    // Tuulen virtaus (Open-Meteo, animoitu hiukkaskenttä)
-    if (stopWindFlow) {
-      stopWindFlow();
-      stopWindFlow = null;
-    }
-
+    // Tuulen virtaus (Open-Meteo, animoitu hiukkaskenttä) + ennustenapit
     const flowCanvas = popupEl.querySelector(".wind-flow-canvas");
     const flowBgCanvas = popupEl.querySelector(".wind-flow-bg");
-    if (flowCanvas) {
+    const flowButtons = popupEl.querySelectorAll(".wind-flow-btn");
+
+    async function loadWindFlow(offsetHours) {
+
+      if (stopWindFlow) {
+        stopWindFlow();
+        stopWindFlow = null;
+      }
+
+      if (!flowCanvas) return;
+
+      flowButtons.forEach(btn => {
+        btn.classList.toggle(
+          "active",
+          Number(btn.dataset.offset) === offsetHours
+        );
+      });
+
       try {
-        const gridData = await fetchWindGrid(station.lat, station.lon);
+        const gridData = await fetchWindGrid(station.lat, station.lon, offsetHours);
 
         if (flowBgCanvas) {
-          // Ei odoteta – karttatausta saa ilmestyä hiukan animaation jälkeen
           drawMapBackground(flowBgCanvas, gridData.bounds).catch(err => {
             console.warn("Karttataustan lataus epäonnistui:", err);
           });
@@ -771,6 +790,14 @@ if (station.type === "weather" && station.yr) {
       } catch (err) {
         console.warn("Tuulivirtauksen haku epäonnistui:", err);
       }
+    }
+
+    flowButtons.forEach(btn => {
+      btn.onclick = () => loadWindFlow(Number(btn.dataset.offset));
+    });
+
+    if (flowCanvas) {
+      await loadWindFlow(0);
     }
 
      const marker = e.popup._source;

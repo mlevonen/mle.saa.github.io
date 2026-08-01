@@ -80,6 +80,6 @@ export async function drawMapBackground(canvas, bounds, zoom = 10) {
 
   // Kevyt vaalennus/haalennus, jotta tummat virtauspisteet
   // erottuvat kartan päältä selvästi.
-  ctx.fillStyle = "rgba(255,255,255,0.45)";
+  ctx.fillStyle = "rgba(255,255,255,0.25)";
   ctx.fillRect(0, 0, w, h);
 }
