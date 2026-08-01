@@ -12,6 +12,7 @@ import { fetchWindGridSeries } from "./api/openMeteoWind.js";
 import { renderWindFlow } from "./charts/windFlow.js";
 import { drawMapBackground } from "./charts/miniMapBackground.js";
 import { loadPreviewCache, savePreviewCache } from "./utils/previewCache.js";
+import { initMarineInfoPanels } from "./marineInfoPanels.js";
 
 
 "use strict";
@@ -31,6 +32,10 @@ const bounds = L.latLngBounds(
 map.fitBounds(bounds, {
   padding: [20, 20]
 });
+
+// Säätiedotus merenkulkijoille + Varoitukset -infopaneelit
+// (avattava/piilotettava, sisältö ladataan vasta avattaessa)
+initMarineInfoPanels();
 
 const FMI_WFS = "https://opendata.fmi.fi/wfs";
 

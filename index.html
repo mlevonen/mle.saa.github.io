@@ -277,12 +277,188 @@ html, body { margin: 0; height: 100%; }
   font-size: 10px;
   color: #888;
 }
+
+/* ==========================
+   Säätiedotus merenkulkijoille + Varoitukset
+   ========================== */
+
+.info-panels {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 300px;
+  max-width: calc(100vw - 24px);
+  font-family: sans-serif;
+}
+
+.info-panel {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+  overflow: hidden;
+}
+
+.info-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 9px 12px;
+  border: none;
+  background: #f4f5f7;
+  font-size: 13px;
+  font-weight: 600;
+  color: #222;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+}
+
+.info-panel-header:hover {
+  background: #eceef1;
+}
+
+.info-panel-caret {
+  transition: transform 0.2s ease;
+  color: #666;
+  font-size: 11px;
+}
+
+.info-panel.open .info-panel-caret {
+  transform: rotate(180deg);
+}
+
+.info-panel-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.25s ease;
+}
+
+.info-panel.open .info-panel-body {
+  max-height: 420px;
+}
+
+.info-panel-frame-wrapper {
+  padding: 8px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.info-panel-open-link {
+  font-size: 11px;
+  color: #0b5fa5;
+  text-decoration: none;
+  align-self: flex-start;
+}
+
+.info-panel-open-link:hover {
+  text-decoration: underline;
+}
+
+.marine-bulletin-iframe {
+  width: 100%;
+  height: 340px;
+  border: 1px solid #e3e3e3;
+  border-radius: 8px;
+}
+
+.warnings-list {
+  max-height: 380px;
+  overflow-y: auto;
+  padding: 6px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-panel-loading,
+.info-panel-empty,
+.info-panel-error {
+  padding: 10px;
+  font-size: 12px;
+  color: #555;
+}
+
+.info-panel-error a {
+  color: #0b5fa5;
+}
+
+.warning-item {
+  display: block;
+  padding: 8px 10px;
+  border: 1px solid #f0d0a0;
+  background: #fff8ec;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #222;
+}
+
+.warning-item:hover {
+  background: #fff1d8;
+}
+
+.warning-item-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 2px;
+  color: #222;
+}
+
+.warning-item-date {
+  font-size: 10px;
+  color: #888;
+  margin-bottom: 3px;
+}
+
+.warning-item-desc {
+  font-size: 11px;
+  color: #444;
+  line-height: 1.35;
+}
 </style>
 
 </head>
 
 <body>
   <div id="map"></div>
+
+  <div class="info-panels">
+
+    <div class="info-panel" id="marine-bulletin-panel">
+      <button type="button" class="info-panel-header" aria-expanded="false">
+        <span>⛵ Säätiedotus merenkulkijoille</span>
+        <span class="info-panel-caret">▾</span>
+      </button>
+      <div class="info-panel-body">
+        <div class="info-panel-frame-wrapper">
+          <a class="info-panel-open-link"
+             href="https://www.ilmatieteenlaitos.fi/saatiedotus-merenkulkijoille"
+             target="_blank" rel="noopener">
+            Avaa alkuperäinen sivu ↗
+          </a>
+          <iframe class="marine-bulletin-iframe" loading="lazy"
+                   title="Säätiedotus merenkulkijoille"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-panel" id="warnings-panel">
+      <button type="button" class="info-panel-header" aria-expanded="false">
+        <span>⚠️ Varoitukset</span>
+        <span class="info-panel-caret">▾</span>
+      </button>
+      <div class="info-panel-body">
+        <div class="warnings-list"></div>
+      </div>
+    </div>
+
+  </div>
 
 <!-- Leaflet ENSIN -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
