@@ -4,17 +4,29 @@
 // yläkulmaan. Sisältö ladataan vasta kun käyttäjä avaa paneelin
 // ensimmäisen kerran, jotta kartan alkulataus ei hidastu turhaan.
 //
-// Säätiedotusta merenkulkijoille ei ole saatavilla Ilmatieteen
-// laitoksen avoimessa WFS-datassa (ei omaa storedquery-id:tä),
-// joten se näytetään upottamalla virallinen sivu iframeen –
-// samaan tapaan kuin sääasemien Yr-meteogrammit tässä sovelluksessa.
-// Varoitukset sen sijaan julkaistaan koneluettavana RSS-syötteenä,
-// joten ne haetaan ja jäsennetään suoraan.
+// Säätiedotus merenkulkijoille haetaan valmiiksi muotoiltuna HTML-
+// fragmenttina cdn.fmi.fi:stä (sama osoite jota ilmatieteenlaitos.fi
+// itse käyttää sivullaan) ja jäsennetään tekstiksi – ks.
+// popup/marineBulletinParser.js. Tiedote päivittyy FMI:llä n. 6
+// kertaa vuorokaudessa; koska tarkkoja julkaisukellonaikoja ei
+// voitu luotettavasti varmistaa, haetaan tuore tiedote paneelin
+// avatessa ja sen jälkeen kerran tunnissa niin kauan kuin sivu on
+// auki – tämä poimii jokaisen päivityksen viimeistään tunnin sisällä.
+//
+// Varoitukset julkaistaan koneluettavana RSS-syötteenä, joten ne
+// haetaan ja jäsennetään suoraan.
 // ==========================
 
+import { fetchMarineBulletinHtml } from "./api/marineBulletin.js";
+import {
+  parseMarineBulletinHtml,
+  renderMarineBulletinHtml
+} from "./popup/marineBulletinParser.js";
+
 const WARNINGS_RSS_URL = "https://alerts.fmi.fi/cap/feed/rss_fi-FI.rss";
-const MARINE_BULLETIN_URL = "https://www.ilmatieteenlaitos.fi/saatiedotus-merenkulkijoille";
+const MARINE_BULLETIN_PAGE_URL = "https://www.ilmatieteenlaitos.fi/saatiedotus-merenkulkijoille";
 const WARNINGS_PAGE_URL = "https://www.ilmatieteenlaitos.fi/varoitukset";
+const MARINE_BULLETIN_REFRESH_MS = 60 * 60 * 1000; // 1 h
 
 function setupPanel(panelEl, { onFirstOpen } = {}) {
 
@@ -48,6 +60,45 @@ function renderWarningsError(listEl, message) {
       </a>
     </div>
   `;
+
+}
+
+function renderMarineBulletinError(contentEl, message) {
+
+  contentEl.innerHTML = `
+    <div class="info-panel-error">
+      ${message}
+      <br>
+      <a href="${MARINE_BULLETIN_PAGE_URL}" target="_blank" rel="noopener">
+        Avaa säätiedotus ilmatieteenlaitos.fi:ssä ↗
+      </a>
+    </div>
+  `;
+
+}
+
+async function loadMarineBulletin(contentEl, { showLoading = true } = {}) {
+
+  if (showLoading) {
+    contentEl.innerHTML = `<div class="info-panel-loading">Ladataan…</div>`;
+  }
+
+  try {
+
+    const html = await fetchMarineBulletinHtml();
+    const bulletin = parseMarineBulletinHtml(html);
+
+    contentEl.innerHTML = renderMarineBulletinHtml(bulletin);
+
+  } catch (err) {
+
+    console.warn("Säätiedotuksen haku epäonnistui:", err);
+    renderMarineBulletinError(
+      contentEl,
+      "Säätiedotuksen haku ei onnistunut juuri nyt."
+    );
+
+  }
 
 }
 
@@ -126,13 +177,18 @@ export function initMarineInfoPanels() {
 
   if (marinePanel) {
 
-    const iframe = marinePanel.querySelector(".marine-bulletin-iframe");
+    const contentEl = marinePanel.querySelector(".marine-bulletin-content");
 
     setupPanel(marinePanel, {
       onFirstOpen: () => {
-        if (iframe && !iframe.src) {
-          iframe.src = MARINE_BULLETIN_URL;
-        }
+        loadMarineBulletin(contentEl);
+
+        // Tiedote päivittyy FMI:llä n. 6 kertaa vuorokaudessa – haetaan
+        // tuore versio kerran tunnissa niin kauan kuin sivu on auki.
+        setInterval(
+          () => loadMarineBulletin(contentEl, { showLoading: false }),
+          MARINE_BULLETIN_REFRESH_MS
+        );
       }
     });
 
