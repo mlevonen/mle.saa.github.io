@@ -99,8 +99,8 @@ export function renderWindFlow(canvas, gridData) {
       const speed = Math.hypot(u, v);
       const alpha = Math.min(0.9, 0.25 + (speed / maxSpeed) * 0.65);
 
-      ctx.strokeStyle = `rgba(120,200,255,${alpha})`;
-      ctx.lineWidth = 1.1;
+      ctx.strokeStyle = `rgba(15,25,75,${alpha})`;
+      ctx.lineWidth = 1.3;
       ctx.beginPath();
       ctx.moveTo(p.x, p.y);
       ctx.lineTo(nx, ny);

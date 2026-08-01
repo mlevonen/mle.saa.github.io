@@ -228,17 +228,17 @@ stations.forEach(station => {
     ></canvas>
 
     <div style="margin-top:8px;"><strong>Tuulen virtaus (lähialue)</strong></div>
-    <div class="wind-flow-wrapper" style="position:relative; width:560px; height:200px;">
+    <div class="wind-flow-wrapper" style="position:relative; width:320px; height:320px;">
       <canvas
         class="wind-flow-bg"
-        width="560"
-        height="200"
+        width="320"
+        height="320"
         style="position:absolute; top:0; left:0;"
       ></canvas>
       <canvas
         class="wind-flow-canvas"
-        width="560"
-        height="200"
+        width="320"
+        height="320"
         style="position:absolute; top:0; left:0;"
         data-lat="${station.lat}"
         data-lon="${station.lon}"

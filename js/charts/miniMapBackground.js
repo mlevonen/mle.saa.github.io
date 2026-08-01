@@ -78,7 +78,8 @@ export async function drawMapBackground(canvas, bounds, zoom = 10) {
   ctx.clearRect(0, 0, w, h);
   ctx.drawImage(off, srcX, srcY, srcW, srcH, 0, 0, w, h);
 
-  // Kevyt tummennus, jotta hiukkaset erottuvat kartan päältä
-  ctx.fillStyle = "rgba(6,14,24,0.4)";
+  // Kevyt vaalennus/haalennus, jotta tummat virtauspisteet
+  // erottuvat kartan päältä selvästi.
+  ctx.fillStyle = "rgba(255,255,255,0.45)";
   ctx.fillRect(0, 0, w, h);
 }
