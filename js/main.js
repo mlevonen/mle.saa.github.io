@@ -9,6 +9,8 @@ import { fetchSeaLevelMulti } from "./api/sealevel.js";
 import { updateCoastalPreview, loadCoastalPreviewCache} from "./api/coastalPreview.js";
 import { updateWeatherPreview } from "./api/weatherPreview.js";
 import { getCurrentSymbol } from "./charts/plugins/weatherSymbols.js";
+import { fetchWindGrid } from "./api/openMeteoWind.js";
+import { renderWindFlow } from "./charts/windFlow.js";
 
 
 "use strict";
@@ -42,6 +44,10 @@ const seaLevelLayer = L.featureGroup(); // EI oletuksena kartalla
 const coastalLayer = L.featureGroup().addTo(map);
 
 const markerRegistry = {};
+
+// Käynnissä olevan tuulivirtausanimaation pysäytysfunktio
+// (yksi kerrallaan – uusi popup pysäyttää edellisen).
+let stopWindFlow = null;
 
 // "Valeoverlay": ei lisää mitään karttaan, vain kytkee CSS-luokan
 // päälle/pois kartan säiliöstä, jolloin markereiden sääsymbolit
@@ -218,6 +224,15 @@ stations.forEach(station => {
     data-lon="${station.lon}"
     data-fmisid="${station.fmisid}"
     data-type="wind-fc"
+    ></canvas>
+
+    <div style="margin-top:8px;"><strong>Tuulen virtaus (lähialue)</strong></div>
+    <canvas
+    class="popup-chart wind-flow-canvas"
+    width="560"
+    height="200"
+    data-lat="${station.lat}"
+    data-lon="${station.lon}"
     ></canvas>
 
   `);
@@ -722,7 +737,23 @@ if (station.type === "weather" && station.yr) {
     renderPopupExtras(popupEl, data);
     renderTemperatureChart(popupEl, data);
     renderWindCharts(popupEl, data);
-    
+
+    // Tuulen virtaus (Open-Meteo, animoitu hiukkaskenttä)
+    if (stopWindFlow) {
+      stopWindFlow();
+      stopWindFlow = null;
+    }
+
+    const flowCanvas = popupEl.querySelector(".wind-flow-canvas");
+    if (flowCanvas) {
+      try {
+        const gridData = await fetchWindGrid(station.lat, station.lon);
+        stopWindFlow = renderWindFlow(flowCanvas, gridData);
+      } catch (err) {
+        console.warn("Tuulivirtauksen haku epäonnistui:", err);
+      }
+    }
+
      const marker = e.popup._source;
 
     // hae latest helperilla tai suoraan arrayn lopusta
@@ -736,6 +767,15 @@ if (station.type === "weather" && station.yr) {
   console.error("Popup error:", err);
 }
 
+});
+
+// Pysäytä tuulivirtausanimaatio kun popup suljetaan,
+// ettei se jää pyörimään taustalle turhaan.
+map.on("popupclose", () => {
+  if (stopWindFlow) {
+    stopWindFlow();
+    stopWindFlow = null;
+  }
 });
 
 
