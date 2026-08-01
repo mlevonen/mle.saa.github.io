@@ -194,6 +194,10 @@ stations.forEach(station => {
     <div class="popup-title">${station.name}</div>
     <div class="popup-extras"></div>
 
+    <div class="popup-note">
+      ℹ️ Graafit perustuvat Ilmatieteen laitoksen dataan, tuuliennusteanimaatio Open-Meteon (MET Nordic) malliin. Eri ennustemallien vuoksi tuulilukemat voivat poiketa hieman toisistaan.
+    </div>
+
     <div class="popup-card">
       <div><strong>Tuuli (havainto)</strong></div>
       <canvas
