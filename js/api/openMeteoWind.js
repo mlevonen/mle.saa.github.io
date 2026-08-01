@@ -26,8 +26,15 @@ function buildVector(speed, dir) {
 
 export async function fetchWindGridSeries(lat, lon) {
 
-  const half = GRID_SPAN_DEG / 2;
-  const step = GRID_SPAN_DEG / (GRID_SIZE - 1);
+  const latHalf = GRID_SPAN_DEG / 2;
+
+  // Pituusasteet "kutistuvat" maastoetäisyydeltään cos(leveysaste):n
+  // verran napoja kohti mentäessä – jaetaan lonHalf sillä, jotta
+  // rajaus vastaa oikeaa neliötä maastossa/kartalla asteneliön sijaan.
+  const lonHalf = latHalf / Math.cos((lat * Math.PI) / 180);
+
+  const latStep = (latHalf * 2) / (GRID_SIZE - 1);
+  const lonStep = (lonHalf * 2) / (GRID_SIZE - 1);
 
   const lats = [];
   const lons = [];
@@ -35,8 +42,8 @@ export async function fetchWindGridSeries(lat, lon) {
   // row 0 = pohjoisin, col 0 = läntisin
   for (let row = 0; row < GRID_SIZE; row++) {
     for (let col = 0; col < GRID_SIZE; col++) {
-      lats.push((lat + half - row * step).toFixed(4));
-      lons.push((lon - half + col * step).toFixed(4));
+      lats.push((lat + latHalf - row * latStep).toFixed(4));
+      lons.push((lon - lonHalf + col * lonStep).toFixed(4));
     }
   }
 
@@ -106,10 +113,10 @@ export async function fetchWindGridSeries(lat, lon) {
   return {
     size: GRID_SIZE,
     bounds: {
-      north: lat + half,
-      south: lat - half,
-      west: lon - half,
-      east: lon + half
+      north: lat + latHalf,
+      south: lat - latHalf,
+      west: lon - lonHalf,
+      east: lon + lonHalf
     },
     series,
     hours
