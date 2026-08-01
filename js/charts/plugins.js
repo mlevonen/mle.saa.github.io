@@ -51,10 +51,23 @@ const windArrowPlugin = {
       ctx.rotate(angle);
 
       ctx.fillStyle = color;
-      ctx.font = "10px sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("➤", 0, 0);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.3;
+      ctx.lineCap = "round";
+
+      // Varsi
+      ctx.beginPath();
+      ctx.moveTo(-5, 0);
+      ctx.lineTo(2, 0);
+      ctx.stroke();
+
+      // Nuolenpää
+      ctx.beginPath();
+      ctx.moveTo(6, 0);
+      ctx.lineTo(1, -3);
+      ctx.lineTo(1, 3);
+      ctx.closePath();
+      ctx.fill();
 
       ctx.restore();
       });
