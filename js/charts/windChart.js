@@ -160,8 +160,8 @@ function renderWindObsChart(
   ].filter(v => typeof v === "number");
 
   const yMax = allValues.length
-    ? Math.ceil((Math.max(...allValues) + 2) / 5) * 5
-    : 15;
+    ? Math.ceil((Math.max(...allValues) + 1) / 2) * 2
+    : 10;
 
   new Chart(canvas, {
     type: "line",
@@ -246,8 +246,8 @@ console.log("Rendering FC chart");
   ].filter(v => typeof v === "number");
 
   const yMax = allValues.length
-    ? Math.ceil((Math.max(...allValues) + 2) / 5) * 5
-    : 15;
+    ? Math.ceil((Math.max(...allValues) + 1) / 2) * 2
+    : 10;
 
 new Chart(canvas, {
   type: "line",
