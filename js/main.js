@@ -228,12 +228,13 @@ stations.forEach(station => {
     ></canvas>
 
     <div style="margin-top:8px; display:flex; align-items:center; justify-content:space-between; gap:8px;">
-      <strong>Tuulen virtaus (lähialue)</strong>
+      <strong>Tuuliennusteanimaatio</strong>
       <div class="wind-flow-controls">
-        <button type="button" class="wind-flow-btn" data-offset="0">Nyt</button>
-        <button type="button" class="wind-flow-btn" data-offset="6">+6h</button>
-        <button type="button" class="wind-flow-btn" data-offset="12">+12h</button>
-        <button type="button" class="wind-flow-btn" data-offset="24">+24h</button>
+        <button type="button" class="wind-flow-btn" data-offset="2">💨 2h</button>
+        <button type="button" class="wind-flow-btn" data-offset="6">💨 6h</button>
+        <button type="button" class="wind-flow-btn" data-offset="12">💨 12h</button>
+        <button type="button" class="wind-flow-btn" data-offset="18">💨 18h</button>
+        <button type="button" class="wind-flow-btn" data-offset="24">💨 24h</button>
       </div>
     </div>
     <div class="wind-flow-wrapper" style="position:relative; width:320px; height:320px;">
