@@ -257,15 +257,16 @@ stations.forEach(station => {
  });
 
 // ==========================
-// Sääasemien tuulinuoli-ikoni
+// Sää- ja rannikkoasemien tuulinuoli-ikoni
 // ==========================
-// Rannikkoasemat hoitaa jo updateCoastalPreview/loadCoastalPreviewCache
-// (omalla, kevyemmällä ja välimuistitetulla haullaan), joten tässä
-// käsitellään vain sääasemat. Käytetään kevyttä suoraa havaintohakua
+// updateCoastalPreview/loadCoastalPreviewCache käsittelee vain
+// "featured"-rannikkoasemat (kotisivun karusellin data), joten
+// KAIKKI sää- ja rannikkoasemat tarvitsevat oman tuulinuolensa
+// tämän silmukan kautta. Käytetään kevyttä suoraa havaintohakua
 // raskaan loadPopupData:n (koko popupin data: ennusteet, aurinko,
 // sääsymbolit ym.) sijaan – se hidasti kartan avautumista turhaan.
 
-const WIND_ICON_CACHE_KEY = "weatherWindIconCache";
+const WIND_ICON_CACHE_KEY = "windIconCache";
 const WIND_ICON_CACHE_TTL = 5 * 60 * 1000;
 
 function applyWindIcons(values) {
@@ -280,13 +281,15 @@ function applyWindIcons(values) {
 const cachedWindIcons = loadPreviewCache(WIND_ICON_CACHE_KEY, WIND_ICON_CACHE_TTL);
 if (cachedWindIcons) applyWindIcons(cachedWindIcons);
 
-// 2. Hae tuoreet lukemat rinnakkain kaikille sääasemille taustalla
+// 2. Hae tuoreet lukemat rinnakkain kaikille sää- ja rannikkoasemille taustalla
 (async () => {
 
-  const weatherStations = stations.filter(s => s.type === "weather");
+  const windIconStations = stations.filter(
+    s => s.type === "weather" || s.type === "coastal"
+  );
   const freshValues = {};
 
-  await Promise.all(weatherStations.map(async station => {
+  await Promise.all(windIconStations.map(async station => {
     try {
       const series = await fetchObservationSeriesByFmisid(station.fmisid);
 
