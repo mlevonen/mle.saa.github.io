@@ -172,7 +172,7 @@ function renderWindObsChart(
           borderColor: "rgba(0,140,0,0.9)",
           borderWidth: 2,
           pointRadius: 0,
-          tension: 0.4,
+          tension: 0.5,
           windDirections: obsSeries.map(p => p.dir)
         },
         {
@@ -258,7 +258,7 @@ new Chart(canvas, {
         borderColor: "rgba(220,0,0,0.9)",
         borderWidth: 2,
         pointRadius: 0,
-        tension: 0.4,
+        tension: 0.5,
         windDirections: fcSeries.map(p => p.dir)
       },
       {

@@ -127,11 +127,10 @@ Chart.register(weatherSymbolsPlugin);
           borderWidth: 1.5,
           pointRadius: 0,
           pointHoverRadius: 0,
-          tension: 0.4,
-          cubicInterpolationMode: "monotone",
+          tension: 0.5,
           spanGaps: true
         },
-        
+
         {
           label: "Ennuste",
           data: fcPointsFiltered,
@@ -139,7 +138,7 @@ Chart.register(weatherSymbolsPlugin);
           borderWidth: 1.5,
           pointRadius: 0,
           pointHoverRadius: 0,
-          tension: 0.4,
+          tension: 0.5,
           borderDash: [4, 4] // jos käytät katkoviivaa
           },
 
