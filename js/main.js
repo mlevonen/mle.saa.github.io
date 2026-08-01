@@ -194,97 +194,99 @@ stations.forEach(station => {
     <div class="popup-title">${station.name}</div>
     <div class="popup-extras"></div>
 
-      <div style="margin-top:8px;"><strong>Tuuli (havainto)</strong></div>
+    <div class="popup-card">
+      <div><strong>Tuuli (havainto)</strong></div>
       <canvas
-      class="popup-chart"
-      width="650"
-      height="140"
-      data-lat="${station.lat}"
-      data-lon="${station.lon}"
-      data-fmisid="${station.fmisid}"
-      data-type="wind-obs"
-    ></canvas>
-
-    <div style="margin-top:8px;"><strong>Tuuli (ennuste)</strong></div>
-    <canvas
-    class="popup-chart"
-    width="650"
-    height="140"
-    data-lat="${station.lat}"
-    data-lon="${station.lon}"
-    data-fmisid="${station.fmisid}"
-    data-type="wind-fc"
-    ></canvas>
-
-    <div style="margin-top:8px; display:flex; align-items:baseline; gap:8px; flex-wrap:wrap;">
-      <strong>Tuuliennusteanimaatio</strong>
-      <span class="wind-flow-speed-label" style="font-size:12px; color:#444;"></span>
+        class="popup-chart"
+        width="650"
+        height="140"
+        data-lat="${station.lat}"
+        data-lon="${station.lon}"
+        data-fmisid="${station.fmisid}"
+        data-type="wind-obs"
+      ></canvas>
     </div>
-    <div style="display:flex; gap:10px; align-items:flex-start;">
-      <div class="wind-flow-wrapper" style="position:relative; width:320px; height:320px; flex-shrink:0;">
-        <canvas
-          class="wind-flow-bg"
-          width="320"
-          height="320"
-          style="position:absolute; top:0; left:0;"
-        ></canvas>
-        <canvas
-          class="wind-flow-canvas"
-          width="320"
-          height="320"
-          style="position:absolute; top:0; left:0;"
-          data-lat="${station.lat}"
-          data-lon="${station.lon}"
-        ></canvas>
+
+    <div class="popup-card">
+      <div><strong>Tuuli (ennuste)</strong></div>
+      <canvas
+        class="popup-chart"
+        width="650"
+        height="140"
+        data-lat="${station.lat}"
+        data-lon="${station.lon}"
+        data-fmisid="${station.fmisid}"
+        data-type="wind-fc"
+      ></canvas>
+    </div>
+
+    <div class="popup-card">
+      <div style="display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; margin-bottom:6px;">
+        <strong>Tuuliennusteanimaatio</strong>
+        <span class="wind-flow-speed-label" style="font-size:12px; color:#444;"></span>
       </div>
-      <div class="wind-flow-sidebar" style="display:flex; flex-direction:column; gap:6px; width:260px;">
-        <div>
-          <div style="font-size:12px; font-weight:600;">Lämpötila</div>
+      <div style="display:flex; gap:10px; align-items:flex-start;">
+        <div class="wind-flow-wrapper" style="position:relative; width:320px; height:320px; flex-shrink:0;">
           <canvas
-            class="popup-chart-mini"
-            width="260"
-            height="100"
+            class="wind-flow-bg"
+            width="320"
+            height="320"
+            style="position:absolute; top:0; left:0;"
+          ></canvas>
+          <canvas
+            class="wind-flow-canvas"
+            width="320"
+            height="320"
+            style="position:absolute; top:0; left:0;"
             data-lat="${station.lat}"
             data-lon="${station.lon}"
-            data-fmisid="${station.fmisid}"
-            data-type="temp"
           ></canvas>
         </div>
+        <div class="wind-flow-sidebar" style="display:flex; flex-direction:column; gap:8px; width:320px;">
+          <div class="popup-card-inner">
+            <div style="font-size:12px; font-weight:600; margin-bottom:4px;">Lämpötila</div>
+            <canvas
+              class="popup-chart-mini"
+              width="300"
+              height="110"
+              data-lat="${station.lat}"
+              data-lon="${station.lon}"
+              data-fmisid="${station.fmisid}"
+              data-type="temp"
+            ></canvas>
+          </div>
 
-        <div class="popup-sealevel" style="font-size:13px;">
-          <img
-            src="./js/assets/icons/sealevel.svg"
-            class="popup-sealevel-icon"
-            alt="Merivedenkorkeus"
-          />
-          <span class="wind-flow-sealevel-value">–</span>
+          <div class="popup-card-inner">
+            <div style="font-size:12px; font-weight:600; margin-bottom:2px;">Vedenkorkeus</div>
+            <span class="wind-flow-sealevel-value">–</span>
+          </div>
         </div>
       </div>
-    </div>
-    <div style="display:flex; align-items:center; gap:8px; margin-top:6px; width:320px;">
-      <input
-        type="range"
-        class="wind-flow-slider"
-        min="0"
-        max="0"
-        step="1"
-        value="0"
-        style="flex:1;"
-      >
-      <span class="wind-flow-time-label" style="font-size:12px; color:#444; min-width:78px; text-align:right;">Nyt</span>
-    </div>
-    <div style="display:flex; gap:8px; width:320px;">
-      <div class="wind-flow-ticks" style="display:flex; justify-content:space-between; flex:1;"></div>
-      <div style="min-width:78px;"></div>
-    </div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:8px; width:320px;">
+        <input
+          type="range"
+          class="wind-flow-slider"
+          min="0"
+          max="0"
+          step="1"
+          value="0"
+          style="flex:1;"
+        >
+        <span class="wind-flow-time-label" style="font-size:12px; color:#444; min-width:78px; text-align:right;">Nyt</span>
+      </div>
+      <div style="display:flex; gap:8px; width:320px;">
+        <div class="wind-flow-ticks" style="display:flex; justify-content:space-between; flex:1;"></div>
+        <div style="min-width:78px;"></div>
+      </div>
 
-    <div class="wind-flow-controls">
-      <button type="button" class="wind-flow-btn" data-offset="2">💨 2h</button>
-      <button type="button" class="wind-flow-btn" data-offset="6">💨 6h</button>
-      <button type="button" class="wind-flow-btn" data-offset="12">💨 12h</button>
-      <button type="button" class="wind-flow-btn" data-offset="18">💨 18h</button>
-      <button type="button" class="wind-flow-btn" data-offset="24">💨 24h</button>
-      <button type="button" class="wind-flow-btn wind-flow-btn-last" data-offset="24">💨 …</button>
+      <div class="wind-flow-controls">
+        <button type="button" class="wind-flow-btn" data-offset="2">💨 2h</button>
+        <button type="button" class="wind-flow-btn" data-offset="6">💨 6h</button>
+        <button type="button" class="wind-flow-btn" data-offset="12">💨 12h</button>
+        <button type="button" class="wind-flow-btn" data-offset="18">💨 18h</button>
+        <button type="button" class="wind-flow-btn" data-offset="24">💨 24h</button>
+        <button type="button" class="wind-flow-btn wind-flow-btn-last" data-offset="24">💨 …</button>
+      </div>
     </div>
 
   `);
