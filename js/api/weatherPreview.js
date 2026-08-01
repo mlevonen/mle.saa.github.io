@@ -1,5 +1,9 @@
 import { fetchObservationSeriesByFmisid } from "./dataLoader.js";
 import { getSmartSymbol } from "../popup/popupExtras.js";
+import { loadPreviewCache, savePreviewCache } from "../utils/previewCache.js";
+
+const CACHE_KEY = "weatherPreviewCache";
+const CACHE_TTL = 5 * 60 * 1000;
 
 
 function createWeatherIcon(temp) {
@@ -50,6 +54,18 @@ function updateWeatherMarkers(values, markerRegistry) {
 
 
 
+// Näyttää heti viimeksi tunnetut (max. CACHE_TTL vanhat) lukemat,
+// ennen kuin tuore data ehtii palvelimelta – nopeuttaa kartan
+// avautumisen tuntumaa huomattavasti.
+export function loadWeatherPreviewCache(markerRegistry) {
+
+  const cached = loadPreviewCache(CACHE_KEY, CACHE_TTL);
+  if (!cached) return;
+
+  updateWeatherMarkers(cached, markerRegistry);
+
+}
+
 export async function updateWeatherPreview(
   stations,
   markerRegistry
@@ -61,13 +77,15 @@ export async function updateWeatherPreview(
 
   const values = {};
 
-  for (const station of weatherStations) {
+  // Rinnakkaishaku sarjahaun sijaan – kaikkien asemien data
+  // pyydetään yhtä aikaa, ei jonossa yksi kerrallaan.
+  await Promise.all(weatherStations.map(async station => {
 
     const series = await fetchObservationSeriesByFmisid(
       station.fmisid
     );
 
-    if (!series.length) continue;
+    if (!series.length) return;
 
     const latest = series.at(-1);
 
@@ -76,12 +94,14 @@ export async function updateWeatherPreview(
       symbolNow: getSmartSymbol(series)
     };
 
-  }
+  }));
 
   updateWeatherMarkers(
     values,
     markerRegistry
   );
+
+  savePreviewCache(CACHE_KEY, values);
 
 }
 

@@ -1,4 +1,4 @@
-import { loadPopupData } from "./api/dataLoader.js";
+import { loadPopupData, fetchObservationSeriesByFmisid } from "./api/dataLoader.js";
 import { updatePopupTitles } from "./popup/popupTitles.js";
 import { renderTemperatureChart } from "./charts/temperatureChart.js";
 import { renderWindCharts } from "./charts/windChart.js";
@@ -6,11 +6,12 @@ import { renderPopupExtras } from "./popup/popupExtras.js";
 import "./charts/plugins.js";
 import { fetchSeaLevel } from "./api/sealevel.js";
 import { updateCoastalPreview, loadCoastalPreviewCache} from "./api/coastalPreview.js";
-import { updateWeatherPreview } from "./api/weatherPreview.js";
+import { updateWeatherPreview, loadWeatherPreviewCache } from "./api/weatherPreview.js";
 import { getCurrentSymbol } from "./charts/plugins/weatherSymbols.js";
 import { fetchWindGridSeries } from "./api/openMeteoWind.js";
 import { renderWindFlow } from "./charts/windFlow.js";
 import { drawMapBackground } from "./charts/miniMapBackground.js";
+import { loadPreviewCache, savePreviewCache } from "./utils/previewCache.js";
 
 
 "use strict";
@@ -255,31 +256,59 @@ stations.forEach(station => {
   }
  });
 
-stations.forEach(async (station) => {
+// ==========================
+// Sääasemien tuulinuoli-ikoni
+// ==========================
+// Rannikkoasemat hoitaa jo updateCoastalPreview/loadCoastalPreviewCache
+// (omalla, kevyemmällä ja välimuistitetulla haullaan), joten tässä
+// käsitellään vain sääasemat. Käytetään kevyttä suoraa havaintohakua
+// raskaan loadPopupData:n (koko popupin data: ennusteet, aurinko,
+// sääsymbolit ym.) sijaan – se hidasti kartan avautumista turhaan.
 
-  const data = await loadPopupData({
-    lat: station.lat,
-    lon: station.lon,
-    weatherPlace: null,
-    weatherFmisid: station.fmisid,
-    seaLevelFmisid: null
+const WIND_ICON_CACHE_KEY = "weatherWindIconCache";
+const WIND_ICON_CACHE_TTL = 5 * 60 * 1000;
+
+function applyWindIcons(values) {
+  Object.entries(values).forEach(([fmisid, w]) => {
+    const marker = markerRegistry[fmisid];
+    if (!marker) return;
+    marker.setIcon(createWindIcon(w.speed, w.dir, w.gust));
   });
+}
 
-  const latestWind = data.obsWindSpeed?.at(-1);
-  if (!latestWind) return;
+// 1. Näytä heti viimeksi tunnetut lukemat (jos alle 5 min vanhoja)
+const cachedWindIcons = loadPreviewCache(WIND_ICON_CACHE_KEY, WIND_ICON_CACHE_TTL);
+if (cachedWindIcons) applyWindIcons(cachedWindIcons);
 
-  const icon = createWindIcon(
-    latestWind.windspeedms,
-    latestWind.winddirection,
-    latestWind.windgust
-  );
+// 2. Hae tuoreet lukemat rinnakkain kaikille sääasemille taustalla
+(async () => {
 
-  const marker = markerRegistry[station.fmisid];
-  if (!marker) return;
+  const weatherStations = stations.filter(s => s.type === "weather");
+  const freshValues = {};
 
-  marker.setIcon(icon);
+  await Promise.all(weatherStations.map(async station => {
+    try {
+      const series = await fetchObservationSeriesByFmisid(station.fmisid);
 
-});
+      const latest = [...series].reverse().find(
+        p => p.windspeedms != null && p.winddirection != null
+      );
+      if (!latest) return;
+
+      freshValues[station.fmisid] = {
+        speed: latest.windspeedms,
+        dir: latest.winddirection,
+        gust: latest.windgust
+      };
+    } catch (err) {
+      console.warn("Tuulilukeman haku epäonnistui:", station.name, err);
+    }
+  }));
+
+  applyWindIcons(freshValues);
+  savePreviewCache(WIND_ICON_CACHE_KEY, freshValues);
+
+})();
 
 // ==========================
 // FMI aikasarja (JSON TUETTU)
@@ -337,6 +366,9 @@ setInterval(() => {
   );
 
 }, 300000);
+
+// cache näkyviin heti, sitten tuore data
+loadWeatherPreviewCache(markerRegistry);
 
 updateWeatherPreview(
   stations,

@@ -144,11 +144,11 @@ export async function updateCoastalPreview(
 
   const values = {};   // ← TÄMÄ TÄRKEÄ
 
-  for (const station of coastalStations) {
+  // Haetaan kaikkien asemien data rinnakkain (ei jonossa yksi kerrallaan),
+  // jotta kartan avautuessa lukemat ilmestyvät huomattavasti nopeammin.
+  await Promise.all(coastalStations.map(async station => {
 
     const series = await fetchObservationSeriesByFmisid(station.fmisid);
-
-      console.log("SERIES LENGTH:", station.name, series.length);
 
       let windRow = null;
       let symbol = null;
@@ -169,9 +169,7 @@ export async function updateCoastalPreview(
 
       }
 
-    
-
-      if (!windRow) continue;
+      if (!windRow) return;
 
       values[station.fmisid] = {
         wind: windRow.windspeedms,
@@ -179,9 +177,7 @@ export async function updateCoastalPreview(
         gust: windRow.windgust,
         symbolNow: symbol
       };
-  }
-
-  
+  }));
 
   updateMarkers(values, markerRegistry, createWindIcon);
 
