@@ -7,8 +7,11 @@
 const PARTICLE_COUNT = 220;
 const MAX_AGE = 90;          // framea ennen hiukkasen uudelleensijoitusta
 const SPEED_SCALE = 0.16;    // px per (m/s) per frame -kerroin
-const BG_COLOR = "#0b1b2b";
-const TRAIL_ALPHA = "rgba(11,27,43,0.12)";
+
+// Kuinka nopeasti vanhat jäljet häipyvät LÄPINÄKYVÄKSI
+// (ei kohti täyteväristä taustaa) – näin karttatausta-canvas
+// tämän kerroksen alla pysyy koko ajan näkyvissä.
+const FADE_ALPHA = 0.10;
 
 function sampleWind(grid, size, w, h, px, py) {
 
@@ -69,8 +72,9 @@ export function renderWindFlow(canvas, gridData) {
 
   const particles = Array.from({ length: PARTICLE_COUNT }, randomParticle);
 
-  ctx.fillStyle = BG_COLOR;
-  ctx.fillRect(0, 0, w, h);
+  // Canvas pysyy läpinäkyvänä – ei täytetä taustaväriä,
+  // jotta sen alla oleva karttatausta-canvas näkyy koko ajan läpi.
+  ctx.clearRect(0, 0, w, h);
 
   let rafId = null;
   let stopped = false;
@@ -78,8 +82,12 @@ export function renderWindFlow(canvas, gridData) {
   function step() {
     if (stopped) return;
 
-    ctx.fillStyle = TRAIL_ALPHA;
+    // Häivytä vanhat jäljet kohti läpinäkyvyyttä (destination-out),
+    // ei kohti täyteväristä taustaa.
+    ctx.globalCompositeOperation = "destination-out";
+    ctx.fillStyle = `rgba(0,0,0,${FADE_ALPHA})`;
     ctx.fillRect(0, 0, w, h);
+    ctx.globalCompositeOperation = "source-over";
 
     for (const p of particles) {
 

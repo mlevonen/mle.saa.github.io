@@ -63,5 +63,14 @@ export async function fetchWindGrid(lat, lon) {
     grid.push(rowArr);
   }
 
-  return { grid, size: GRID_SIZE };
+  return {
+    grid,
+    size: GRID_SIZE,
+    bounds: {
+      north: lat + half,
+      south: lat - half,
+      west: lon - half,
+      east: lon + half
+    }
+  };
 }

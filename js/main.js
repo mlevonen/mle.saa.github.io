@@ -11,6 +11,7 @@ import { updateWeatherPreview } from "./api/weatherPreview.js";
 import { getCurrentSymbol } from "./charts/plugins/weatherSymbols.js";
 import { fetchWindGrid } from "./api/openMeteoWind.js";
 import { renderWindFlow } from "./charts/windFlow.js";
+import { drawMapBackground } from "./charts/miniMapBackground.js";
 
 
 "use strict";
@@ -227,13 +228,22 @@ stations.forEach(station => {
     ></canvas>
 
     <div style="margin-top:8px;"><strong>Tuulen virtaus (lähialue)</strong></div>
-    <canvas
-    class="popup-chart wind-flow-canvas"
-    width="560"
-    height="200"
-    data-lat="${station.lat}"
-    data-lon="${station.lon}"
-    ></canvas>
+    <div class="wind-flow-wrapper" style="position:relative; width:560px; height:200px;">
+      <canvas
+        class="wind-flow-bg"
+        width="560"
+        height="200"
+        style="position:absolute; top:0; left:0;"
+      ></canvas>
+      <canvas
+        class="wind-flow-canvas"
+        width="560"
+        height="200"
+        style="position:absolute; top:0; left:0;"
+        data-lat="${station.lat}"
+        data-lon="${station.lon}"
+      ></canvas>
+    </div>
 
   `);
 
@@ -745,9 +755,18 @@ if (station.type === "weather" && station.yr) {
     }
 
     const flowCanvas = popupEl.querySelector(".wind-flow-canvas");
+    const flowBgCanvas = popupEl.querySelector(".wind-flow-bg");
     if (flowCanvas) {
       try {
         const gridData = await fetchWindGrid(station.lat, station.lon);
+
+        if (flowBgCanvas) {
+          // Ei odoteta – karttatausta saa ilmestyä hiukan animaation jälkeen
+          drawMapBackground(flowBgCanvas, gridData.bounds).catch(err => {
+            console.warn("Karttataustan lataus epäonnistui:", err);
+          });
+        }
+
         stopWindFlow = renderWindFlow(flowCanvas, gridData);
       } catch (err) {
         console.warn("Tuulivirtauksen haku epäonnistui:", err);
