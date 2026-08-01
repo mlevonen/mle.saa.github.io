@@ -264,6 +264,10 @@ stations.forEach(station => {
       >
       <span class="wind-flow-time-label" style="font-size:12px; color:#444; min-width:78px; text-align:right;">Nyt</span>
     </div>
+    <div style="display:flex; gap:8px; width:320px;">
+      <div class="wind-flow-ticks" style="display:flex; justify-content:space-between; flex:1;"></div>
+      <div style="min-width:78px;"></div>
+    </div>
 
   `);
 
@@ -774,8 +778,24 @@ if (station.type === "weather" && station.yr) {
     const flowButtons = popupEl.querySelectorAll(".wind-flow-btn");
     const flowSlider = popupEl.querySelector(".wind-flow-slider");
     const flowTimeLabel = popupEl.querySelector(".wind-flow-time-label");
+    const flowTicksEl = popupEl.querySelector(".wind-flow-ticks");
 
     let windSeriesData = null;
+
+    function renderFlowTicks(maxIdx) {
+      if (!flowTicksEl) return;
+
+      const tickCount = maxIdx >= 4 ? 5 : maxIdx + 1;
+      const ticks = [];
+
+      for (let i = 0; i < tickCount; i++) {
+        ticks.push(Math.round((maxIdx * i) / (tickCount - 1)));
+      }
+
+      flowTicksEl.innerHTML = ticks
+        .map(h => `<span>${h === 0 ? "nyt" : h + "h"}</span>`)
+        .join("");
+    }
 
     function showWindFlowOffset(offsetHours) {
 
@@ -828,9 +848,13 @@ if (station.type === "weather" && station.yr) {
           });
         }
 
+        const maxIdx = windSeriesData.series.length - 1;
+
         if (flowSlider) {
-          flowSlider.max = windSeriesData.series.length - 1;
+          flowSlider.max = maxIdx;
         }
+
+        renderFlowTicks(maxIdx);
 
         showWindFlowOffset(0);
 
