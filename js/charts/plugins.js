@@ -5,6 +5,12 @@ const windArrowPlugin = {
   id: "windArrowPlugin",
   afterDatasetsDraw(chart) {
     const ctx = chart.ctx;
+    const { bottom } = chart.chartArea;
+
+    // Kuinka paljon nuoli piirretään viivan/pisteen alapuolelle,
+    // ja kuinka lähelle kaavion pohjaa se saa enintään mennä.
+    const ARROW_OFFSET = 14;
+    const maxY = bottom - 6;
 
     chart.data.datasets.forEach((dataset, datasetIndex) => {
       if (!dataset.windDirections) return;
@@ -31,6 +37,7 @@ const windArrowPlugin = {
       if (dir == null) return;
 
       const { x, y } = point.getProps(["x", "y"], true);
+      const arrowY = Math.min(y + ARROW_OFFSET, maxY);
 
       const color =
       raw.phase === "fc"
@@ -38,13 +45,13 @@ const windArrowPlugin = {
       : "rgba(0,140,0,0.9)";
 
       ctx.save();
-      ctx.translate(x, y);
+      ctx.translate(x, arrowY);
 
       const angle = (dir + 90) * Math.PI / 180;
       ctx.rotate(angle);
 
       ctx.fillStyle = color;
-      ctx.font = "13px sans-serif";
+      ctx.font = "10px sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText("➤", 0, 0);
