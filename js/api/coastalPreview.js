@@ -1,4 +1,3 @@
-import { smartSymbolIcon } from "../popup/popupExtras.js";
 import { fetchObservationSeriesByFmisid } from "./dataLoader.js";
 
 // ==========================
@@ -124,7 +123,6 @@ Object.entries(values).forEach(([fmisid, data]) => {
   const icon = createWindIcon(
     data.wind,
     data.dir,
-    smartSymbolIcon(data.symbolNow),
     data.gust
   );
 

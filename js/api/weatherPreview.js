@@ -1,18 +1,11 @@
 import { fetchObservationSeriesByFmisid } from "./dataLoader.js";
-import { getSmartSymbol, smartSymbolIcon } from "../popup/popupExtras.js";
+import { getSmartSymbol } from "../popup/popupExtras.js";
 
 
-function createWeatherIcon(temp, symbol) {
-
-  // Ei näytetä ikonia lainkaan jos symbolia ei ole saatavilla
-  // (ei "pilvi + N/A" -oletuskuvaketta)
-  const iconHtml = symbol
-    ? `<img src="/js/assets/weather-icons/SmartSymbol/${symbol}.svg" class="weather-icon">`
-    : "";
+function createWeatherIcon(temp) {
 
   const html = `
     <div class="weather-marker">
-      ${iconHtml}
       <div class="weather-temp">${Math.round(temp)}°</div>
     </div>
   `;
@@ -47,10 +40,7 @@ function updateWeatherMarkers(values, markerRegistry) {
     marker.previewData.temp = data.temp;
     marker.previewData.symbol = data.symbol;
 
-    const icon = createWeatherIcon(
-      data.temp,
-      data.symbolNow ?? 4
-    );
+    const icon = createWeatherIcon(data.temp);
 
     marker.setIcon(icon);
 

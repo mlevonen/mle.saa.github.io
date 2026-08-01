@@ -78,11 +78,6 @@ html, body { margin: 0; height: 100%; }
   margin-bottom: 6px;
 }
 
-.weather-icon {
-  width: 36px;
-  height: 36px;
-}
-
 .popup-pressure {
   font-size: 0.9rem;
   color: #222;
@@ -153,19 +148,6 @@ html, body { margin: 0; height: 100%; }
   opacity: 0.6;
   font-style: italic;
 }
-
-.popup-weather-symbol {
-  display: flex;
-  justify-content: center;
-  margin: 4px 0 8px;
-}
-
-.popup-weather-icon {
-  width: 32px;
-  height: 32px;
-  margin-right: 8px;
-}
-
 
 .popup-metrics {
   display: flex;
@@ -243,40 +225,6 @@ html, body { margin: 0; height: 100%; }
   position: relative;
   width: 44px;
   height: 44px;
-}
-
-/* Sääikoni – piilossa oletuksena, näkyy kun "Sääsymbolit"-valinta on päällä */
-.weather-icon-wrapper {
-  position: absolute;
-  top: -14px;
-  left: -16px;
-  width: 24px;
-  height: 24px;
-  z-index: 4;   /* nuolen (3) yläpuolella, jos ne osuvat päällekkäin */
-  display: none;
-}
-
-.show-weather-symbols .weather-icon-wrapper {
-  display: block;
-}
-
-/* tausta */
-.weather-icon-wrapper::before {
-  content: "";
-  position: absolute;
-  inset: -3px;
-
-  background: transparent;
-  border-radius: 50%;
-  z-index: 1;
-}
-
-/* itse ikoni */
-.marker-weather-icon {
-  position: relative;
-  width: 150%;
-  height: 150%;
-  z-index: 2;
 }
 
 /* Nuoli */

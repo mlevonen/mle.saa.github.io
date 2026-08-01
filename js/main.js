@@ -41,7 +41,7 @@ const FMI_WFS = "https://opendata.fmi.fi/wfs";
 
 
 const weatherLayer = L.featureGroup().addTo(map);
-const seaLevelLayer = L.featureGroup(); // EI oletuksena kartalla
+const seaLevelLayer = L.featureGroup().addTo(map);
 const coastalLayer = L.featureGroup().addTo(map);
 
 const markerRegistry = {};
@@ -49,26 +49,6 @@ const markerRegistry = {};
 // Käynnissä olevan tuulivirtausanimaation pysäytysfunktio
 // (yksi kerrallaan – uusi popup pysäyttää edellisen).
 let stopWindFlow = null;
-
-// "Valeoverlay": ei lisää mitään karttaan, vain kytkee CSS-luokan
-// päälle/pois kartan säiliöstä, jolloin markereiden sääsymbolit
-// voidaan piilottaa/näyttää valintalaatikolla.
-const WeatherSymbolToggle = L.Layer.extend({
-  onAdd(map) {
-    map.getContainer().classList.add("show-weather-symbols");
-  },
-  onRemove(map) {
-    map.getContainer().classList.remove("show-weather-symbols");
-  }
-});
-const weatherSymbolLayer = new WeatherSymbolToggle();
-
-L.control.layers(null, {
-  "🌤 Sääasemat": weatherLayer,
-  "🌊 Vedenkorkeusasemat": seaLevelLayer,
-  "⚓ Rannikkoasemat": coastalLayer,
-  "☀️ Sääsymbolit": weatherSymbolLayer
-}, { collapsed: false }).addTo(map);
 
 
 //IKONIFUNKTIOT
@@ -325,9 +305,6 @@ stations.forEach(async (station) => {
   const icon = createWindIcon(
     latestWind.windspeedms,
     latestWind.winddirection,
-    data.symbolNow
-      ? `/js/assets/weather-icons/SmartSymbol/${data.symbolNow}.svg`
-      : null,
     latestWind.windgust
   );
 
@@ -680,7 +657,7 @@ function getMarkerStyle(type) {
 }
 
 
-function createWindIcon(speed, dir, symbolUrl, gust = null) {
+function createWindIcon(speed, dir, gust = null) {
 
   const roundedSpeed = Math.round(speed);
   const roundedGust =
@@ -700,21 +677,10 @@ function createWindIcon(speed, dir, symbolUrl, gust = null) {
     ? `Tuuli ${roundedSpeed} m/s, puuska ${roundedGust} m/s`
     : `Tuuli ${roundedSpeed} m/s`;
 
-  // Ei näytetä ikonia lainkaan jos symbolia ei ole saatavilla
-  // (ei "pilvi + N/A" -oletuskuvaketta)
-  const weatherIconHtml = symbolUrl
-    ? `<div class="weather-icon-wrapper">
-        <img class="marker-weather-icon" src="${symbolUrl}">
-      </div>`
-    : "";
-
 const html = `
   <div class="wind-marker">
 
-    <!-- SÄÄIKONI -->
-    ${weatherIconHtml}
-
-    <!-- NUOLI (nyt viimeisenä) -->
+    <!-- NUOLI -->
     <div class="marker-arrow"
          style="transform: translate(4px,4px) rotate(${dir + 180}deg); color: ${color}">
       <svg viewBox="0 0 24 24" width="55" height="55">
@@ -747,6 +713,16 @@ map.on("popupopen", async e => {
 
   const popupEl = e.popup.getElement();
   if (!popupEl) return;
+
+  // Varmistetaan että popup mahtuu näytölle myös pienillä näytöillä
+  // (esim. kannettava tietokone): rajataan popupin korkeus ikkunan
+  // korkeuden mukaan ja tehdään sisällöstä scrollattava, jotta popupin
+  // ylä- tai alareuna (mm. sulkupainike) ei jää piiloon.
+  const maxPopupHeight = Math.max(240, window.innerHeight - 100);
+  e.popup.options.maxHeight = maxPopupHeight;
+  e.popup.options.autoPan = true;
+  e.popup.options.autoPanPadding = [20, 20];
+  e.popup.update();
 
   // 🔑 1. Ota feature.properties ENSIN
 const station = e.popup._source.station;

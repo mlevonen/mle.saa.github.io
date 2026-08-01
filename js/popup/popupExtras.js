@@ -37,35 +37,6 @@ export function smartSymbolIcon(code) {
 }
 
 
-function getPressure(series) {
-  if (!Array.isArray(series) || series.length === 0) return null;
-
-  const latest = series.at(-1);
-  return typeof latest.pressurehpa === "number"
-    ? latest.pressurehpa
-    : null;
-}
-
-function getPressureTrend(series, hours = 3) {
-  if (!Array.isArray(series)) return null;
-
-  const clean = series.filter(
-    p => typeof p.pressurehpa === "number"
-  );
-
-  if (clean.length < hours + 1) return null;
-
-  const current = clean.at(-1).pressurehpa;
-  const past = clean.at(-(hours + 1)).pressurehpa;
-
-  const diff = current - past;
-
-  if (diff > 0.5) return "up";
-  if (diff < -0.5) return "down";
-  return "steady";
-}
-
-
 // --- Merivedenkorkeus (cm, numero) ---
 function getSeaLevel(data) {
   const sea = data.seaLevel;
@@ -97,50 +68,6 @@ export function renderPopupExtras(popupEl, data) {
   if (!container) return;
 
   let html = "";
-
-  /* === SÄÄSYMBOLI === */
-
-  const symbolCode =
-  data.symbolNow ??
-  data.fcTemp?.[0]?.symbol ??
-  null;
-
-  html += `
-    <div class="popup-inline-item">
-      <img
-        src="${
-          symbolCode
-            ? `/js/assets/weather-icons/SmartSymbol/${symbolCode}.svg`
-            : "/js/assets/weather-icons/SmartSymbol/na.svg"
-        }"
-        class="popup-weather-icon"
-        alt="Sääsymboli"
-      />
-    </div>
-  `;
-
-  /* === ILMANPAINE === */
-
-  const pressure = getPressure(data.obsPressure);
-  const trend = getPressureTrend(data.obsPressure);
-
-  if (pressure != null) {
-    const arrow =
-      trend === "up" ? "▲" :
-      trend === "down" ? "▼" :
-      "▬";
-
-    html += `
-      <div class="popup-inline-item">
-        <img
-          src="./js/assets/icons/pressure.svg"
-          class="popup-icon"
-          alt="Ilmanpaine"
-        />
-        ${pressure.toFixed(0)} hPa ${arrow}
-      </div>
-    `;
-  }
 
   /* === MERIVEDENKORKEUS === */
 
