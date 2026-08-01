@@ -194,17 +194,6 @@ stations.forEach(station => {
     <div class="popup-title">${station.name}</div>
     <div class="popup-extras"></div>
 
-    <div><strong>Lämpötila</strong></div>
-    <canvas
-      class="popup-chart"
-      width="650"
-      height="160"
-      data-lat="${station.lat}"
-      data-lon="${station.lon}"
-      data-fmisid="${station.fmisid}"
-      data-type="temp"
-    ></canvas>
-
       <div style="margin-top:8px;"><strong>Tuuli (havainto)</strong></div>
       <canvas
       class="popup-chart"
@@ -245,12 +234,36 @@ stations.forEach(station => {
           data-lon="${station.lon}"
         ></canvas>
       </div>
-      <div class="wind-flow-controls">
-        <button type="button" class="wind-flow-btn" data-offset="2">💨 2h</button>
-        <button type="button" class="wind-flow-btn" data-offset="6">💨 6h</button>
-        <button type="button" class="wind-flow-btn" data-offset="12">💨 12h</button>
-        <button type="button" class="wind-flow-btn" data-offset="18">💨 18h</button>
-        <button type="button" class="wind-flow-btn" data-offset="24">💨 24h</button>
+      <div class="wind-flow-sidebar" style="display:flex; flex-direction:column; gap:6px; width:260px;">
+        <div class="wind-flow-controls">
+          <button type="button" class="wind-flow-btn" data-offset="2">💨 2h</button>
+          <button type="button" class="wind-flow-btn" data-offset="6">💨 6h</button>
+          <button type="button" class="wind-flow-btn" data-offset="12">💨 12h</button>
+          <button type="button" class="wind-flow-btn" data-offset="18">💨 18h</button>
+          <button type="button" class="wind-flow-btn" data-offset="24">💨 24h</button>
+        </div>
+
+        <div>
+          <div style="font-size:12px; font-weight:600;">Lämpötila</div>
+          <canvas
+            class="popup-chart-mini"
+            width="260"
+            height="100"
+            data-lat="${station.lat}"
+            data-lon="${station.lon}"
+            data-fmisid="${station.fmisid}"
+            data-type="temp"
+          ></canvas>
+        </div>
+
+        <div class="popup-sealevel" style="font-size:13px;">
+          <img
+            src="./js/assets/icons/sealevel.svg"
+            class="popup-sealevel-icon"
+            alt="Merivedenkorkeus"
+          />
+          <span class="wind-flow-sealevel-value">–</span>
+        </div>
       </div>
     </div>
     <div style="display:flex; align-items:center; gap:8px; margin-top:6px; width:320px;">
@@ -591,6 +604,29 @@ function getPressureTrend(data, minutes = 180) {
   return "steady";
 }
 
+// Lähin vedenkorkeusasema annetulle pisteelle (yksinkertainen
+// asteperusteinen etäisyys riittää tälle mittakaavalle).
+function findNearestSeaLevelStation(lat, lon) {
+
+  let nearest = null;
+  let minDist = Infinity;
+
+  for (const s of stations) {
+    if (s.type !== "sealevel") continue;
+
+    const dLat = s.lat - lat;
+    const dLon = s.lon - lon;
+    const dist = dLat * dLat + dLon * dLon;
+
+    if (dist < minDist) {
+      minDist = dist;
+      nearest = s;
+    }
+  }
+
+  return nearest;
+}
+
 function getMarkerStyle(type) {
 
   switch (type) {
@@ -772,6 +808,25 @@ if (station.type === "weather" && station.yr) {
     renderPopupExtras(popupEl, data);
     renderTemperatureChart(popupEl, data);
     renderWindCharts(popupEl, data);
+
+    // Lähimmän vedenkorkeusaseman lukema sivupalkkiin
+    const seaLevelValueEl = popupEl.querySelector(".wind-flow-sealevel-value");
+    if (seaLevelValueEl) {
+      const nearestSea = findNearestSeaLevelStation(station.lat, station.lon);
+
+      if (!nearestSea) {
+        seaLevelValueEl.textContent = "–";
+      } else {
+        try {
+          const level = await fetchSeaLevel(nearestSea.fmisid);
+          seaLevelValueEl.textContent = level != null
+            ? `${level > 0 ? "+" : ""}${level} cm (${nearestSea.name})`
+            : `– (${nearestSea.name})`;
+        } catch (err) {
+          seaLevelValueEl.textContent = `– (${nearestSea.name})`;
+        }
+      }
+    }
 
     // Tuulen virtaus (Open-Meteo, animoitu hiukkaskenttä) + napit/liukusäädin
     const flowCanvas = popupEl.querySelector(".wind-flow-canvas");
