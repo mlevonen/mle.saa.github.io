@@ -2,38 +2,29 @@
 // Open-Meteo tuulihila
 // Hakee pienen hilan (GRID_SIZE x GRID_SIZE) tuulidataa
 // havaintopisteen ympäriltä yhdellä API-kutsulla, popupin
-// "tuulen virtaus" -visualisointia varten. Tukee myös
-// tulevaa ennustetuntia (offsetHours), jotta samasta datasta
-// voidaan näyttää nyt-tilanne tai esim. +6h/+12h ennuste.
+// "tuulen virtaus" -visualisointia varten.
+//
+// fetchWindGridSeries hakee koko tuntikohtaisen ennustesarjan
+// (FORECAST_DAYS päivää) kerralla, jotta napit ja liukusäädin
+// voivat vaihtaa näytettävää tuntia ilman uusia verkkokutsuja.
 // ==========================
 
 const GRID_SIZE = 6;          // 6x6 hila
 const GRID_SPAN_DEG = 0.3;    // koko hilan leveys asteina (~sopiva lähialueelle)
-const FORECAST_DAYS = 2;      // riittää +24h/+36h ennusteille
+const FORECAST_DAYS = 2;      // 48h dataa riittää +24h/+36h/+48h -tarkasteluun
 
-function findClosestTimeIndex(times, targetDate) {
-
-  if (!Array.isArray(times) || !times.length) return null;
-
-  let bestIdx = 0;
-  let bestDiff = Infinity;
-
-  for (let i = 0; i < times.length; i++) {
-    // Open-Meteo palauttaa "YYYY-MM-DDTHH:mm" UTC:na kun timezone=UTC
-    const t = new Date(times[i] + "Z");
-    const diff = Math.abs(t.getTime() - targetDate.getTime());
-
-    if (diff < bestDiff) {
-      bestDiff = diff;
-      bestIdx = i;
-    }
-  }
-
-  return bestIdx;
+function buildVector(speed, dir) {
+  // Meteorologinen suunta = mistä tuuli tulee.
+  // Muunnetaan vektoriksi joka osoittaa minne tuuli menee.
+  const rad = (dir * Math.PI) / 180;
+  return {
+    u: -speed * Math.sin(rad),
+    v: -speed * Math.cos(rad),
+    speed
+  };
 }
 
-// offsetHours: 0 = lähin nykyhetkeä oleva tunti, 6/12/24 jne. = ennuste
-export async function fetchWindGrid(lat, lon, offsetHours = 0) {
+export async function fetchWindGridSeries(lat, lon) {
 
   const half = GRID_SPAN_DEG / 2;
   const step = GRID_SPAN_DEG / (GRID_SIZE - 1);
@@ -66,47 +57,61 @@ export async function fetchWindGrid(lat, lon, offsetHours = 0) {
   const data = await res.json();
   const list = Array.isArray(data) ? data : [data];
 
-  const targetTime = new Date(Date.now() + offsetHours * 3600_000);
+  // Oletetaan että kaikilla hilan pisteillä on sama aikasarja
+  // (sama forecast_days/timezone kaikille kutsuille).
+  const referenceTimes = list[0]?.hourly?.time ?? [];
 
-  const grid = [];
-  let i = 0;
+  // Etsi tuntisarjasta lähinnä nykyhetkeä oleva indeksi -> offset 0
+  const now = Date.now();
+  let startIdx = 0;
+  let bestDiff = Infinity;
 
-  for (let row = 0; row < GRID_SIZE; row++) {
-    const rowArr = [];
+  referenceTimes.forEach((t, idx) => {
+    const diff = Math.abs(new Date(t + "Z").getTime() - now);
+    if (diff < bestDiff) {
+      bestDiff = diff;
+      startIdx = idx;
+    }
+  });
 
-    for (let col = 0; col < GRID_SIZE; col++) {
-      const point = list[i++];
+  const maxOffset = Math.max(0, referenceTimes.length - startIdx - 1);
 
-      const times = point?.hourly?.time ?? [];
-      const speeds = point?.hourly?.wind_speed_10m ?? [];
-      const dirs = point?.hourly?.wind_direction_10m ?? [];
+  const series = [];
+  const hours = [];
 
-      const idx = findClosestTimeIndex(times, targetTime);
+  for (let offset = 0; offset <= maxOffset; offset++) {
+    const idx = startIdx + offset;
 
-      const speed = idx != null ? (speeds[idx] ?? 0) : 0;
-      const dir = idx != null ? (dirs[idx] ?? 0) : 0;
+    const grid = [];
+    let i = 0;
 
-      // Meteorologinen suunta = mistä tuuli tulee.
-      // Muunnetaan vektoriksi joka osoittaa minne tuuli menee.
-      const rad = (dir * Math.PI) / 180;
-      const u = -speed * Math.sin(rad);
-      const v = -speed * Math.cos(rad);
+    for (let row = 0; row < GRID_SIZE; row++) {
+      const rowArr = [];
 
-      rowArr.push({ u, v, speed });
+      for (let col = 0; col < GRID_SIZE; col++) {
+        const point = list[i++];
+        const speed = point?.hourly?.wind_speed_10m?.[idx] ?? 0;
+        const dir = point?.hourly?.wind_direction_10m?.[idx] ?? 0;
+
+        rowArr.push(buildVector(speed, dir));
+      }
+
+      grid.push(rowArr);
     }
 
-    grid.push(rowArr);
+    series.push(grid);
+    hours.push(new Date(referenceTimes[idx] + "Z"));
   }
 
   return {
-    grid,
     size: GRID_SIZE,
-    offsetHours,
     bounds: {
       north: lat + half,
       south: lat - half,
       west: lon - half,
       east: lon + half
-    }
+    },
+    series,
+    hours
   };
 }

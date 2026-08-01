@@ -9,7 +9,7 @@ import { fetchSeaLevelMulti } from "./api/sealevel.js";
 import { updateCoastalPreview, loadCoastalPreviewCache} from "./api/coastalPreview.js";
 import { updateWeatherPreview } from "./api/weatherPreview.js";
 import { getCurrentSymbol } from "./charts/plugins/weatherSymbols.js";
-import { fetchWindGrid } from "./api/openMeteoWind.js";
+import { fetchWindGridSeries } from "./api/openMeteoWind.js";
 import { renderWindFlow } from "./charts/windFlow.js";
 import { drawMapBackground } from "./charts/miniMapBackground.js";
 
@@ -251,6 +251,18 @@ stations.forEach(station => {
         data-lat="${station.lat}"
         data-lon="${station.lon}"
       ></canvas>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px; margin-top:6px; width:320px;">
+      <input
+        type="range"
+        class="wind-flow-slider"
+        min="0"
+        max="0"
+        step="1"
+        value="0"
+        style="flex:1;"
+      >
+      <span class="wind-flow-time-label" style="font-size:12px; color:#444; min-width:78px; text-align:right;">Nyt</span>
     </div>
 
   `);
@@ -756,48 +768,75 @@ if (station.type === "weather" && station.yr) {
     renderTemperatureChart(popupEl, data);
     renderWindCharts(popupEl, data);
 
-    // Tuulen virtaus (Open-Meteo, animoitu hiukkaskenttä) + ennustenapit
+    // Tuulen virtaus (Open-Meteo, animoitu hiukkaskenttä) + napit/liukusäädin
     const flowCanvas = popupEl.querySelector(".wind-flow-canvas");
     const flowBgCanvas = popupEl.querySelector(".wind-flow-bg");
     const flowButtons = popupEl.querySelectorAll(".wind-flow-btn");
+    const flowSlider = popupEl.querySelector(".wind-flow-slider");
+    const flowTimeLabel = popupEl.querySelector(".wind-flow-time-label");
 
-    async function loadWindFlow(offsetHours) {
+    let windSeriesData = null;
+
+    function showWindFlowOffset(offsetHours) {
+
+      if (!windSeriesData || !windSeriesData.series.length) return;
+
+      const idx = Math.max(
+        0,
+        Math.min(windSeriesData.series.length - 1, offsetHours)
+      );
 
       if (stopWindFlow) {
         stopWindFlow();
         stopWindFlow = null;
       }
 
-      if (!flowCanvas) return;
-
-      flowButtons.forEach(btn => {
-        btn.classList.toggle(
-          "active",
-          Number(btn.dataset.offset) === offsetHours
-        );
+      stopWindFlow = renderWindFlow(flowCanvas, {
+        grid: windSeriesData.series[idx],
+        size: windSeriesData.size
       });
 
-      try {
-        const gridData = await fetchWindGrid(station.lat, station.lon, offsetHours);
+      flowButtons.forEach(btn => {
+        btn.classList.toggle("active", Number(btn.dataset.offset) === idx);
+      });
 
-        if (flowBgCanvas) {
-          drawMapBackground(flowBgCanvas, gridData.bounds).catch(err => {
-            console.warn("Karttataustan lataus epäonnistui:", err);
-          });
-        }
+      if (flowSlider) flowSlider.value = idx;
 
-        stopWindFlow = renderWindFlow(flowCanvas, gridData);
-      } catch (err) {
-        console.warn("Tuulivirtauksen haku epäonnistui:", err);
+      if (flowTimeLabel) {
+        const hourDate = windSeriesData.hours[idx];
+        flowTimeLabel.textContent = idx === 0
+          ? "Nyt"
+          : `+${idx}h (${hourDate.toLocaleTimeString("fi-FI", { hour: "2-digit", minute: "2-digit" })})`;
       }
     }
 
     flowButtons.forEach(btn => {
-      btn.onclick = () => loadWindFlow(Number(btn.dataset.offset));
+      btn.onclick = () => showWindFlowOffset(Number(btn.dataset.offset));
     });
 
+    if (flowSlider) {
+      flowSlider.oninput = () => showWindFlowOffset(Number(flowSlider.value));
+    }
+
     if (flowCanvas) {
-      await loadWindFlow(0);
+      try {
+        windSeriesData = await fetchWindGridSeries(station.lat, station.lon);
+
+        if (flowBgCanvas) {
+          drawMapBackground(flowBgCanvas, windSeriesData.bounds).catch(err => {
+            console.warn("Karttataustan lataus epäonnistui:", err);
+          });
+        }
+
+        if (flowSlider) {
+          flowSlider.max = windSeriesData.series.length - 1;
+        }
+
+        showWindFlowOffset(0);
+
+      } catch (err) {
+        console.warn("Tuulivirtauksen haku epäonnistui:", err);
+      }
     }
 
      const marker = e.popup._source;
