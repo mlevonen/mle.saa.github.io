@@ -4,8 +4,7 @@ import { renderTemperatureChart } from "./charts/temperatureChart.js";
 import { renderWindCharts } from "./charts/windChart.js";
 import { renderPopupExtras } from "./popup/popupExtras.js";
 import "./charts/plugins.js";
-import { fetchSeaLevel, fetchSeaLevelSeries, fetchSeaLevelForecast } from "./api/sealevel.js";
-import { fetchSeaLevelMulti } from "./api/sealevel.js";
+import { fetchSeaLevel } from "./api/sealevel.js";
 import { updateCoastalPreview, loadCoastalPreviewCache} from "./api/coastalPreview.js";
 import { updateWeatherPreview } from "./api/weatherPreview.js";
 import { getCurrentSymbol } from "./charts/plugins/weatherSymbols.js";
@@ -41,7 +40,6 @@ const FMI_WFS = "https://opendata.fmi.fi/wfs";
 
 
 const weatherLayer = L.featureGroup().addTo(map);
-const seaLevelLayer = L.featureGroup().addTo(map);
 const coastalLayer = L.featureGroup().addTo(map);
 
 const markerRegistry = {};
@@ -53,42 +51,7 @@ let stopWindFlow = null;
 
 //IKONIFUNKTIOT
 
-function createStationIcon(station, level = null) {
-
-  if (station.type === "sealevel") {
-
-  let arrow = "";
-  let value = "";
-  let color = "#6e6e6e"; // neutraali
-
-  if (level != null) {
-
-    if (level > 0) arrow = "▲";
-    else if (level < 0) arrow = "▼";
-    else arrow = "●";
-
-    value = Math.round(level);
-
-    // värit
-    if (level > 30) color = "#d73027";      // korkea vesi
-    else if (level < -30) color = "#2b6cb0"; // matala vesi
-  }
-
-  return L.divIcon({
-    className: "station-sealevel",
-    html: `
-      <div class="sealevel-marker">
-        <div class="sealevel-arrow" style="color:${color}">
-          ${arrow}
-        </div>
-        <div class="sealevel-value">${value}</div>
-      </div>
-    `,
-    iconSize: [46, 46],
-    iconAnchor: [23, 23],
-    popupAnchor: [0, -23]
-  });
-  }
+function createStationIcon(station) {
 
   if (station.type === "coastal") {
     return L.divIcon({
@@ -115,6 +78,11 @@ function createStationIcon(station, level = null) {
 
 
 stations.forEach(station => {
+
+  // Vedenkorkeusasemille ei enää näytetä omaa markeria kartalla –
+  // sama lukema näkyy jo lähimpien asemien popupin
+  // "Vedenkorkeus"-kortissa (ks. findNearestSeaLevelStation).
+  if (station.type === "sealevel") return;
 
   const marker = L.marker(
     [station.lat, station.lon],
@@ -155,11 +123,6 @@ stations.forEach(station => {
 
     else if (station.type === "coastal" && preview.wind != null) {
       content += `<br>${preview.wind.toFixed(1)} m/s`;
-    }
-
-    else if (station.type === "sealevel" && preview.sea != null) {
-      const sign = preview.sea > 0 ? "+" : "";
-      content += `<br>${sign}${preview.sea} cm`;
     }
 
     this.setTooltipContent(content);
@@ -280,10 +243,6 @@ stations.forEach(station => {
     weatherLayer.addLayer(marker);
   }
 
-  if (station.type === "sealevel") {
-    seaLevelLayer.addLayer(marker);
-  }
-
   if (station.type === "coastal") {
     coastalLayer.addLayer(marker);
   }
@@ -314,55 +273,6 @@ stations.forEach(async (station) => {
   marker.setIcon(icon);
 
 });
-
-// ==========================
-// Sealevel marker päivitys
-// ==========================
-
-async function updateSeaLevelMarkers() {
-
-  const seaStations = stations.filter(
-    s => s.type === "sealevel"
-  );
-
-  const requests = seaStations.map(async station => {
-
-    try {
-
-      const level = await fetchSeaLevel(station.fmisid);
-
-      const marker = markerRegistry[station.fmisid];
-      if (!marker) return;
-
-      marker.previewData = marker.previewData || {};
-      marker.previewData.sea = level;
-
-      marker.setIcon(
-        createStationIcon(station, level)
-      );
-
-
-
-    } catch (err) {
-
-      console.warn(
-        "Sea level update failed",
-        station.name
-      );
-
-    }
-
-  });
-
-  await Promise.all(requests);
-}
-
-// ==========================
-// KÄYNNISTYS
-// ==========================
-
-updateSeaLevelMarkers();
-setInterval(updateSeaLevelMarkers, 900000);
 
 // ==========================
 // FMI aikasarja (JSON TUETTU)
@@ -755,11 +665,6 @@ if (station.type === "weather" && station.yr) {
   return;
 }
 
-  if (station.type === "sealevel") {
-  renderSeaLevelPopup(e.popup, station);
-  return;
-  }
-
   const canvases = popupEl.querySelectorAll("canvas");
   if (!canvases.length) return;
 
@@ -950,219 +855,3 @@ map.on("popupclose", () => {
 });
 
 
-async function renderSeaLevelPopup(popup, station) {
-
-  const popupEl = popup.getElement();
-  if (!popupEl) return;
-
-  const contentEl = popupEl.querySelector(".leaflet-popup-content");
-  if (!contentEl) return;
-
-  const series = await fetchSeaLevelSeries(station.fmisid);
-  const forecastData = await fetchSeaLevelForecast(station.fmisid);
-
-  //OTSIKKOINFOT
-  const latestLevel =
-  series.waterLevel.at(-1)?.value ?? null;
-
-  const latestTemp =
-  series.waterTemp.at(-1)?.value ?? null;
-  
-  contentEl.innerHTML = `
-  <div style="width:500px;">
-
-    <h3 style="margin-top:0;">${station.name}</h3>
-    
-    <div style="
-      display:flex;
-      gap:16px;
-      align-items:center;
-      font-size:15px;
-      margin-bottom:14px;
-    ">
-    <span style="display:flex; align-items:center; gap:6px;">
-      <img src="/js/assets/icons/sealevel.svg"
-          style="width:18px; height:18px;">
-      ${latestLevel !== null ? latestLevel + " cm" : "–"}
-    </span>
-
-    <span style="display:flex; align-items:center; gap:6px;">
-      <img src="/js/assets/icons/temp2.svg"
-          style="width:18px; height:18px;">
-      ${latestTemp !== null ? latestTemp + " °C" : "–"}
-    </span>
-    </div>
-
-    <div style="margin-bottom:20px;">
-      <strong>Vedenkorkeus (havainto)</strong>
-      <canvas id="sea-level-obs-chart" height="110"></canvas>
-    </div>
-
-    <div style="margin-bottom:20px;">
-      <strong>Vedenkorkeus (ennuste)</strong>
-      <canvas id="sea-level-fc-chart" height="110"></canvas>
-    </div>
-
-    <div>
-      <strong>Veden lämpötila</strong>
-      <canvas id="sea-temp-chart" height="80"></canvas>
-    </div>
-
-  </div>
-  `;
-  
-
-  //HAVAINTOGRAAFIT
-  const ctx = contentEl
-    .querySelector("#sea-level-obs-chart")
-    .getContext("2d");
-
-  new Chart(ctx, {
-    type: "line",
-    data: {
-    labels: series.waterLevel.map(p => {
-      const d = new Date(p.time);
-      return d.getHours().toString().padStart(2, "0");
-    }),
-      datasets: [
-        {
-          label: "Vedenkorkeus (cm)",
-          data: series.waterLevel.map(p => p.value),
-          tension: 0.3,
-          pointRadius: 0,
-          borderWidth: 2
-        },
-        {
-          label: "N2000 (cm)",
-          data: series.waterLevelN2000.map(p => p.value),
-          tension: 0.3,
-          pointRadius: 0,
-          borderDash: [6, 4],
-          borderWidth: 2
-        }
-
-      ]
-
-    },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: true }
-        },
-        scales: {
-          y: {
-            title: {
-              display: true,
-              text: "cm"
-            }
-          }
-        }
-      }
-  });
-
-
-//ENNUSTEGRAAFIT
-
-  const fcCtx = contentEl
-    .querySelector("#sea-level-fc-chart")
-    .getContext("2d");
-
-  new Chart(fcCtx, {
-    type: "line",
-    data: {
-      labels: forecastData.forecast.map(p => {
-        const d = new Date(p.time);
-        return d.getHours().toString().padStart(2, "0");
-      }),
-      datasets: [
-        {
-          label: "Ennuste (cm)",
-          data: forecastData.forecast.map(p => p.value),
-          tension: 0.3,
-          pointRadius: 0,
-          borderWidth: 2
-        },
-        {
-          label: "Ennuste N2000 (cm)",
-          data: forecastData.forecastN2000.map(p => p.value),
-          tension: 0.3,
-          pointRadius: 0,
-          borderDash: [6, 4],
-          borderWidth: 2
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: true }
-      },
-      scales: {
-        y: {
-          title: {
-            display: true,
-            text: "cm"
-          }
-        }
-      }
-    }
-  });
-
-
-  const validTemp = series.waterTemp
-    .filter(p => Number.isFinite(p.value));
-
-  if (validTemp.length === 0) {
-
-    const tempContainer = contentEl
-      .querySelector("#sea-temp-chart")
-      .parentElement;
-
-    tempContainer.innerHTML = `
-      <strong>Veden lämpötila</strong>
-      <div style="padding:20px 0; color:#666; font-size:14px;">
-        Veden lämpötiladataa ei saatavilla
-      </div>
-    `;
-
-  } else {
-
- const tempCtx = contentEl
-  .querySelector("#sea-temp-chart")
-  .getContext("2d");
-
-  new Chart(tempCtx, {
-    type: "line",
-    data: {
-      labels: series.waterTemp.map(p => {
-        const d = new Date(p.time);
-        return d.getHours().toString().padStart(2, "0");
-      }),
-      datasets: [{
-        label: "Veden lämpötila (°C)",
-        data: series.waterTemp.map(p => p.value),
-        tension: 0.3,
-        pointRadius: 0,
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false }
-      },
-      scales: {
-        y: {
-          title: {
-            display: true,
-            text: "°C"
-          },
-          grid: {
-            color: ctx => ctx.tick.value === 0 ? "#000" : "#eee",
-            lineWidth: ctx => ctx.tick.value === 0 ? 2 : 1
-          }
-        }
-      }
-    }
-});
-
-}}
