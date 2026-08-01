@@ -205,7 +205,14 @@ stations.forEach(station => {
 
           <div class="popup-card-inner">
             <div style="font-size:12px; font-weight:600; margin-bottom:2px;">Vedenkorkeus</div>
-            <span class="wind-flow-sealevel-value">–</span>
+            <div class="wind-flow-sealevel-row">
+              <span class="wind-flow-sealevel-label">Keskivesi</span>
+              <span class="wind-flow-sealevel-value" data-kind="watlev">–</span>
+            </div>
+            <div class="wind-flow-sealevel-row">
+              <span class="wind-flow-sealevel-label">N2000</span>
+              <span class="wind-flow-sealevel-value" data-kind="n2000">–</span>
+            </div>
           </div>
         </div>
       </div>
@@ -700,21 +707,30 @@ if (station.type === "weather" && station.yr) {
     renderTemperatureChart(popupEl, data);
     renderWindCharts(popupEl, data);
 
-    // Lähimmän vedenkorkeusaseman lukema sivupalkkiin
-    const seaLevelValueEl = popupEl.querySelector(".wind-flow-sealevel-value");
-    if (seaLevelValueEl) {
+    // Lähimmän vedenkorkeusaseman lukemat sivupalkkiin
+    // (sekä keskiveteen suhteutettu WATLEV että N2000-lukema).
+    const seaLevelWatlevEl = popupEl.querySelector('.wind-flow-sealevel-value[data-kind="watlev"]');
+    const seaLevelN2000El = popupEl.querySelector('.wind-flow-sealevel-value[data-kind="n2000"]');
+
+    if (seaLevelWatlevEl || seaLevelN2000El) {
       const nearestSea = findNearestSeaLevelStation(station.lat, station.lon);
+      const formatLevel = v => v != null ? `${v > 0 ? "+" : ""}${v} cm` : "–";
 
       if (!nearestSea) {
-        seaLevelValueEl.textContent = "–";
+        if (seaLevelWatlevEl) seaLevelWatlevEl.textContent = "–";
+        if (seaLevelN2000El) seaLevelN2000El.textContent = "–";
       } else {
         try {
-          const level = await fetchSeaLevel(nearestSea.fmisid);
-          seaLevelValueEl.textContent = level != null
-            ? `${level > 0 ? "+" : ""}${level} cm (${nearestSea.name})`
-            : `– (${nearestSea.name})`;
+          const { watlev, n2000 } = await fetchSeaLevel(nearestSea.fmisid);
+          if (seaLevelWatlevEl) {
+            seaLevelWatlevEl.textContent = `${formatLevel(watlev)} (${nearestSea.name})`;
+          }
+          if (seaLevelN2000El) {
+            seaLevelN2000El.textContent = `${formatLevel(n2000)} (${nearestSea.name})`;
+          }
         } catch (err) {
-          seaLevelValueEl.textContent = `– (${nearestSea.name})`;
+          if (seaLevelWatlevEl) seaLevelWatlevEl.textContent = `– (${nearestSea.name})`;
+          if (seaLevelN2000El) seaLevelN2000El.textContent = `– (${nearestSea.name})`;
         }
       }
     }

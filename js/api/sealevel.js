@@ -1,3 +1,6 @@
+// Palauttaa sekä perinteisen keskiveteen suhteutetun lukeman (WATLEV)
+// että uudemman N2000-korkeusjärjestelmän lukeman (WLEVN2K_PT1S_INSTANT),
+// molemmat senttimetreinä. Jompikumpi voi puuttua asemasta riippuen.
 export async function fetchSeaLevel(fmisid) {
   const params = new URLSearchParams({
     service: "WFS",
@@ -8,11 +11,11 @@ export async function fetchSeaLevel(fmisid) {
   });
 
   const url = `https://opendata.fmi.fi/wfs/fin?${params}`;
-  
+
   const res = await fetch(url);
   if (!res.ok) {
     console.warn("Sea level observation not available for fmisid", fmisid);
-    return null;
+    return { watlev: null, n2000: null };
   }
 
   const text = await res.text();
@@ -21,33 +24,43 @@ export async function fetchSeaLevel(fmisid) {
   const parser = new DOMParser();
   const xml = parser.parseFromString(text, "application/xml");
 
-// hae kaikki BsWfsElementit
+  // hae kaikki BsWfsElementit
   const elements = xml.querySelectorAll(
-  "BsWfs\\:BsWfsElement, BsWfsElement"
-);
-
-for (const el of elements) {
-  const nameNode = el.querySelector(
-    "BsWfs\\:ParameterName, ParameterName"
-  );
-  const valueNode = el.querySelector(
-    "BsWfs\\:ParameterValue, ParameterValue"
+    "BsWfs\\:BsWfsElement, BsWfsElement"
   );
 
-  if (!nameNode || !valueNode) continue;
+  let watlev = null;
+  let n2000 = null;
 
-  const name = nameNode.textContent.trim();
+  for (const el of elements) {
+    const nameNode = el.querySelector(
+      "BsWfs\\:ParameterName, ParameterName"
+    );
+    const valueNode = el.querySelector(
+      "BsWfs\\:ParameterValue, ParameterValue"
+    );
 
-  if (name === "WATLEV" || name === "TW") {
+    if (!nameNode || !valueNode) continue;
+
+    const name = nameNode.textContent.trim();
     const mm = Number(valueNode.textContent);
-    if (!Number.isFinite(mm)) return null;
+    if (!Number.isFinite(mm)) continue;
 
-    return Math.round(mm / 10); // cm
+    if (name === "WATLEV") {
+      watlev = Math.round(mm / 10); // cm
+    }
+
+    if (name === "WLEVN2K_PT1S_INSTANT") {
+      n2000 = Math.round(mm / 10); // cm
+    }
   }
-}
 
-console.warn("Sea level TW value not found for fmisid", fmisid);
-return null;}
+  if (watlev == null && n2000 == null) {
+    console.warn("Sea level values not found for fmisid", fmisid);
+  }
+
+  return { watlev, n2000 };
+}
 
 export async function fetchSeaLevelSeries(fmisid) {
 
