@@ -97,6 +97,10 @@ Chart.register(weatherSymbolsPlugin);
   );
   if (!tempCanvas) return;
 
+  // Pienennetyssä (sivupalkin) graafissa ei näytetä otsikkorivin
+  // sääsymboliraitaa – tilaa ei ole ja se ahtautuu pienessä koossa.
+  const isMini = tempCanvas.classList.contains("popup-chart-mini");
+
   const oldTemp = Chart.getChart(tempCanvas);
   if (oldTemp) oldTemp.destroy();
 
@@ -147,7 +151,7 @@ Chart.register(weatherSymbolsPlugin);
     options: {
       responsive: false,
       plugins: {
-        weatherSymbols: true,
+        weatherSymbols: !isMini,
         legend: {
           display: true,
           position: "top",

@@ -235,14 +235,6 @@ stations.forEach(station => {
         ></canvas>
       </div>
       <div class="wind-flow-sidebar" style="display:flex; flex-direction:column; gap:6px; width:260px;">
-        <div class="wind-flow-controls">
-          <button type="button" class="wind-flow-btn" data-offset="2">💨 2h</button>
-          <button type="button" class="wind-flow-btn" data-offset="6">💨 6h</button>
-          <button type="button" class="wind-flow-btn" data-offset="12">💨 12h</button>
-          <button type="button" class="wind-flow-btn" data-offset="18">💨 18h</button>
-          <button type="button" class="wind-flow-btn" data-offset="24">💨 24h</button>
-        </div>
-
         <div>
           <div style="font-size:12px; font-weight:600;">Lämpötila</div>
           <canvas
@@ -281,6 +273,15 @@ stations.forEach(station => {
     <div style="display:flex; gap:8px; width:320px;">
       <div class="wind-flow-ticks" style="display:flex; justify-content:space-between; flex:1;"></div>
       <div style="min-width:78px;"></div>
+    </div>
+
+    <div class="wind-flow-controls">
+      <button type="button" class="wind-flow-btn" data-offset="2">💨 2h</button>
+      <button type="button" class="wind-flow-btn" data-offset="6">💨 6h</button>
+      <button type="button" class="wind-flow-btn" data-offset="12">💨 12h</button>
+      <button type="button" class="wind-flow-btn" data-offset="18">💨 18h</button>
+      <button type="button" class="wind-flow-btn" data-offset="24">💨 24h</button>
+      <button type="button" class="wind-flow-btn wind-flow-btn-last" data-offset="24">💨 …</button>
     </div>
 
   `);
@@ -911,6 +912,14 @@ if (station.type === "weather" && station.yr) {
         }
 
         renderFlowTicks(maxIdx);
+
+        // "Viimeisin ennuste" -nappi osoittaa aina sarjan viimeiseen
+        // saatavilla olevaan tuntiin (yleensä ~36-47h, riippuu kellonajasta).
+        const lastBtn = popupEl.querySelector(".wind-flow-btn-last");
+        if (lastBtn) {
+          lastBtn.dataset.offset = maxIdx;
+          lastBtn.textContent = `💨 ${maxIdx}h (viimeisin)`;
+        }
 
         showWindFlowOffset(0);
 
