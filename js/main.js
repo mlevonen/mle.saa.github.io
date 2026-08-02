@@ -68,6 +68,28 @@ map.fitBounds(bounds, {
 // (avattava/piilotettava, sisältö ladataan vasta avattaessa)
 initMarineInfoPanels();
 
+// ==========================
+// Popup aina infopaneelien päälle
+//
+// .info-panels on kiinnitetty (position:fixed) vasempaan yläkulmaan
+// z-index:1000:lla. Leafletin karttapaneeli (.leaflet-map-pane, jonka
+// sisällä myös popupit ovat) on kuitenkin vain z-index:400 – eikä sitä
+// voi nostaa pysyvästi yli 1000:n ilman, että koko karttatausta alkaa
+// peittää infopaneelit aina. Ratkaisu: lasketaan infopaneelien
+// z-index tilapäisesti popupin ollessa auki, jolloin popup (ja
+// samalla koko kartta) nousee hetkeksi päälle – ja palautetaan
+// entiselleen kun popup suljetaan.
+// ==========================
+const infoPanelsEl = document.querySelector(".info-panels");
+
+map.on("popupopen", () => {
+  if (infoPanelsEl) infoPanelsEl.style.zIndex = "1";
+});
+
+map.on("popupclose", () => {
+  if (infoPanelsEl) infoPanelsEl.style.zIndex = "";
+});
+
 const FMI_WFS = "https://opendata.fmi.fi/wfs";
 
 
