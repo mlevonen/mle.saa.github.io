@@ -352,7 +352,7 @@ stations.forEach(station => {
     <div class="popup-card">
       <div style="display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; margin-bottom:6px;">
         <strong>Tuuliennusteanimaatio</strong>
-        <span class="wind-flow-speed-label" style="font-size:12px; color:#444;"></span>
+        <span class="wind-flow-speed-label" style="font-size:12px; font-weight:bold; color:#444;"></span>
       </div>
       <div style="display:flex; gap:10px; align-items:flex-start;">
         <div class="wind-flow-wrapper" style="position:relative; width:320px; height:320px; flex-shrink:0;">
@@ -406,7 +406,7 @@ stations.forEach(station => {
           </div>
 
           <div class="popup-card-inner popup-sun-card" style="display:none;">
-            <div style="font-size:12px; font-weight:600; margin-bottom:2px;">Aurinko</div>
+            <div style="font-size:12px; font-weight:600; margin-bottom:2px;">Sää</div>
             <div class="popup-sun-row">
               <div class="popup-inline-item">
                 <img src="./js/assets/icons/sunrise.svg" class="popup-icon" alt="Auringonnousu">
