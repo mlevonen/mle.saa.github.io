@@ -1,3 +1,30 @@
+// Lähin vedenkorkeusasema annetulle pisteelle (yksinkertainen
+// asteperusteinen etäisyys riittää tälle mittakaavalle). Käyttää
+// stations.js:n globaalia `stations`-taulukkoa (ladataan sivulla
+// tavallisena <script>-tagina ennen moduuleja, joten se on
+// suoraan käytettävissä täältäkin ilman importtia).
+export function findNearestSeaLevelStation(lat, lon) {
+
+  let nearest = null;
+  let minDist = Infinity;
+
+  for (const s of stations) {
+    if (s.type !== "sealevel") continue;
+
+    const dLat = s.lat - lat;
+    const dLon = s.lon - lon;
+    const dist = dLat * dLat + dLon * dLon;
+
+    if (dist < minDist) {
+      minDist = dist;
+      nearest = s;
+    }
+  }
+
+  return nearest;
+}
+
+
 // Palauttaa sekä perinteisen keskiveteen suhteutetun lukeman (WATLEV)
 // että uudemman N2000-korkeusjärjestelmän lukeman (WLEVN2K_PT1S_INSTANT),
 // molemmat senttimetreinä. Jompikumpi voi puuttua asemasta riippuen.
