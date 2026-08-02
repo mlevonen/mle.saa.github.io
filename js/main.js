@@ -16,15 +16,42 @@ import { initMarineInfoPanels } from "./marineInfoPanels.js";
 import { fetchWaveBuoyObservation } from "./api/waveHeight.js";
 import { renderWaveBuoyPopup } from "./popup/waveBuoyPopup.js";
 import { initRadarPanel } from "./radarPanel.js";
+import { MML_API_KEY } from "./config.js";
 
 
 "use strict";
 
 const map = L.map("map").setView([60, 25], 6);
 
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+const osmLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "&copy; OpenStreetMap"
 }).addTo(map);
+
+// ==========================
+// Maanmittauslaitoksen avoin taustakartta (WMTS, REST-tiilit)
+//
+// Vaihtoehtoinen taustakartta OpenStreetMapin rinnalle, valittavissa
+// kartan tasonvalitsimesta. Vaatii käyttäjäkohtaisen API-avaimen
+// (ks. js/config.js) – ilman avainta MML palauttaa 401-virheen
+// eivätkä tiilit lataudu, mutta OSM toimii silti normaalisti.
+//
+// HUOM tiilijärjestys: MML:n WMTS REST -osoite on muotoa
+// .../taustakartta/default/WGS84_Pseudo-Mercator/{TileMatrix}/{TileRow}/{TileCol}.png
+// eli TileRow (=y) tulee ennen TileCol (=x) – siksi URL-mallissa
+// {z}/{y}/{x}, ei totuttu {z}/{x}/{y}.
+// ==========================
+const mmlLayer = L.tileLayer(
+  `https://avoin-karttakuva.maanmittauslaitos.fi/avoin/wmts/1.0.0/taustakartta/default/WGS84_Pseudo-Mercator/{z}/{y}/{x}.png?api-key=${MML_API_KEY}`,
+  {
+    maxZoom: 16,
+    attribution: "&copy; Maanmittauslaitos"
+  }
+);
+
+L.control.layers({
+  "OpenStreetMap": osmLayer,
+  "MML Taustakartta": mmlLayer
+}, null, { position: "topright" }).addTo(map);
 
 // Oletusnäkymä: lähempänä zoomattu näkymä, joka näyttää Saariston-
 // meren kokonaan ja osan Suomenlahtea (n. Hangosta Helsinkiin).
