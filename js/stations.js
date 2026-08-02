@@ -600,29 +600,11 @@ const stations = [
 
   {
     type: "wavebuoy",
-    id: "hanko-langden",
-    name: "Hanko Längden",
-    fmisid: 654900,
-    lat: 59.8,
-    lon: 23.2
-  },
-
-  {
-    type: "wavebuoy",
     id: "helsinki-suomenlinna-aaltopoiju",
     name: "Helsinki Suomenlinna aaltopoiju",
     fmisid: 103976,
     lat: 60.1,
     lon: 25.0
-  },
-
-  {
-    type: "wavebuoy",
-    id: "kalajoki-maakalla",
-    name: "Kalajoki Maakalla",
-    fmisid: 103808,
-    lat: 64.3,
-    lon: 23.6
   },
 
   {
@@ -645,24 +627,6 @@ const stations = [
 
   {
     type: "wavebuoy",
-    id: "maalahti-storskaret",
-    name: "Maalahti Storskäret",
-    fmisid: 107033,
-    lat: 63.1,
-    lon: 20.8
-  },
-
-  {
-    type: "wavebuoy",
-    id: "oulu-santapankki",
-    name: "Oulu Santapankki",
-    fmisid: 103807,
-    lat: 65.2,
-    lon: 25.0
-  },
-
-  {
-    type: "wavebuoy",
     id: "perameri-aaltopoiju",
     name: "Perämeri aaltopoiju",
     fmisid: 137228,
@@ -677,15 +641,6 @@ const stations = [
     fmisid: 134220,
     lat: 59.2,
     lon: 21.0
-  },
-
-  {
-    type: "wavebuoy",
-    id: "pori-kaijakari",
-    name: "Pori Kaijakari",
-    fmisid: 104600,
-    lat: 61.6,
-    lon: 21.4
   },
 
   {
@@ -713,15 +668,15 @@ const stations = [
     fmisid: 108126,
     lat: 59.7,
     lon: 21.4
-  },
-
-  {
-    type: "wavebuoy",
-    id: "uusikaupunki-vekara",
-    name: "Uusikaupunki Vekara",
-    fmisid: 106631,
-    lat: 60.9,
-    lon: 21.0
   }
+
+  // Poistettu (2026-08-02): Hanko Längden, Uusikaupunki Vekara,
+  // Pori Kaijakari, Maalahti Storskäret, Kalajoki Maakalla ja
+  // Oulu Santapankki – näiltä FMI:n havaintorajapinta palautti
+  // pysyvästi NaN-arvot WaveHs/WTP/ModalWDi/WHDD-parametreille
+  // koko testatulla aikavälillä (vain veden lämpötila TWATER
+  // toimi). Ei siis tilapäinen häiriö, vaan kyseisillä asemilla
+  // ei ilmeisesti ole toimivaa aaltoanturia, vaikka ne löytyvät
+  // "aaltopoiju"-suodattimella ilmatieteenlaitos.fi:n sivulta.
 
 ];
