@@ -2,7 +2,7 @@ import { loadPopupData, fetchObservationSeriesByFmisid } from "./api/dataLoader.
 import { updatePopupTitles } from "./popup/popupTitles.js";
 import { renderTemperatureChart } from "./charts/temperatureChart.js";
 import { renderWindCharts } from "./charts/windChart.js";
-import { renderPopupExtras, renderSunCard } from "./popup/popupExtras.js";
+import { renderPopupExtras, renderSunCard, renderWaveCard } from "./popup/popupExtras.js";
 import "./charts/plugins.js";
 import { fetchSeaLevel } from "./api/sealevel.js";
 import { updateCoastalPreview, loadCoastalPreviewCache} from "./api/coastalPreview.js";
@@ -218,6 +218,14 @@ stations.forEach(station => {
             <div class="wind-flow-sealevel-row">
               <span class="wind-flow-sealevel-label">N2000</span>
               <span class="wind-flow-sealevel-value" data-kind="n2000">–</span>
+            </div>
+          </div>
+
+          <div class="popup-card-inner popup-wave-card" style="display:none;">
+            <div style="font-size:12px; font-weight:600; margin-bottom:2px;">Aallokko</div>
+            <div class="popup-wave-row">
+              <span class="popup-wave-height-value">–</span>
+              <span class="popup-wave-period-label">jakso <span class="popup-wave-period-value">–</span></span>
             </div>
           </div>
 
@@ -748,7 +756,8 @@ if (station.type === "weather" && station.yr) {
       lon: station.lon,
       weatherPlace: null,
       weatherFmisid: station.fmisid,
-      seaLevelFmisid: null
+      seaLevelFmisid: null,
+      includeWave: station.type === "coastal"
     });
     console.log("STATION FMISID:", station.fmisid);
     console.log("marker symbol", data.currentSymbol);
@@ -759,6 +768,7 @@ if (station.type === "weather" && station.yr) {
     updatePopupTitles(popupEl, data);
     renderPopupExtras(popupEl, data);
     renderSunCard(popupEl, data);
+    renderWaveCard(popupEl, data, station);
     renderTemperatureChart(popupEl, data);
     renderWindCharts(popupEl, data);
 

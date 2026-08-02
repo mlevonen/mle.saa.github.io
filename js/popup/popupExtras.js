@@ -123,3 +123,37 @@ export function renderSunCard(popupEl, data) {
 
   card.style.display = "";
 }
+
+
+/* =========================================================
+   AALLOKKO – oma korttinsa (vain rannikkoasemat)
+   ========================================================= */
+
+export function renderWaveCard(popupEl, data, station) {
+
+  const card = popupEl.querySelector(".popup-wave-card");
+  if (!card) return;
+
+  if (station?.type !== "coastal" || !data.waveHeight) {
+    card.style.display = "none";
+    return;
+  }
+
+  const { height, period } = data.waveHeight;
+
+  const heightEl = card.querySelector(".popup-wave-height-value");
+  const periodEl = card.querySelector(".popup-wave-period-value");
+
+  if (heightEl) {
+    heightEl.textContent = Number.isFinite(height)
+      ? `${height.toFixed(1)} m`
+      : "–";
+  }
+
+  if (periodEl) {
+    periodEl.textContent = Number.isFinite(period) ? `${period} s` : "–";
+  }
+
+  card.style.display = "";
+
+}

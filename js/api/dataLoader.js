@@ -38,8 +38,10 @@ import { fetchPressureByFmisid } from "../api/fetchPressureByPlace.js";
 
 import { fetchSunTimes } from "../api/sunApi.js";
 
-import { fetchWindGustObservations } 
+import { fetchWindGustObservations }
   from "../api/fetchWindGustObservations.js";
+
+import { fetchWaveHeight } from "../api/waveHeight.js";
 
 
 const popupCache = {};
@@ -51,7 +53,8 @@ export async function loadPopupData({
   lon,
   weatherPlace,
   weatherFmisid,
-  seaLevelFmisid
+  seaLevelFmisid,
+  includeWave = false
 }) {
 
 
@@ -68,6 +71,7 @@ export async function loadPopupData({
   let obsWindSpeed = null;
   let obsPressure = null;
   let seaLevel = null;
+  let waveHeight = null;
 
   // ==========================
   // HAVAINNOT
@@ -142,6 +146,17 @@ console.log("symbolNow:", symbolNow);
     }
   }
 
+  // ==========================
+  // AALLONKORKEUS (vain kun erikseen pyydetty, esim. rannikkoasemat)
+  // ==========================
+  if (includeWave) {
+    try {
+      waveHeight = await fetchWaveHeight(lat, lon);
+    } catch (e) {
+      waveHeight = null;
+    }
+  }
+
 
 function attachSymbols(fcTemp, symbols) {
 
@@ -196,6 +211,7 @@ function attachSymbols(fcTemp, symbols) {
     obsWindSpeed,
     obsPressure,
     seaLevel,
+    waveHeight,
     sunTimes,
     fcTemp,
     fcWindSpeed,
