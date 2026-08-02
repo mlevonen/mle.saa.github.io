@@ -13,6 +13,8 @@ import { renderWindFlow } from "./charts/windFlow.js";
 import { drawMapBackground } from "./charts/miniMapBackground.js";
 import { loadPreviewCache, savePreviewCache } from "./utils/previewCache.js";
 import { initMarineInfoPanels } from "./marineInfoPanels.js";
+import { fetchWaveBuoyObservation } from "./api/waveHeight.js";
+import { renderWaveBuoyPopup } from "./popup/waveBuoyPopup.js";
 
 
 "use strict";
@@ -47,6 +49,7 @@ const FMI_WFS = "https://opendata.fmi.fi/wfs";
 
 const weatherLayer = L.featureGroup().addTo(map);
 const coastalLayer = L.featureGroup().addTo(map);
+const waveBuoyLayer = L.featureGroup().addTo(map);
 
 const markerRegistry = {};
 
@@ -78,12 +81,115 @@ function createStationIcon(station) {
 
 }
 
+// Aaltopoijun ikoni: sama nuoli+badge-tyyli kuin tuulimarkereilla,
+// mutta badge näyttää aallonkorkeuden ja nuoli aallokon tulosuunnan.
+function createWaveIcon(height, direction, period) {
+
+  const hasHeight = Number.isFinite(height);
+  const roundedHeight = hasHeight ? height.toFixed(1) : "–";
+
+  const color =
+    !hasHeight ? "#888" :
+    height < 0.5 ? "#0288d1" :
+    height < 1.5 ? "#01579b" :
+    height < 2.5 ? "#7b1fa2" :
+                    "#c62828";
+
+  const dirRotation = Number.isFinite(direction) ? direction + 180 : 0;
+
+  const titleParts = [];
+  if (hasHeight) titleParts.push(`Aallonkorkeus ${height.toFixed(1)} m`);
+  if (Number.isFinite(period)) titleParts.push(`jakso ${period.toFixed(1)} s`);
+  const title = titleParts.length ? titleParts.join(", ") : "Aaltohavaintoa ei saatavilla";
+
+  const html = `
+    <div class="wind-marker">
+      <div class="marker-arrow"
+           style="transform: translate(4px,4px) rotate(${dirRotation}deg); color: ${color}">
+        <svg viewBox="0 0 24 24" width="55" height="55">
+          <path d="M12 1 L18 11 L14 11 L14 21 L10 21 L10 11 L6 11 Z"
+                fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="marker-speed" style="border-color:${color}" title="${title}">${roundedHeight}m</div>
+    </div>
+  `;
+
+  return L.divIcon({
+    className: "wind-marker-wrapper",
+    html,
+    iconSize: [80, 80],
+    iconAnchor: [40, 40]
+  });
+
+}
+
+// Aaltopoijumarkeri: kevyt oma popup ilman graafeja (ei käytä
+// isoa yleismallin popup-templatea, koska poijuilla ei ole
+// tuuli-/lämpötilahavaintoja tms.).
+function createWaveBuoyMarker(station) {
+
+  const marker = L.marker(
+    [station.lat, station.lon],
+    { icon: createWaveIcon(null, null, null) }
+  );
+
+  markerRegistry[station.fmisid] = marker;
+  marker.station = station;
+  marker.previewData = null;
+
+  marker.bindTooltip("", {
+    direction: "top",
+    offset: [0, -8],
+    opacity: 0.9
+  });
+
+  marker.on("mouseover", function () {
+
+    let content = `<strong>${station.name}</strong>`;
+    const preview = this.previewData;
+
+    if (preview?.height != null) {
+      content += `<br>${preview.height.toFixed(1)} m`;
+    }
+
+    this.setTooltipContent(content);
+    this.openTooltip();
+
+  });
+
+  marker.on("mouseout", function () {
+    this.closeTooltip();
+  });
+
+  marker.bindPopup(`
+    <div class="popup-title">${station.name}</div>
+    <div class="popup-card">
+      <div><strong>Aaltohavainto</strong></div>
+      <div class="wave-buoy-body">
+        <div class="info-panel-loading">Ladataan…</div>
+      </div>
+    </div>
+  `);
+
+  waveBuoyLayer.addLayer(marker);
+
+}
+
 // ==========================
 // Asemat kartalle
 // ==========================
 
 
 stations.forEach(station => {
+
+  // Aaltopoijut saavat oman, kevyemmän markerin ja popupinsa –
+  // ei käytetä yleismallin tuuli-/lämpötilagraafeja sisältävää
+  // popup-templatea, koska poijuilla ei niitä ole.
+  if (station.type === "wavebuoy") {
+    createWaveBuoyMarker(station);
+    return;
+  }
 
   // Vedenkorkeusasemille ei enää näytetä omaa markeria kartalla –
   // sama lukema näkyy jo lähimpien asemien popupin
@@ -339,6 +445,51 @@ if (cachedWindIcons) applyWindIcons(cachedWindIcons);
   savePreviewCache(WIND_ICON_CACHE_KEY, freshValues);
 
 })();
+
+// ==========================
+// Aaltopoijujen ikonit (oikeat havainnot)
+// ==========================
+// Poijudata päivittyy FMI:llä n. 10 min välein, joten haetaan
+// tuoretta dataa samalla tahdilla. Ensin näytetään viimeksi
+// tunnettu (välimuistitettu) lukema heti, sitten päivitetään.
+
+const WAVE_ICON_CACHE_KEY = "waveBuoyIconCache";
+const WAVE_ICON_CACHE_TTL = 10 * 60 * 1000;
+
+function applyWaveIcons(values) {
+  Object.entries(values).forEach(([fmisid, w]) => {
+    const marker = markerRegistry[fmisid];
+    if (!marker) return;
+    marker.setIcon(createWaveIcon(w.height, w.direction, w.period));
+    marker.previewData = w;
+  });
+}
+
+const cachedWaveIcons = loadPreviewCache(WAVE_ICON_CACHE_KEY, WAVE_ICON_CACHE_TTL);
+if (cachedWaveIcons) applyWaveIcons(cachedWaveIcons);
+
+async function refreshWaveBuoyIcons() {
+
+  const waveBuoyStations = stations.filter(s => s.type === "wavebuoy");
+  const freshValues = {};
+
+  await Promise.all(waveBuoyStations.map(async station => {
+    try {
+      const obs = await fetchWaveBuoyObservation(station.fmisid);
+      if (!obs || obs.height == null) return;
+      freshValues[station.fmisid] = obs;
+    } catch (err) {
+      console.warn("Aaltopoijun haku epäonnistui:", station.name, err);
+    }
+  }));
+
+  applyWaveIcons(freshValues);
+  savePreviewCache(WAVE_ICON_CACHE_KEY, freshValues);
+
+}
+
+refreshWaveBuoyIcons();
+setInterval(refreshWaveBuoyIcons, WAVE_ICON_CACHE_TTL);
 
 // ==========================
 // FMI aikasarja (JSON TUETTU)
@@ -731,6 +882,15 @@ if (station.type === "weather" && station.yr) {
   popup.setContent(html);
   popup.update();
 
+  return;
+}
+
+// ==========================
+// Aaltopoiju → kevyt havaintopopup
+// ==========================
+
+if (station.type === "wavebuoy") {
+  await renderWaveBuoyPopup(e.popup, station);
   return;
 }
 

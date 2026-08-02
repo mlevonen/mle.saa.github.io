@@ -89,3 +89,89 @@ export async function fetchWaveHeight(lat, lon) {
   }
 
 }
+
+
+// ==========================
+// Aaltopoijuhavainnot (oikeat mittaukset)
+//
+// Ilmatieteen laitoksella on n. 14 aaltopoijua Itämerellä/Perämerellä
+// (ks. ilmatieteenlaitos.fi/aallonkorkeus). Näiltä saa oikean, n. 10 min
+// välein päivittyvän havainnon storedqueryllä
+// "fmi::observations::wave::simple" asemakohtaisella fmisidillä.
+// Yksittäiset aikaleimat voivat sisältää puuttuvia (NaN) arvoja,
+// joten haetaan uusimmasta taaksepäin ensimmäinen validi lukema
+// kullekin suureelle.
+// ==========================
+
+export async function fetchWaveBuoyObservation(fmisid) {
+
+  try {
+
+    const params = new URLSearchParams({
+      service: "WFS",
+      version: "2.0.0",
+      request: "GetFeature",
+      storedquery_id: "fmi::observations::wave::simple",
+      fmisid
+    });
+
+    const res = await fetch(`${WAVE_URL}?${params}`);
+
+    if (!res.ok) {
+      console.warn("Aaltopoijuhavainnon haku epäonnistui:", res.status);
+      return null;
+    }
+
+    const text = await res.text();
+    const xml = new DOMParser().parseFromString(text, "application/xml");
+
+    const elements = Array.from(
+      xml.querySelectorAll("BsWfs\\:BsWfsElement, BsWfsElement")
+    );
+
+    let height = null;
+    let period = null;
+    let direction = null;
+    let waterTemp = null;
+
+    for (let i = elements.length - 1; i >= 0; i--) {
+
+      const el = elements[i];
+
+      const nameNode = el.querySelector(
+        "BsWfs\\:ParameterName, ParameterName"
+      );
+      const valueNode = el.querySelector(
+        "BsWfs\\:ParameterValue, ParameterValue"
+      );
+
+      if (!nameNode || !valueNode) continue;
+
+      const name = nameNode.textContent.trim();
+      const value = Number(valueNode.textContent);
+      if (!Number.isFinite(value)) continue;
+
+      if (name === "WaveHs" && height == null) height = value;
+      if (name === "WTP" && period == null) period = value;
+      if (name === "ModalWDi" && direction == null) direction = value;
+      if (name === "TWATER" && waterTemp == null) waterTemp = value;
+
+      if (
+        height != null &&
+        period != null &&
+        direction != null &&
+        waterTemp != null
+      ) break;
+
+    }
+
+    return { height, period, direction, waterTemp };
+
+  } catch (err) {
+
+    console.warn("Aaltopoijuhavainnon haku epäonnistui:", err);
+    return null;
+
+  }
+
+}
