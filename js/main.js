@@ -81,8 +81,10 @@ function createStationIcon(station) {
 
 }
 
-// Aaltopoijun ikoni: sama nuoli+badge-tyyli kuin tuulimarkereilla,
-// mutta badge näyttää aallonkorkeuden ja nuoli aallokon tulosuunnan.
+// Aaltopoijun ikoni: oma, tuulinuolista selvästi erottuva ulkoasu –
+// pyöreä "poiju"-merkki jossa aaltoviivat ja korkeuslukema piirretty
+// suoraan sisään. Pieni piikki kehän reunalla osoittaa aallokon
+// tulosuunnan, jos se on tiedossa.
 function createWaveIcon(height, direction, period) {
 
   const hasHeight = Number.isFinite(height);
@@ -95,7 +97,7 @@ function createWaveIcon(height, direction, period) {
     height < 2.5 ? "#7b1fa2" :
                     "#c62828";
 
-  const dirRotation = Number.isFinite(direction) ? direction + 180 : 0;
+  const hasDirection = Number.isFinite(direction);
 
   const titleParts = [];
   if (hasHeight) titleParts.push(`Aallonkorkeus ${height.toFixed(1)} m`);
@@ -103,23 +105,36 @@ function createWaveIcon(height, direction, period) {
   const title = titleParts.length ? titleParts.join(", ") : "Aaltohavaintoa ei saatavilla";
 
   const html = `
-    <div class="wind-marker">
-      <div class="marker-arrow"
-           style="transform: translate(4px,4px) rotate(${dirRotation}deg); color: ${color}">
-        <svg viewBox="0 0 24 24" width="55" height="55">
-          <path d="M12 1 L18 11 L14 11 L14 21 L10 21 L10 11 L6 11 Z"
-                fill="currentColor"/>
-        </svg>
-      </div>
-      <div class="marker-speed" style="border-color:${color}" title="${title}">${roundedHeight}m</div>
+    <div class="wave-marker" title="${title}">
+      <svg viewBox="0 0 60 60" width="60" height="60">
+
+        ${hasDirection ? `
+        <g transform="rotate(${direction} 30 30)">
+          <path d="M30 1 L35 11 L25 11 Z" fill="${color}"/>
+        </g>
+        ` : ""}
+
+        <circle cx="30" cy="30" r="18" fill="${color}" stroke="#fff" stroke-width="2"/>
+
+        <path d="M13,33 Q17,27 21,33 T29,33 T37,33 T45,33"
+              fill="none" stroke="#ffffff" stroke-width="1.8"
+              stroke-linecap="round" opacity="0.9"/>
+        <path d="M13,38 Q17,32 21,38 T29,38 T37,38 T45,38"
+              fill="none" stroke="#ffffff" stroke-width="1.8"
+              stroke-linecap="round" opacity="0.55"/>
+
+        <text x="30" y="26" text-anchor="middle" font-size="11"
+              font-weight="700" font-family="sans-serif" fill="#ffffff">${roundedHeight}m</text>
+
+      </svg>
     </div>
   `;
 
   return L.divIcon({
-    className: "wind-marker-wrapper",
+    className: "wave-marker-wrapper",
     html,
-    iconSize: [80, 80],
-    iconAnchor: [40, 40]
+    iconSize: [60, 60],
+    iconAnchor: [30, 30]
   });
 
 }
