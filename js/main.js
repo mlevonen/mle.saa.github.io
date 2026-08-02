@@ -370,7 +370,7 @@ stations.forEach(station => {
             data-lon="${station.lon}"
           ></canvas>
         </div>
-        <div class="wind-flow-sidebar" style="display:flex; flex-direction:column; gap:8px; width:390px;">
+        <div class="wind-flow-sidebar" style="display:flex; flex-direction:column; gap:8px; width:345px;">
           <div class="popup-card-inner popup-temp-card">
             <div style="font-size:12px; font-weight:600; margin-bottom:2px;">Lämpötila</div>
             <div class="popup-temp-value">–</div>
