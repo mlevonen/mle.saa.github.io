@@ -2,126 +2,130 @@ const stations = [
 
   /*
    * =========================
-   * SÄÄASEMAT (kaupunkipisteet)
+   * MAA-ASEMAT (kaupunkipisteet)
+   * Ent. Yr.no-meteogrammiin liitetyt "weather"-asemat, nyt
+   * rannikkoaseman konseptilla (tuulinuoli, graafit, sivupalkin
+   * kortit). inland:true jättää aallonkorkeuden ja vedenkorkeuden
+   * pois, koska nämä eivät ole meren rannalla.
    * =========================
    */
 
   {
-    type: "weather",
+    type: "coastal",
     id: "helsinki-weather",
     name: "Helsinki",
     fmisid: 100971,
     lat: 60.17,
     lon: 24.95,
-    yr: "https://www.yr.no/en/content/2-13453572/meteogram.svg"
+    inland: true
   },
 
   {
-    type: "weather",
+    type: "coastal",
     id: "porvoo-weather",
     name: "Porvoo",
     fmisid: 101004,
     lat: 60.39,
     lon: 25.66,
-    yr: "https://www.yr.no/en/content/2-11978456/meteogram.svg"
+    inland: true
   },
 
     {
-    type: "weather",
+    type: "coastal",
     id: "asikkala-pulkkilanharju-weather",
     name: "Asikkala Pulkkilanharju",
     fmisid: 101185,
     lat: 61.27,
     lon: 25.52,
-    yr: "https://www.yr.no/en/content/2-660949/meteogram.svg"
+    inland: true
   },
 
   {
-    type: "weather",
+    type: "coastal",
     id: "luhanka-judinsalo-weather",
     name: "Luhanka Judinsalo",
     fmisid: 101362,
     lat: 61.7,
     lon: 25.51,
     featured: true,
-    yr: "https://www.yr.no/en/content/2-647522/meteogram.svg"
+    inland: true
   },
 
   {
-    type: "weather",
+    type: "coastal",
     id: "tampere-siilinkari-weather",
     name: "Tampere Siilinkari",
     fmisid: 101311,
     lat: 61.52,
     lon: 23.75,
     featured: true,
-    yr: "https://www.yr.no/en/content/2-634963/meteogram.svg"
+    inland: true
   },
 
   {
-    type: "weather",
+    type: "coastal",
     id: "lappeenranta-hiekkapakka-weather",
     name: "Lappeenranta Hiekkapakka",
     fmisid: 101252,
     lat: 61.2,
     lon: 28.47,
     featured: true,
-    yr: "https://www.yr.no/en/content/2-11978335/meteogram.svg"
+    inland: true
   },
 
   {
-    type: "weather",
+    type: "coastal",
     id: "rantasalmi-rukkasluoto-weather",
     name: "Rantasalmi Rukkasluoto",
     fmisid: 101436,
     lat: 62.06,
     lon: 28.57,
     featured: true,
-    yr: "https://www.yr.no/en/content/2-639906/meteogram.svg"
+    inland: true
   },
 
   {
-    type: "weather",
+    type: "coastal",
     id: "liperi-tuiskavanluoto-weather",
     name: "Liperi Tuiskavanluoto",
     fmisid: 101628,
     lat: 62.55,
     lon: 29.67,
     featured: true,
-    yr: "https://www.yr.no/en/content/2-647851/meteogram.svg"
+    inland: true
   },
 
   {
-    type: "weather",
+    type: "coastal",
     id: "kuopio-ritoniemi-weather",
     name: "Kuopio Ritoniemi",
     fmisid: 101580,
     lat: 62.8,
     lon: 27.9,
     featured: true,
-    yr: "https://www.yr.no/en/content/2-650224/meteogram.svg"
+    inland: true
   },
 
   {
-    type: "weather",
+    type: "coastal",
     id: "inari-seitalaassa-weather",
     name: "Inari Seitalaassa",
     fmisid: 129963,
     lat: 69.05,
     lon: 27.76,
     featured: true,
-    yr: "https://www.yr.no/en/content/2-656657/meteogram.svg"
+    inland: true
   },
 
   {
-    type: "weather",
+    type: "coastal",
     id: "kumlinge-kirkonkylä-weather",
     name: "Kumlinge kirkonkylä",
     fmisid: 100928,
     lat: 60.26,
     lon: 20.75,
     featured: true,
-    yr: "https://www.yr.no/en/content/2-650395/meteogram.svg"
+    inland: true
   },
 
   /*

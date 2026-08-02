@@ -226,7 +226,7 @@ export function renderWaveCard(popupEl, data, station) {
   const card = popupEl.querySelector(".popup-wave-card");
   if (!card) return;
 
-  if (station?.type !== "coastal" || !data.waveHeight) {
+  if (station?.type !== "coastal" || station?.inland || !data.waveHeight) {
     card.style.display = "none";
     return;
   }

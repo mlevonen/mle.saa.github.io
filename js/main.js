@@ -376,7 +376,7 @@ stations.forEach(station => {
             <div class="popup-temp-value">–</div>
           </div>
 
-          <div class="popup-card-inner">
+          <div class="popup-card-inner popup-sealevel-card">
             <div style="font-size:12px; font-weight:600; margin-bottom:2px;">Vedenkorkeus</div>
             <div class="wind-flow-sealevel-row">
               <span class="wind-flow-sealevel-label">Keskivesi</span>
@@ -922,33 +922,6 @@ const station = e.popup._source.station;
 if (!station) return;
 
 // ==========================
-// Weather → Yr meteogram (iframe)
-// ==========================
-
-if (station.type === "weather" && station.yr) {
-
-  const popup = e.popup;
-
-  const html = `
-    <div class="yr-popup">
-      <iframe
-        src="${station.yr}"
-        width="650"
-        height="360"
-        frameborder="0"
-        style="border:0;display:block;"
-        loading="lazy">
-      </iframe>
-    </div>
-  `;
-
-  popup.setContent(html);
-  popup.update();
-
-  return;
-}
-
-// ==========================
 // Aaltopoiju → kevyt havaintopopup
 // ==========================
 
@@ -980,7 +953,10 @@ if (station.type === "wavebuoy") {
       weatherPlace: null,
       weatherFmisid: station.fmisid,
       seaLevelFmisid: null,
-      includeWave: station.type === "coastal"
+      // Maa-asemille (ent. Yr-asemat, station.inland) ei haeta
+      // aallonkorkeutta, vaikka niiden type onkin nyt "coastal" –
+      // ne eivät ole meren rannalla.
+      includeWave: station.type === "coastal" && !station.inland
     });
     console.log("STATION FMISID:", station.fmisid);
     console.log("marker symbol", data.currentSymbol);
@@ -997,28 +973,39 @@ if (station.type === "wavebuoy") {
 
     // Lähimmän vedenkorkeusaseman lukemat sivupalkkiin
     // (sekä keskiveteen suhteutettu WATLEV että N2000-lukema).
+    // Maa-asemille (station.inland) koko kortti piilotetaan – lähin
+    // vedenkorkeusasema voisi olla satoja kilometrejä päässä eikä
+    // lukema liity mitenkään kyseiseen sisämaan pisteeseen.
+    const seaLevelCard = popupEl.querySelector(".popup-sealevel-card");
     const seaLevelWatlevEl = popupEl.querySelector('.wind-flow-sealevel-value[data-kind="watlev"]');
     const seaLevelN2000El = popupEl.querySelector('.wind-flow-sealevel-value[data-kind="n2000"]');
 
-    if (seaLevelWatlevEl || seaLevelN2000El) {
-      const nearestSea = findNearestSeaLevelStation(station.lat, station.lon);
-      const formatLevel = v => v != null ? `${v > 0 ? "+" : ""}${v} cm` : "–";
+    if (station.inland) {
+      if (seaLevelCard) seaLevelCard.style.display = "none";
+    } else {
 
-      if (!nearestSea) {
-        if (seaLevelWatlevEl) seaLevelWatlevEl.textContent = "–";
-        if (seaLevelN2000El) seaLevelN2000El.textContent = "–";
-      } else {
-        try {
-          const { watlev, n2000 } = await fetchSeaLevel(nearestSea.fmisid);
-          if (seaLevelWatlevEl) {
-            seaLevelWatlevEl.textContent = `${formatLevel(watlev)} (${nearestSea.name})`;
+      if (seaLevelCard) seaLevelCard.style.display = "";
+
+      if (seaLevelWatlevEl || seaLevelN2000El) {
+        const nearestSea = findNearestSeaLevelStation(station.lat, station.lon);
+        const formatLevel = v => v != null ? `${v > 0 ? "+" : ""}${v} cm` : "–";
+
+        if (!nearestSea) {
+          if (seaLevelWatlevEl) seaLevelWatlevEl.textContent = "–";
+          if (seaLevelN2000El) seaLevelN2000El.textContent = "–";
+        } else {
+          try {
+            const { watlev, n2000 } = await fetchSeaLevel(nearestSea.fmisid);
+            if (seaLevelWatlevEl) {
+              seaLevelWatlevEl.textContent = `${formatLevel(watlev)} (${nearestSea.name})`;
+            }
+            if (seaLevelN2000El) {
+              seaLevelN2000El.textContent = `${formatLevel(n2000)} (${nearestSea.name})`;
+            }
+          } catch (err) {
+            if (seaLevelWatlevEl) seaLevelWatlevEl.textContent = `– (${nearestSea.name})`;
+            if (seaLevelN2000El) seaLevelN2000El.textContent = `– (${nearestSea.name})`;
           }
-          if (seaLevelN2000El) {
-            seaLevelN2000El.textContent = `${formatLevel(n2000)} (${nearestSea.name})`;
-          }
-        } catch (err) {
-          if (seaLevelWatlevEl) seaLevelWatlevEl.textContent = `– (${nearestSea.name})`;
-          if (seaLevelN2000El) seaLevelN2000El.textContent = `– (${nearestSea.name})`;
         }
       }
     }
