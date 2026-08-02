@@ -2,9 +2,21 @@
 // Aaltopoijun popup-sisältö
 // Kevyt, kaaviotta – näyttää poijun viimeisimmän havainnon
 // (aallonkorkeus, jakso, tulosuunta, veden lämpötila).
+//
+// HUOM korkein yksittäinen aalto: Ilmatieteen laitoksen avoin
+// aaltopoiju-WFS (fmi::observations::wave::simple) ei sisällä
+// erillistä "korkein aalto" -mittausta – DescribeStoredQueries
+// listaa vain merkitsevän aallonkorkeuden, suunnan, suunnan
+// hajonnan, jakson ja veden lämpötilan. Ilmatieteenlaitos.fi:n
+// omalla sivulla näkyvä "Korkein aalto" vaikuttaa olevan tilastollinen
+// arvio (havaittu suhde n. 1.5–2.0 × merkitsevä aallonkorkeus eri
+// asemilla), joten lasketaan sama arvio vakiintuneella merenkulun
+// nyrkkisäännöllä (Hmax ≈ 1.8 × Hs) ja merkitään se selvästi arvioksi.
 // ==========================
 
 import { fetchWaveBuoyObservation } from "../api/waveHeight.js";
+
+const MAX_WAVE_ESTIMATE_FACTOR = 1.8;
 
 export async function renderWaveBuoyPopup(popup, station) {
 
@@ -25,8 +37,13 @@ export async function renderWaveBuoyPopup(popup, station) {
       return;
     }
 
+    const estimatedMax = Number.isFinite(obs.height)
+      ? obs.height * MAX_WAVE_ESTIMATE_FACTOR
+      : null;
+
     const rows = [
       ["Merkitsevä aallonkorkeus", Number.isFinite(obs.height) ? `${obs.height.toFixed(1)} m` : "–"],
+      ["Korkein aalto (arvio)", estimatedMax != null ? `~${estimatedMax.toFixed(1)} m` : "–"],
       ["Aallon jakso", Number.isFinite(obs.period) ? `${obs.period.toFixed(1)} s` : "–"],
       ["Tulosuunta", Number.isFinite(obs.direction) ? `${Math.round(obs.direction)}°` : "–"],
       ["Veden lämpötila", Number.isFinite(obs.waterTemp) ? `${obs.waterTemp.toFixed(1)} °C` : "–"]
@@ -37,7 +54,11 @@ export async function renderWaveBuoyPopup(popup, station) {
         <span class="wave-buoy-label">${label}</span>
         <span class="wave-buoy-value">${value}</span>
       </div>
-    `).join("");
+    `).join("") + `
+      <div class="wave-buoy-note">
+        Korkein aalto on arvio (~1.8 × merkitsevä aallonkorkeus), ei suora mittaus.
+      </div>
+    `;
 
   } catch (err) {
 

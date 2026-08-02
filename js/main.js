@@ -25,10 +25,13 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "&copy; OpenStreetMap"
 }).addTo(map);
 
-// 👉 LISÄÄ TÄMÄ TÄHÄN
+// Oletusnäkymä: Ruotsin rannikko näkyviin lännessä (eteläisin
+// aaltopoiju sijaitsee etelässä lähellä sitä), idässä raja n.
+// Sipoon kohdalla ja pohjoisessa hieman Porin yläpuolella.
+// Käyttäjä voi silti vapaasti pannata/zoomata kartalla muualle.
 const bounds = L.latLngBounds(
   [58.8, 18.8],  // SW
-  [63.5, 27.8]   // NE
+  [61.9, 25.6]   // NE
 );
 
 map.fitBounds(bounds, {
