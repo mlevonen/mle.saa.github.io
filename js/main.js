@@ -15,6 +15,7 @@ import { loadPreviewCache, savePreviewCache } from "./utils/previewCache.js";
 import { initMarineInfoPanels } from "./marineInfoPanels.js";
 import { fetchWaveBuoyObservation } from "./api/waveHeight.js";
 import { renderWaveBuoyPopup } from "./popup/waveBuoyPopup.js";
+import { initRadarPanel } from "./radarPanel.js";
 
 
 "use strict";
@@ -74,18 +75,9 @@ const radarLayer = L.tileLayer.wms("https://openwms.fmi.fi/geoserver/wms", {
   attribution: "Tutkakuva &copy; Ilmatieteen laitos"
 });
 
-L.control.layers(null, {
-  "Sadetutka": radarLayer
-}, { collapsed: true, position: "topright" }).addTo(map);
-
-// Tutkakuva uusiutuu n. 5 min välein FMI:n päässä – pakotetaan
-// selain hakemaan tuoreet ruudut samalla välillä (vain jos taso on
-// päällä, muuten turha verkkoliikenne).
-setInterval(() => {
-  if (map.hasLayer(radarLayer)) {
-    radarLayer.setParams({ _ts: Date.now() });
-  }
-}, 5 * 60 * 1000);
+// Oikean yläkulman "Sadetutka"-nappi + avautuva kortti, jossa
+// aikaliukusäädin (historia, ei ennustetta – ks. radarPanel.js).
+initRadarPanel(map, radarLayer);
 
 const markerRegistry = {};
 
