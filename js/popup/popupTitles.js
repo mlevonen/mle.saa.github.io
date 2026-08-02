@@ -1,24 +1,14 @@
 import { getLatestObservation } from "../utils/helpers.js";
 
 export function updatePopupTitles(popupEl, data) {
-  const temp = getLatestObservation(data.obsTemp, "utctime", "temperature");
   const wind = getLatestObservation(data.obsWindSpeed, "utctime", "windspeedms");
   const gust = getLatestObservation(data.obsWindSpeed, "utctime", "windgust");
   const pressure = getLatestObservation(data.obsPressure, "utctime", "pressure");
 
+  // Lämpötilan pikanäyttö hoidetaan nyt renderTempCard()-funktiolla
+  // (js/popup/popupExtras.js) – erillinen minigraafi ja sen otsikon
+  // päivitys poistettu, koska tuntikohtainen sääennuste korvaa graafin.
 
-
-
-  const tempTitle = popupEl.querySelector(
-  'canvas[data-type="temp"]'
-  )?.previousElementSibling;
-
-  if (temp && tempTitle) {
-  tempTitle.textContent =
-    `Lämpötila ${temp.v.toFixed(1)} °C`;
-  }
-
-  
  if (wind) {
   const windObsTitle = popupEl.querySelector(
     'canvas[data-type="wind-obs"]'

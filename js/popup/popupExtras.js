@@ -92,6 +92,36 @@ export function renderPopupExtras(popupEl, data) {
 
 
 /* =========================================================
+   LÄMPÖTILA – pieni korttinsa (korvaa entisen minigraafin,
+   koska tuntikohtainen sääennuste näyttää nyt kehityksen)
+   ========================================================= */
+
+export function renderTempCard(popupEl, data) {
+
+  const card = popupEl.querySelector(".popup-temp-card");
+  if (!card) return;
+
+  const valueEl = card.querySelector(".popup-temp-value");
+  if (!valueEl) return;
+
+  const obs = Array.isArray(data.obsTemp) ? data.obsTemp : [];
+
+  let latest = null;
+
+  for (let i = obs.length - 1; i >= 0; i--) {
+    const t = obs[i]?.temperature;
+    if (Number.isFinite(t)) {
+      latest = t;
+      break;
+    }
+  }
+
+  valueEl.textContent = latest != null ? `${latest.toFixed(1)} °C` : "–";
+
+}
+
+
+/* =========================================================
    AURINGONNOUSU / -LASKU – oma korttinsa
    ========================================================= */
 

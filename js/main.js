@@ -1,8 +1,7 @@
 import { loadPopupData, fetchObservationSeriesByFmisid } from "./api/dataLoader.js";
 import { updatePopupTitles } from "./popup/popupTitles.js";
-import { renderTemperatureChart } from "./charts/temperatureChart.js";
 import { renderWindCharts } from "./charts/windChart.js";
-import { renderPopupExtras, renderSunCard, renderWaveCard } from "./popup/popupExtras.js";
+import { renderPopupExtras, renderSunCard, renderWaveCard, renderTempCard } from "./popup/popupExtras.js";
 import "./charts/plugins.js";
 import { fetchSeaLevel } from "./api/sealevel.js";
 import { updateCoastalPreview, loadCoastalPreviewCache} from "./api/coastalPreview.js";
@@ -372,17 +371,9 @@ stations.forEach(station => {
           ></canvas>
         </div>
         <div class="wind-flow-sidebar" style="display:flex; flex-direction:column; gap:8px; width:320px;">
-          <div class="popup-card-inner">
-            <div style="font-size:12px; font-weight:600; margin-bottom:4px;">Lämpötila</div>
-            <canvas
-              class="popup-chart-mini"
-              width="300"
-              height="110"
-              data-lat="${station.lat}"
-              data-lon="${station.lon}"
-              data-fmisid="${station.fmisid}"
-              data-type="temp"
-            ></canvas>
+          <div class="popup-card-inner popup-temp-card">
+            <div style="font-size:12px; font-weight:600; margin-bottom:2px;">Lämpötila</div>
+            <div class="popup-temp-value">–</div>
           </div>
 
           <div class="popup-card-inner">
@@ -1001,7 +992,7 @@ if (station.type === "wavebuoy") {
     renderPopupExtras(popupEl, data);
     renderSunCard(popupEl, data);
     renderWaveCard(popupEl, data, station);
-    renderTemperatureChart(popupEl, data);
+    renderTempCard(popupEl, data);
     renderWindCharts(popupEl, data);
 
     // Lähimmän vedenkorkeusaseman lukemat sivupalkkiin
