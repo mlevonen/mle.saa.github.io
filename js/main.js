@@ -53,6 +53,40 @@ const weatherLayer = L.featureGroup().addTo(map);
 const coastalLayer = L.featureGroup().addTo(map);
 const waveBuoyLayer = L.featureGroup().addTo(map);
 
+// ==========================
+// Sadetutka (Ilmatieteen laitoksen avoin WMS-tutkayhdistelmä)
+//
+// Lähde: openwms.fmi.fi/geoserver/wms, taso "Radar:suomi_rr_eureffin"
+// (sateen intensiteetti mm/h, 5 min aikaresoluutio). Ei oletuksena
+// näkyvissä – käyttäjä kytkee päälle kartan oikean yläkulman
+// tasonvalitsimesta.
+//
+// HUOM: Ilmatieteenlaitos.fi:n mukaan tämä taso korvautuu syksyllä
+// 2026 nimellä "Radar:radar_finland_cappi_rate" (uusi 5 min
+// aikaresoluution tutkayhdistelmä). Nimi pitää päivittää silloin.
+// ==========================
+const radarLayer = L.tileLayer.wms("https://openwms.fmi.fi/geoserver/wms", {
+  layers: "Radar:suomi_rr_eureffin",
+  format: "image/png",
+  transparent: true,
+  version: "1.3.0",
+  opacity: 0.6,
+  attribution: "Tutkakuva &copy; Ilmatieteen laitos"
+});
+
+L.control.layers(null, {
+  "Sadetutka": radarLayer
+}, { collapsed: true, position: "topright" }).addTo(map);
+
+// Tutkakuva uusiutuu n. 5 min välein FMI:n päässä – pakotetaan
+// selain hakemaan tuoreet ruudut samalla välillä (vain jos taso on
+// päällä, muuten turha verkkoliikenne).
+setInterval(() => {
+  if (map.hasLayer(radarLayer)) {
+    radarLayer.setParams({ _ts: Date.now() });
+  }
+}, 5 * 60 * 1000);
+
 const markerRegistry = {};
 
 // Käynnissä olevan tuulivirtausanimaation pysäytysfunktio
