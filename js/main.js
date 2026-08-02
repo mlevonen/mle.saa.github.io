@@ -417,6 +417,8 @@ stations.forEach(station => {
                 <span class="popup-sunset-value">–</span>
               </div>
             </div>
+            <div class="popup-hourly-day"></div>
+            <div class="popup-hourly-forecast"></div>
           </div>
         </div>
       </div>

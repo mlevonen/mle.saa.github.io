@@ -121,7 +121,69 @@ export function renderSunCard(popupEl, data) {
   if (sunriseEl) sunriseEl.textContent = formatSunTime(sunrise);
   if (sunsetEl) sunsetEl.textContent = formatSunTime(sunset);
 
+  // Auringon nousu/lasku -kortin yhteyteen yhdistetty tuntikohtainen
+  // sääennustenauha (samasta ennustedatasta, joka on jo haettu
+  // loadPopupDatassa – ei siis erillistä lisähakua).
+  const hourlyEl = card.querySelector(".popup-hourly-forecast");
+  const hourlyDayEl = card.querySelector(".popup-hourly-day");
+  renderHourlyForecastStrip(hourlyEl, hourlyDayEl, data.fcTemp);
+
   card.style.display = "";
+}
+
+
+/* =========================================================
+   TUNTIKOHTAINEN SÄÄENNUSTENAUHA (osa Aurinko-korttia)
+   ========================================================= */
+
+const MAX_HOURLY_ITEMS = 10;
+
+function formatHourlyDayHeader(d) {
+  const weekday = d.toLocaleDateString("fi-FI", { weekday: "short" });
+  const capitalized = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+  return `${capitalized} ${d.getDate()}.${d.getMonth() + 1}.`;
+}
+
+function renderHourlyForecastStrip(hourlyEl, hourlyDayEl, fcTemp) {
+
+  if (!hourlyEl) return;
+
+  const now = Date.now();
+
+  const upcoming = Array.isArray(fcTemp)
+    ? fcTemp
+        .filter(p => new Date(p.utctime).getTime() >= now - 30 * 60 * 1000)
+        .slice(0, MAX_HOURLY_ITEMS)
+    : [];
+
+  if (!upcoming.length) {
+    hourlyEl.innerHTML = "";
+    if (hourlyDayEl) hourlyDayEl.textContent = "";
+    return;
+  }
+
+  if (hourlyDayEl) {
+    hourlyDayEl.textContent = formatHourlyDayHeader(new Date(upcoming[0].utctime));
+  }
+
+  hourlyEl.innerHTML = upcoming.map(p => {
+
+    const d = new Date(p.utctime);
+    const icon = smartSymbolIcon(p.symbol);
+    const temp = Number.isFinite(p.temperature) ? Math.round(p.temperature) : null;
+
+    return `
+      <div class="popup-hourly-item">
+        <div class="popup-hourly-hour">${d.getHours()}</div>
+        ${icon
+          ? `<img src="${icon}" class="popup-hourly-icon" alt="">`
+          : `<div class="popup-hourly-icon"></div>`}
+        <div class="popup-hourly-temp">${temp != null ? temp + "°" : "–"}</div>
+      </div>
+    `;
+
+  }).join("");
+
 }
 
 
