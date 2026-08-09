@@ -23,8 +23,6 @@ export function renderWindCharts(popupEl, data) {
     obsWindGust
   } = data;
 
-  if (!Array.isArray(obsWindSpeed)) return;
-
   const nowUtc = new Date();
   const OBS_TOLERANCE_MIN = 15;
 
@@ -35,13 +33,22 @@ export function renderWindCharts(popupEl, data) {
   // ======================================================
   // RAAKA TUULIDATA
   // ======================================================
-  const rawObsWind = obsWindSpeed
-    .map(p => ({
-      x: parseFmiUtc(p.utctime),
-      y: p.windspeedms,
-      dir: p.winddirection
-    }))
-    .filter(p => p.x <= obsCutoffUtc);
+  // HUOM: havainto (obs) ja ennuste (fc) käsitellään tästä lähtien
+  // toisistaan riippumatta. Jos asemalta puuttuu havaintodata
+  // (esim. FMI ei palauta yhtään havaintoa fmisidille), ennuste-
+  // graafin pitää silti piirtyä normaalisti – aiemmin koko funktio
+  // keskeytyi heti jos vain obsWindSpeed puuttui, mikä esti myös
+  // toimivan ennusteen näkymisen (havaittu esim. Helsinki
+  // Helsingin majakka -asemalla).
+  const rawObsWind = Array.isArray(obsWindSpeed)
+    ? obsWindSpeed
+        .map(p => ({
+          x: parseFmiUtc(p.utctime),
+          y: p.windspeedms,
+          dir: p.winddirection
+        }))
+        .filter(p => p.x <= obsCutoffUtc)
+    : [];
 
   const rawFcWind = Array.isArray(fcWindSpeed)
     ? fcWindSpeed

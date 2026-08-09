@@ -479,14 +479,13 @@ const stations = [
   },
 
 
-  {
-    type: "coastal",
-    id: "kaskinen-sälgrund",
-    name: "Kaskinen Sälgrund",
-    fmisid: 101256,
-    lat: 62.33,
-    lon: 21.19
-  },
+  // Poistettu (2026-08-09): Kaskinen Sälgrund (fmisid 101256) –
+  // tuulennopeus palautti FMI:n rajapinnasta jatkuvasti NaN, eikä
+  // tuulensuunta-/puuskaparametrejä ollut tarjolla ollenkaan koko
+  // testatulla aikavälillä. Lämpötila/paine toimivat, mutta koska
+  // asema on tällä sivulla ensisijaisesti tuulihavaintopiste, se
+  // poistettiin kokonaan (sama linja kuin toimimattomilla
+  // aaltopoijuilla).
 
   {
     type: "coastal",
