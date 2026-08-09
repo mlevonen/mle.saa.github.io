@@ -830,6 +830,64 @@ const stations = [
     name: "Vilsandi",
     lat: 58.38,
     lon: 21.81
+  },
+
+  /*
+   * =========================
+   * GOTLANTI, ÖÖLANTI JA TUKHOLMAN SAARISTO
+   * Sama konsepti kuin muissa wind-fc-pisteissä – ei fmisidiä,
+   * pelkkä Open-Meteon tuuliennuste. Kattaa molemmat saaret
+   * pohjoisesta etelään sekä kaksi tunnettua purjehduspistettä
+   * Tukholman saaristosta.
+   * =========================
+   */
+
+  {
+    type: "wind-fc",
+    id: "visby-wind",
+    name: "Visby (Gotlanti)",
+    lat: 57.63,
+    lon: 18.30
+  },
+
+  {
+    type: "wind-fc",
+    id: "farosund-wind",
+    name: "Fårösund (Gotlanti)",
+    lat: 57.86,
+    lon: 19.05
+  },
+
+  {
+    type: "wind-fc",
+    id: "boda-wind",
+    name: "Böda (Ööland)",
+    lat: 57.27,
+    lon: 17.05
+  },
+
+  {
+    type: "wind-fc",
+    id: "ottenby-wind",
+    name: "Ottenby (Ööland)",
+    lat: 56.20,
+    lon: 16.40
+  },
+
+  {
+    type: "wind-fc",
+    id: "sandhamn-wind",
+    name: "Sandhamn (Tukholman saaristo)",
+    lat: 59.29,
+    lon: 18.91
+  },
+
+  {
+    type: "wind-fc",
+    id: "landsort-wind",
+    name: "Landsort (Tukholman saaristo)",
+    lat: 58.74,
+    lon: 17.87
   }
 
 ];
