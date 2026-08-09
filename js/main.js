@@ -100,24 +100,24 @@ const waveBuoyLayer = L.featureGroup().addTo(map);
 const windForecastLayer = L.featureGroup().addTo(map);
 
 // ==========================
-// Sadetutka (Ilmatieteen laitoksen avoin WMS-tutkayhdistelmä)
+// Sadetutka (RainViewer, api.rainviewer.com)
 //
-// Lähde: openwms.fmi.fi/geoserver/wms, taso "Radar:suomi_rr_eureffin"
-// (sateen intensiteetti mm/h, 5 min aikaresoluutio). Ei oletuksena
-// näkyvissä – käyttäjä kytkee päälle kartan oikean yläkulman
-// tasonvalitsimesta.
+// Valmiiksi pehmennetyt ("smooth") tiilit – ei näytä yhtä
+// rasteroituneelta/lohkoiselta kuin raaka WMS-tutkakuva. Ei
+// oletuksena näkyvissä – käyttäjä kytkee päälle kartan oikean
+// yläkulman tasonvalitsimesta. Todellinen tiili-URL asetetaan
+// radarPanel.js:ssä (radarLayer.setUrl(...)) sitä mukaa kun
+// käyttäjä selaa historiaa liukusäätimellä; tämä on vain alustus.
 //
-// HUOM: Ilmatieteenlaitos.fi:n mukaan tämä taso korvautuu syksyllä
-// 2026 nimellä "Radar:radar_finland_cappi_rate" (uusi 5 min
-// aikaresoluution tutkayhdistelmä). Nimi pitää päivittää silloin.
+// maxNativeZoom rajaa RainViewerin oman tiilirajapinnan enimmäis-
+// zoomiin (7) – Leaflet skaalaa tiilet visuaalisesti sitä syvemmälle
+// zoomattaessa sen sijaan, että yrittäisi hakea olemattomia tiilejä.
 // ==========================
-const radarLayer = L.tileLayer.wms("https://openwms.fmi.fi/geoserver/wms", {
-  layers: "Radar:suomi_rr_eureffin",
-  format: "image/png",
-  transparent: true,
-  version: "1.3.0",
+const radarLayer = L.tileLayer("", {
   opacity: 0.6,
-  attribution: "Tutkakuva &copy; Ilmatieteen laitos"
+  maxNativeZoom: 7,
+  attribution:
+    'Tutkakuva &copy; <a href="https://www.rainviewer.com" target="_blank" rel="noopener">RainViewer</a>'
 });
 
 // Oikean yläkulman "Sadetutka"-nappi + avautuva kortti, jossa
