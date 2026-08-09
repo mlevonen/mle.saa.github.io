@@ -18,7 +18,7 @@ import { loadPopupData } from "../api/dataLoader.js";
 import { updatePopupTitles } from "./popupTitles.js";
 import { renderPopupExtras, renderSunCard, renderWaveCard, renderTempCard } from "./popupExtras.js";
 import { renderWindCharts } from "../charts/windChart.js";
-import { fetchSeaLevel, findNearestSeaLevelStation } from "../api/sealevel.js";
+import { renderSeaLevelCard } from "./seaLevelCard.js";
 import { renderWindFlowAnimation } from "./windFlowAnimation.js";
 
 export function stationDetailHTML(station) {
@@ -178,39 +178,7 @@ export async function renderStationDetail(containerEl, station) {
     // asemille (station.inland) koko kortti piilotetaan – lähin
     // vedenkorkeusasema voisi olla satoja kilometrejä päässä eikä
     // lukema liity mitenkään kyseiseen sisämaan pisteeseen.
-    const seaLevelCard = containerEl.querySelector(".popup-sealevel-card");
-    const seaLevelWatlevEl = containerEl.querySelector('.wind-flow-sealevel-value[data-kind="watlev"]');
-    const seaLevelN2000El = containerEl.querySelector('.wind-flow-sealevel-value[data-kind="n2000"]');
-
-    if (station.inland) {
-      if (seaLevelCard) seaLevelCard.style.display = "none";
-    } else {
-
-      if (seaLevelCard) seaLevelCard.style.display = "";
-
-      if (seaLevelWatlevEl || seaLevelN2000El) {
-        const nearestSea = findNearestSeaLevelStation(station.lat, station.lon);
-        const formatLevel = v => v != null ? `${v > 0 ? "+" : ""}${v} cm` : "–";
-
-        if (!nearestSea) {
-          if (seaLevelWatlevEl) seaLevelWatlevEl.textContent = "–";
-          if (seaLevelN2000El) seaLevelN2000El.textContent = "–";
-        } else {
-          try {
-            const { watlev, n2000 } = await fetchSeaLevel(nearestSea.fmisid);
-            if (seaLevelWatlevEl) {
-              seaLevelWatlevEl.textContent = `${formatLevel(watlev)} (${nearestSea.name})`;
-            }
-            if (seaLevelN2000El) {
-              seaLevelN2000El.textContent = `${formatLevel(n2000)} (${nearestSea.name})`;
-            }
-          } catch (err) {
-            if (seaLevelWatlevEl) seaLevelWatlevEl.textContent = `– (${nearestSea.name})`;
-            if (seaLevelN2000El) seaLevelN2000El.textContent = `– (${nearestSea.name})`;
-          }
-        }
-      }
-    }
+    await renderSeaLevelCard(containerEl, station);
 
     // Tuulen virtaus (Open-Meteo, animoitu hiukkaskenttä) + napit/liukusäädin
     const { stop } = await renderWindFlowAnimation(containerEl, station.lat, station.lon);

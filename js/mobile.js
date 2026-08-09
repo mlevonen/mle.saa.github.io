@@ -3,9 +3,12 @@
 // merialueittain, kortti avautuu "bottom sheet" -tyylisenä
 // kun asemaa napautetaan.
 //
-// Käyttää samaa asemakortin runkoa/logiikkaa kuin desktop-
-// popupitkin (js/popup/stationDetail.js), joten kartta-
-// pohjaista Leafletia ei tarvita lainkaan tässä näkymässä.
+// Käyttää mobiilikohtaista asemakortin runkoa/logiikkaa
+// (js/popup/mobileStationDetail.js), joka jakaa datan lataus- ja
+// alikorttilogiikan desktop-popupin kanssa mutta pinoo kortit
+// omaan, kevyempään layoutiinsa (ei sivupalkkia, graafit linkin
+// takana, tekstimuotoinen tuulen aikajana). Karttapohjaista
+// Leafletia ei tarvita lainkaan tässä näkymässä.
 //
 // stations.js ladataan (kuten index.html:ssäkin) tavallisena
 // <script>-tagina ennen tätä moduulia, joten globaali `stations`-
@@ -13,7 +16,7 @@
 // ==========================
 
 import { groupBySeaArea } from "./seaAreas.js";
-import { stationDetailHTML, renderStationDetail } from "./popup/stationDetail.js";
+import { mobileStationDetailHTML, renderMobileStationDetail } from "./popup/mobileStationDetail.js";
 
 const listEl = document.getElementById("station-list");
 const overlayEl = document.getElementById("detail-overlay");
@@ -53,11 +56,11 @@ async function openStation(station) {
     currentStop = null;
   }
 
-  sheetBodyEl.innerHTML = stationDetailHTML(station);
+  sheetBodyEl.innerHTML = mobileStationDetailHTML(station);
   overlayEl.classList.add("open");
   overlayEl.scrollTop = 0;
 
-  const { stop } = await renderStationDetail(sheetBodyEl, station);
+  const { stop } = await renderMobileStationDetail(sheetBodyEl, station);
   currentStop = stop;
 }
 
