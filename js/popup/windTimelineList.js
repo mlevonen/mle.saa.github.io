@@ -171,7 +171,7 @@ export function renderWindTimelineList(containerEl, data) {
       : row.time.toLocaleTimeString("fi-FI", { hour: "2-digit", minute: "2-digit" });
 
     const speed = row.windspeedms != null ? `${Math.round(row.windspeedms)} m/s` : "–";
-    const gust = row.windgust != null ? ` (${Math.round(row.windgust)})` : "";
+    const gust = row.windgust != null ? `, puuska ${Math.round(row.windgust)} m/s` : "";
 
     const arrow = row.winddirection != null
       ? `<span class="wind-timeline-arrow" style="transform:rotate(${row.winddirection + 180}deg);">↑</span>`
