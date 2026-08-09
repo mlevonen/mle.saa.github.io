@@ -3,7 +3,27 @@
 <head>
 
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>FMI Sääkartta – Havainnot</title>
+
+<script>
+  // Ohjaa kapeat näytöt (puhelimet) automaattisesti mobiiliversioon.
+  // HUOM: window.innerWidth kertoo todellisen näytön leveyden vain
+  // kun yllä oleva viewport-meta on läsnä – ilman sitä mobiiliselain
+  // raportoisi virtuaalisen "työpöytäleveyden" (esim. 980px) eikä
+  // ohjaus koskaan laukeaisi oikeilla puhelimilla. Suoritetaan heti
+  // <head>:n alussa, ennen raskaampien resurssien (Leaflet, kartta)
+  // latausta, jotta uudelleenohjaus on välitön eikä työpöytäversio
+  // ehdi vilahtaa näkyviin. location.replace ei jätä väliaskelta
+  // selaimen historiaan, jotta "edellinen sivu" -painike toimii
+  // järkevästi.
+  (function () {
+    var MOBILE_BREAKPOINT_PX = 768;
+    if (window.innerWidth <= MOBILE_BREAKPOINT_PX) {
+      window.location.replace("mobile.html");
+    }
+  })();
+</script>
 
 <link rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
