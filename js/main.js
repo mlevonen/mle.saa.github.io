@@ -9,6 +9,7 @@ import { fetchWaveBuoyObservation } from "./api/waveHeight.js";
 import { renderWaveBuoyPopup } from "./popup/waveBuoyPopup.js";
 import { initRadarPanel } from "./radarPanel.js";
 import { initBaseLayerControl } from "./baseLayerControl.js";
+import { initDataLicenseControl } from "./dataLicenseControl.js";
 import { MML_API_KEY } from "./config.js";
 import { stationDetailHTML, renderStationDetail } from "./popup/stationDetail.js";
 import { openMeteoWindPopupHTML, renderOpenMeteoWindPopup } from "./popup/openMeteoWindPopup.js";
@@ -50,6 +51,11 @@ initBaseLayerControl(map, [
   { name: "OpenStreetMap", layer: osmLayer },
   { name: "MML Taustakartta", layer: mmlLayer }
 ]);
+
+// Taustakartta-napin alle: lista sivustolla käytetyistä avoimen
+// datan lähteistä lisensseineen (läpinäkyvyys avoimen datan ehtojen
+// noudattamisesta).
+initDataLicenseControl(map);
 
 // Oletusnäkymä: lähempänä zoomattu näkymä, joka näyttää Saariston-
 // meren kokonaan ja osan Suomenlahtea (n. Hangosta Helsinkiin).
