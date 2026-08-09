@@ -192,7 +192,20 @@ function renderWindObsChart(
       ]
     },
     options: {
-      responsive: false,
+      // HUOM: canvas-elementin width/height-attribuutit (650×140,
+      // ks. HTML-templatet) määrittävät kanvaasin sisäisen
+      // piirtoresoluution, kun taas CSS (.popup-chart) määrittää
+      // näkyvän kokolaatikon eri mittasuhteilla (esim. desktopilla
+      // 560×200, mobiilissa 100%×160px). responsive:false jättäisi
+      // kanvaasin piirtymään alkuperäiseen 650×140-resoluutioon,
+      // jonka selain sitten venyttää/litistää eri X/Y-skaaloilla
+      // vastaamaan CSS-laatikkoa – tästä syntyi graafien
+      // sivusuunnassa litistynyt ulkoasu. responsive:true +
+      // maintainAspectRatio:false antaa Chart.js:n mitata CSS-
+      // laatikon todellisen koon ja piirtää kanvaasin oikeassa
+      // mittasuhteessa siihen.
+      responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         legend: { display: false },
         windArrowPlugin: true,
@@ -279,7 +292,11 @@ new Chart(canvas, {
     ]
   },
   options: {
-    responsive: false,
+    // Ks. selitys renderWindObsChart-funktion vastaavan kohdan
+    // yhteydessä: responsive:true + maintainAspectRatio:false
+    // korjaa graafin sivusuunnassa litistyneen ulkoasun.
+    responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
       windArrowPlugin: true
