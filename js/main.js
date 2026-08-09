@@ -8,6 +8,7 @@ import { initMarineInfoPanels } from "./marineInfoPanels.js";
 import { fetchWaveBuoyObservation } from "./api/waveHeight.js";
 import { renderWaveBuoyPopup } from "./popup/waveBuoyPopup.js";
 import { initRadarPanel } from "./radarPanel.js";
+import { initBaseLayerControl } from "./baseLayerControl.js";
 import { MML_API_KEY } from "./config.js";
 import { stationDetailHTML, renderStationDetail } from "./popup/stationDetail.js";
 import { openMeteoWindPopupHTML, renderOpenMeteoWindPopup } from "./popup/openMeteoWindPopup.js";
@@ -43,10 +44,12 @@ const mmlLayer = L.tileLayer(
   }
 );
 
-L.control.layers({
-  "OpenStreetMap": osmLayer,
-  "MML Taustakartta": mmlLayer
-}, null, { position: "topright" }).addTo(map);
+// Pieni pyöreäkulmainen "Taustakartta"-nappi (ei Leafletin
+// oletusarvoista pino-ikonia), avaa pudotusvalikon OSM/MML-valinnalle.
+initBaseLayerControl(map, [
+  { name: "OpenStreetMap", layer: osmLayer },
+  { name: "MML Taustakartta", layer: mmlLayer }
+]);
 
 // Oletusnäkymä: lähempänä zoomattu näkymä, joka näyttää Saariston-
 // meren kokonaan ja osan Suomenlahtea (n. Hangosta Helsinkiin).
@@ -120,9 +123,10 @@ const radarLayer = L.tileLayer("", {
     'Tutkakuva &copy; <a href="https://www.rainviewer.com" target="_blank" rel="noopener">RainViewer</a>'
 });
 
-// Oikean yläkulman "Sadetutka"-nappi + avautuva kortti, jossa
-// aikaliukusäädin (historia, ei ennustetta – ks. radarPanel.js).
-initRadarPanel(map, radarLayer);
+// Sadetutka-nappi pois käytöstä toistaiseksi (käyttäjän pyynnöstä
+// 2026-08-09) – radarLayer ja radarPanel.js jätetty ennalleen,
+// joten ominaisuus saadaan takaisin poistamalla kommentti alta.
+// initRadarPanel(map, radarLayer);
 
 const markerRegistry = {};
 
