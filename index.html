@@ -275,8 +275,8 @@ html, body { margin: 0; height: 100%; }
 
 .wind-marker {
   position: relative;
-  width: 44px;
-  height: 44px;
+  width: 90px;
+  height: 90px;
 }
 
 .wave-marker-wrapper {
@@ -291,40 +291,62 @@ html, body { margin: 0; height: 100%; }
   cursor: pointer;
 }
 
-/* Nuoli */
-.marker-arrow {
+/* Tuulensuuntanuoli – kiinni kulmaisessa ikonissa kuten Volvo-
+   merkissä: nuoli pyörii tuulen mukaan, ikoni itse pysyy aina
+   pystyssä ja luettavana. */
+.marker-direction-svg {
   position: absolute;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  top: 0;
+  left: 0;
   pointer-events: none;
-  transform: translate(8px, 8px);
-  z-index: 3;   /* päälle */
+  z-index: 3;
 }
 
-/* Nopeus/puuska – soikion sisällä, jotta erottuu karttataustasta */
-.marker-speed {
+/* Tuuli-/puuskalukema kulmaisessa "kortissa" ikonin keskellä.
+   Reunan väri kertoo tuulen voimakkuuden. */
+.marker-badge {
   position: absolute;
-  bottom: -10px;
-  right: -14px;
-  min-width: 22px;
-  height: 18px;
-  padding: 0 5px;
-  border-radius: 9px;
-  white-space: nowrap;
-  background: rgba(255,255,255,0.95);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: max-content;
+  min-width: 72px;
+  box-sizing: border-box;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.97);
   border: 2px solid #999;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  font-weight: 700;
-  color: #222;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 1px;
   z-index: 5;   /* aina nuolen päällä */
   box-shadow: 0 1px 3px rgba(0,0,0,0.4);
   cursor: default;
+}
+
+.marker-badge-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 4px;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 1.25;
+}
+
+.marker-badge-label {
+  font-size: 9px;
+  font-weight: 600;
+  color: #666;
+  flex-shrink: 0;
+}
+
+.marker-badge-value {
+  font-size: 11px;
+  font-weight: 700;
+  color: #222;
 }
 
 .wind-flow-controls {
