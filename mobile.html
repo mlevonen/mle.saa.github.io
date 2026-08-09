@@ -174,7 +174,17 @@
   }
 
   .detail-sheet {
+    /* 92vh iOS Safarissa lasketaan koko sivun (ml. selaimen
+       kutistuvan osoiterivin alle piiloutuva alue) korkeudesta, ei
+       oikeasti näkyvästä ruudusta. Kun osoiterivi on auki, kortti
+       (ja sen sisällä "Sulje"-nappi) saattoi näin ylittää näkyvän
+       ruudun ylälaidan – eikä sitä pystynyt skrollaamaan näkyviin,
+       koska koko elementti on kiinteästi asemoitu, ei sivun
+       normaalissa skrollivuossa. 92dvh mittaa aidosti näkyvän
+       ruudun korkeuden ja päivittyy osoiterivin tilan mukaan; 92vh
+       jätetään varalle selaimille, jotka eivät tue dvh-yksikköä. */
     max-height: 92vh;
+    max-height: 92dvh;
     background: #f2f3f5;
     border-radius: 16px 16px 0 0;
     box-shadow: 0 -4px 24px rgba(0,0,0,0.25);
