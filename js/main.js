@@ -730,36 +730,28 @@ function createWindIcon(speed, dir, gust = null) {
     roundedSpeed < 15 ? "#b67e06" :
                         "#E53935";
 
+  const speedLabel = roundedGust != null
+    ? `${roundedSpeed} m/s (${roundedGust})`
+    : `${roundedSpeed} m/s`;
+
   const speedTitle = roundedGust != null
     ? `Tuuli ${roundedSpeed} m/s, puuska ${roundedGust} m/s`
     : `Tuuli ${roundedSpeed} m/s`;
 
-  const gustRow = roundedGust != null
-    ? `
-    <div class="marker-badge-row">
-      <span class="marker-badge-label">Puuskat</span>
-      <span class="marker-badge-value">${roundedGust} m/s</span>
-    </div>`
-    : "";
-
 const html = `
   <div class="wind-marker">
 
-    <!-- TUULENSUUNTANUOLI: kiinni ikonissa, pyörii tuulen mukaan -->
-    <svg class="marker-direction-svg" viewBox="0 0 90 90" width="90" height="90">
-      <g transform="rotate(${dir + 180} 45 45)">
-        <line x1="45" y1="24" x2="45" y2="4" stroke="${color}" stroke-width="4" stroke-linecap="round"/>
-        <path d="M45 0 L39 12 L51 12 Z" fill="${color}"/>
-      </g>
-    </svg>
-
-    <!-- TUULI / PUUSKAT -->
-    <div class="marker-badge" style="border-color:${color}" title="${speedTitle}">
-      <div class="marker-badge-row">
-        <span class="marker-badge-label">Tuuli</span>
-        <span class="marker-badge-value">${roundedSpeed} m/s</span>
-      </div>${gustRow}
+    <!-- NUOLI -->
+    <div class="marker-arrow"
+         style="transform: translate(4px,4px) rotate(${dir + 180}deg); color: ${color}">
+      <svg viewBox="0 0 24 24" width="55" height="55">
+        <path d="M12 1 L18 11 L14 11 L14 21 L10 21 L10 11 L6 11 Z"
+              fill="currentColor"/>
+      </svg>
     </div>
+
+    <!-- NOPEUS -->
+    <div class="marker-speed" style="border-color:${color}" title="${speedTitle}">${speedLabel}</div>
 
   </div>
 `;
@@ -767,8 +759,8 @@ const html = `
   return L.divIcon({
     className: "wind-marker-wrapper",
     html,
-    iconSize: [90, 90],
-    iconAnchor: [45, 45]
+    iconSize: [80, 80],
+    iconAnchor: [40, 40]
   });
 }
 
