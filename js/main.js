@@ -404,6 +404,13 @@ if (cachedWindIcons) applyWindIcons(cachedWindIcons);
   );
   const freshValues = {};
 
+  // Asemat, joilta FMI:n havaintorajapinta ei palauttanut kelvollista
+  // tuulilukemaa (esim. Helsinki Helsingin majakka, jolta rajapinta
+  // ei palauta mitään havaintoa lainkaan) – näille kokeillaan
+  // varalla Open-Meteon koordinaattipohjaista nykytuulta, jotta
+  // kartan tuulinuoli ei jää kokonaan piiloon.
+  const fmiWindFallbackStations = [];
+
   await Promise.all(windIconStations.map(async station => {
     try {
       const series = await fetchObservationSeriesByFmisid(station.fmisid);
@@ -411,7 +418,11 @@ if (cachedWindIcons) applyWindIcons(cachedWindIcons);
       const latest = [...series].reverse().find(
         p => p.windspeedms != null && p.winddirection != null
       );
-      if (!latest) return;
+
+      if (!latest) {
+        fmiWindFallbackStations.push(station);
+        return;
+      }
 
       freshValues[station.fmisid] = {
         speed: latest.windspeedms,
@@ -420,8 +431,23 @@ if (cachedWindIcons) applyWindIcons(cachedWindIcons);
       };
     } catch (err) {
       console.warn("Tuulilukeman haku epäonnistui:", station.name, err);
+      fmiWindFallbackStations.push(station);
     }
   }));
+
+  if (fmiWindFallbackStations.length) {
+    try {
+      const fallbackValues = await fetchCurrentWindMulti(fmiWindFallbackStations);
+      fmiWindFallbackStations.forEach(station => {
+        const w = fallbackValues[station.id];
+        if (w && w.speed != null && w.dir != null) {
+          freshValues[station.fmisid] = w;
+        }
+      });
+    } catch (err) {
+      console.warn("Open-Meteo-varatuulen haku epäonnistui:", err);
+    }
+  }
 
   applyWindIcons(freshValues);
   savePreviewCache(WIND_ICON_CACHE_KEY, freshValues);
