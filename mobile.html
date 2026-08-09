@@ -499,7 +499,7 @@
   }
 
   .wind-flow-title-row .wind-flow-speed-label {
-    font-size: 12px;
+    font-size: 16px;
     font-weight: bold;
     color: #444;
   }
@@ -588,10 +588,10 @@
     position: sticky;
     top: 0;
     background: #f2f3f5;
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 700;
     color: #666;
-    padding: 4px 2px;
+    padding: 6px 2px;
     text-transform: uppercase;
     letter-spacing: 0.02em;
   }
@@ -616,7 +616,8 @@
   }
 
   .wind-timeline-row-now .wind-timeline-time,
-  .wind-timeline-row-now .wind-timeline-speed {
+  .wind-timeline-row-now .wind-timeline-speed,
+  .wind-timeline-row-now .wind-timeline-gust {
     color: #0f3559;
   }
 
@@ -641,8 +642,16 @@
     color: #bbb;
   }
 
+  /* Nopeus ja puuska omina kiinteälevyisinä sarakkeinaan, jotta
+     esim. "puuska"-sana pysyy pystysuunnassa samassa kohdassa
+     riveittäin vaikka lukemat vaihtelevat 1–2-numeroisina. */
   .wind-timeline-speed {
+    min-width: 62px;
     color: #222;
+  }
+
+  .wind-timeline-gust {
+    color: #666;
   }
 
   .wind-timeline-empty {

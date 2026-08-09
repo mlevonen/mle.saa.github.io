@@ -175,17 +175,22 @@ export function renderWindTimelineList(containerEl, data) {
       : row.time.toLocaleTimeString("fi-FI", { hour: "2-digit", minute: "2-digit" });
 
     const speed = row.windspeedms != null ? `${Math.round(row.windspeedms)} m/s` : "–";
-    const gust = row.windgust != null ? `, puuska ${Math.round(row.windgust)} m/s` : "";
+    const gust = row.windgust != null ? `puuska ${Math.round(row.windgust)} m/s` : "";
 
     const arrow = row.winddirection != null
       ? `<span class="wind-timeline-arrow" style="transform:rotate(${row.winddirection + 180}deg);">↑</span>`
       : `<span class="wind-timeline-arrow wind-timeline-arrow-empty">–</span>`;
 
+    // Nopeus ja puuska omina, kiinteälevyisinä "sarakkeinaan" (ei
+    // yhtenä pilkulla eroteltuna tekstinä), jotta esim. "puuska"-sana
+    // pysyy pystysuunnassa samassa kohdassa riveittäin, vaikka
+    // lukemat vaihtelevat 1–2-numeroisina.
     html += `
       <div class="wind-timeline-row${isNow ? " wind-timeline-row-now" : ""}"${isNow ? ' data-row-now="true"' : ""}>
         <span class="wind-timeline-time">${timeLabel}</span>
         ${arrow}
-        <span class="wind-timeline-speed">${speed}${gust}</span>
+        <span class="wind-timeline-speed">${speed}</span>
+        <span class="wind-timeline-gust">${gust}</span>
       </div>
     `;
   });
