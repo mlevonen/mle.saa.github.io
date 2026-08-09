@@ -20,6 +20,7 @@ import { mobileStationDetailHTML, renderMobileStationDetail } from "./popup/mobi
 
 const listEl = document.getElementById("station-list");
 const overlayEl = document.getElementById("detail-overlay");
+const sheetEl = document.getElementById("detail-sheet");
 const sheetBodyEl = document.getElementById("detail-sheet-body");
 const closeBtn = document.getElementById("detail-close");
 
@@ -58,7 +59,14 @@ async function openStation(station) {
 
   sheetBodyEl.innerHTML = mobileStationDetailHTML(station);
   overlayEl.classList.add("open");
-  overlayEl.scrollTop = 0;
+
+  // HUOM: skrollattava elementti on #detail-sheet (overflow-y:auto),
+  // ei #detail-overlay (kiinteä koko ruudun kehys, ei itse skrollaa).
+  // Aiemmin väärä elementti nollattiin, jolloin edellisen aseman
+  // skrollausasema jäi voimaan uutta korttia avatessa – tämä saattoi
+  // yhdessä lyhyemmän sisällön kanssa työntää "Sulje"-napin näkymän
+  // yläpuolelle.
+  sheetEl.scrollTop = 0;
 
   const { stop } = await renderMobileStationDetail(sheetBodyEl, station);
   currentStop = stop;

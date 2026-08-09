@@ -153,22 +153,33 @@
     pointer-events: auto;
   }
 
-  .detail-sheet {
+  /* Liu'utuskääre: HUOM tämä on tarkoituksella ERI elementti kuin
+     .detail-sheet (skrollattava sisältö). Safarissa (mm. iPhone)
+     position:sticky menee satunnaisesti rikki, jos sen skrollattava
+     esi-isä-elementti itse sisältää transformin/transition-
+     animaation – juuri tämä aiheutti "Sulje"-napin ajoittaisen
+     katoamisen/väärän sijainnin. Kun transform on erillisessä,
+     ei-skrollattavassa kääre-elementissä, .detail-sheet-headerin
+     sticky-sijoittelu pysyy Safarissakin luotettavana. */
+  .detail-sheet-slide {
     position: relative;
     width: 100%;
     max-width: 560px;
+    transform: translateY(100%);
+    transition: transform 0.25s ease;
+  }
+
+  .detail-overlay.open .detail-sheet-slide {
+    transform: translateY(0);
+  }
+
+  .detail-sheet {
     max-height: 92vh;
     background: #f2f3f5;
     border-radius: 16px 16px 0 0;
     box-shadow: 0 -4px 24px rgba(0,0,0,0.25);
     overflow-y: auto;
     padding: 0 16px calc(16px + env(safe-area-inset-bottom, 0px));
-    transform: translateY(100%);
-    transition: transform 0.25s ease;
-  }
-
-  .detail-overlay.open .detail-sheet {
-    transform: translateY(0);
   }
 
   /* Sulkupalkki pysyy aina näkyvissä ylhäällä skrollattaessa
@@ -643,14 +654,16 @@
   <main class="station-list-wrapper" id="station-list"></main>
 
   <div class="detail-overlay" id="detail-overlay">
-    <div class="detail-sheet" id="detail-sheet">
-      <div class="detail-sheet-header">
-        <button type="button" class="detail-close" id="detail-close" aria-label="Sulje havaintoasema">
-          <span class="detail-close-icon">✕</span>
-          <span>Sulje</span>
-        </button>
+    <div class="detail-sheet-slide">
+      <div class="detail-sheet" id="detail-sheet">
+        <div class="detail-sheet-header">
+          <button type="button" class="detail-close" id="detail-close" aria-label="Sulje havaintoasema">
+            <span class="detail-close-icon">✕</span>
+            <span>Sulje</span>
+          </button>
+        </div>
+        <div id="detail-sheet-body"></div>
       </div>
-      <div id="detail-sheet-body"></div>
     </div>
   </div>
 
