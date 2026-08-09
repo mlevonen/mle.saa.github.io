@@ -31,11 +31,15 @@ export function windTimelineListHTML() {
       <div class="wind-charts-panel" style="display:none;">
         <div class="popup-card-inner">
           <div style="font-size:12px; font-weight:600; margin-bottom:4px;">Tuuli (havainto)</div>
-          <canvas class="popup-chart" width="650" height="140" data-type="wind-obs"></canvas>
+          <div class="popup-chart-wrapper">
+            <canvas class="popup-chart" width="650" height="140" data-type="wind-obs"></canvas>
+          </div>
         </div>
         <div class="popup-card-inner" style="margin-top:8px;">
           <div style="font-size:12px; font-weight:600; margin-bottom:4px;">Tuuli (ennuste)</div>
-          <canvas class="popup-chart" width="650" height="140" data-type="wind-fc"></canvas>
+          <div class="popup-chart-wrapper">
+            <canvas class="popup-chart" width="650" height="140" data-type="wind-fc"></canvas>
+          </div>
         </div>
       </div>
 

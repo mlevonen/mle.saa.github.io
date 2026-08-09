@@ -32,28 +32,32 @@ export function stationDetailHTML(station) {
 
     <div class="popup-card">
       <div><strong>Tuuli (havainto)</strong></div>
-      <canvas
-        class="popup-chart"
-        width="650"
-        height="140"
-        data-lat="${station.lat}"
-        data-lon="${station.lon}"
-        data-fmisid="${station.fmisid}"
-        data-type="wind-obs"
-      ></canvas>
+      <div class="popup-chart-wrapper">
+        <canvas
+          class="popup-chart"
+          width="650"
+          height="140"
+          data-lat="${station.lat}"
+          data-lon="${station.lon}"
+          data-fmisid="${station.fmisid}"
+          data-type="wind-obs"
+        ></canvas>
+      </div>
     </div>
 
     <div class="popup-card">
       <div><strong>Tuuli (ennuste)</strong></div>
-      <canvas
-        class="popup-chart"
-        width="650"
-        height="140"
-        data-lat="${station.lat}"
-        data-lon="${station.lon}"
-        data-fmisid="${station.fmisid}"
-        data-type="wind-fc"
-      ></canvas>
+      <div class="popup-chart-wrapper">
+        <canvas
+          class="popup-chart"
+          width="650"
+          height="140"
+          data-lat="${station.lat}"
+          data-lon="${station.lon}"
+          data-fmisid="${station.fmisid}"
+          data-type="wind-fc"
+        ></canvas>
+      </div>
     </div>
 
     <div class="popup-card">

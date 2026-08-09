@@ -262,10 +262,19 @@
     box-sizing: border-box;
   }
 
+  /* Graafin kääre: kiinteä korkeus, ei riipu sisällöstä (estää
+     Chart.js:n responsive-mittauksen ruokkimasta itseään), leveys
+     100 % kortin leveydestä. Sama malli kuin desktopin
+     index.html:ssä. */
+  .popup-chart-wrapper {
+    width: 100%;
+    height: 160px;
+  }
+
   .popup-chart {
     width: 100% !important;
     max-width: 100%;
-    height: 160px !important;
+    height: 100% !important;
   }
 
   .popup-extras {

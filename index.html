@@ -62,18 +62,23 @@ html, body { margin: 0; height: 100%; }
   box-sizing: border-box;
 }
 
+/* Graafin kääre: KIINTEÄ korkeus (ei riipu sisällöstä), leveys 100 %
+   popup-kortin todellisesta (Leafletin shrink-to-fit-määrittämästä)
+   leveydestä. Chart.js:n responsive:true mittaa tämän kääreen –
+   koska korkeus on kiinteä pikseliarvo eikä riipu itse kanvaasin
+   koosta, mittaus ei enää voi ruokkia itseään (aiempi bugi: Leaflet-
+   popupin autosize + Chart.js:n ResizeObserver venyttivät graafin
+   kymmenien senttien korkuiseksi). Koska leveys on 100 %, kanvaasi
+   täyttää aina koko popupin oikean leveyden sen sijaan että jäisi
+   kapeammaksi kiinteällä pikseliarvolla. */
+.popup-chart-wrapper {
+  width: 100%;
+  height: 200px;
+}
+
 .popup-chart {
-  /* !important on tarpeen: Chart.js asettaa responsive:true-tilassa
-     kanvaasille oman inline style width/height -arvon kontainerin
-     mitatun koon perusteella. Ilman !important tämä JS-inline-tyyli
-     voittaa tämän ulkoisen tyylisäännön (koska Chart.js asettaa sen
-     suoraan elementin style-attribuuttiin), ja koska Leaflet-popupin
-     kääre ei tarjoa kiinteää korkeutta, syntyi kasvava
-     resize-silmukka (popupin autosize ↔ Chart.js:n ResizeObserver),
-     joka venytti graafit kymmenien senttien korkuisiksi. Sama korjaus
-     on jo mobile.html:n vastaavassa säännössä. */
-  width: 560px !important;   /* +40 % */
-  height: 200px !important;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .popup-chart-mini {
