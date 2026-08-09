@@ -138,3 +138,49 @@ export async function fetchWindGridSeries(lat, lon) {
     hours
   };
 }
+
+// ==========================
+// Nykyhetken tuuli usealle asemalle yhdellä kutsulla (karttaikonien
+// päivitykseen niille asemille, joilla ei ole FMI:n fmisidiä eikä
+// siten havaintodataa – esim. Ruotsin puolen tuuliennustepisteet).
+// Open-Meteo tukee pilkulla eroteltuja koordinaattilistoja, joten
+// koko asemajoukko haetaan yhdellä pyynnöllä N erillisen sijaan.
+// ==========================
+export async function fetchCurrentWindMulti(stationList) {
+
+  if (!stationList.length) return {};
+
+  const lats = stationList.map(s => s.lat.toFixed(4)).join(",");
+  const lons = stationList.map(s => s.lon.toFixed(4)).join(",");
+
+  const url =
+    `https://api.open-meteo.com/v1/forecast` +
+    `?latitude=${lats}` +
+    `&longitude=${lons}` +
+    `&current=wind_speed_10m,wind_direction_10m,wind_gusts_10m` +
+    `&wind_speed_unit=ms` +
+    `&timezone=UTC`;
+
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error("Open-Meteo nykytuulen haku epäonnistui");
+  }
+
+  const data = await res.json();
+  const list = Array.isArray(data) ? data : [data];
+
+  const result = {};
+
+  stationList.forEach((station, i) => {
+    const current = list[i]?.current;
+    if (!current) return;
+
+    result[station.id] = {
+      speed: current.wind_speed_10m ?? null,
+      dir: current.wind_direction_10m ?? null,
+      gust: current.wind_gusts_10m ?? null
+    };
+  });
+
+  return result;
+}

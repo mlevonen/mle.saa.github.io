@@ -10,6 +10,8 @@ import { renderWaveBuoyPopup } from "./popup/waveBuoyPopup.js";
 import { initRadarPanel } from "./radarPanel.js";
 import { MML_API_KEY } from "./config.js";
 import { stationDetailHTML, renderStationDetail } from "./popup/stationDetail.js";
+import { openMeteoWindPopupHTML, renderOpenMeteoWindPopup } from "./popup/openMeteoWindPopup.js";
+import { fetchCurrentWindMulti } from "./api/openMeteoWind.js";
 
 
 "use strict";
@@ -95,6 +97,7 @@ const FMI_WFS = "https://opendata.fmi.fi/wfs";
 const weatherLayer = L.featureGroup().addTo(map);
 const coastalLayer = L.featureGroup().addTo(map);
 const waveBuoyLayer = L.featureGroup().addTo(map);
+const windForecastLayer = L.featureGroup().addTo(map);
 
 // ==========================
 // Sadetutka (Ilmatieteen laitoksen avoin WMS-tutkayhdistelmä)
@@ -137,6 +140,15 @@ function createStationIcon(station) {
     return L.divIcon({
       className: "station-dot",
       html: `<div class="dot dot-coastal"></div>`,
+      iconSize: [12, 12],
+      iconAnchor: [6, 6]
+    });
+  }
+
+  if (station.type === "wind-fc") {
+    return L.divIcon({
+      className: "station-dot",
+      html: `<div class="dot dot-wind-fc"></div>`,
       iconSize: [12, 12],
       iconAnchor: [6, 6]
     });
@@ -220,7 +232,7 @@ function createWaveBuoyMarker(station) {
     { icon: createWaveIcon(null, null, null) }
   );
 
-  markerRegistry[station.fmisid] = marker;
+  markerRegistry[station.fmisid ?? station.id] = marker;
   marker.station = station;
   marker.previewData = null;
 
@@ -289,7 +301,11 @@ stations.forEach(station => {
     }
   );
 
-  markerRegistry[station.fmisid] = marker;
+  // Rekisteriavaimena fmisid kun sellainen on (FMI-asemat), muuten
+  // aseman oma id (esim. Ruotsin wind-fc-pisteet, joilla ei ole
+  // fmisidiä – muuten kaikki niistä osuisivat samaan "undefined"-
+  // avaimeen ja ylikirjoittaisivat toisensa rekisterissä).
+  markerRegistry[station.fmisid ?? station.id] = marker;
   marker.station = station;
 
 
@@ -323,6 +339,10 @@ stations.forEach(station => {
       content += `<br>${preview.wind.toFixed(1)} m/s`;
     }
 
+    else if (station.type === "wind-fc" && preview.wind != null) {
+      content += `<br>${preview.wind.toFixed(1)} m/s`;
+    }
+
     this.setTooltipContent(content);
     this.openTooltip();
   });
@@ -331,7 +351,11 @@ stations.forEach(station => {
     this.closeTooltip();
   });
 
-  marker.bindPopup(stationDetailHTML(station));
+  marker.bindPopup(
+    station.type === "wind-fc"
+      ? openMeteoWindPopupHTML(station)
+      : stationDetailHTML(station)
+  );
 
   // Lisää oikeaan layeriin
   if (station.type === "weather") {
@@ -340,6 +364,10 @@ stations.forEach(station => {
 
   if (station.type === "coastal") {
     coastalLayer.addLayer(marker);
+  }
+
+  if (station.type === "wind-fc") {
+    windForecastLayer.addLayer(marker);
   }
  });
 
@@ -399,6 +427,46 @@ if (cachedWindIcons) applyWindIcons(cachedWindIcons);
   savePreviewCache(WIND_ICON_CACHE_KEY, freshValues);
 
 })();
+
+// ==========================
+// Ruotsin tuuliennustepisteiden ikonit (Open-Meteo, ei FMI-havaintoa)
+// ==========================
+// Näillä asemilla ei ole fmisidiä, joten ikoni haetaan koordinaatti-
+// pohjaisesti Open-Meteon "current"-kentästä yhdellä yhteisellä
+// kutsulla kaikille asemille kerralla. markerRegistry on tässä
+// avaimena station.id (ks. rekisteröintikohta yllä).
+
+const WIND_FC_ICON_CACHE_KEY = "windForecastIconCache";
+
+function applyWindForecastIcons(values) {
+  Object.entries(values).forEach(([id, w]) => {
+    const marker = markerRegistry[id];
+    if (!marker || w.speed == null || w.dir == null) return;
+    marker.setIcon(createWindIcon(w.speed, w.dir, w.gust));
+    marker.previewData = { wind: w.speed };
+  });
+}
+
+const cachedWindFcIcons = loadPreviewCache(WIND_FC_ICON_CACHE_KEY, WIND_ICON_CACHE_TTL);
+if (cachedWindFcIcons) applyWindForecastIcons(cachedWindFcIcons);
+
+async function refreshWindForecastIcons() {
+
+  const windFcStations = stations.filter(s => s.type === "wind-fc");
+  if (!windFcStations.length) return;
+
+  try {
+    const values = await fetchCurrentWindMulti(windFcStations);
+    applyWindForecastIcons(values);
+    savePreviewCache(WIND_FC_ICON_CACHE_KEY, values);
+  } catch (err) {
+    console.warn("Ruotsin tuuliennusteikonien haku epäonnistui:", err);
+  }
+
+}
+
+refreshWindForecastIcons();
+setInterval(refreshWindForecastIcons, WIND_ICON_CACHE_TTL);
 
 // ==========================
 // Aaltopoijujen ikonit (oikeat havainnot)
@@ -793,6 +861,15 @@ map.on("popupopen", async e => {
   // ==========================
   if (station.type === "wavebuoy") {
     await renderWaveBuoyPopup(e.popup, station);
+    return;
+  }
+
+  // ==========================
+  // Ruotsin tuuliennustepiste → pelkkä tuulivirtausanimaatio,
+  // ei FMI-dataa (ei fmisidiä)
+  // ==========================
+  if (station.type === "wind-fc") {
+    stopStationDetail = await renderOpenMeteoWindPopup(popupEl, station);
     return;
   }
 

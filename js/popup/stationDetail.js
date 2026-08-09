@@ -19,9 +19,7 @@ import { updatePopupTitles } from "./popupTitles.js";
 import { renderPopupExtras, renderSunCard, renderWaveCard, renderTempCard } from "./popupExtras.js";
 import { renderWindCharts } from "../charts/windChart.js";
 import { fetchSeaLevel, findNearestSeaLevelStation } from "../api/sealevel.js";
-import { fetchWindGridSeries } from "../api/openMeteoWind.js";
-import { renderWindFlow } from "../charts/windFlow.js";
-import { drawMapBackground } from "../charts/miniMapBackground.js";
+import { renderWindFlowAnimation } from "./windFlowAnimation.js";
 
 export function stationDetailHTML(station) {
   return `
@@ -154,15 +152,6 @@ export function stationDetailHTML(station) {
 
 export async function renderStationDetail(containerEl, station) {
 
-  let localStopWindFlow = null;
-
-  function stop() {
-    if (localStopWindFlow) {
-      localStopWindFlow();
-      localStopWindFlow = null;
-    }
-  }
-
   try {
 
     const data = await loadPopupData({
@@ -224,118 +213,13 @@ export async function renderStationDetail(containerEl, station) {
     }
 
     // Tuulen virtaus (Open-Meteo, animoitu hiukkaskenttä) + napit/liukusäädin
-    const flowCanvas = containerEl.querySelector(".wind-flow-canvas");
-    const flowBgCanvas = containerEl.querySelector(".wind-flow-bg");
-    const flowButtons = containerEl.querySelectorAll(".wind-flow-btn");
-    const flowSlider = containerEl.querySelector(".wind-flow-slider");
-    const flowTimeLabel = containerEl.querySelector(".wind-flow-time-label");
-    const flowTicksEl = containerEl.querySelector(".wind-flow-ticks");
-    const flowSpeedLabel = containerEl.querySelector(".wind-flow-speed-label");
-
-    let windSeriesData = null;
-
-    function renderFlowTicks(maxIdx) {
-      if (!flowTicksEl) return;
-
-      const tickCount = maxIdx >= 4 ? 5 : maxIdx + 1;
-      const ticks = [];
-
-      for (let i = 0; i < tickCount; i++) {
-        ticks.push(Math.round((maxIdx * i) / (tickCount - 1)));
-      }
-
-      flowTicksEl.innerHTML = ticks
-        .map(h => `<span>${h === 0 ? "nyt" : h + "h"}</span>`)
-        .join("");
-    }
-
-    function showWindFlowOffset(offsetHours) {
-
-      if (!windSeriesData || !windSeriesData.series.length) return;
-
-      const idx = Math.max(
-        0,
-        Math.min(windSeriesData.series.length - 1, offsetHours)
-      );
-
-      stop();
-
-      localStopWindFlow = renderWindFlow(flowCanvas, {
-        grid: windSeriesData.series[idx],
-        size: windSeriesData.size
-      });
-
-      flowButtons.forEach(btn => {
-        btn.classList.toggle("active", Number(btn.dataset.offset) === idx);
-      });
-
-      if (flowSlider) flowSlider.value = idx;
-
-      if (flowTimeLabel) {
-        const hourDate = windSeriesData.hours[idx];
-        flowTimeLabel.textContent = idx === 0
-          ? "Nyt"
-          : `+${idx}h (${hourDate.toLocaleTimeString("fi-FI", { hour: "2-digit", minute: "2-digit" })})`;
-      }
-
-      if (flowSpeedLabel) {
-        const wind = windSeriesData.stationWind?.[idx];
-        if (wind && wind.speed != null) {
-          const speedTxt = wind.speed.toFixed(1);
-          const gustTxt = wind.gust != null ? `, puuskat ${wind.gust.toFixed(1)} m/s` : "";
-          flowSpeedLabel.textContent = `💨 ${speedTxt} m/s${gustTxt}`;
-        } else {
-          flowSpeedLabel.textContent = "";
-        }
-      }
-    }
-
-    flowButtons.forEach(btn => {
-      btn.onclick = () => showWindFlowOffset(Number(btn.dataset.offset));
-    });
-
-    if (flowSlider) {
-      flowSlider.oninput = () => showWindFlowOffset(Number(flowSlider.value));
-    }
-
-    if (flowCanvas) {
-      try {
-        windSeriesData = await fetchWindGridSeries(station.lat, station.lon);
-
-        if (flowBgCanvas) {
-          drawMapBackground(flowBgCanvas, windSeriesData.bounds).catch(err => {
-            console.warn("Karttataustan lataus epäonnistui:", err);
-          });
-        }
-
-        const maxIdx = windSeriesData.series.length - 1;
-
-        if (flowSlider) {
-          flowSlider.max = maxIdx;
-        }
-
-        renderFlowTicks(maxIdx);
-
-        // "Viimeisin ennuste" -nappi osoittaa aina sarjan viimeiseen
-        // saatavilla olevaan tuntiin (yleensä ~36-47h, riippuu kellonajasta).
-        const lastBtn = containerEl.querySelector(".wind-flow-btn-last");
-        if (lastBtn) {
-          lastBtn.dataset.offset = maxIdx;
-          lastBtn.textContent = `💨 ${maxIdx}h (viimeisin)`;
-        }
-
-        showWindFlowOffset(0);
-
-      } catch (err) {
-        console.warn("Tuulivirtauksen haku epäonnistui:", err);
-      }
-    }
+    const { stop } = await renderWindFlowAnimation(containerEl, station.lat, station.lon);
 
     return { data, stop };
 
   } catch (err) {
     console.error("Asemakortin lataus epäonnistui:", err);
-    return { data: null, stop };
+    return { data: null, stop: () => {} };
   }
 
 }

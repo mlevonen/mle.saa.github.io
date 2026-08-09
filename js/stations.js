@@ -672,7 +672,7 @@ const stations = [
     fmisid: 108126,
     lat: 59.7,
     lon: 21.4
-  }
+  },
 
   // Poistettu (2026-08-02): Hanko Längden, Uusikaupunki Vekara,
   // Pori Kaijakari, Maalahti Storskäret, Kalajoki Maakalla ja
@@ -682,5 +682,80 @@ const stations = [
   // toimi). Ei siis tilapäinen häiriö, vaan kyseisillä asemilla
   // ei ilmeisesti ole toimivaa aaltoanturia, vaikka ne löytyvät
   // "aaltopoiju"-suodattimella ilmatieteenlaitos.fi:n sivulta.
+
+  /*
+   * =========================
+   * RUOTSIN TUULIENNUSTEPISTEET
+   * Ei FMI:n fmisid-tunnusta eikä siten havaintoja/lämpötilaa/
+   * vedenkorkeutta – vain Open-Meteon (koordinaattipohjainen)
+   * tuuliennuste kartan ikonissa ja kevyessä popupissa.
+   * Kattaa Ruotsin itärannikon etelästä pohjoiseen, peilaten
+   * Suomen rannikon kattavuutta Pohjanlahden/Itämeren yli.
+   * =========================
+   */
+
+  {
+    type: "wind-fc",
+    id: "karlskrona-wind",
+    name: "Karlskrona",
+    lat: 56.16,
+    lon: 15.59
+  },
+
+  {
+    type: "wind-fc",
+    id: "kalmar-wind",
+    name: "Kalmar",
+    lat: 56.66,
+    lon: 16.36
+  },
+
+  {
+    type: "wind-fc",
+    id: "norrkoping-wind",
+    name: "Norrköping",
+    lat: 58.59,
+    lon: 16.19
+  },
+
+  {
+    type: "wind-fc",
+    id: "stockholm-wind",
+    name: "Tukholma",
+    lat: 59.33,
+    lon: 18.06
+  },
+
+  {
+    type: "wind-fc",
+    id: "gavle-wind",
+    name: "Gävle",
+    lat: 60.67,
+    lon: 17.14
+  },
+
+  {
+    type: "wind-fc",
+    id: "sundsvall-wind",
+    name: "Sundsvall",
+    lat: 62.39,
+    lon: 17.31
+  },
+
+  {
+    type: "wind-fc",
+    id: "umea-wind",
+    name: "Umeå",
+    lat: 63.83,
+    lon: 20.26
+  },
+
+  {
+    type: "wind-fc",
+    id: "lulea-wind",
+    name: "Luleå",
+    lat: 65.58,
+    lon: 22.15
+  }
 
 ];
