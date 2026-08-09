@@ -756,6 +756,80 @@ const stations = [
     name: "Luleå",
     lat: 65.58,
     lon: 22.15
+  },
+
+  /*
+   * =========================
+   * VIRON TUULIENNUSTEPISTEET
+   * Sama konsepti kuin Ruotsin pisteissä: ei fmisidiä, pelkkä
+   * Open-Meteon tuuliennuste ikonissa ja kevyessä popupissa.
+   * Kattaa Suomenlahden etelärannikon (peilaten Suomen puolta)
+   * sekä Viron länsirannikon/saaret Saaristomeren suuntaan.
+   * =========================
+   */
+
+  {
+    type: "wind-fc",
+    id: "narva-joesuu-wind",
+    name: "Narva-Jõesuu",
+    lat: 59.47,
+    lon: 28.03
+  },
+
+  {
+    type: "wind-fc",
+    id: "kunda-wind",
+    name: "Kunda",
+    lat: 59.52,
+    lon: 26.54
+  },
+
+  {
+    type: "wind-fc",
+    id: "tallinn-wind",
+    name: "Tallinna",
+    lat: 59.44,
+    lon: 24.75
+  },
+
+  {
+    type: "wind-fc",
+    id: "paldiski-wind",
+    name: "Paldiski",
+    lat: 59.35,
+    lon: 24.05
+  },
+
+  {
+    type: "wind-fc",
+    id: "haapsalu-wind",
+    name: "Haapsalu",
+    lat: 58.94,
+    lon: 23.54
+  },
+
+  {
+    type: "wind-fc",
+    id: "parnu-wind",
+    name: "Pärnu",
+    lat: 58.39,
+    lon: 24.50
+  },
+
+  {
+    type: "wind-fc",
+    id: "kuressaare-wind",
+    name: "Kuressaare",
+    lat: 58.25,
+    lon: 22.48
+  },
+
+  {
+    type: "wind-fc",
+    id: "vilsandi-wind",
+    name: "Vilsandi",
+    lat: 58.38,
+    lon: 21.81
   }
 
 ];
