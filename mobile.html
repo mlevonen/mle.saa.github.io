@@ -206,8 +206,8 @@
   }
 
   .popup-card {
-    background: #fff;
-    border: 1px solid #e3e3e3;
+    background: #e8eef5;
+    border: 1px solid #c5d5e3;
     border-radius: 12px;
     padding: 10px 12px;
     margin-bottom: 12px;
@@ -216,11 +216,20 @@
   }
 
   .popup-card-inner {
-    background: #fafafa;
-    border: 1px solid #e8e8e8;
+    background: #e8eef5;
+    border: 1px solid #c5d5e3;
     border-radius: 8px;
     padding: 6px 8px;
     box-sizing: border-box;
+  }
+
+  /* Lämpötila/Vedenkorkeus/Aallokko/Sää-kortit ovat nyt itsenäisiä,
+     pinottuja "top-level"-kortteja (eivät enää sivupalkin sisällä),
+     joten niille annetaan samat mitat kuin .popup-card:lle. */
+  .mobile-stack-card {
+    border-radius: 12px;
+    padding: 10px 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   }
 
   .popup-note {

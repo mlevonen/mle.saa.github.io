@@ -30,51 +30,6 @@ export function mobileStationDetailHTML(station) {
     <div class="popup-title">${station.name}</div>
     <div class="popup-extras"></div>
 
-    <div class="popup-note">
-      ℹ️ Graafit perustuvat Ilmatieteen laitoksen dataan, tuuliennusteanimaatio Open-Meteon (MET Nordic) malliin. Eri ennustemallien vuoksi tuulilukemat voivat poiketa hieman toisistaan.
-    </div>
-
-    <div class="popup-card-inner popup-temp-card mobile-stack-card">
-      <div class="mobile-card-label">Lämpötila</div>
-      <div class="popup-temp-value">–</div>
-    </div>
-
-    <div class="popup-card-inner popup-sealevel-card mobile-stack-card">
-      <div class="mobile-card-label">Vedenkorkeus</div>
-      <div class="wind-flow-sealevel-row">
-        <span class="wind-flow-sealevel-label">Keskivesi</span>
-        <span class="wind-flow-sealevel-value" data-kind="watlev">–</span>
-      </div>
-      <div class="wind-flow-sealevel-row">
-        <span class="wind-flow-sealevel-label">N2000</span>
-        <span class="wind-flow-sealevel-value" data-kind="n2000">–</span>
-      </div>
-    </div>
-
-    <div class="popup-card-inner popup-wave-card mobile-stack-card" style="display:none;">
-      <div class="mobile-card-label">Aallokko</div>
-      <div class="popup-wave-row">
-        <span class="popup-wave-height-value">–</span>
-        <span class="popup-wave-period-label">jakso <span class="popup-wave-period-value">–</span></span>
-      </div>
-    </div>
-
-    <div class="popup-card-inner popup-sun-card mobile-stack-card" style="display:none;">
-      <div class="mobile-card-label">Sää</div>
-      <div class="popup-sun-row">
-        <div class="popup-inline-item">
-          <img src="./js/assets/icons/sunrise.svg" class="popup-icon" alt="Auringonnousu">
-          <span class="popup-sunrise-value">–</span>
-        </div>
-        <div class="popup-inline-item">
-          <img src="./js/assets/icons/sunset.svg" class="popup-icon" alt="Auringonlasku">
-          <span class="popup-sunset-value">–</span>
-        </div>
-      </div>
-      <div class="popup-hourly-day"></div>
-      <div class="popup-hourly-forecast"></div>
-    </div>
-
     ${windTimelineListHTML()}
 
     <div class="popup-card">
@@ -118,6 +73,51 @@ export function mobileStationDetailHTML(station) {
         <button type="button" class="wind-flow-btn" data-offset="24">💨 24h</button>
         <button type="button" class="wind-flow-btn wind-flow-btn-last" data-offset="24">💨 …</button>
       </div>
+    </div>
+
+    <div class="popup-card-inner popup-wave-card mobile-stack-card" style="display:none;">
+      <div class="mobile-card-label">Aallokko</div>
+      <div class="popup-wave-row">
+        <span class="popup-wave-height-value">–</span>
+        <span class="popup-wave-period-label">jakso <span class="popup-wave-period-value">–</span></span>
+      </div>
+    </div>
+
+    <div class="popup-card-inner popup-sealevel-card mobile-stack-card">
+      <div class="mobile-card-label">Vedenkorkeus</div>
+      <div class="wind-flow-sealevel-row">
+        <span class="wind-flow-sealevel-label">Keskivesi</span>
+        <span class="wind-flow-sealevel-value" data-kind="watlev">–</span>
+      </div>
+      <div class="wind-flow-sealevel-row">
+        <span class="wind-flow-sealevel-label">N2000</span>
+        <span class="wind-flow-sealevel-value" data-kind="n2000">–</span>
+      </div>
+    </div>
+
+    <div class="popup-card-inner popup-temp-card mobile-stack-card">
+      <div class="mobile-card-label">Lämpötila</div>
+      <div class="popup-temp-value">–</div>
+    </div>
+
+    <div class="popup-card-inner popup-sun-card mobile-stack-card" style="display:none;">
+      <div class="mobile-card-label">Sää</div>
+      <div class="popup-sun-row">
+        <div class="popup-inline-item">
+          <img src="./js/assets/icons/sunrise.svg" class="popup-icon" alt="Auringonnousu">
+          <span class="popup-sunrise-value">–</span>
+        </div>
+        <div class="popup-inline-item">
+          <img src="./js/assets/icons/sunset.svg" class="popup-icon" alt="Auringonlasku">
+          <span class="popup-sunset-value">–</span>
+        </div>
+      </div>
+      <div class="popup-hourly-day"></div>
+      <div class="popup-hourly-forecast"></div>
+    </div>
+
+    <div class="popup-note">
+      ℹ️ Graafit perustuvat Ilmatieteen laitoksen dataan, tuuliennusteanimaatio Open-Meteon (MET Nordic) malliin. Eri ennustemallien vuoksi tuulilukemat voivat poiketa hieman toisistaan.
     </div>
   `;
 }
