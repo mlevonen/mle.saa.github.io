@@ -10,9 +10,14 @@ export function updatePopupTitles(popupEl, data) {
   // päivitys poistettu, koska tuntikohtainen sääennuste korvaa graafin.
 
  if (wind) {
-  const windObsTitle = popupEl.querySelector(
-    'canvas[data-type="wind-obs"]'
-  )?.previousElementSibling;
+  // HUOM: haetaan otsikkoelementti stabiililla luokalla
+  // (.wind-obs-card-title), EI enää canvaksen edellisen sisaruksen
+  // kautta (previousElementSibling). Tuuligraafin ympärille
+  // lisätty .popup-chart-wrapper (graafin venymis-/litistymis-
+  // korjaus, ks. windChart.js) rikkoi aiemman sisarushaun
+  // hiljaisesti, koska canvas ei enää ole otsikkodivin suora
+  // sisarus vaan kääre-elementin ainoa lapsi.
+  const windObsTitle = popupEl.querySelector(".wind-obs-card-title");
 
   // HUOM: päivitetään sisemmän <strong>-elementin teksti, ei koko
   // otsikkodivin textContent – muuten <strong>-kääre katoaa ja

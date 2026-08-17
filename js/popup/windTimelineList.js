@@ -30,7 +30,7 @@ export function windTimelineListHTML() {
 
       <div class="wind-charts-panel" style="display:none;">
         <div class="popup-card-inner">
-          <div style="font-size:12px; font-weight:600; margin-bottom:4px;">Tuuli (havainto)</div>
+          <div class="wind-obs-card-title" style="font-size:12px; font-weight:600; margin-bottom:4px;"><strong>Tuuli (havainto)</strong></div>
           <div class="popup-chart-wrapper">
             <canvas class="popup-chart" width="650" height="140" data-type="wind-obs"></canvas>
           </div>

@@ -20,18 +20,18 @@ import { renderPopupExtras, renderSunCard, renderWaveCard, renderTempCard } from
 import { renderWindCharts } from "../charts/windChart.js";
 import { renderSeaLevelCard } from "./seaLevelCard.js";
 import { renderWindFlowAnimation } from "./windFlowAnimation.js";
+import { currentConditionsCardHTML, renderCurrentWindSummary, renderCurrentSunTimes } from "./currentConditionsCard.js";
 
 export function stationDetailHTML(station) {
   return `
-    <div class="popup-title">${station.name}</div>
-    <div class="popup-extras"></div>
+    ${currentConditionsCardHTML(station)}
 
     <div class="popup-note">
       ℹ️ Graafit perustuvat Ilmatieteen laitoksen dataan, tuuliennusteanimaatio Open-Meteon (MET Nordic) malliin. Eri ennustemallien vuoksi tuulilukemat voivat poiketa hieman toisistaan.
     </div>
 
     <div class="popup-card">
-      <div><strong>Tuuli (havainto)</strong></div>
+      <div class="wind-obs-card-title"><strong>Tuuli (havainto)</strong></div>
       <div class="popup-chart-wrapper">
         <canvas
           class="popup-chart"
@@ -82,44 +82,19 @@ export function stationDetailHTML(station) {
             data-lon="${station.lon}"
           ></canvas>
         </div>
-        <div class="wind-flow-sidebar" style="display:flex; flex-direction:column; gap:8px; width:345px;">
-          <div class="popup-card-inner popup-temp-card">
-            <div style="font-size:12px; font-weight:600; margin-bottom:2px;">Lämpötila</div>
-            <div class="popup-temp-value">–</div>
-          </div>
-
-          <div class="popup-card-inner popup-sealevel-card">
-            <div style="font-size:12px; font-weight:600; margin-bottom:2px;">Vedenkorkeus</div>
-            <div class="wind-flow-sealevel-row">
-              <span class="wind-flow-sealevel-label">Keskivesi</span>
-              <span class="wind-flow-sealevel-value" data-kind="watlev">–</span>
-            </div>
-            <div class="wind-flow-sealevel-row">
-              <span class="wind-flow-sealevel-label">N2000</span>
-              <span class="wind-flow-sealevel-value" data-kind="n2000">–</span>
-            </div>
-          </div>
-
-          <div class="popup-card-inner popup-wave-card" style="display:none;">
-            <div style="font-size:12px; font-weight:600; margin-bottom:2px;">Aallokko</div>
-            <div class="popup-wave-row">
-              <span class="popup-wave-height-value">–</span>
-              <span class="popup-wave-period-label">jakso <span class="popup-wave-period-value">–</span></span>
-            </div>
-          </div>
-
+        <div class="wind-flow-sidebar" style="display:flex; flex-direction:column; gap:8px; width:220px;">
+          <!-- Lämpötila, Vedenkorkeus ja Aallokko näkyvät nyt ylimmässä
+               yhteenvetokortissa (ks. currentConditionsCard.js) – ei
+               enää toisteta tässä. Tuntikohtainen sääennustenauha
+               (aiemmin osa "Sää"-korttia yhdessä auringonnousu/lasku-
+               tietojen kanssa) jää edelleen tänne, koska se näyttää
+               tulevan kehityksen eikä pelkkää hetkellistä lukemaa;
+               .popup-sun-card-luokka ja renderSunCard() säilyvät
+               muuttumattomina (sunrise/sunset-elementit vain puuttuvat
+               tästä kortista, minkä renderSunCard käsittelee
+               turvallisesti). -->
           <div class="popup-card-inner popup-sun-card" style="display:none;">
-            <div style="font-size:12px; font-weight:600; margin-bottom:2px;">Sää</div>
-            <div class="popup-sun-row">
-              <div class="popup-inline-item">
-                <img src="./js/assets/icons/sunrise.svg" class="popup-icon" alt="Auringonnousu">
-                <span class="popup-sunrise-value">–</span>
-              </div>
-              <div class="popup-inline-item">
-                <img src="./js/assets/icons/sunset.svg" class="popup-icon" alt="Auringonlasku">
-                <span class="popup-sunset-value">–</span>
-              </div>
-            </div>
+            <div style="font-size:12px; font-weight:600; margin-bottom:2px;">Sääennuste</div>
             <div class="popup-hourly-day"></div>
             <div class="popup-hourly-forecast"></div>
           </div>
@@ -177,9 +152,19 @@ export async function renderStationDetail(containerEl, station) {
     renderTempCard(containerEl, data);
     renderWindCharts(containerEl, data);
 
-    // Lähimmän vedenkorkeusaseman lukemat sivupalkkiin (sekä
-    // keskiveteen suhteutettu WATLEV että N2000-lukema). Maa-
-    // asemille (station.inland) koko kortti piilotetaan – lähin
+    // Ylimmän yhteenvetokortin tuuli (havainto) + auringon nousu/lasku.
+    // Lämpötila, vedenkorkeus ja aallokko käyttävät samoja jaettuja
+    // funktioita kuin ennen (renderTempCard/renderWaveCard yllä,
+    // renderSeaLevelCard alla) – ne löytävät elementit uudesta
+    // sijainnista automaattisesti, koska hakevat aina koko
+    // containerElistä eivätkä ole sidottuja mihinkään tiettyyn
+    // vanhempaan.
+    renderCurrentWindSummary(containerEl, data);
+    renderCurrentSunTimes(containerEl, data);
+
+    // Lähimmän vedenkorkeusaseman lukemat (sekä keskiveteen
+    // suhteutettu WATLEV että N2000-lukema). Maa-asemille
+    // (station.inland) koko kortti piilotetaan – lähin
     // vedenkorkeusasema voisi olla satoja kilometrejä päässä eikä
     // lukema liity mitenkään kyseiseen sisämaan pisteeseen.
     await renderSeaLevelCard(containerEl, station);

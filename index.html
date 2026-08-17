@@ -82,6 +82,107 @@ html, body { margin: 0; height: 100%; }
   box-sizing: border-box;
 }
 
+/* ==========================
+   Ylin yhteenvetokortti ("tämänhetkinen tilanne") – tarkoituksella
+   tummempi kuin muut kortit, jotta se erottuu heti popupin
+   avautuessa. Sisältää tuulen (havainto), lämpötilan, vedenkorkeuden,
+   aallokon (jos relevantti) ja auringon nousun/laskun. Vastaavat
+   yksittäiset lukemat on poistettu popupin muista osioista – vain
+   tämä kortti näyttää ne, graafit/animaatio näyttävät edelleen
+   kehityksen/trendin. Ks. js/popup/currentConditionsCard.js.
+   ========================== */
+
+.popup-current-card {
+  background: #1c3f5f;
+  border-color: #0f2a44;
+  color: #eaf1f8;
+}
+
+.popup-current-card .popup-title {
+  color: #fff;
+}
+
+.current-conditions-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 8px;
+}
+
+.current-conditions-item {
+  min-width: 130px;
+}
+
+.current-label {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 3px;
+  color: #9fc1de;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.current-wind-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.current-wind-arrow {
+  display: inline-block;
+  font-size: 20px;
+  color: #bfe0ff;
+}
+
+.current-wind-speed {
+  font-size: 18px;
+  font-weight: 700;
+  color: #bfe0ff;
+}
+
+.current-wind-dir {
+  font-size: 13px;
+  color: #9fc1de;
+}
+
+/* Jaettujen lämpötila-/vedenkorkeus-/aallokkoluokkien värit
+   ylikirjoitettuna tumman kortin sisällä (perusversiot on suunniteltu
+   vaaleaa taustaa varten muualla popupissa). */
+
+.popup-current-card .popup-temp-value {
+  color: #ffab91;
+}
+
+.popup-current-card .wind-flow-sealevel-label {
+  color: #9fc1de;
+}
+
+.popup-current-card .wind-flow-sealevel-value {
+  color: #bfe0ff;
+}
+
+.popup-current-card .popup-wave-height-value {
+  color: #bfe0ff;
+}
+
+.popup-current-card .popup-wave-period-label {
+  color: #9fc1de;
+}
+
+.popup-current-card .popup-wave-period-value {
+  color: #eaf1f8;
+}
+
+.popup-current-card .popup-inline-item:not(:first-child)::before {
+  border-left-color: rgba(255,255,255,0.25);
+}
+
+.current-sunrise-value,
+.current-sunset-value {
+  color: #eaf1f8;
+  font-weight: 600;
+}
+
 /* Graafin kääre: KIINTEÄ korkeus (ei riipu sisällöstä), leveys 100 %
    popup-kortin todellisesta (Leafletin shrink-to-fit-määrittämästä)
    leveydestä. Chart.js:n responsive:true mittaa tämän kääreen –
