@@ -113,44 +113,39 @@ html, body { margin: 0; height: 100%; }
      muutenkin suurempi kuin oletus-.popup-title, joten nimen on
      hyvä olla selvästi sitäkin isompi. */
   font-size: 24px;
-  margin-bottom: 0;
+  margin-bottom: 8px;
 }
 
-.popup-current-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 14px;
-}
-
-/* Lämpötila otsikkorivin oikeaan reunaan (aiemmin siellä oli vain
-   tyhjää tilaa aseman nimen vieressä). */
-.current-temp-display {
-  text-align: right;
-  flex-shrink: 0;
-}
-
-.current-temp-display .current-label {
-  margin-bottom: 0;
-}
-
-.popup-current-card .current-temp-display .popup-temp-value {
-  font-size: 30px;
-}
-
+/* Jokainen tietoryhmä (Tuuli, Lämpötila, Vedenkorkeus, Aallokko,
+   Aurinko, Sääennuste) on oma alakorttinsa (.popup-card-inner) tässä
+   YHDESSÄ CSS Grid -ruudukossa. Grid (ei flex-wrap) takaa, että
+   kortit asettuvat tasan sekä vaaka- että pystysuunnassa: jokaisen
+   rivin korkeus ja jokaisen sarakkeen leveys ovat aina yhtenäiset
+   riippumatta yksittäisten korttien sisällön määrästä. */
 .current-conditions-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 8px;
 }
 
 .current-conditions-item {
-  min-width: 130px;
+  display: flex;
+  flex-direction: column;
 }
 
-.current-wind-item {
-  min-width: 150px;
+/* Sääennuste tarvitsee enemmän tilaa vaakavierittyvälle
+   tuntilistalle, joten se vie koko ruudukon leveyden omana rivinään. */
+.current-conditions-item-wide {
+  grid-column: 1 / -1;
+}
+
+/* Alakorttien tumma tyyli (perus-.popup-card-inner on suunniteltu
+   vaaleaa taustaa varten muualla popupissa). */
+.popup-current-card .popup-card-inner {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.18);
+  padding: 10px 12px;
 }
 
 .current-label {
@@ -190,11 +185,8 @@ html, body { margin: 0; height: 100%; }
   color: #bfe0ff;
 }
 
-/* Jaettujen lämpötila-/vedenkorkeus-/aallokkoluokkien värit
-   ylikirjoitettuna tumman kortin sisällä (perusversiot on suunniteltu
-   vaaleaa taustaa varten muualla popupissa). */
-
 .popup-current-card .popup-temp-value {
+  font-size: 26px;
   color: #ffab91;
 }
 
@@ -228,31 +220,15 @@ html, body { margin: 0; height: 100%; }
   font-weight: 600;
 }
 
-/* Tuntikohtainen sääennuste yhteenvetokortin alaosassa, oikealle
-   päin ("oikealle alas") – siirretty tänne Tuuliennusteanimaatio-
-   kortin entisestä sivupalkista. */
-.current-forecast-row {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 12px;
-}
-
-.current-forecast-row .popup-sun-card {
-  width: 100%;
-  max-width: 360px;
-  background: rgba(255,255,255,0.08);
-  border-color: rgba(255,255,255,0.18);
-}
-
-.current-forecast-row .popup-hourly-day {
+.popup-current-card .popup-hourly-day {
   color: #9fc1de;
 }
 
-.current-forecast-row .popup-hourly-hour {
+.popup-current-card .popup-hourly-hour {
   color: #cfe0f0;
 }
 
-.current-forecast-row .popup-hourly-temp {
+.popup-current-card .popup-hourly-temp {
   color: #ffab91;
 }
 

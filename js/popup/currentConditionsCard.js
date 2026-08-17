@@ -10,23 +10,30 @@
 // edelleen kehityksen/trendin, eivät vain hetkellistä lukemaa, joten
 // ne säilyvät ennallaan (animaatio on levitetty graafien levyiseksi).
 //
+// Kaikki tietoryhmät (Tuuli, Lämpötila, Vedenkorkeus, Aallokko,
+// Aurinko, Sääennuste) ovat omia "alakorttejaan" (.popup-card-inner)
+// yhden yhteisen CSS Grid -ruudukon (.current-conditions-grid)
+// sisällä, jotta ne asettuvat tasan sekä vaaka- että pystysuunnassa
+// riippumatta yksittäisten korttien sisällön korkeudesta (CSS Grid,
+// ei flex-wrap – rivin korkeus ja sarakkeen leveys ovat aina
+// yhtenäiset). Sääennuste-alakortti on tarkoituksella koko leveä
+// (.current-conditions-item-wide, grid-column:1/-1), koska sen
+// vaakavierittyvä tuntilista tarvitsee enemmän tilaa kuin muut.
+//
 // Lämpötila-, vedenkorkeus- ja aallokkolohkot käyttävät TARKOITUKSELLA
 // samoja luokkanimiä kuin ennen (popup-temp-card, popup-sealevel-card,
 // popup-wave-card jne.), jotta jaetut renderöintifunktiot
 // (renderTempCard, renderSeaLevelCard, renderWaveCard – kaikki
 // hakevat elementit popupEl.querySelector(...)-kutsulla, eivät ole
 // sidottuja mihinkään tiettyyn sijaintiin DOM-puussa) toimivat
-// muuttumattomina uudessa sijainnissaan. Lämpötila on sijoitettu
-// otsikkorivin oikeaan reunaan (.popup-current-header), muut
-// omaan ruudukkoonsa (.current-conditions-grid) sen alle.
+// muuttumattomina uudessa sijainnissaan.
 //
 // Auringon nousu/lasku on TARKOITUKSELLA oma, kevyt toteutuksensa
 // (renderCurrentSunTimes) eikä käytä popupExtras.js:n renderSunCard-
 // funktiota/​.popup-sun-card-luokkaa, koska se on edelleen käytössä
-// sekä mobiilissa (muuttumattomana) että desktopin tuntikohtaisen
-// sääennustenauhan kortissa (ks. stationDetail.js) – kahta samalla
-// luokalla varustettua elementtiä ei voisi molempia löytää
-// querySelectorilla.
+// sekä mobiilissa (muuttumattomana) että desktopin sääennuste-
+// alakortissa tässä samassa tiedostossa – kahta samalla luokalla
+// varustettua elementtiä ei voisi molempia löytää querySelectorilla.
 // ==========================
 
 function formatSunTime(d) {
@@ -39,18 +46,12 @@ function formatSunTime(d) {
 export function currentConditionsCardHTML(station) {
   return `
     <div class="popup-card popup-current-card">
-      <div class="popup-current-header">
-        <div class="popup-title">${station.name}</div>
-        <div class="current-temp-display popup-temp-card">
-          <div class="current-label">Lämpötila</div>
-          <div class="popup-temp-value">–</div>
-        </div>
-      </div>
+      <div class="popup-title">${station.name}</div>
       <div class="popup-extras"></div>
 
       <div class="current-conditions-grid">
 
-        <div class="current-conditions-item current-wind-item">
+        <div class="current-conditions-item popup-card-inner current-wind-item">
           <div class="current-label">Tuuli</div>
           <div class="current-wind-row">
             <span class="current-wind-arrow">↑</span>
@@ -59,7 +60,12 @@ export function currentConditionsCardHTML(station) {
           <div class="current-wind-speed">–</div>
         </div>
 
-        <div class="current-conditions-item popup-sealevel-card">
+        <div class="current-conditions-item popup-card-inner popup-temp-card">
+          <div class="current-label">Lämpötila</div>
+          <div class="popup-temp-value">–</div>
+        </div>
+
+        <div class="current-conditions-item popup-card-inner popup-sealevel-card">
           <div class="current-label">Vedenkorkeus</div>
           <div class="wind-flow-sealevel-row">
             <span class="wind-flow-sealevel-label">Keskivesi</span>
@@ -71,7 +77,7 @@ export function currentConditionsCardHTML(station) {
           </div>
         </div>
 
-        <div class="current-conditions-item popup-wave-card" style="display:none;">
+        <div class="current-conditions-item popup-card-inner popup-wave-card" style="display:none;">
           <div class="current-label">Aallokko</div>
           <div class="popup-wave-row">
             <span class="popup-wave-height-value">–</span>
@@ -79,7 +85,7 @@ export function currentConditionsCardHTML(station) {
           </div>
         </div>
 
-        <div class="current-conditions-item current-sun-item" style="display:none;">
+        <div class="current-conditions-item popup-card-inner current-sun-item" style="display:none;">
           <div class="current-label">Aurinko</div>
           <div class="popup-sun-row">
             <div class="popup-inline-item">
@@ -93,23 +99,20 @@ export function currentConditionsCardHTML(station) {
           </div>
         </div>
 
-      </div>
-
-      <!-- Tuntikohtainen sääennuste, siirretty tänne Tuuliennuste-
-           animaatio-kortin sivupalkista (joka poistui, kun animaatio
-           levitettiin graafien levyiseksi). Sijoitettu kortin
-           alaosaan oikealle. Käyttää samaa jaettua renderSunCard-
-           funktiota kuin ennen (sunrise/sunset-elementit vain
-           puuttuvat tästä yhteydestä – ne näkyvät jo yllä omana
-           Aurinko-kohtanaan – mikä käsitellään turvallisesti). -->
-      <div class="current-forecast-row">
-        <div class="popup-card-inner popup-sun-card" style="display:none;">
+        <!-- Tuntikohtainen sääennuste, sama alakortti-tyyli kuin
+             muutkin ryhmät, mutta koko leveä (.current-conditions-
+             item-wide) koska vaakavierittyvä tuntilista tarvitsee
+             enemmän tilaa. Käyttää samaa jaettua renderSunCard-
+             funktiota kuin ennen (sunrise/sunset-elementit vain
+             puuttuvat tästä yhteydestä – ne näkyvät jo yllä omana
+             Aurinko-kohtanaan – mikä käsitellään turvallisesti). -->
+        <div class="current-conditions-item current-conditions-item-wide popup-card-inner popup-sun-card" style="display:none;">
           <div class="current-label">Sääennuste</div>
           <div class="popup-hourly-day"></div>
           <div class="popup-hourly-forecast"></div>
         </div>
-      </div>
 
+      </div>
     </div>
   `;
 }
