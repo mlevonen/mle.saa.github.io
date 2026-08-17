@@ -39,6 +39,26 @@ export async function renderWindFlowAnimation(containerEl, lat, lon) {
 
   if (!flowCanvas) return { stop, data: null };
 
+  // Asetetaan kanvaasien sisäinen piirtoresoluutio vastaamaan niiden
+  // todellista CSS-renderöityä kokoa. Aiemmin kanvaasit olivat aina
+  // kiinteän 320×320-neliön kokoisia (sekä HTML-attribuutti että
+  // näytetty koko), mutta desktopilla animaatio levitettiin nyt
+  // popupin/graafien levyiseksi (ei enää neliö) ja mobiilissa koko
+  // voi vaihdella näytön leveyden mukaan – ilman tätä synkronointia
+  // kanvaasi piirtyisi vanhaan kiinteään resoluutioon ja selain
+  // venyttäisi/sumentaisi sen näytettyyn kokoon.
+  function syncCanvasResolution(canvas) {
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const w = Math.max(1, Math.round(rect.width));
+    const h = Math.max(1, Math.round(rect.height));
+    if (canvas.width !== w) canvas.width = w;
+    if (canvas.height !== h) canvas.height = h;
+  }
+
+  syncCanvasResolution(flowCanvas);
+  syncCanvasResolution(flowBgCanvas);
+
   let windSeriesData = null;
 
   function renderFlowTicks(maxIdx) {

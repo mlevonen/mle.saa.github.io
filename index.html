@@ -228,6 +228,34 @@ html, body { margin: 0; height: 100%; }
   font-weight: 600;
 }
 
+/* Tuntikohtainen sääennuste yhteenvetokortin alaosassa, oikealle
+   päin ("oikealle alas") – siirretty tänne Tuuliennusteanimaatio-
+   kortin entisestä sivupalkista. */
+.current-forecast-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.current-forecast-row .popup-sun-card {
+  width: 100%;
+  max-width: 360px;
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.18);
+}
+
+.current-forecast-row .popup-hourly-day {
+  color: #9fc1de;
+}
+
+.current-forecast-row .popup-hourly-hour {
+  color: #cfe0f0;
+}
+
+.current-forecast-row .popup-hourly-temp {
+  color: #ffab91;
+}
+
 /* Graafin kääre: KIINTEÄ korkeus (ei riipu sisällöstä), leveys 100 %
    popup-kortin todellisesta (Leafletin shrink-to-fit-määrittämästä)
    leveydestä. Chart.js:n responsive:true mittaa tämän kääreen –
@@ -250,6 +278,26 @@ html, body { margin: 0; height: 100%; }
 .popup-chart-mini {
   width: 300px;
   height: 110px;
+}
+
+/* Tuuliennusteanimaatio – levitetty samaan leveyteen graafien kanssa
+   (sama kääre+kiinteä-korkeus-periaate kuin .popup-chart-wrapper).
+   Kanvaasien todellinen piirtoresoluutio synkronoidaan tähän kokoon
+   JS:ssä (ks. js/popup/windFlowAnimation.js), joten animaatio pysyy
+   terävänä vaikka se ei enää olekaan neliö. */
+.wind-flow-wrapper {
+  position: relative;
+  width: 100%;
+  height: 260px;
+}
+
+.wind-flow-bg,
+.wind-flow-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .popup-extras {

@@ -3,11 +3,12 @@
 //
 // Kokoaa asemakortin tämänhetkisen tilanteen yhteen, heti avautuessa
 // näkyvään korttiin: tuulen nopeus/suunta (havainto), lämpötila,
-// vedenkorkeus, aallonkorkeus (jos relevantti) ja auringon nousu/
-// lasku. Vastaavat yksittäiset lukemat on poistettu popupin muista
-// osioista (ks. stationDetail.js) – graafit ja tuuliennusteanimaatio
-// näyttävät edelleen kehityksen/trendin, eivät vain hetkellistä
-// lukemaa, joten ne säilyvät ennallaan.
+// vedenkorkeus, aallonkorkeus (jos relevantti), auringon nousu/lasku
+// JA tuntikohtainen sääennuste (kortin alaosassa oikealla). Vastaavat
+// yksittäiset lukemat on poistettu popupin muista osioista (ks.
+// stationDetail.js) – graafit ja tuuliennusteanimaatio näyttävät
+// edelleen kehityksen/trendin, eivät vain hetkellistä lukemaa, joten
+// ne säilyvät ennallaan (animaatio on levitetty graafien levyiseksi).
 //
 // Lämpötila-, vedenkorkeus- ja aallokkolohkot käyttävät TARKOITUKSELLA
 // samoja luokkanimiä kuin ennen (popup-temp-card, popup-sealevel-card,
@@ -93,6 +94,22 @@ export function currentConditionsCardHTML(station) {
         </div>
 
       </div>
+
+      <!-- Tuntikohtainen sääennuste, siirretty tänne Tuuliennuste-
+           animaatio-kortin sivupalkista (joka poistui, kun animaatio
+           levitettiin graafien levyiseksi). Sijoitettu kortin
+           alaosaan oikealle. Käyttää samaa jaettua renderSunCard-
+           funktiota kuin ennen (sunrise/sunset-elementit vain
+           puuttuvat tästä yhteydestä – ne näkyvät jo yllä omana
+           Aurinko-kohtanaan – mikä käsitellään turvallisesti). -->
+      <div class="current-forecast-row">
+        <div class="popup-card-inner popup-sun-card" style="display:none;">
+          <div class="current-label">Sääennuste</div>
+          <div class="popup-hourly-day"></div>
+          <div class="popup-hourly-forecast"></div>
+        </div>
+      </div>
+
     </div>
   `;
 }

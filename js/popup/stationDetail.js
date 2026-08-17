@@ -65,42 +65,25 @@ export function stationDetailHTML(station) {
         <strong>Tuuliennusteanimaatio</strong>
         <span class="wind-flow-speed-label" style="font-size:12px; font-weight:bold; color:#444;"></span>
       </div>
-      <div style="display:flex; gap:10px; align-items:flex-start;">
-        <div class="wind-flow-wrapper" style="position:relative; width:320px; height:320px; flex-shrink:0;">
-          <canvas
-            class="wind-flow-bg"
-            width="320"
-            height="320"
-            style="position:absolute; top:0; left:0;"
-          ></canvas>
-          <canvas
-            class="wind-flow-canvas"
-            width="320"
-            height="320"
-            style="position:absolute; top:0; left:0;"
-            data-lat="${station.lat}"
-            data-lon="${station.lon}"
-          ></canvas>
-        </div>
-        <div class="wind-flow-sidebar" style="display:flex; flex-direction:column; gap:8px; width:300px;">
-          <!-- Lämpötila, Vedenkorkeus ja Aallokko näkyvät nyt ylimmässä
-               yhteenvetokortissa (ks. currentConditionsCard.js) – ei
-               enää toisteta tässä. Tuntikohtainen sääennustenauha
-               (aiemmin osa "Sää"-korttia yhdessä auringonnousu/lasku-
-               tietojen kanssa) jää edelleen tänne, koska se näyttää
-               tulevan kehityksen eikä pelkkää hetkellistä lukemaa;
-               .popup-sun-card-luokka ja renderSunCard() säilyvät
-               muuttumattomina (sunrise/sunset-elementit vain puuttuvat
-               tästä kortista, minkä renderSunCard käsittelee
-               turvallisesti). -->
-          <div class="popup-card-inner popup-sun-card" style="display:none;">
-            <div style="font-size:12px; font-weight:600; margin-bottom:2px;">Sääennuste</div>
-            <div class="popup-hourly-day"></div>
-            <div class="popup-hourly-forecast"></div>
-          </div>
-        </div>
+
+      <!-- Sivupalkki (lämpötila/vedenkorkeus/aallokko/sääennuste)
+           poistui – kaikki siirtyivät ylimpään yhteenvetokorttiin.
+           Animaatio levitetty samaan leveyteen graafien kanssa
+           (.wind-flow-wrapper on nyt 100 % leveä samalla
+           kääre+kiinteä-korkeus-periaatteella kuin .popup-chart-
+           wrapper). Kanvaasien todellinen piirtoresoluutio
+           synkronoidaan niiden näytettyyn kokoon windFlowAnimation.js:
+           ssä, joten animaatio pysyy terävänä myös ei-neliömäisenä. -->
+      <div class="wind-flow-wrapper">
+        <canvas class="wind-flow-bg"></canvas>
+        <canvas
+          class="wind-flow-canvas"
+          data-lat="${station.lat}"
+          data-lon="${station.lon}"
+        ></canvas>
       </div>
-      <div style="display:flex; align-items:center; gap:8px; margin-top:8px; width:320px;">
+
+      <div style="display:flex; align-items:center; gap:8px; margin-top:8px;">
         <input
           type="range"
           class="wind-flow-slider"
@@ -112,7 +95,7 @@ export function stationDetailHTML(station) {
         >
         <span class="wind-flow-time-label" style="font-size:12px; color:#444; min-width:78px; text-align:right;">Nyt</span>
       </div>
-      <div style="display:flex; gap:8px; width:320px;">
+      <div style="display:flex; gap:8px;">
         <div class="wind-flow-ticks" style="display:flex; justify-content:space-between; flex:1;"></div>
         <div style="min-width:78px;"></div>
       </div>
