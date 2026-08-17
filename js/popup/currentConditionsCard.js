@@ -15,7 +15,9 @@
 // (renderTempCard, renderSeaLevelCard, renderWaveCard – kaikki
 // hakevat elementit popupEl.querySelector(...)-kutsulla, eivät ole
 // sidottuja mihinkään tiettyyn sijaintiin DOM-puussa) toimivat
-// muuttumattomina uudessa sijainnissaan.
+// muuttumattomina uudessa sijainnissaan. Lämpötila on sijoitettu
+// otsikkorivin oikeaan reunaan (.popup-current-header), muut
+// omaan ruudukkoonsa (.current-conditions-grid) sen alle.
 //
 // Auringon nousu/lasku on TARKOITUKSELLA oma, kevyt toteutuksensa
 // (renderCurrentSunTimes) eikä käytä popupExtras.js:n renderSunCard-
@@ -36,7 +38,13 @@ function formatSunTime(d) {
 export function currentConditionsCardHTML(station) {
   return `
     <div class="popup-card popup-current-card">
-      <div class="popup-title">${station.name}</div>
+      <div class="popup-current-header">
+        <div class="popup-title">${station.name}</div>
+        <div class="current-temp-display popup-temp-card">
+          <div class="current-label">Lämpötila</div>
+          <div class="popup-temp-value">–</div>
+        </div>
+      </div>
       <div class="popup-extras"></div>
 
       <div class="current-conditions-grid">
@@ -45,14 +53,9 @@ export function currentConditionsCardHTML(station) {
           <div class="current-label">Tuuli</div>
           <div class="current-wind-row">
             <span class="current-wind-arrow">↑</span>
-            <span class="current-wind-speed">–</span>
-            <span class="current-wind-dir"></span>
+            <span class="current-wind-dir">–</span>
           </div>
-        </div>
-
-        <div class="current-conditions-item popup-temp-card">
-          <div class="current-label">Lämpötila</div>
-          <div class="popup-temp-value">–</div>
+          <div class="current-wind-speed">–</div>
         </div>
 
         <div class="current-conditions-item popup-sealevel-card">
@@ -118,7 +121,7 @@ export function renderCurrentWindSummary(containerEl, data) {
 
   if (!latest) {
     if (speedEl) speedEl.textContent = "–";
-    if (dirEl) dirEl.textContent = "";
+    if (dirEl) dirEl.textContent = "–";
     if (arrowEl) arrowEl.style.visibility = "hidden";
     return;
   }

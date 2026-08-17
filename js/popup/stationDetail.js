@@ -82,7 +82,7 @@ export function stationDetailHTML(station) {
             data-lon="${station.lon}"
           ></canvas>
         </div>
-        <div class="wind-flow-sidebar" style="display:flex; flex-direction:column; gap:8px; width:220px;">
+        <div class="wind-flow-sidebar" style="display:flex; flex-direction:column; gap:8px; width:300px;">
           <!-- Lämpötila, Vedenkorkeus ja Aallokko näkyvät nyt ylimmässä
                yhteenvetokortissa (ks. currentConditionsCard.js) – ei
                enää toisteta tässä. Tuntikohtainen sääennustenauha
