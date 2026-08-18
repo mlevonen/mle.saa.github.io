@@ -126,7 +126,20 @@ export async function renderWindFlowAnimation(containerEl, lat, lon) {
   }
 
   try {
-    windSeriesData = await fetchWindGridSeries(lat, lon);
+    // Kanvaasin kuvasuhde (syncCanvasResolution on jo asettanut
+    // canvas.width/height todelliseen renderöityyn kokoon yllä).
+    // Välitetään se haulle, jotta haettu maastoalue levenee samassa
+    // suhteessa kuin kanvaasi on neliötä leveämpi – muuten sekä
+    // karttatausta (miniMapBackground.js) että virtausviivat
+    // (windFlow.js) venyisivät sivusuunnassa, koska molemmat
+    // piirtävät aina täyteen kanvaasin leveyteen/korkeuteen. Neliö-
+    // muotoisilla kanvaaseilla (esim. Ruotsi/Viro-asemien 320×320-
+    // popup) suhde on 1 eikä mikään muutu.
+    const aspectRatio = flowCanvas.height > 0
+      ? flowCanvas.width / flowCanvas.height
+      : 1;
+
+    windSeriesData = await fetchWindGridSeries(lat, lon, aspectRatio);
 
     if (flowBgCanvas) {
       drawMapBackground(flowBgCanvas, windSeriesData.bounds).catch(err => {

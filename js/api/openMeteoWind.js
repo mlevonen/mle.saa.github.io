@@ -24,14 +24,29 @@ function buildVector(speed, dir) {
   };
 }
 
-export async function fetchWindGridSeries(lat, lon) {
+// aspectRatio = kanvaasin todellinen leveys/korkeus-suhde (ks.
+// windFlowAnimation.js, joka lukee sen synkatun canvas.width/height-
+// arvosta). Sekä karttatausta (miniMapBackground.js) että itse
+// virtauskenttä (windFlow.js) piirtävät aina TÄYTEEN kanvaasin
+// leveyteen/korkeuteen riippumatta sen muodosta – jos haettu alue on
+// maastossa neliö (kuten aiemmin, kun kanvaasi oli aina 320×320),
+// mutta kanvaasi onkin nyt leveä suorakaide (esim. desktopilla
+// graafien levyinen animaatio), sekä kartta että virtausviivat
+// venyisivät sivusuunnassa. Kertomalla lonHalf kanvaasin
+// leveys/korkeus-suhteella haettu alue levenee maastossa TASAN sen
+// verran kuin kanvaasi on neliötä leveämpi, jolloin venytys kumoutuu
+// eikä vääristymää synny. aspectRatio=1 (oletus, esim. Ruotsi/Viro-
+// asemien neliömäinen popup) säilyttää ennallaan.
+export async function fetchWindGridSeries(lat, lon, aspectRatio = 1) {
 
   const latHalf = GRID_SPAN_DEG / 2;
 
   // Pituusasteet "kutistuvat" maastoetäisyydeltään cos(leveysaste):n
   // verran napoja kohti mentäessä – jaetaan lonHalf sillä, jotta
   // rajaus vastaa oikeaa neliötä maastossa/kartalla asteneliön sijaan.
-  const lonHalf = latHalf / Math.cos((lat * Math.PI) / 180);
+  // Kerrotaan lopuksi aspectRatio:lla (ks. yllä) ei-neliömäisen
+  // kanvaasin venytyksen korjaamiseksi.
+  const lonHalf = (latHalf / Math.cos((lat * Math.PI) / 180)) * aspectRatio;
 
   const latStep = (latHalf * 2) / (GRID_SIZE - 1);
   const lonStep = (lonHalf * 2) / (GRID_SIZE - 1);
