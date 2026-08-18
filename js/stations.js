@@ -10,25 +10,30 @@ const stations = [
    * =========================
    */
 
-  {
-    type: "coastal",
-    id: "helsinki-weather",
-    name: "Helsinki",
-    fmisid: 100971,
-    lat: 60.17,
-    lon: 24.95,
-    inland: true
-  },
+  // Kommentoitu ulos: pääkaupunkiseudulla on useita muita
+  // havaintopisteitä lähellä (mm. Helsinki Kaivopuisto, Helsinki
+  // Vuosaari satama, Helsinki Harmaja, Helsinki Helsingin majakka,
+  // Porvoo Emäsalo, Porvoo Emäsalo Vaarlahti, Porvoo Kalbådagrund),
+  // joten nämä yleisnimiset kaksoiskappaleet eivät ole tarpeen.
+  // {
+  //   type: "coastal",
+  //   id: "helsinki-weather",
+  //   name: "Helsinki",
+  //   fmisid: 100971,
+  //   lat: 60.17,
+  //   lon: 24.95,
+  //   inland: true
+  // },
 
-  {
-    type: "coastal",
-    id: "porvoo-weather",
-    name: "Porvoo",
-    fmisid: 101004,
-    lat: 60.39,
-    lon: 25.66,
-    inland: true
-  },
+  // {
+  //   type: "coastal",
+  //   id: "porvoo-weather",
+  //   name: "Porvoo",
+  //   fmisid: 101004,
+  //   lat: 60.39,
+  //   lon: 25.66,
+  //   inland: true
+  // },
 
     {
     type: "coastal",
