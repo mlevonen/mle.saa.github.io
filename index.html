@@ -526,6 +526,47 @@ html, body { margin: 0; height: 100%; }
   color: #c62828;
 }
 
+/* Aallokko-otsikon vieressä oleva info-nappi + sen selitysteksti
+   (miksi lukema on tarkalleen havaintoaseman, ei avomeren, kohdalla –
+   ks. renderWaveCard, popupExtras.js). Käytetään sekä desktop- että
+   mobiilikortissa (mobile.html:ssä on sama sääntö). */
+.popup-wave-label-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.popup-info-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+}
+
+.popup-wave-info-text {
+  font-size: 11px;
+  color: #666;
+  line-height: 1.35;
+  margin: 2px 0 4px;
+}
+
+/* Tumma teema (ylin yhteenvetokortti) tarvitsee vaaleamman
+   selitystekstin värin, jotta se erottuu tummalta taustalta. */
+.popup-current-card .popup-wave-info-text {
+  color: #cfe0f0;
+}
+
 .popup-wave-row {
   display: flex;
   align-items: baseline;

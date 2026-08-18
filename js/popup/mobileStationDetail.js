@@ -76,7 +76,18 @@ export function mobileStationDetailHTML(station) {
     </div>
 
     <div class="popup-card-inner popup-wave-card mobile-stack-card" style="display:none;">
-      <div class="mobile-card-label">Aallokko</div>
+      <div class="mobile-card-label popup-wave-label-row">
+        Aallokko
+        <button type="button" class="popup-info-btn" aria-label="Tietoa aallonkorkeuslukemasta">?</button>
+      </div>
+      <!-- Selitys sille miksi lukema ei aina vastaa avomeren aallokkoa
+           – ks. renderWaveCard, popupExtras.js, joka sitoo klikkauksen
+           tähän (hidden-attribuutin toggle). -->
+      <div class="popup-wave-info-text" hidden>
+        Lukema on aaltomallin ennuste tarkalleen havaintoaseman
+        sijainnissa. Moni asema on satamassa tai muuten suojaisassa
+        paikassa, joten se voi poiketa avomeren aallokosta.
+      </div>
       <div class="popup-wave-row">
         <span class="popup-wave-height-value">–</span>
         <span class="popup-wave-period-label">jakso <span class="popup-wave-period-value">–</span></span>

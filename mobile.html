@@ -413,6 +413,42 @@
     color: #c62828;
   }
 
+  /* Aallokko-otsikon vieressä oleva info-nappi + selitysteksti (miksi
+     lukema on tarkalleen havaintoaseman, ei avomeren, kohdalla – ks.
+     renderWaveCard, js/popup/popupExtras.js). Isompi kosketuskohde
+     kuin desktopilla (index.html), koska mobiilissa napautetaan
+     sormella eikä hiirellä. */
+  .popup-wave-label-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .popup-info-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    background: transparent;
+    color: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .popup-wave-info-text {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.4;
+    margin: 2px 0 6px;
+  }
+
   .popup-wave-row {
     display: flex;
     align-items: baseline;

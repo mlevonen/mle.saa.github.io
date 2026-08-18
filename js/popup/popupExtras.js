@@ -226,6 +226,20 @@ export function renderWaveCard(popupEl, data, station) {
   const card = popupEl.querySelector(".popup-wave-card");
   if (!card) return;
 
+  // Info-nappi (miksi lukema voi poiketa avomeren aallokosta) –
+  // sidotaan aina kun kortti on olemassa, riippumatta siitä
+  // näytetäänkö kortti juuri nyt. .onclick (ei addEventListener)
+  // pitää sidonnan idempotenttina: sama popup-DOM voidaan täyttää
+  // useaan kertaan (joka kerta kun popup avataan uudelleen), eikä
+  // silloin saa kertyä useita päällekkäisiä kuuntelijoita.
+  const infoBtn = card.querySelector(".popup-info-btn");
+  const infoText = card.querySelector(".popup-wave-info-text");
+  if (infoBtn && infoText) {
+    infoBtn.onclick = () => {
+      infoText.hidden = !infoText.hidden;
+    };
+  }
+
   if (station?.type !== "coastal" || station?.inland || !data.waveHeight) {
     card.style.display = "none";
     return;
