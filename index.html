@@ -169,12 +169,13 @@ html, body { margin: 0; height: 100%; }
   position: relative;
 }
 
-/* Nuolen oma vaalea "kortti" – nuolen väri vaihtelee tuulen mukaan
+/* Nuolen oma pyöreä "kupla" – nuolen väri vaihtelee tuulen mukaan
    (ks. alla), ja osa väreistä (esim. sininen) hukkuisi tumman
-   yleistaustan päällä. Vaalea keltainen/beige tausta pitää nuolen
-   aina hyvin erottuvana, eikä ole yhtä "kirkas" kuin puhdas
-   valkoinen. Sijoitettu kortin oikeaan yläkulmaan, jotta se erottuu
-   omana elementtinään lämpötila-/asteluvusta. */
+   yleistaustan päällä. Vaalea sininen tausta sopii yhteen kortin
+   muun sinisen sävymaailman kanssa (ks. esim. .current-label,
+   .current-wind-speed) ja pitää nuolen silti hyvin erottuvana.
+   Sijoitettu kortin oikeaan yläkulmaan, jotta se erottuu omana
+   elementtinään asteluvusta. */
 .current-wind-arrow-box {
   position: absolute;
   top: 8px;
@@ -184,9 +185,9 @@ html, body { margin: 0; height: 100%; }
   justify-content: center;
   width: 52px;
   height: 52px;
-  border-radius: 8px;
-  background: #f5e9bd;
-  border: 1px solid #d9c98a;
+  border-radius: 50%;
+  background: #dbeeff;
+  border: 1px solid #a9d4f0;
 }
 
 /* Tuulinuoli – sama SVG-muoto kuin kartan tuuli-ikoneissa
