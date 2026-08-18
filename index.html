@@ -163,6 +163,22 @@ html, body { margin: 0; height: 100%; }
   gap: 8px;
 }
 
+/* Nuolen oma vaalea "kortti" – nuolen väri vaihtelee tuulen mukaan
+   (ks. alla), ja osa väreistä (esim. sininen) hukkuisi tumman
+   yleistaustan päällä. Vaalea keltainen/beige tausta pitää nuolen
+   aina hyvin erottuvana, eikä ole yhtä "kirkas" kuin puhdas
+   valkoinen. */
+.current-wind-arrow-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: #f5e9bd;
+  border: 1px solid #d9c98a;
+}
+
 /* Tuulinuoli – sama SVG-muoto kuin kartan tuuli-ikoneissa
    (createWindIcon(), js/main.js) ja väri vaihtuu tuulen nopeuden
    mukaan JS:ssä (ks. renderCurrentWindSummary/windSpeedColor,
@@ -244,29 +260,31 @@ html, body { margin: 0; height: 100%; }
   font-size: 12px;
 }
 
-/* Sääennuste-alakortti on koko leveä ja tilaa on runsaasti, joten
-   tuntikohtaiset ikonit voivat olla selvästi isompia kuin popupin
-   muualla käytetty pienoiskoko. */
+/* Sääennuste-alakortti on koko leveä, joten tuntikohtaiset ikonit
+   voivat olla hieman isompia kuin popupin muualla käytetty
+   pienoiskoko – mutta kohtuudella, jotta rivi mahtuu kortin
+   sisään eikä ala vaakavierimään (aiemmin liian suuret koot
+   aiheuttivat sivuttaisscrollauksen). */
 .popup-current-card .popup-hourly-forecast {
-  gap: 10px;
+  gap: 6px;
 }
 
 .popup-current-card .popup-hourly-item {
-  width: 56px;
+  width: 40px;
 }
 
 .popup-current-card .popup-hourly-icon {
-  width: 40px;
-  height: 40px;
+  width: 28px;
+  height: 28px;
 }
 
 .popup-current-card .popup-hourly-hour {
-  font-size: 13px;
+  font-size: 12px;
   color: #cfe0f0;
 }
 
 .popup-current-card .popup-hourly-temp {
-  font-size: 15px;
+  font-size: 13px;
   color: #ffab91;
 }
 
