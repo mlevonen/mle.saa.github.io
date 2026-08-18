@@ -34,6 +34,14 @@
 // sekä mobiilissa (muuttumattomana) että desktopin sääennuste-
 // alakortissa tässä samassa tiedostossa – kahta samalla luokalla
 // varustettua elementtiä ei voisi molempia löytää querySelectorilla.
+//
+// Lämpötila+Aurinko ja Vedenkorkeus+Aallokko on ryhmitelty samoihin
+// alakortteihin (kaksi sisäistä, itsenäisesti piiloutuvaa lohkoa
+// yhden visuaalisen kortin sisällä). updateMergedCardVisibility()
+// piilottaa koko yhdistetyn kortin, jos KAIKKI sen sisäiset osiot
+// ovat piilossa (esim. sisämaan asema ilman vedenkorkeutta tai
+// aallokkoa) – kutsuttava renderStationDetailissä vasta kun
+// renderSeaLevelCard/renderWaveCard ovat asettaneet näkyvyytensä.
 // ==========================
 
 function formatSunTime(d) {
@@ -54,47 +62,64 @@ export function currentConditionsCardHTML(station) {
         <div class="current-conditions-item popup-card-inner current-wind-item">
           <div class="current-label">Tuuli</div>
           <div class="current-wind-row">
-            <span class="current-wind-arrow">↑</span>
             <span class="current-wind-dir">–</span>
+            <span class="current-wind-arrow">
+              <svg viewBox="0 0 24 24" width="40" height="40">
+                <path d="M12 1 L18 11 L14 11 L14 21 L10 21 L10 11 L6 11 Z" fill="currentColor"/>
+              </svg>
+            </span>
           </div>
           <div class="current-wind-speed">–</div>
         </div>
 
-        <div class="current-conditions-item popup-card-inner popup-temp-card">
-          <div class="current-label">Lämpötila</div>
-          <div class="popup-temp-value">–</div>
-        </div>
-
-        <div class="current-conditions-item popup-card-inner popup-sealevel-card">
-          <div class="current-label">Vedenkorkeus</div>
-          <div class="wind-flow-sealevel-row">
-            <span class="wind-flow-sealevel-label">Keskivesi</span>
-            <span class="wind-flow-sealevel-value" data-kind="watlev">–</span>
+        <!-- Lämpötila + Aurinko samassa alakortissa. Molemmat pysyvät
+             omina sisäisinä lohkoinaan (.popup-temp-card/.current-sun-
+             item), jotta niiden erillinen näkyvyyslogiikka (lämpötila
+             näkyy aina, aurinkotieto piilotetaan jos ei saatavilla)
+             toimii edelleen itsenäisesti – vain ULOMPI kortti on
+             visuaalisesti yhtenäinen. -->
+        <div class="current-conditions-item popup-card-inner current-temp-sun-card">
+          <div class="popup-temp-card">
+            <div class="current-label">Lämpötila</div>
+            <div class="popup-temp-value">–</div>
           </div>
-          <div class="wind-flow-sealevel-row">
-            <span class="wind-flow-sealevel-label">N2000</span>
-            <span class="wind-flow-sealevel-value" data-kind="n2000">–</span>
-          </div>
-        </div>
-
-        <div class="current-conditions-item popup-card-inner popup-wave-card" style="display:none;">
-          <div class="current-label">Aallokko</div>
-          <div class="popup-wave-row">
-            <span class="popup-wave-height-value">–</span>
-            <span class="popup-wave-period-label">jakso <span class="popup-wave-period-value">–</span></span>
-          </div>
-        </div>
-
-        <div class="current-conditions-item popup-card-inner current-sun-item" style="display:none;">
-          <div class="current-label">Aurinko</div>
-          <div class="popup-sun-row">
-            <div class="popup-inline-item">
-              <img src="./js/assets/icons/sunrise.svg" class="popup-icon" alt="Auringonnousu">
-              <span class="current-sunrise-value">–</span>
+          <div class="current-sun-item" style="display:none;">
+            <div class="current-label">Aurinko</div>
+            <div class="popup-sun-row">
+              <div class="popup-inline-item">
+                <img src="./js/assets/icons/sunrise.svg" class="popup-icon" alt="Auringonnousu">
+                <span class="current-sunrise-value">–</span>
+              </div>
+              <div class="popup-inline-item">
+                <img src="./js/assets/icons/sunset.svg" class="popup-icon" alt="Auringonlasku">
+                <span class="current-sunset-value">–</span>
+              </div>
             </div>
-            <div class="popup-inline-item">
-              <img src="./js/assets/icons/sunset.svg" class="popup-icon" alt="Auringonlasku">
-              <span class="current-sunset-value">–</span>
+          </div>
+        </div>
+
+        <!-- Vedenkorkeus + Aallokko samassa alakortissa, samalla
+             periaatteella kuin yllä (kumpikin osio piiloutuu
+             itsenäisesti; jos molemmat piiloutuvat esim. sisämaan
+             asemalla, hideEmptyMergedCard piilottaa myös koko
+             ulomman kortin, ettei jää tyhjää laatikkoa). -->
+        <div class="current-conditions-item popup-card-inner current-sealevel-wave-card">
+          <div class="popup-sealevel-card">
+            <div class="current-label">Vedenkorkeus</div>
+            <div class="wind-flow-sealevel-row">
+              <span class="wind-flow-sealevel-label">Keskivesi</span>
+              <span class="wind-flow-sealevel-value" data-kind="watlev">–</span>
+            </div>
+            <div class="wind-flow-sealevel-row">
+              <span class="wind-flow-sealevel-label">N2000</span>
+              <span class="wind-flow-sealevel-value" data-kind="n2000">–</span>
+            </div>
+          </div>
+          <div class="popup-wave-card" style="display:none;">
+            <div class="current-label">Aallokko</div>
+            <div class="popup-wave-row">
+              <span class="popup-wave-height-value">–</span>
+              <span class="popup-wave-period-label">jakso <span class="popup-wave-period-value">–</span></span>
             </div>
           </div>
         </div>
@@ -115,6 +140,28 @@ export function currentConditionsCardHTML(station) {
       </div>
     </div>
   `;
+}
+
+// Piilottaa yhdistetyn "alakortin" kokonaan, jos KAIKKI sen sisäiset
+// osiot ovat piilossa (esim. sisämaan asemalla, jolla ei ole
+// vedenkorkeutta EIKÄ aallokkoa – muuten jäisi näkyviin tyhjä,
+// tarkoitukseton laatikko).
+function hideEmptyMergedCard(containerEl, wrapperSelector, partSelectors) {
+  const wrapper = containerEl.querySelector(wrapperSelector);
+  if (!wrapper) return;
+
+  const anyVisible = partSelectors.some(sel => {
+    const part = wrapper.querySelector(sel);
+    return part && part.style.display !== "none";
+  });
+
+  wrapper.style.display = anyVisible ? "" : "none";
+}
+
+export function updateMergedCardVisibility(containerEl) {
+  hideEmptyMergedCard(containerEl, ".current-sealevel-wave-card", [".popup-sealevel-card", ".popup-wave-card"]);
+  // Lämpötila näkyy aina (renderTempCard ei koskaan piilota sitä),
+  // joten current-temp-sun-card ei tarvitse vastaavaa käsittelyä.
 }
 
 // Tuoreimman havaitun tuulilukeman (nopeus + suunta + puuska) haku
@@ -164,8 +211,20 @@ export function renderCurrentWindSummary(containerEl, data) {
     // Sama dir+180°-konventio kuin kartan tuuli-ikoneissa ja
     // tuulen aikajanalla – nuoli osoittaa mihin tuuli puhaltaa.
     arrowEl.style.transform = `rotate(${latest.winddirection + 180}deg)`;
+    // Sama nopeusrajoihin perustuva väriasteikko kuin kartan
+    // tuuli-ikoneissa (ks. createWindIcon(), js/main.js), jotta
+    // nuoli "muuttaa väriä tuulen nopeuden mukaan samalla tavalla
+    // kuin kartalla".
+    arrowEl.style.color = windSpeedColor(speed);
   }
 
+}
+
+function windSpeedColor(roundedSpeed) {
+  return roundedSpeed < 5  ? "#028b09" :
+         roundedSpeed < 10 ? "#025981" :
+         roundedSpeed < 15 ? "#b67e06" :
+                              "#E53935";
 }
 
 export function renderCurrentSunTimes(containerEl, data) {

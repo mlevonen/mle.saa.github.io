@@ -160,20 +160,22 @@ html, body { margin: 0; height: 100%; }
 .current-wind-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
-/* Tuulinuoli selvästi isoin elementti kortissa – tuulitieto on
-   todennäköisesti katsojalle kiinnostavin yksittäinen lukema. */
+/* Tuulinuoli – sama SVG-muoto kuin kartan tuuli-ikoneissa
+   (createWindIcon(), js/main.js) ja väri vaihtuu tuulen nopeuden
+   mukaan JS:ssä (ks. renderCurrentWindSummary/windSpeedColor,
+   js/popup/currentConditionsCard.js) samalla nopeusasteikolla kuin
+   kartalla. */
 .current-wind-arrow {
-  display: inline-block;
-  font-size: 42px;
-  line-height: 1;
+  display: inline-flex;
   color: #bfe0ff;
+  transition: color 0.2s ease;
 }
 
 .current-wind-dir {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
   color: #eaf1f8;
 }
@@ -188,6 +190,23 @@ html, body { margin: 0; height: 100%; }
 .popup-current-card .popup-temp-value {
   font-size: 26px;
   color: #ffab91;
+}
+
+/* Lämpötila+Aurinko ja Vedenkorkeus+Aallokko ovat kumpikin kaksi
+   pinottua, itsenäisesti piiloutuvaa lohkoa saman alakortin sisällä
+   – erotettu kevyellä jakoviivalla, kun molemmat ovat näkyvissä. */
+.current-temp-sun-card,
+.current-sealevel-wave-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+}
+
+.current-temp-sun-card > div:not(:first-child),
+.current-sealevel-wave-card > div:not(:first-child) {
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.15);
 }
 
 .popup-current-card .wind-flow-sealevel-label {
@@ -222,13 +241,32 @@ html, body { margin: 0; height: 100%; }
 
 .popup-current-card .popup-hourly-day {
   color: #9fc1de;
+  font-size: 12px;
+}
+
+/* Sääennuste-alakortti on koko leveä ja tilaa on runsaasti, joten
+   tuntikohtaiset ikonit voivat olla selvästi isompia kuin popupin
+   muualla käytetty pienoiskoko. */
+.popup-current-card .popup-hourly-forecast {
+  gap: 10px;
+}
+
+.popup-current-card .popup-hourly-item {
+  width: 56px;
+}
+
+.popup-current-card .popup-hourly-icon {
+  width: 40px;
+  height: 40px;
 }
 
 .popup-current-card .popup-hourly-hour {
+  font-size: 13px;
   color: #cfe0f0;
 }
 
 .popup-current-card .popup-hourly-temp {
+  font-size: 15px;
   color: #ffab91;
 }
 

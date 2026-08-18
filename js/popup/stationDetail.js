@@ -20,7 +20,7 @@ import { renderPopupExtras, renderSunCard, renderWaveCard, renderTempCard } from
 import { renderWindCharts } from "../charts/windChart.js";
 import { renderSeaLevelCard } from "./seaLevelCard.js";
 import { renderWindFlowAnimation } from "./windFlowAnimation.js";
-import { currentConditionsCardHTML, renderCurrentWindSummary, renderCurrentSunTimes } from "./currentConditionsCard.js";
+import { currentConditionsCardHTML, renderCurrentWindSummary, renderCurrentSunTimes, updateMergedCardVisibility } from "./currentConditionsCard.js";
 
 export function stationDetailHTML(station) {
   return `
@@ -151,6 +151,12 @@ export async function renderStationDetail(containerEl, station) {
     // vedenkorkeusasema voisi olla satoja kilometrejä päässä eikä
     // lukema liity mitenkään kyseiseen sisämaan pisteeseen.
     await renderSeaLevelCard(containerEl, station);
+
+    // Vasta kun renderSeaLevelCard/renderWaveCard ovat asettaneet
+    // omat näkyvyytensä, voidaan päätellä pitääkö koko yhdistetty
+    // Vedenkorkeus+Aallokko-alakortti piilottaa kokonaan (jos
+    // molemmat osiot ovat piilossa, esim. sisämaan asemalla).
+    updateMergedCardVisibility(containerEl);
 
     // Tuulen virtaus (Open-Meteo, animoitu hiukkaskenttä) + napit/liukusäädin
     const { stop } = await renderWindFlowAnimation(containerEl, station.lat, station.lon);
