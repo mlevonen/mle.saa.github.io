@@ -263,13 +263,15 @@
      ========================== */
 
   .popup-current-card {
-    background: #1c3f5f;
-    border-color: #0f2a44;
+    background: #0f2438;
+    border-color: #081a2a;
     color: #eaf1f8;
   }
 
+  /* Vaaleansininen (ei valkoinen) sopii paremmin yhteen tummemman
+     taustan kanssa kuin täysvalkoinen. */
   .popup-current-card .popup-title {
-    color: #fff;
+    color: #bfe0ff;
     font-size: 22px;
     margin-bottom: 8px;
   }
@@ -313,6 +315,14 @@
     position: relative;
   }
 
+  /* "Tuuli"-otsikko piilotettu: nuolipallo (ks. alla) on niin iso ja
+     lähellä yläreunaa, että pieni otsikkoteksti näytti irralliselta/
+     hukkuvalta sen vierellä. Itse tuulilukemat (asteluku, nopeus)
+     kertovat jo riittävästi mistä kortista on kyse. */
+  .current-wind-item .current-label {
+    display: none;
+  }
+
   .current-wind-arrow-box {
     position: absolute;
     top: 8px;
@@ -339,11 +349,14 @@
     color: #eaf1f8;
   }
 
+  /* Sama korosteväri kuin lämpötilalla (.popup-temp-value), koska
+     tuulen nopeus on kortin toinen "pääluku" siinä missä suunta on
+     toissijainen tieto. */
   .current-wind-speed {
     margin-top: 2px;
     font-size: 20px;
     font-weight: 700;
-    color: #bfe0ff;
+    color: #ffab91;
   }
 
   .popup-current-card .popup-temp-value {
