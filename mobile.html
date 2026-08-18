@@ -262,8 +262,17 @@
      rakenne, vain grid-template-columns eroaa desktopista.
      ========================== */
 
-  /* Sama tummansininen kuin desktop-versiossa (index.html). */
-  .popup-current-card {
+  /* Sama tummansininen kuin desktop-versiossa (index.html).
+     HUOM: valitsin ".popup-card.popup-current-card" (molemmat
+     luokat), EI pelkkää ".popup-current-card" – elementillä on aina
+     molemmat luokat ("popup-card popup-current-card"), ja pelkkä
+     yhden luokan valitsin on täsmälleen yhtä spesifinen kuin alempana
+     oleva ".popup-card"-perussääntö. Koska ".popup-card" määritellään
+     tiedostossa TÄMÄN säännön JÄLKEEN, se voitti aiemmin taustavärin
+     (ja reunavärin) – siksi tausta ei näyttänyt vaihtuvan. Yhdistetty
+     valitsin on spesifisyydeltään vahvempi ja voittaa aina
+     järjestyksestä riippumatta. */
+  .popup-card.popup-current-card {
     background: #1c3f5f;
     border-color: #0f2a44;
     color: #eaf1f8;

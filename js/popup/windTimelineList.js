@@ -197,11 +197,12 @@ export function renderWindTimelineList(containerEl, data) {
 
   listEl.innerHTML = html;
 
-  const nowEl = listEl.querySelector('[data-row-now="true"]');
-  if (nowEl) {
-    requestAnimationFrame(() => {
-      nowEl.scrollIntoView({ block: "center" });
-    });
-  }
+  // HUOM: aiemmin "nyt"-rivi vieritettiin automaattisesti näkyviin
+  // (scrollIntoView), mikä oli järkevää kun tuulilista oli kortin
+  // ylin sisältö. Nyt yläkortti (tämän hetkinen tilanne) on aina
+  // ensimmäisenä, joten tämä automaattivieritys veisi näkymän sen
+  // ohi suoraan tuulilistaan asti popupin avautuessa. "Nyt"-rivi
+  // erottuu silti visuaalisesti (ks. .wind-timeline-row-now), joten
+  // erillistä automaattivieritystä ei enää tarvita.
 
 }
