@@ -244,6 +244,179 @@
     margin-bottom: 6px;
   }
 
+  /* ==========================
+     Ylin yhteenvetokortti ("tämän hetkinen tilanne") – sama konsepti
+     ja sama jaettu HTML/JS kuin desktopilla (index.html /
+     js/popup/currentConditionsCard.js: currentConditionsCardHTML,
+     renderCurrentWindSummary, renderCurrentSunTimes,
+     updateMergedCardVisibility – EI mobiilikopiota näistä). Vain
+     ulkoasu (tämä CSS-lohko) on mobiilikohtainen.
+
+     Desktopilla alakortit (Tuuli, Lämpötila+Aurinko, Vedenkorkeus+
+     Aallokko, Sääennuste) ovat 3 sarakkeen ruudukossa, koska popup on
+     leveä (≥660px). Mobiilin kortti on kapeampi (tyypillisesti
+     320-400px), joten 3 kapeaa saraketta olisi liian ahdas mm.
+     pitkälle vedenkorkeusaseman nimelle ja tuulinuolikuplalle.
+     Siksi mobiilissa KAIKKI alakortit pinotaan yhteen sarakkeeseen
+     (samaan tapaan kuin muutkin mobiilin kortit) – sama HTML-
+     rakenne, vain grid-template-columns eroaa desktopista.
+     ========================== */
+
+  .popup-current-card {
+    background: #1c3f5f;
+    border-color: #0f2a44;
+    color: #eaf1f8;
+  }
+
+  .popup-current-card .popup-title {
+    color: #fff;
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+
+  .current-conditions-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .current-conditions-item {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .popup-current-card .popup-card-inner {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.18);
+    padding: 10px 12px;
+  }
+
+  .current-label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 3px;
+    color: #9fc1de;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .current-wind-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .current-wind-item {
+    position: relative;
+  }
+
+  .current-wind-arrow-box {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #dbeeff;
+    border: 1px solid #a9d4f0;
+  }
+
+  .current-wind-arrow {
+    display: inline-flex;
+    color: #bfe0ff;
+    transition: color 0.2s ease;
+  }
+
+  .current-wind-dir {
+    font-size: 24px;
+    font-weight: 700;
+    color: #eaf1f8;
+  }
+
+  .current-wind-speed {
+    margin-top: 2px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #bfe0ff;
+  }
+
+  .popup-current-card .popup-temp-value {
+    font-size: 26px;
+    color: #ffab91;
+  }
+
+  .current-temp-sun-card,
+  .current-sealevel-wave-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .current-temp-sun-card > div:not(:first-child),
+  .current-sealevel-wave-card > div:not(:first-child) {
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .popup-current-card .wind-flow-sealevel-row {
+    min-width: 0;
+  }
+
+  .popup-current-card .wind-flow-sealevel-label {
+    color: #9fc1de;
+  }
+
+  .popup-current-card .wind-flow-sealevel-value {
+    color: #bfe0ff;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .popup-current-card .popup-wave-height-value {
+    color: #bfe0ff;
+  }
+
+  .popup-current-card .popup-wave-period-label {
+    color: #9fc1de;
+  }
+
+  .popup-current-card .popup-wave-period-value {
+    color: #eaf1f8;
+  }
+
+  .popup-current-card .popup-wave-info-text {
+    color: #cfe0f0;
+  }
+
+  .popup-current-card .popup-inline-item:not(:first-child)::before {
+    border-left-color: rgba(255,255,255,0.25);
+  }
+
+  .current-sunrise-value,
+  .current-sunset-value {
+    color: #eaf1f8;
+    font-weight: 600;
+  }
+
+  .popup-current-card .popup-hourly-day {
+    color: #9fc1de;
+  }
+
+  .popup-current-card .popup-hourly-hour {
+    color: #cfe0f0;
+  }
+
+  .popup-current-card .popup-hourly-temp {
+    color: #ffab91;
+  }
+
   .popup-card {
     background: #e8eef5;
     border: 1px solid #c5d5e3;

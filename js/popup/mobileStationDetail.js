@@ -24,11 +24,26 @@ import { renderPopupExtras, renderSunCard, renderWaveCard, renderTempCard } from
 import { renderSeaLevelCard } from "./seaLevelCard.js";
 import { renderWindFlowAnimation } from "./windFlowAnimation.js";
 import { windTimelineListHTML, renderWindTimelineList } from "./windTimelineList.js";
+import {
+  currentConditionsCardHTML,
+  renderCurrentWindSummary,
+  renderCurrentSunTimes,
+  updateMergedCardVisibility
+} from "./currentConditionsCard.js";
 
 export function mobileStationDetailHTML(station) {
   return `
-    <div class="popup-title">${station.name}</div>
-    <div class="popup-extras"></div>
+    <!-- Sama tumma "tämän hetkinen tilanne" -yläkortti kuin
+         desktopilla (js/popup/currentConditionsCard.js, täysin
+         jaettu funktio – ei mobiilikopiota). Sisältää nyt myös
+         aiemmin täällä olleen aseman nimen ja popup-extrasit, joten
+         niitä ei enää tulosteta erikseen. Yksittäiset Lämpötila-,
+         Vedenkorkeus-, Aallokko- ja Sää-kortit poistettiin tämän
+         ALTA (ks. renderMobileStationDetail), koska samat tiedot
+         näkyvät nyt tässä kortissa. mobile.html:n oma CSS asettelee
+         alakortit yhteen sarakkeeseen kolmen sijaan, koska mobiili
+         on kapeampi kuin desktop-popup. -->
+    ${currentConditionsCardHTML(station)}
 
     ${windTimelineListHTML()}
 
@@ -75,57 +90,14 @@ export function mobileStationDetailHTML(station) {
       </div>
     </div>
 
-    <div class="popup-card-inner popup-wave-card mobile-stack-card" style="display:none;">
-      <div class="mobile-card-label popup-wave-label-row">
-        Aallokko
-        <button type="button" class="popup-info-btn" aria-label="Tietoa aallonkorkeuslukemasta">?</button>
-      </div>
-      <!-- Selitys sille miksi lukema ei aina vastaa avomeren aallokkoa
-           – ks. renderWaveCard, popupExtras.js, joka sitoo klikkauksen
-           tähän (hidden-attribuutin toggle). -->
-      <div class="popup-wave-info-text" hidden>
-        Lukema on aaltomallin ennuste tarkalleen havaintoaseman
-        sijainnissa. Moni asema on satamassa tai muuten suojaisassa
-        paikassa, joten se voi poiketa avomeren aallokosta.
-      </div>
-      <div class="popup-wave-row">
-        <span class="popup-wave-height-value">–</span>
-        <span class="popup-wave-period-label">jakso <span class="popup-wave-period-value">–</span></span>
-      </div>
-    </div>
-
-    <div class="popup-card-inner popup-sealevel-card mobile-stack-card">
-      <div class="mobile-card-label">Vedenkorkeus</div>
-      <div class="wind-flow-sealevel-row">
-        <span class="wind-flow-sealevel-label">Keskivesi</span>
-        <span class="wind-flow-sealevel-value" data-kind="watlev">–</span>
-      </div>
-      <div class="wind-flow-sealevel-row">
-        <span class="wind-flow-sealevel-label">N2000</span>
-        <span class="wind-flow-sealevel-value" data-kind="n2000">–</span>
-      </div>
-    </div>
-
-    <div class="popup-card-inner popup-temp-card mobile-stack-card">
-      <div class="mobile-card-label">Lämpötila</div>
-      <div class="popup-temp-value">–</div>
-    </div>
-
-    <div class="popup-card-inner popup-sun-card mobile-stack-card" style="display:none;">
-      <div class="mobile-card-label">Sää</div>
-      <div class="popup-sun-row">
-        <div class="popup-inline-item">
-          <img src="./js/assets/icons/sunrise.svg" class="popup-icon" alt="Auringonnousu">
-          <span class="popup-sunrise-value">–</span>
-        </div>
-        <div class="popup-inline-item">
-          <img src="./js/assets/icons/sunset.svg" class="popup-icon" alt="Auringonlasku">
-          <span class="popup-sunset-value">–</span>
-        </div>
-      </div>
-      <div class="popup-hourly-day"></div>
-      <div class="popup-hourly-forecast"></div>
-    </div>
+    <!-- Aallokko, Vedenkorkeus, Lämpötila ja Sää (tuntiennuste) ovat
+         nyt yläkortin sisällä (currentConditionsCardHTML) – erilliset
+         kortit poistettu, jotta samat tiedot eivät näy kahdesti.
+         renderWaveCard/renderSeaLevelCard/renderTempCard/renderSunCard
+         (alla renderMobileStationDetailissä) täyttävät edelleen samat
+         .popup-wave-card/.popup-sealevel-card/.popup-temp-card/
+         .popup-sun-card -elementit, mutta nyt ne löytyvät yläkortin
+         sisältä, koska funktiot etsivät ne aina koko containerElistä. -->
 
     <div class="popup-note">
       ℹ️ Graafit perustuvat Ilmatieteen laitoksen dataan, tuuliennusteanimaatio Open-Meteon (MET Nordic) malliin. Eri ennustemallien vuoksi tuulilukemat voivat poiketa hieman toisistaan.
@@ -154,8 +126,19 @@ export async function renderMobileStationDetail(containerEl, station) {
     renderWaveCard(containerEl, data, station);
     renderTempCard(containerEl, data);
 
+    // Yläkortin tuuli (havainto) + auringon nousu/lasku – sama jaettu
+    // logiikka kuin desktopilla (ks. stationDetail.js).
+    renderCurrentWindSummary(containerEl, data);
+    renderCurrentSunTimes(containerEl, data);
+
     // Vedenkorkeus (sama logiikka kuin desktopilla, jaettu moduuli).
     await renderSeaLevelCard(containerEl, station);
+
+    // Vasta kun renderSeaLevelCard/renderWaveCard ovat asettaneet omat
+    // näkyvyytensä, voidaan päätellä pitääkö koko yhdistetty
+    // Vedenkorkeus+Aallokko-alakortti piilottaa kokonaan (esim.
+    // sisämaan asemalla, jolla ei ole kumpaakaan).
+    updateMergedCardVisibility(containerEl);
 
     // Tekstimuotoinen tuulen aikajana + graafit lazy-toggle-linkin taakse.
     renderWindTimelineList(containerEl, data);
