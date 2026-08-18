@@ -36,14 +36,23 @@ html, body { margin: 0; height: 100%; }
 
 .leaflet-popup-content {
   width: auto !important;
-  /* Leafletin shrink-to-fit-leveys perustuu popupin sisällä olevaan
-     LEVEIMPÄÄN riviin. Kun ylimmän yhteenvetokortin ruudukko
-     (.current-conditions-grid) käyttää flex-wrap-tyyliä eikä yhtä
-     kiinteää leveyttä, se ei enää itsessään pakota popupia riittävän
-     leveäksi – koko popup kapeni ja osa sisällöstä (mm. tuntikohtaisen
-     sääennusteen loppupää) jäi vierittyvän alueen taakse "piiloon"
-     oikeaan reunaan. min-width takaa popupille riittävän leveyden
-     riippumatta siitä mikä rivi sattuu olemaan leveintä. */
+}
+
+/* min-width koskee VAIN täyttä asemakorttia (stationDetail.js,
+   station-full-popup-luokka annetaan marker.bindPopup()-kutsussa
+   main.js:ssä). Aiemmin sääntö oli yleinen .leaflet-popup-content,
+   jolloin se pakotti myös aaltopoiju- ja wind-fc-popupit (Ruotsi/
+   Viro) turhan leveiksi, vaikka niiden oma sisältö on paljon
+   kapeampi.
+   Leafletin shrink-to-fit-leveys perustuu popupin sisällä olevaan
+   LEVEIMPÄÄN riviin. Kun ylimmän yhteenvetokortin ruudukko
+   (.current-conditions-grid) käyttää flex-wrap-tyyliä eikä yhtä
+   kiinteää leveyttä, se ei enää itsessään pakota popupia riittävän
+   leveäksi – koko popup kapeni ja osa sisällöstä (mm. tuntikohtaisen
+   sääennusteen loppupää) jäi vierittyvän alueen taakse "piiloon"
+   oikeaan reunaan. min-width takaa popupille riittävän leveyden
+   riippumatta siitä mikä rivi sattuu olemaan leveintä. */
+.leaflet-popup.station-full-popup .leaflet-popup-content {
   min-width: 660px;
 }
 
@@ -132,6 +141,14 @@ html, body { margin: 0; height: 100%; }
 .current-conditions-item {
   display: flex;
   flex-direction: column;
+  /* Ilman tätä CSS Grid mitoittaa sarakkeen leveyden sisällön
+     MIN-CONTENTIN mukaan – esim. pitkä, katkeamaton vedenkorkeus-
+     aseman nimi ("Turku Ruissalo Saaronniemi") pakottaisi tämän
+     sarakkeen leveämmäksi ja kutistaisi samalla rivin muut sarakkeet
+     (esim. Tuuli). min-width:0 sallii itemin kutistua 1fr-osuutensa
+     mukaiseksi, jolloin ylipitkä teksti voidaan sen sijaan katkaista
+     kolmella pisteellä (ks. .wind-flow-sealevel-value alla). */
+  min-width: 0;
 }
 
 /* Sääennuste tarvitsee enemmän tilaa vaakavierittyvälle
@@ -372,6 +389,10 @@ html, body { margin: 0; height: 100%; }
   align-items: baseline;
   gap: 6px;
   line-height: 1.3;
+  /* Sallii rivin (ja sen sisällä olevan arvon, ks. alla) kutistua
+     korttinsa mukana sen sijaan että pitkä asemanimi työntäisi
+     koko riviä leveämmäksi. */
+  min-width: 0;
 }
 
 .wind-flow-sealevel-label {
@@ -379,6 +400,8 @@ html, body { margin: 0; height: 100%; }
   color: #888;
   min-width: 52px;
   white-space: nowrap;
+  /* Ei saa kutistua – vain arvo (jossa asemanimi) katkaistaan. */
+  flex-shrink: 0;
 }
 
 .wind-flow-sealevel-value {
@@ -386,6 +409,17 @@ html, body { margin: 0; height: 100%; }
   font-weight: 700;
   color: #1a4d7a;
   white-space: nowrap;
+  /* Vedenkorkeuslukemaan liitetään lähimmän aseman nimi suluissa
+     (ks. seaLevelCard.js), joka voi olla hyvinkin pitkä (esim.
+     "Turku Ruissalo Saaronniemi"). min-width:0 sallii tämän flex-
+     lapsen kutistua rivin mukana, jolloin overflow+ellipsis katkaisee
+     ylipitkän nimen kolmeen pisteeseen sen sijaan että se työntäisi
+     koko korttia (ja siten CSS Grid -saraketta) leveämmäksi. Koko
+     nimi on silti nähtävissä hover-vihjeenä (title-attribuutti,
+     ks. seaLevelCard.js). */
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 

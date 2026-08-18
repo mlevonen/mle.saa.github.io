@@ -43,17 +43,31 @@ export async function renderSeaLevelCard(containerEl, station) {
     return;
   }
 
+  // HUOM: asemanimi voi olla pitkä (esim. "Turku Ruissalo
+  // Saaronniemi") ja se katkaistaan tarvittaessa visuaalisesti CSS:n
+  // ellipsis-säännöllä (ks. .wind-flow-sealevel-value, index.html),
+  // jotta se ei enää pakota koko korttia (ja CSS Grid -saraketta)
+  // leveämmäksi. title-attribuutti näyttää silti täyden nimen hover-
+  // vihjeenä.
   try {
     const { watlev, n2000 } = await fetchSeaLevel(nearestSea.fmisid);
     if (seaLevelWatlevEl) {
       seaLevelWatlevEl.textContent = `${formatLevel(watlev)} (${nearestSea.name})`;
+      seaLevelWatlevEl.title = nearestSea.name;
     }
     if (seaLevelN2000El) {
       seaLevelN2000El.textContent = `${formatLevel(n2000)} (${nearestSea.name})`;
+      seaLevelN2000El.title = nearestSea.name;
     }
   } catch (err) {
-    if (seaLevelWatlevEl) seaLevelWatlevEl.textContent = `– (${nearestSea.name})`;
-    if (seaLevelN2000El) seaLevelN2000El.textContent = `– (${nearestSea.name})`;
+    if (seaLevelWatlevEl) {
+      seaLevelWatlevEl.textContent = `– (${nearestSea.name})`;
+      seaLevelWatlevEl.title = nearestSea.name;
+    }
+    if (seaLevelN2000El) {
+      seaLevelN2000El.textContent = `– (${nearestSea.name})`;
+      seaLevelN2000El.title = nearestSea.name;
+    }
   }
 
 }

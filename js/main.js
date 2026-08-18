@@ -361,10 +361,18 @@ stations.forEach(station => {
     this.closeTooltip();
   });
 
+  // HUOM: "station-full-popup" -luokka annetaan VAIN täydelle
+  // asemakortille (stationDetailHTML), ei kevyemmälle wind-fc-
+  // popupille (Ruotsi/Viro). Leaflet lisää className-option-arvon
+  // ulomman .leaflet-popup-elementin luokaksi, joten index.html:n
+  // min-width-sääntö voidaan kohdistaa VAIN tähän luokkaan eikä se
+  // enää pakota myös aaltopoiju- tai wind-fc-popupeja liian leveiksi
+  // (ks. .leaflet-popup-content-sääntö index.html:ssä).
   marker.bindPopup(
     station.type === "wind-fc"
       ? openMeteoWindPopupHTML(station)
-      : stationDetailHTML(station)
+      : stationDetailHTML(station),
+    station.type === "wind-fc" ? undefined : { className: "station-full-popup" }
   );
 
   // Lisää oikeaan layeriin
