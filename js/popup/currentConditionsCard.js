@@ -60,19 +60,21 @@ export function currentConditionsCardHTML(station) {
       <div class="current-conditions-grid">
 
         <div class="current-conditions-item popup-card-inner current-wind-item">
+          <!-- Nuolelle oma vaalea "kortti" tumman taustan päällä,
+               jotta nuoli erottuu aina riippumatta sen omasta
+               (tuulen mukaan vaihtuvasta) väristä. Sijoitettu
+               absoluuttisesti kortin oikeaan yläkulmaan (ks. CSS),
+               joten sen paikka lähdekoodissa ei vaikuta ulkoasuun. -->
+          <span class="current-wind-arrow-box">
+            <span class="current-wind-arrow">
+              <svg viewBox="0 0 24 24" width="46" height="46">
+                <path d="M12 1 L18 11 L14 11 L14 21 L10 21 L10 11 L6 11 Z" fill="currentColor"/>
+              </svg>
+            </span>
+          </span>
           <div class="current-label">Tuuli</div>
           <div class="current-wind-row">
             <span class="current-wind-dir">–</span>
-            <!-- Nuolelle oma vaalea "kortti" tumman taustan päällä,
-                 jotta nuoli erottuu aina riippumatta sen omasta
-                 (tuulen mukaan vaihtuvasta) väristä. -->
-            <span class="current-wind-arrow-box">
-              <span class="current-wind-arrow">
-                <svg viewBox="0 0 24 24" width="40" height="40">
-                  <path d="M12 1 L18 11 L14 11 L14 21 L10 21 L10 11 L6 11 Z" fill="currentColor"/>
-                </svg>
-              </span>
-            </span>
           </div>
           <div class="current-wind-speed">–</div>
         </div>

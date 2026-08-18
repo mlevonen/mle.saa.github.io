@@ -163,17 +163,27 @@ html, body { margin: 0; height: 100%; }
   gap: 8px;
 }
 
+/* Nuolilaatikon absoluuttinen sijoittelu edellyttää, että itse
+   Tuuli-alakortti on positiointikonteksti. */
+.current-wind-item {
+  position: relative;
+}
+
 /* Nuolen oma vaalea "kortti" – nuolen väri vaihtelee tuulen mukaan
    (ks. alla), ja osa väreistä (esim. sininen) hukkuisi tumman
    yleistaustan päällä. Vaalea keltainen/beige tausta pitää nuolen
    aina hyvin erottuvana, eikä ole yhtä "kirkas" kuin puhdas
-   valkoinen. */
+   valkoinen. Sijoitettu kortin oikeaan yläkulmaan, jotta se erottuu
+   omana elementtinään lämpötila-/asteluvusta. */
 .current-wind-arrow-box {
+  position: absolute;
+  top: 8px;
+  right: 8px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 52px;
+  height: 52px;
   border-radius: 8px;
   background: #f5e9bd;
   border: 1px solid #d9c98a;
