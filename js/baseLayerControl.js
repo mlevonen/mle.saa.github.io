@@ -12,7 +12,7 @@ export function initBaseLayerControl(map, layers) {
 
   const BaseLayerControl = L.Control.extend({
 
-    options: { position: "topright" },
+    options: { position: "bottomright" },
 
     onAdd() {
 

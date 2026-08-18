@@ -38,7 +38,7 @@ export function initDataLicenseControl(map) {
 
   const DataLicenseControl = L.Control.extend({
 
-    options: { position: "topright" },
+    options: { position: "bottomright" },
 
     onAdd() {
 

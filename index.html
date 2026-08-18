@@ -1054,8 +1054,13 @@ html, body { margin: 0; height: 100%; }
 .baselayer-control-toggle {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   height: 34px;
+  /* Kiinteä leveys (ei vain paddingia) – sama arvo kuin
+     .datalicense-control-toggle:lla, jotta napit näyttävät
+     samankokoisilta tekstien eripituudesta huolimatta. */
+  width: 168px;
   padding: 0 12px;
   font-size: 13px;
   font-weight: 600;
@@ -1065,6 +1070,7 @@ html, body { margin: 0; height: 100%; }
   border-radius: 8px;
   cursor: pointer;
   white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .baselayer-control-toggle:hover {
@@ -1074,7 +1080,10 @@ html, body { margin: 0; height: 100%; }
 .baselayer-panel {
   display: none;
   position: absolute;
-  top: 40px;
+  /* Nappi on nyt kartan alareunassa (bottomright) – pudotusvalikko
+     avautuu YLÖSPÄIN napin yläpuolelle (ei enää alaspäin), jotta se
+     ei jää näytön alareunan ulkopuolelle piiloon. */
+  bottom: 40px;
   right: 0;
   min-width: 180px;
   background: #fff;
@@ -1114,14 +1123,22 @@ html, body { margin: 0; height: 100%; }
   box-shadow: 0 2px 10px rgba(0,0,0,0.18);
   overflow: visible;
   position: relative;
-  margin-top: 6px !important;
+  /* Väli napin JA taustakartta-napin välillä. Molemmat kontrollit
+     ovat nyt "bottomright"-kulmassa (pinottuna alhaalta ylöspäin),
+     joten margin-bottom pitää saman visuaalisen välin kuin aiemmin
+     margin-top topright-kulmassa. */
+  margin-bottom: 6px !important;
 }
 
 .datalicense-control-toggle {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   height: 34px;
+  /* Sama kiinteä leveys kuin .baselayer-control-toggle:lla, jotta
+     napit näyttävät samankokoisilta. */
+  width: 168px;
   padding: 0 12px;
   font-size: 13px;
   font-weight: 600;
@@ -1131,6 +1148,7 @@ html, body { margin: 0; height: 100%; }
   border-radius: 8px;
   cursor: pointer;
   white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .datalicense-control-toggle:hover {
@@ -1140,7 +1158,9 @@ html, body { margin: 0; height: 100%; }
 .datalicense-panel {
   display: none;
   position: absolute;
-  top: 40px;
+  /* Ks. .baselayer-panel – avautuu ylöspäin, koska nappi on nyt
+     kartan alareunassa. */
+  bottom: 40px;
   right: 0;
   width: 280px;
   max-height: 70vh;
