@@ -37,10 +37,13 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   }
 
-  .app-header h1 {
-    margin: 0;
-    font-size: 17px;
-    font-weight: 700;
+  /* Logo korvaa aiemman "FMI Havaintopisteet" -tekstiotsikon.
+     28px näyttökorkeus, kuva itse tallennettu 2x-resoluutiona
+     (56px) retina-näyttöjä varten – height:auto pitää kuvasuhteen. */
+  .app-header-logo {
+    display: block;
+    height: 28px;
+    width: auto;
   }
 
   .app-header a {
@@ -900,7 +903,7 @@
 <body>
 
   <header class="app-header">
-    <h1>🌊 FMI Havaintopisteet</h1>
+    <img src="./js/assets/icons/merisaa-logo.png" class="app-header-logo" alt="Merisää">
   </header>
 
   <main class="station-list-wrapper" id="station-list"></main>
