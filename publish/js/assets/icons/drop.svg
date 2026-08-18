@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="256" height="256" viewBox="0 0 256 256" xml:space="preserve">
+<g style="stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: none; fill-rule: nonzero; opacity: 1;" transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)">
+	<linearGradient id="SVGID_1" gradientUnits="userSpaceOnUse" x1="31.5207" y1="37.5664" x2="79.7607" y2="99.8464">
+<stop offset="0%" style="stop-color:rgb(26,190,233);stop-opacity: 1"/>
+<stop offset="100%" style="stop-color:rgb(0,73,233);stop-opacity: 1"/>
+</linearGradient>
+<path d="M 45.56 0.422 c -0.164 -0.563 -0.956 -0.563 -1.12 0 c -4.316 14.839 -32.114 31.966 -32.114 56.904 C 12.962 75.332 26.983 90 44.999 90 c 0 0 0 0 0.001 0 s 0 0 0.001 0 c 18.016 0 32.037 -14.668 32.673 -32.674 C 77.674 32.389 49.876 15.261 45.56 0.422 z" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: url(#SVGID_1); fill-rule: nonzero; opacity: 1;" transform=" matrix(1 0 0 1 0 0) " stroke-linecap="round"/>
+</g>
+</svg>

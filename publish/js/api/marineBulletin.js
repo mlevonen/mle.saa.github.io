@@ -1,0 +1,1 @@
+const MARINE_BULLETIN_URL = "https://cdn.fmi.fi/apps/sea-weather-forecasts-texts/day1.php"; export async function fetchMarineBulletinHtml() { const res = await fetch(MARINE_BULLETIN_URL); if (!res.ok) { throw new Error("HTTP " + res.status); } return await res.text(); }
