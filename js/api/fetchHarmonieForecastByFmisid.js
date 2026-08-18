@@ -1,7 +1,17 @@
-export async function fetchHarmonieForecastByFmisid(fmisid) {
+// Harmonie-mallin ennuste ulottuu ajoajosta riippuen 54-66 tuntiin,
+// mutta FMI:n WFS-rajapinnan OLETUSaikaväli (kun starttime/endtime
+// jätetään pois) palauttaa vain n. 49 tuntia dataa. Pyytämällä
+// endtime eksplisiittisesti saadaan koko mallin tarjoama data ulos.
+// 54h on kaikkien ajojen (myös lyhyempien 54h-ajojen) taattu
+// vähimmäispituus, joten sitä käytetään turvamarginaalilla.
+const DEFAULT_HOURS_AHEAD = 54;
+
+export async function fetchHarmonieForecastByFmisid(fmisid, hoursAhead = DEFAULT_HOURS_AHEAD) {
+
+  const endtime = new Date(Date.now() + hoursAhead * 60 * 60 * 1000).toISOString();
 
   const url =
-    `https://opendata.fmi.fi/wfs?service=WFS&version=2.0.0&request=getFeature&storedquery_id=fmi::forecast::harmonie::surface::point::multipointcoverage&fmisid=${fmisid}`;
+    `https://opendata.fmi.fi/wfs?service=WFS&version=2.0.0&request=getFeature&storedquery_id=fmi::forecast::harmonie::surface::point::multipointcoverage&fmisid=${fmisid}&endtime=${endtime}`;
 
   const res = await fetch(url);
   const text = await res.text();

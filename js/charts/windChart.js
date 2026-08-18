@@ -11,7 +11,11 @@ export function renderWindCharts(popupEl, data) {
   const obsEnd   = now;
 
   const fcStart = now;
-  const fcEnd   = new Date(now.getTime() + 36 * 60 * 60 * 1000);
+  // FMI:n Harmonie-malli tarjoaa dataa n. 54-66h eteenpäin (ks.
+  // fetchHarmonieForecastByFmisid.js), joten näytetään 48h eli
+  // reilusti aiempaa 36h enemmän mutta jätetään silti muutaman
+  // tunnin turvamarginaali mallin lyhyempien ajojen (54h) varalle.
+  const fcEnd   = new Date(now.getTime() + 48 * 60 * 60 * 1000);
 
 
 
@@ -57,7 +61,12 @@ export function renderWindCharts(popupEl, data) {
           y: p.windspeedms,
           dir: fcWindDir?.[i]?.winddirection
         }))
-        .filter(p => p.x > obsCutoffUtc)
+        // p.y != null suodattaa pois mallin ajon reunalla mahdollisesti
+        // esiintyvät puuttuvat (NaN→null) arvot – pidennetyn 48h-
+        // ikkunan takia näitä voi joskus esiintyä lyhyempien Harmonie-
+        // ajojen (54h) loppupäässä. Ilman suodatusta interpolointi
+        // (null + luku) tuottaisi NaN-pisteitä, jotka rikkoisivat käyrän.
+        .filter(p => p.x > obsCutoffUtc && p.y != null)
     : [];
 
   // ======================================================
@@ -121,7 +130,7 @@ export function renderWindCharts(popupEl, data) {
       x: parseFmiUtc(p.utctime),
       y: p.windgust
     }))
-    .filter(p => p.x > obsCutoffUtc);
+    .filter(p => p.x > obsCutoffUtc && p.y != null);
 
 
     console.log("WindSeries:", windSeries.length);
@@ -209,7 +218,8 @@ function renderWindObsChart(
       plugins: {
         legend: { display: false },
         windArrowPlugin: true,
-        nowLine: true
+        nowLine: true,
+        dayBoundary: true
       },
       scales: {
         x: {
@@ -299,7 +309,8 @@ new Chart(canvas, {
     maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
-      windArrowPlugin: true
+      windArrowPlugin: true,
+      dayBoundary: true
     },
     scales: {
       x: {
@@ -311,7 +322,10 @@ new Chart(canvas, {
           displayFormats: { hour: "HH" }
         },
         ticks: {
-          stepSize: 2,
+          // 48h-ikkunassa 2h-askel (aiempi arvo) tuottaisi 24
+          // tuntimerkintää – 3h-askel pitää akselin luettavana myös
+          // pidennetyllä aikavälillä.
+          stepSize: 3,
           autoSkip: false,
           maxRotation: 0,
           minRotation: 0

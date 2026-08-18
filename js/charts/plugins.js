@@ -110,6 +110,81 @@ const nowLinePlugin = {
 };
 
 
+// VUOROKAUDENVAIHTOPLUGIN
+//
+// Piirtää ohuen pystyviivan ja päivän lyhenteen (ma/ti/ke...) jokaisen
+// paikallisen keskiyön (00:00) kohdalle akselin näkyvällä aikavälillä.
+// Käyttökelpoisin pidennetyllä (48h) tuuliennustegraafilla, jossa
+// vuorokausi voi vaihtua kesken graafin, mutta toimii yhtä hyvin myös
+// lyhyemmällä havaintograafilla (ei piirrä mitään jos näkyvällä
+// aikavälillä ei ole yhtään keskiyötä).
+const dayBoundaryPlugin = {
+  id: "dayBoundary",
+
+  // Viiva piirretään ENNEN datasettejä, jotta se jää käyrien alle
+  // (samaan tapaan kuin Chart.js:n omat ruudukkoviivat).
+  beforeDatasetsDraw(chart) {
+    const { ctx, chartArea, scales } = chart;
+    const xScale = scales.x;
+    if (!xScale) return;
+
+    ctx.save();
+    ctx.strokeStyle = "rgba(0,0,0,0.25)";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([2, 3]);
+
+    forEachDayBoundary(xScale, boundaryTime => {
+      const x = xScale.getPixelForValue(boundaryTime);
+      ctx.beginPath();
+      ctx.moveTo(x, chartArea.top);
+      ctx.lineTo(x, chartArea.bottom);
+      ctx.stroke();
+    });
+
+    ctx.restore();
+  },
+
+  // Päivän lyhenne piirretään VASTA lopuksi, jotta teksti näkyy
+  // selvästi käyrien päällä eikä jää niiden alle.
+  afterDraw(chart) {
+    const { ctx, chartArea, scales } = chart;
+    const xScale = scales.x;
+    if (!xScale) return;
+
+    ctx.save();
+    ctx.font = "bold 10px sans-serif";
+    ctx.fillStyle = "rgba(0,0,0,0.55)";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+
+    forEachDayBoundary(xScale, boundaryTime => {
+      const x = xScale.getPixelForValue(boundaryTime);
+      const label = new Date(boundaryTime).toLocaleDateString("fi-FI", { weekday: "short" });
+      ctx.fillText(label, x, chartArea.top + 2);
+    });
+
+    ctx.restore();
+  }
+};
+
+// Kutsuu callbackia jokaiselle paikalliselle keskiyölle (00:00), joka
+// osuu annetun x-akselin min/max-aikavälille.
+function forEachDayBoundary(xScale, callback) {
+  const min = xScale.min;
+  const max = xScale.max;
+  if (min == null || max == null) return;
+
+  // Ensimmäinen keskiyö minin JÄLKEEN (paikallisessa aikavyöhykkeessä).
+  const d = new Date(min);
+  d.setHours(24, 0, 0, 0);
+
+  while (d.getTime() <= max) {
+    callback(d.getTime());
+    d.setDate(d.getDate() + 1);
+  }
+}
+
+
 // TEMPERATUREBANDSPLUGIN
 
 const temperatureBandsPlugin = {
@@ -151,3 +226,4 @@ const temperatureBandsPlugin = {
 Chart.register(windArrowPlugin);
 Chart.register(nowLinePlugin);
 Chart.register(temperatureBandsPlugin);
+Chart.register(dayBoundaryPlugin);
