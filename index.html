@@ -161,6 +161,10 @@ html, body { margin: 0; height: 100%; }
   display: flex;
   align-items: center;
   gap: 8px;
+  /* Nuolipallo (ks. alla) on absoluuttisesti sijoitettu kortin
+     oikeaan yläkulmaan ja ulottuu n. 60px kortin yläreunasta – ilman
+     tätä väliä asteluku näytti "koskettavan" palloa. */
+  margin-top: 10px;
 }
 
 /* Nuolilaatikon absoluuttinen sijoittelu edellyttää, että itse
@@ -281,12 +285,12 @@ html, body { margin: 0; height: 100%; }
 }
 
 .popup-current-card .popup-hourly-item {
-  width: 40px;
+  width: 44px;
 }
 
 .popup-current-card .popup-hourly-icon {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
 }
 
 .popup-current-card .popup-hourly-hour {
