@@ -6,10 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Merisää – Tuuli, aallokko ja vedenkorkeus kartalla veneilijöille</title>
 <meta name="description" content="Reaaliaikaiset tuuli-, aallokko- ja vedenkorkeushavainnot sekä sääennusteet Suomen rannikolla ja saaristossa. Ilmainen sääkartta veneilijöille, purjehtijoille, merenkulkijoille ja mökkiläisille.">
-<!-- noindex: tämä on vain JS-uudelleenohjauksen kohdesivu (ks. index.html),
-     sisältö on sama kuin etusivulla – canonical osoittaa sinne, jottei
-     hakukone pidä näitä kahtena erillisenä (duplicate content) sivuna. -->
-<meta name="robots" content="noindex, follow">
+<!-- HUOM: EI noindex-tagia täällä. Google indeksoi ensisijaisesti
+     mobiilinäkymän kautta (mobile-first indexing), ja koska index.html:n
+     JS-uudelleenohjaus vie kapeat näytöt (myös Googlebotin mobiilikäyttäjä-
+     agentin) tänne, Googlebot päätyy tosiasiassa renderöimään TÄMÄN sivun
+     sisällön etusivun URL-osoitteelle. Jos tällä sivulla olisi noindex,
+     Google tulkitsisi koko etusivun (https://merisaa.fi/) indeksoimatto-
+     maksi – näin kävikin ennen tämän korjauksen. Canonical-tagi riittää
+     yksinään estämään duplikaattisisällön ongelman ilman tätä riskiä. -->
 <link rel="canonical" href="https://merisaa.fi/">
 <link rel="icon" href="data:,">
 

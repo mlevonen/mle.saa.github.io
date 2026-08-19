@@ -29,4 +29,4 @@ import { parseFmiUtc } from "../utils/time.js"; import { renderWindCharts } from
         <span class="wind-timeline-speed">${speed}</span>
         <span class="wind-timeline-gust">${gust}</span>
       </div>
-    `; }); listEl.innerHTML = html;               }
+    `; }); listEl.innerHTML = html;                           requestAnimationFrame(() => { const nowEl = listEl.querySelector('[data-row-now="true"]'); if (!nowEl) return; const dayHeaderEl = listEl.querySelector(".wind-timeline-day"); const headerHeight = dayHeaderEl ? dayHeaderEl.getBoundingClientRect().height : 0; const listRect = listEl.getBoundingClientRect(); const rowRect = nowEl.getBoundingClientRect();     listEl.scrollTop += (rowRect.top - listRect.top) - headerHeight; }); }
