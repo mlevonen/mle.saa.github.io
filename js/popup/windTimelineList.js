@@ -197,12 +197,32 @@ export function renderWindTimelineList(containerEl, data) {
 
   listEl.innerHTML = html;
 
-  // HUOM: aiemmin "nyt"-rivi vieritettiin automaattisesti näkyviin
-  // (scrollIntoView), mikä oli järkevää kun tuulilista oli kortin
-  // ylin sisältö. Nyt yläkortti (tämän hetkinen tilanne) on aina
-  // ensimmäisenä, joten tämä automaattivieritys veisi näkymän sen
-  // ohi suoraan tuulilistaan asti popupin avautuessa. "Nyt"-rivi
-  // erottuu silti visuaalisesti (ks. .wind-timeline-row-now), joten
-  // erillistä automaattivieritystä ei enää tarvita.
+  // "Nyt"-rivi näkyviin heti listan SISÄLLÄ (eikä koko korttia/sheettiä
+  // vierittäen). Lista alkaa aina historiasta (-12h), joten ilman tätä
+  // käyttäjä näkisi ensin pelkkää menneisyyttä ja joutuisi itse
+  // skrollaamaan nykyhetkeen asti.
+  //
+  // HUOM: tämä on eri asia kuin aiemmin poistettu automaattivieritys.
+  // Tuolloin käytettiin nowEl.scrollIntoView(), joka vierittää KAIKKIA
+  // scrollattavia esi-isiä (myös koko mobiilin sheet-elementtiä) –
+  // se veisi näkymän yläkortin ohi suoraan tähän listaan popupin
+  // avautuessa. Tässä sen sijaan asetetaan suoraan vain listEl:n omaa
+  // scrollTop-arvoa, mikä ei koskaan vaikuta esi-isien vieritykseen –
+  // yläkortti pysyy siis edelleen ensimmäisenä näkyvissä, ja vasta
+  // tämän listan SISÄLLÄ näkymä alkaa "Nyt"-rivistä.
+  requestAnimationFrame(() => {
+    const nowEl = listEl.querySelector('[data-row-now="true"]');
+    if (!nowEl) return;
+
+    const dayHeaderEl = listEl.querySelector(".wind-timeline-day");
+    const headerHeight = dayHeaderEl ? dayHeaderEl.getBoundingClientRect().height : 0;
+
+    const listRect = listEl.getBoundingClientRect();
+    const rowRect = nowEl.getBoundingClientRect();
+
+    // "Nyt"-rivi juuri kiinteän päivä-otsikon alle, ei täysin listan
+    // yläreunaan asti (muuten sticky-otsikko peittäisi sen).
+    listEl.scrollTop += (rowRect.top - listRect.top) - headerHeight;
+  });
 
 }
