@@ -10,7 +10,7 @@
 const SOURCES = [
   {
     name: "Ilmatieteen laitos",
-    use: "Havainnot, ennusteet, vedenkorkeus, aallonkorkeus, säätiedotteet ja varoitukset",
+    use: "Havainnot, ennusteet, vedenkorkeus, aallonkorkeus ja säätiedotteet",
     license: "CC BY 4.0",
     url: "https://www.ilmatieteenlaitos.fi/avoin-data-lisenssi"
   },

@@ -75,7 +75,7 @@ map.fitBounds(bounds, {
   padding: [20, 20]
 });
 
-// Säätiedotus merenkulkijoille + Varoitukset -infopaneelit
+// Säätiedotus merenkulkijoille -infopaneeli
 // (avattava/piilotettava, sisältö ladataan vasta avattaessa)
 initMarineInfoPanels();
 
