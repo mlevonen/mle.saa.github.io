@@ -758,13 +758,15 @@ html, body { margin: 0; height: 100%; }
 .info-panels {
   position: fixed;
   top: 12px;
-  left: 12px;
+  /* left: 12px + ~6.5mm, jotta paneeli ei mene Leafletin zoom-
+     kontrollin (+/-) päälle vasemmassa yläkulmassa */
+  left: 38px;
   z-index: 1000;
   display: flex;
   flex-direction: column;
   gap: 8px;
   width: 300px;
-  max-width: calc(100vw - 24px);
+  max-width: calc(100vw - 50px);
   font-family: sans-serif;
 }
 
