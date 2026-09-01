@@ -18,7 +18,10 @@ const INLAND_LAKE_STATION_IDS = new Set([
   "rantasalmi-rukkasluoto-weather",
   "liperi-tuiskavanluoto-weather",
   "kuopio-ritoniemi-weather",
-  "inari-seitalaassa-weather"
+  "inari-seitalaassa-weather",
+  "lieksa-lampela-weather",
+  "kajaani-lentoasema-weather",
+  "sodankylä-lokka-weather"
 ]);
 
 // Näyttöjärjestys etelästä pohjoiseen, sisämaa viimeisenä.

@@ -124,6 +124,39 @@ const stations = [
 
   {
     type: "coastal",
+    id: "lieksa-lampela-weather",
+    name: "Lieksa Lampela",
+    fmisid: 101636,
+    lat: 63.3,
+    lon: 30.0,
+    featured: true,
+    inland: true
+  },
+
+  {
+    type: "coastal",
+    id: "kajaani-lentoasema-weather",
+    name: "Kajaani lentoasema",
+    fmisid: 101725,
+    lat: 64.3,
+    lon: 27.7,
+    featured: true,
+    inland: true
+  },
+
+  {
+    type: "coastal",
+    id: "sodankylä-lokka-weather",
+    name: "Sodankylä Lokka",
+    fmisid: 102000,
+    lat: 67.8,
+    lon: 27.7,
+    featured: true,
+    inland: true
+  },
+
+  {
+    type: "coastal",
     id: "kumlinge-kirkonkylä-weather",
     name: "Kumlinge kirkonkylä",
     fmisid: 100928,
