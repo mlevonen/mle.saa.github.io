@@ -15,7 +15,7 @@
 // muuttuja on suoraan käytettävissä ilman importtia.
 // ==========================
 
-import { groupBySeaArea } from "./seaAreas.js";
+import { groupBySeaArea, sortStationsWithinArea } from "./seaAreas.js";
 import { mobileStationDetailHTML, renderMobileStationDetail } from "./popup/mobileStationDetail.js";
 import { getFavoriteIds, isFavorite, toggleFavorite } from "./utils/favorites.js";
 import { CHANGELOG } from "./changelogData.js";
@@ -215,9 +215,10 @@ function refreshFavoritesSection() {
   const favStations = coastalStations.filter(s => favIds.includes(s.id));
 
   // Sama järjestys kuin muualla listassa (etelästä pohjoiseen, sitten
-  // aakkosjärjestys), ei lisäysjärjestys – pysyy ennustettavana.
+  // rannikon suuntaa mukaileva järjestys – ks. sortStationsWithinArea),
+  // ei lisäysjärjestys – pysyy ennustettavana.
   const ordered = groupBySeaArea(favStations)
-    .flatMap(g => g.stations.slice().sort((a, b) => a.name.localeCompare(b.name, "fi")));
+    .flatMap(g => sortStationsWithinArea(g.area, g.stations));
 
   favoritesList.innerHTML = "";
   ordered.forEach(station => favoritesList.appendChild(createStationLi(station)));
@@ -248,9 +249,7 @@ if (!groups.length) {
     const ul = document.createElement("ul");
     ul.className = "station-list";
 
-    areaStations
-      .slice()
-      .sort((a, b) => a.name.localeCompare(b.name, "fi"))
+    sortStationsWithinArea(area, areaStations)
       .forEach(station => ul.appendChild(createStationLi(station)));
 
     section.appendChild(ul);

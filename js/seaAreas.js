@@ -51,6 +51,28 @@ export function getSeaArea(station) {
 
 }
 
+// Merialueen SISÄINEN järjestys (esim. mobiililistassa) – pyrkii
+// mukailemaan rannikon suuntaa aakkosjärjestyksen sijaan, jotta lista
+// etenee maantieteellisesti johdonmukaisesti. Suomenlahti ja
+// Saaristomeri ja Ahvenanmaa kulkevat pääosin länsi-itä-suunnassa
+// (rannikko/saaristo levittäytyy sivuttain), joten ne järjestetään
+// pituusasteen mukaan lännestä itään. Muut alueet (Selkämeri,
+// Merenkurkku, Perämeri) kulkevat länsirannikkoa pohjois-etelä-
+// suunnassa, joten ne järjestetään leveysasteen mukaan pohjoisesta
+// etelään. Sisämaan järvillä ei ole vastaavaa rannikkoa, joten
+// käytetään samaa pohjois-etelä-järjestystä yksinkertaisuuden vuoksi.
+const WEST_TO_EAST_AREAS = new Set(["Suomenlahti", "Saaristomeri ja Ahvenanmaa"]);
+
+export function sortStationsWithinArea(area, stationList) {
+  const sorted = stationList.slice();
+  if (WEST_TO_EAST_AREAS.has(area)) {
+    sorted.sort((a, b) => a.lon - b.lon);
+  } else {
+    sorted.sort((a, b) => b.lat - a.lat);
+  }
+  return sorted;
+}
+
 // Ryhmittelee asemalistan merialueittain SEA_AREA_ORDER-järjestyksessä.
 // Palauttaa taulukon { area, stations } -objekteja (vain ei-tyhjät ryhmät).
 export function groupBySeaArea(stationList) {
