@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 64">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="45%" r="60%">
+      <stop offset="0%" stop-color="#2f6573" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#2f6573" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <g>
+    <circle cx="36" cy="32" r="30" fill="url(#glow)"/>
+
+    <path d="M6,40 Q16,16 26,30 Q34,41 44,22 Q52,9 66,26"
+          fill="none" stroke="#7ccdb8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/>
+
+    <path d="M2,42 Q14,34 22,42 T38,42 T54,42 T70,42"
+          fill="none" stroke="#55a4a4" stroke-width="3.5" stroke-linecap="round" opacity="0.9"/>
+
+    <path d="M2,49 Q14,41 22,49 T38,49 T54,49 T70,49"
+          fill="none" stroke="#2f6573" stroke-width="3.5" stroke-linecap="round" opacity="0.85"/>
+  </g>
+
+  <text x="82" y="42" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="700" font-size="29" letter-spacing="1.5" fill="#e6ebee">Merisää</text>
+</svg>
