@@ -1,0 +1,10 @@
+# Väliaikaiset/työkansiot – ei kuulu repoon (mm. suuria kuva-/videotiedostoja,
+# jotka aiheuttavat GitHubin 100 MB tiedostokokorajan ylityksiä).
+Temp_kuvat/
+
+# Yleiset suuret media-/arkistotiedostotyypit työkansiossa vahingossa
+# lisättyjen tiedostojen varalle.
+*.mp4
+*.mov
+*.MOV
+*.MP4

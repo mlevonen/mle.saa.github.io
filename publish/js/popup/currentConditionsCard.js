@@ -1,6 +1,7 @@
 function formatSunTime(d) { return d.toLocaleTimeString("fi-FI", { hour: "2-digit", minute: "2-digit" }); } export function currentConditionsCardHTML(station) { return `
     <div class="popup-card popup-current-card">
       <div class="popup-title">${station.name}</div>
+      ${station.notice ? `<div class="popup-station-notice">⚠️ ${station.notice}</div>` : ""}
       <div class="popup-extras"></div>
 
       <div class="current-conditions-grid">

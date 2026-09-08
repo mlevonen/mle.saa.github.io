@@ -11,6 +11,7 @@ import { initRadarPanel } from "./radarPanel.js";
 import { initBaseLayerControl } from "./baseLayerControl.js";
 import { initDataLicenseControl } from "./dataLicenseControl.js";
 import { initFeedbackControl } from "./feedbackControl.js";
+import { initChangelogControl } from "./changelogControl.js";
 import { MML_API_KEY } from "./config.js";
 import { stationDetailHTML, renderStationDetail } from "./popup/stationDetail.js";
 import { openMeteoWindPopupHTML, renderOpenMeteoWindPopup } from "./popup/openMeteoWindPopup.js";
@@ -62,6 +63,10 @@ initDataLicenseControl(map);
 // käyttäjän sähköpostiohjelman valmiiksi täytetyllä viestillä,
 // ei vaadi omaa palvelinta).
 initFeedbackControl(map);
+
+// Palaute-napin yläpuolelle: nappi, joka näyttää listan viimeisimmistä
+// sivustolle tehdyistä muutoksista (ks. changelogData.js).
+initChangelogControl(map);
 
 // Oletusnäkymä: lähempänä zoomattu näkymä, joka näyttää Saariston-
 // meren kokonaan ja osan Suomenlahtea (n. Hangosta Helsinkiin).
@@ -911,6 +916,7 @@ map.on("popupopen", async e => {
   // ==========================
   if (station.type === "wavebuoy") {
     await renderWaveBuoyPopup(e.popup, station);
+    resyncPopupSize(e.popup);
     return;
   }
 
@@ -920,6 +926,7 @@ map.on("popupopen", async e => {
   // ==========================
   if (station.type === "wind-fc") {
     stopStationDetail = await renderOpenMeteoWindPopup(popupEl, station);
+    resyncPopupSize(e.popup);
     return;
   }
 
@@ -933,6 +940,21 @@ map.on("popupopen", async e => {
 
   stopStationDetail = stop;
 
+  // HUOM (korjaus): yllä oleva maxHeight/autoPan-asetus tehtiin popupin
+  // AUKEAMISHETKELLÄ, jolloin sisältö on vielä pelkkä "luuranko" (ks.
+  // stationDetail.js:n paluuarvo ennen dataa). Todellinen sisältö
+  // (graafit, tuntikohtainen ennuste ym.) kasvattaa popupia merkittävästi
+  // vasta tässä, datan latauduttua – ja koska Leaflet ankkuroi popupin
+  // ALAREUNAN (nuolenkärjen) markkeriin ja kasvattaa laatikkoa ylöspäin,
+  // aiemmin ladattu, jo suurentunut popup saattoi jäädä osittain näytön
+  // yläpuolelle ilman että karttaa oli panoroitu uudelleen. Havaittu mm.
+  // Edge/Firefox-selaimissa sekä iPadin Chromessa. update() laskee
+  // popupin koon/sijainnin uudelleen JA kutsuu Leafletin sisäistä
+  // autoPan-logiikkaa (ks. options.autoPan yllä), joten kartta panoroituu
+  // tarvittaessa niin että koko – nyt lopullisen kokoinen – popup mahtuu
+  // näkyviin.
+  resyncPopupSize(e.popup);
+
   if (data) {
     const marker = e.popup._source;
     marker.previewData = {
@@ -943,6 +965,19 @@ map.on("popupopen", async e => {
   }
 
 });
+
+// Päivittää auenneen popupin koon/sijainnin (ks. selitys yllä). Suojattu
+// try/catchilla, koska popup on saattanut jo ehtiä sulkeutua (esim.
+// käyttäjä sulki sen kesken datan latauksen) ennen kuin async-funktio
+// palaa – Leafletin oma update()-metodi tarkistaa tämän pääosin itse,
+// mutta ei ole syytä ottaa turhaa riskiä konsolivirheestä.
+function resyncPopupSize(popup) {
+  try {
+    popup.update();
+  } catch (err) {
+    console.warn("Popupin koon päivitys epäonnistui:", err);
+  }
+}
 
 // Pysäytä tuulivirtausanimaatio kun popup suljetaan,
 // ettei se jää pyörimään taustalle turhaan.

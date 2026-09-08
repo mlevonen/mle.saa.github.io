@@ -55,6 +55,7 @@ export function currentConditionsCardHTML(station) {
   return `
     <div class="popup-card popup-current-card">
       <div class="popup-title">${station.name}</div>
+      ${station.notice ? `<div class="popup-station-notice">⚠️ ${station.notice}</div>` : ""}
       <div class="popup-extras"></div>
 
       <div class="current-conditions-grid">

@@ -170,6 +170,30 @@ function renderWindObsChart(
 
   const obsSeries = windSeries.filter(p => p.phase === "obs");
 
+  // Jos asemalta ei ole yhtään havaintopistettä (esim. asema on juuri
+  // lisätty tai FMI ei sillä hetkellä palauta dataa), piilotetaan tyhjä
+  // kanvaasi ja näytetään sen tilalla selkeä ilmoitus tyhjän/rikkinäisen
+  // graafin sijaan.
+  const wrapper = canvas.closest(".popup-chart-wrapper");
+  let emptyMsgEl = wrapper ? wrapper.querySelector(".wind-obs-empty-msg") : null;
+
+  if (!obsSeries.length) {
+    canvas.style.display = "none";
+    if (wrapper) {
+      if (!emptyMsgEl) {
+        emptyMsgEl = document.createElement("div");
+        emptyMsgEl.className = "wind-obs-empty-msg";
+        emptyMsgEl.textContent = "Havaintodataa ei ole tällä hetkellä saatavilla.";
+        wrapper.appendChild(emptyMsgEl);
+      }
+      emptyMsgEl.style.display = "";
+    }
+    return;
+  } else {
+    canvas.style.display = "";
+    if (emptyMsgEl) emptyMsgEl.style.display = "none";
+  }
+
   const allValues = [
     ...obsSeries.map(p => p.y),
     ...gustObs.map(p => p.y)
