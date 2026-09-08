@@ -973,7 +973,21 @@ map.on("popupopen", async e => {
 // mutta ei ole syytä ottaa turhaa riskiä konsolivirheestä.
 function resyncPopupSize(popup) {
   try {
-    popup.update();
+    // HUOM (korjattu): EI popup.update() – se kutsuu myös Leafletin
+    // _updateContent()-metodia, joka korvaa popupin sisällön
+    // (node.innerHTML) takaisin ALKUPERÄISEEN bindPopup()-mallipohjaan.
+    // Tämä pyyhkisi pois kaiken renderStationDetailin/renderWaveBuoy-
+    // Popupin/renderOpenMeteoWindPopupin jo täyttämän datan (graafit,
+    // lukemat) – havaittiin käytännössä niin, että sisältö "vilahti"
+    // näkyviin ja katosi heti sen jälkeen tyhjäksi. Kutsutaan siksi vain
+    // koon/sijainnin/autoPanin päivittävät sisäiset metodit suoraan,
+    // jotka eivät koske sisältöön. Nämä ovat Leafletin "yksityisiä"
+    // (_-alkuisia) metodeja, mutta CDN-versio on kiinnitetty tarkasti
+    // (leaflet@1.9.4 index.html:n <head>:ssä), joten rajapinta ei voi
+    // muuttua yllättäen alta pois.
+    popup._updateLayout();
+    popup._updatePosition();
+    popup._adjustPan();
   } catch (err) {
     console.warn("Popupin koon päivitys epäonnistui:", err);
   }
