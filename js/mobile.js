@@ -18,6 +18,7 @@
 import { groupBySeaArea } from "./seaAreas.js";
 import { mobileStationDetailHTML, renderMobileStationDetail } from "./popup/mobileStationDetail.js";
 import { getFavoriteIds, isFavorite, toggleFavorite } from "./utils/favorites.js";
+import { CHANGELOG } from "./changelogData.js";
 
 const listEl = document.getElementById("station-list");
 const overlayEl = document.getElementById("detail-overlay");
@@ -71,6 +72,41 @@ async function openStation(station) {
 
   const { stop } = await renderMobileStationDetail(sheetBodyEl, station);
   currentStop = stop;
+}
+
+// ==========================
+// Muutokset – sama sisältö/data kuin desktopin Muutokset-napissa
+// (js/changelogControl.js), avataan tässä samaan "bottom sheet" -
+// kehykseen kuin asemakortitkin. Ei tarvitse omaa stop-funktiota,
+// koska sisältö on staattista tekstiä (ei animaatioita/ajastimia).
+// ==========================
+
+function changelogHTML() {
+  return `
+    <div class="popup-card">
+      <div class="popup-title">Viimeisimmät muutokset</div>
+      <div class="changelog-list">
+        ${CHANGELOG.map(entry => `
+          <div class="changelog-entry">
+            <div class="changelog-date">${entry.date}</div>
+            <ul class="changelog-items">
+              ${entry.items.map(item => `<li>${item}</li>`).join("")}
+            </ul>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function openChangelog() {
+  if (currentStop) {
+    currentStop();
+    currentStop = null;
+  }
+  sheetBodyEl.innerHTML = changelogHTML();
+  overlayEl.classList.add("open");
+  sheetEl.scrollTop = 0;
 }
 
 // ==========================
@@ -223,5 +259,20 @@ if (!groups.length) {
   });
 
 }
+
+// Listan viimeinen rivi: linkki Muutokset-sisältöön. Tarkoituksella
+// aivan lopussa (ei alussa/kiinnitettynä) – matalan käyttötiheyden
+// toiminto, joka ei saa kilpailla huomiosta suosikkien/asemalistan
+// kanssa sovellusta avatessa (sama periaate kuin desktopin syrjään
+// sijoitetussa Muutokset-napissa).
+const changelogFooterBtn = document.createElement("button");
+changelogFooterBtn.type = "button";
+changelogFooterBtn.className = "changelog-footer-btn";
+changelogFooterBtn.innerHTML = `
+  <span>🆕 Katso muutokset</span>
+  <span class="station-item-chevron">›</span>
+`;
+changelogFooterBtn.addEventListener("click", openChangelog);
+listEl.appendChild(changelogFooterBtn);
 
 refreshFavoritesSection();

@@ -191,6 +191,54 @@
     font-size: 14px;
   }
 
+  /* Listan viimeinen rivi: sama ulkoasu kuin asemariveillä, jotta se
+     tuntuu luontevalta jatkeelta eikä irralliselta lisäykseltä. */
+  .changelog-footer-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 54px;
+    padding: 12px 16px;
+    border: none;
+    background: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a4d7a;
+    text-align: left;
+    cursor: pointer;
+    -webkit-tap-highlight-color: rgba(0,0,0,0.06);
+  }
+
+  .changelog-footer-btn:active {
+    background: #f0f2f5;
+  }
+
+  .changelog-entry + .changelog-entry {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #d3dee8;
+  }
+
+  .changelog-date {
+    font-size: 12px;
+    font-weight: 700;
+    color: #444;
+    margin-bottom: 3px;
+  }
+
+  .changelog-items {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 15px;
+    color: #333;
+    line-height: 1.45;
+  }
+
+  .changelog-items li + li {
+    margin-top: 6px;
+  }
+
   /* ==========================
      Asemakortin "bottom sheet"
      ========================== */
