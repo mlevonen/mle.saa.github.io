@@ -213,7 +213,10 @@ function createWaveIcon(height, direction, period) {
       <svg viewBox="0 0 60 60" width="60" height="60">
 
         ${hasDirection ? `
-        <g transform="rotate(${direction} 30 30)">
+        <!-- FMI:n aaltosuunta on TULOSUUNTA (mistä aallot tulevat, kuten
+             tuulen suunta). Nuolen halutaan osoittavan minne aallot ovat
+             MENOSSA, joten kierretään 180 astetta vastakkaiseen suuntaan. -->
+        <g transform="rotate(${direction + 180} 30 30)">
           <path d="M30 1 L35 11 L25 11 Z" fill="${color}"/>
         </g>
         ` : ""}
