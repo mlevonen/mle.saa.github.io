@@ -12,6 +12,10 @@ export const CHANGELOG = [
   {
     date: "08.09.2026",
     items: [
+      "Uusi Muutokset-nappi, josta näkee tämän listan.",
+      "Korjattu popupin koon/sijainnin päivitys niin ettei popupin yläreuna jää enää näytön ulkopuolelle (havaittu mm. Edge/Firefox-selaimissa ja iPadilla).",
+      "Isompi, paremmin erottuva sulkupainike popupin oikeaan yläkulmaan.",
+      "Aaltopoijun nuoli osoittaa nyt minne aallot ovat menossa (aiemmin mistä ne tulevat).",
       "Tuulihavaintograafiin lisätty selkeä ilmoitus, jos havaintodataa ei juuri sillä hetkellä ole saatavilla."
     ]
   },
@@ -32,12 +36,6 @@ export const CHANGELOG = [
     date: "18.08.2026",
     items: [
       "Palaute-nappi ja taustakartan vaihtomahdollisuus lisätty."
-    ]
-  },
-  {
-    date: "09.08.2026",
-    items: [
-      "Sadetutka lisätty kartalle."
     ]
   }
 ];
