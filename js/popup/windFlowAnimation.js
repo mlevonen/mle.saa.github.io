@@ -142,7 +142,7 @@ export async function renderWindFlowAnimation(containerEl, lat, lon) {
     windSeriesData = await fetchWindGridSeries(lat, lon, aspectRatio);
 
     if (flowBgCanvas) {
-      drawMapBackground(flowBgCanvas, windSeriesData.bounds).catch(err => {
+      drawMapBackground(flowBgCanvas, windSeriesData.bounds, 10, { lat, lon }).catch(err => {
         console.warn("Karttataustan lataus epäonnistui:", err);
       });
     }

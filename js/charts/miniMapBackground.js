@@ -29,7 +29,10 @@ function loadTile(zoom, x, y) {
 }
 
 // bounds = { north, south, east, west } (asteina)
-export async function drawMapBackground(canvas, bounds, zoom = 10) {
+// markerLatLon = { lat, lon } (valinnainen) – merkitsee havaintoaseman
+// oman sijainnin karttataustalle punaisella pallolla, jotta käyttäjä
+// näkee mistä kohtaa tuulivirtaus/-ennuste on haettu.
+export async function drawMapBackground(canvas, bounds, zoom = 10, markerLatLon = null) {
 
   const ctx = canvas.getContext("2d");
   const w = canvas.width;
@@ -82,4 +85,25 @@ export async function drawMapBackground(canvas, bounds, zoom = 10) {
   // erottuvat kartan päältä selvästi.
   ctx.fillStyle = "rgba(255,255,255,0.25)";
   ctx.fillRect(0, 0, w, h);
+
+  // Havaintoaseman oma sijainti punaisella pallolla. Käytetään SAMAA
+  // tile-koordinaatistoon perustuvaa laskutapaa kuin yllä karttakuvan
+  // rajaukselle (lonToTileX/latToTileY), jotta piste osuu pikselin
+  // tarkkuudella samaan kohtaan kuin karttatausta – suora lat/lon →
+  // canvas-pikseli-interpolointi olisi hieman väärässä paikassa
+  // Mercator-projektion vinoutuman takia.
+  if (markerLatLon) {
+    const mx = lonToTileX(markerLatLon.lon, zoom);
+    const my = latToTileY(markerLatLon.lat, zoom);
+    const px = ((mx - xNW) / (xSE - xNW)) * w;
+    const py = ((my - yNW) / (ySE - yNW)) * h;
+
+    ctx.beginPath();
+    ctx.arc(px, py, 5, 0, 2 * Math.PI);
+    ctx.fillStyle = "#e0301e";
+    ctx.fill();
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = "#ffffff";
+    ctx.stroke();
+  }
 }
