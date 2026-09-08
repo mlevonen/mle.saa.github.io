@@ -8,15 +8,26 @@
 // lukee tämän suoraan.
 // ==========================
 
+// Pysyvä huomautus, näytetään aina listan yläpuolella (ei liity
+// mihinkään yksittäiseen päivämäärään).
+export const CHANGELOG_NOTE =
+  "Osa muutoksista koskee vain työpöytäversiota, osa vain mobiiliversiota.";
+
+// Pysyvä yhteystieto, näytetään aina listan alapuolella.
+export const CHANGELOG_CONTACT_EMAIL = "palaute@merisaa.fi";
+
 export const CHANGELOG = [
   {
     date: "08.09.2026",
     items: [
-      "Uusi Muutokset-nappi, josta näkee tämän listan.",
+      "Uusi, kompaktimpi logo mobiilin yläotsikkoon.",
+      "Uusi Muutokset-nappi/-rivi, josta näkee tämän listan (työpöytä: oikea alakulma, mobiili: listan viimeinen rivi).",
       "Korjattu popupin koon/sijainnin päivitys niin ettei popupin yläreuna jää enää näytön ulkopuolelle (havaittu mm. Edge/Firefox-selaimissa ja iPadilla).",
-      "Isompi, paremmin erottuva sulkupainike popupin oikeaan yläkulmaan.",
+      "Isompi, paremmin erottuva sulkupainike popupin oikeaan yläkulmaan (työpöytä).",
       "Aaltopoijun nuoli osoittaa nyt minne aallot ovat menossa (aiemmin mistä ne tulevat).",
-      "Tuulihavaintograafiin lisätty selkeä ilmoitus, jos havaintodataa ei juuri sillä hetkellä ole saatavilla."
+      "Tuulihavaintograafiin lisätty selkeä ilmoitus, jos havaintodataa ei juuri sillä hetkellä ole saatavilla.",
+      "Havaintoaseman sijainti näkyy nyt punaisella pallolla tuuliennusteanimaation karttataustalla.",
+      "Mobiilin asemalista järjestyy nyt merialueen sisällä rannikon suunnan mukaan (ei enää aakkosjärjestyksessä)."
     ]
   },
   {

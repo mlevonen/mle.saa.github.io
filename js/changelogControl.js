@@ -10,7 +10,7 @@
 // käyttäjän huomaama muutos.
 // ==========================
 
-import { CHANGELOG } from "./changelogData.js";
+import { CHANGELOG, CHANGELOG_NOTE, CHANGELOG_CONTACT_EMAIL } from "./changelogData.js";
 
 export function initChangelogControl(map) {
 
@@ -34,6 +34,9 @@ export function initChangelogControl(map) {
       const header = L.DomUtil.create("div", "changelog-panel-header", panel);
       header.textContent = "Viimeisimmät muutokset";
 
+      const note = L.DomUtil.create("div", "changelog-note", panel);
+      note.textContent = CHANGELOG_NOTE;
+
       const list = L.DomUtil.create("div", "changelog-list", panel);
 
       for (const entry of CHANGELOG) {
@@ -48,6 +51,9 @@ export function initChangelogControl(map) {
           li.textContent = item;
         }
       }
+
+      const contact = L.DomUtil.create("div", "changelog-contact", panel);
+      contact.innerHTML = `Kysyttävää tai palautetta? <a href="mailto:${CHANGELOG_CONTACT_EMAIL}">${CHANGELOG_CONTACT_EMAIL}</a>`;
 
       let open = false;
 

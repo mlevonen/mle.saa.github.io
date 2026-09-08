@@ -18,7 +18,7 @@
 import { groupBySeaArea, sortStationsWithinArea } from "./seaAreas.js";
 import { mobileStationDetailHTML, renderMobileStationDetail } from "./popup/mobileStationDetail.js";
 import { getFavoriteIds, isFavorite, toggleFavorite } from "./utils/favorites.js";
-import { CHANGELOG } from "./changelogData.js";
+import { CHANGELOG, CHANGELOG_NOTE, CHANGELOG_CONTACT_EMAIL } from "./changelogData.js";
 
 const listEl = document.getElementById("station-list");
 const overlayEl = document.getElementById("detail-overlay");
@@ -85,6 +85,7 @@ function changelogHTML() {
   return `
     <div class="popup-card">
       <div class="popup-title">Viimeisimmät muutokset</div>
+      <div class="changelog-note">${CHANGELOG_NOTE}</div>
       <div class="changelog-list">
         ${CHANGELOG.map(entry => `
           <div class="changelog-entry">
@@ -94,6 +95,9 @@ function changelogHTML() {
             </ul>
           </div>
         `).join("")}
+      </div>
+      <div class="changelog-contact">
+        Kysyttävää tai palautetta? <a href="mailto:${CHANGELOG_CONTACT_EMAIL}">${CHANGELOG_CONTACT_EMAIL}</a>
       </div>
     </div>
   `;
