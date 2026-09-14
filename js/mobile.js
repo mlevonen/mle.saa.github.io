@@ -24,6 +24,10 @@ import { waterTempColor } from "./popup/seaLevelCard.js";
 import { fetchObservationSeriesByFmisid } from "./api/dataLoader.js";
 import { fetchCurrentWindMulti } from "./api/openMeteoWind.js";
 import { loadPreviewCache, savePreviewCache } from "./utils/previewCache.js";
+// Rekisteröi Chart.js-lisäosat (mm. windArrowPlugin) myös mobiilin
+// Chart.js-instanssiin – ilman tätä tuuligraafien nuolet eivät piirry,
+// koska main.js:n vastaava import ei koske mobile.js:n omaa bundlea.
+import "./charts/plugins.js";
 
 const listEl = document.getElementById("station-list");
 const overlayEl = document.getElementById("detail-overlay");

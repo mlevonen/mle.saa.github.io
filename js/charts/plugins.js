@@ -12,28 +12,33 @@ const windArrowPlugin = {
     const ARROW_OFFSET = 14;
     const maxY = bottom - 6;
 
-    // Nuolien väli lasketaan kaavion todellisen piirtoleveyden mukaan,
-    // ei kiinteänä tuntimääränä. Näin kapealla mobiilikaaviolla (esim.
-    // 48h ennustegraafi vain n. 300 px leveydellä) nuolet harvenevat
-    // automaattisesti niin, ettei niitä mene päällekkäin, kun taas
-    // leveämmällä desktop-kaaviolla mahtuu näyttämään useampia. Väli
-    // pyöristetään aina täysiin tunteihin, koska data on tunneittain
-    // näytteistettyä (ei järkeä näyttää tiheämmin kuin 1h/nuoli).
+    // Oletusväli pysyy tunnissa (alkuperäinen, muuttumaton käytös
+    // desktopin leveillä kaavioilla). Vain silloin kun kaavio on aidosti
+    // kapea (mobiilin pienempi popup-kortti) väliä harvennetaan
+    // dynaamisesti kaavion piirtoleveyden mukaan, ettei nuolia mene
+    // päällekkäin. Kynnysarvo (NARROW_CHART_THRESHOLD_PX) on selvästi
+    // desktopin kaavioleveyttä (n. 560 px) pienempi, joten desktopin
+    // nuoliväli ei muutu tästä logiikasta lainkaan.
     const MIN_ARROW_SPACING_PX = 34;
     const HOUR_MS = 60 * 60 * 1000;
+    const NARROW_CHART_THRESHOLD_PX = 420;
     const xScale = chart.scales?.x;
     const chartWidthPx = right - left;
     const timeSpanMs = xScale ? xScale.max - xScale.min : 0;
 
-    const rawIntervalMs =
-      chartWidthPx > 0 && timeSpanMs > 0
-        ? (MIN_ARROW_SPACING_PX / chartWidthPx) * timeSpanMs
-        : HOUR_MS;
+    let arrowIntervalMs = HOUR_MS;
 
-    const arrowIntervalMs = Math.max(
-      HOUR_MS,
-      Math.ceil(rawIntervalMs / HOUR_MS) * HOUR_MS
-    );
+    if (
+      chartWidthPx > 0 &&
+      chartWidthPx < NARROW_CHART_THRESHOLD_PX &&
+      timeSpanMs > 0
+    ) {
+      const rawIntervalMs = (MIN_ARROW_SPACING_PX / chartWidthPx) * timeSpanMs;
+      arrowIntervalMs = Math.max(
+        HOUR_MS,
+        Math.ceil(rawIntervalMs / HOUR_MS) * HOUR_MS
+      );
+    }
 
     chart.data.datasets.forEach((dataset, datasetIndex) => {
       if (!dataset.windDirections) return;
