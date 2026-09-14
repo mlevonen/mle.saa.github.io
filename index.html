@@ -207,7 +207,15 @@ html, body { margin: 0; height: 100%; }
    riippumatta yksittäisten korttien sisällön määrästä. */
 .current-conditions-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  /* Aiemmin 3 saraketta (Tuuli, Lämpötila+Aurinko, Vedenkorkeus+
+     Aallokko rinnakkain samalla rivillä). Nyt 2 saraketta, koska
+     Veden lämpötila -kortti lisäsi neljännen tietoryhmän: näin
+     Tuuli + Lämpötila+Aurinko asettuvat riville 1 ja Vedenkorkeus+
+     Aallokko + Veden lämpötila riville 2 (HTML-järjestys stationDetail.
+     js:ssä/currentConditionsCard.js:ssä ei muuttunut, pelkkä
+     sarakemäärä ohjaa asettelun). Kortit levenevät automaattisesti
+     (1fr per sarake), popupin kokonaisleveys ei muutu. */
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
   margin-top: 8px;
 }
