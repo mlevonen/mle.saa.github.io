@@ -18,6 +18,18 @@ export const CHANGELOG_CONTACT_EMAIL = "palaute@merisaa.fi";
 
 export const CHANGELOG = [
   {
+    date: "14.09.2026",
+    items: [
+      "Havaintoasemien popup-korttiin lisätty vedenlämpötila ja näkyvyys (esim. sumua, +15 km) samaan tietokorttiin.",
+      "Uusi 'Vedenlämpö'-nappi kartalla (työpöytä) näyttää vedenlämpötilat myös paikoissa, joissa ei ole omaa havaintoasemaa (SYKE:n sisävesiasemat ja pääkaupunkiseudun uimarannat).",
+      "Desktop-popupin yläosan kortit järjestetty 2x2-ruudukoksi ja popupia kavennettu hieman.",
+      "Mobiiliin lisätty 'Muut vedenlämpötilat' -valikko sekä mahdollisuus merkitä vedenlämpöpisteitä suosikeiksi.",
+      "Mobiilin asemalistalla näkyy nyt tuulen nopeus ja suuntanuoli jo ennen popupin avaamista.",
+      "Korjattu tuuligraafien (havainto/ennuste) puuttuvat suuntanuolet mobiiliversiossa.",
+      "Lisätty SYKE ja Forum Virium Helsinki Käyttöoikeudet-listaan uusien vedenlämpötietolähteiden myötä."
+    ]
+  },
+  {
     date: "08.09.2026",
     items: [
       "Uusi, kompaktimpi logo mobiilin yläotsikkoon.",

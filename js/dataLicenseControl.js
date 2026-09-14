@@ -31,6 +31,18 @@ const SOURCES = [
     use: "Tuuliennusteanimaatio sekä Ruotsin ja Viron tuulipisteet",
     license: "CC BY 4.0 (ei-kaupallinen käyttö)",
     url: "https://open-meteo.com/en/licence"
+  },
+  {
+    name: "Suomen ympäristökeskus (SYKE)",
+    use: "Sisävesien vedenlämpötilat (Hydrologiarajapinta)",
+    license: "CC BY 4.0",
+    url: "https://avoindata.suomi.fi/data/fi/dataset/hydrologiarajapinta"
+  },
+  {
+    name: "Forum Virium Helsinki",
+    use: "Pääkaupunkiseudun uimarantojen reaaliaikaiset vedenlämpötilat (UiRaS)",
+    license: "CC BY 4.0",
+    url: "https://avoindata.suomi.fi/data/dataset/veden-reaaliaikainen-lampotila-helsingin-uimarannoilla"
   }
 ];
 
