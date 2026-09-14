@@ -1,9 +1,16 @@
 // ==========================
-// "Vedenlämpö"-kontrolli – näyttää/piilottaa kartalla pallomerkit
+// "Vedenlämpö"-nappi – näyttää/piilottaa kartalla pallomerkit
 // vedenlämpöpisteistä, JOILLA EI ole omaa havaintoasemaa sivustolla
 // (ks. js/api/waterTempPoints.js: SYKE:n sisävesiasemat + pk-seudun
 // UiRaS-uimapaikat, molemmista suodatettu pois sivuston omien
 // asemien läheisyydessä olevat pisteet).
+//
+// Nappi on TAVALLINEN HTML-painike index.html:n .info-panels-
+// säiliössä (id="watertemp-toggle-btn"), heti Säätiedotus-napin alla
+// – EI enää oma Leaflet-kontrollinsa kartan kulmassa. Tämä pitää
+// napin automaattisesti oikealla paikalla (ja oikeassa kohdassa myös
+// silloin kun Säätiedotus-paneeli avataan/sulkeutuu, koska
+// .info-panels on flexbox-pino) ilman erillistä koordinointia.
 //
 // Piilossa oletuksena ja togglataan yhdellä napilla (ei erillistä
 // pudotuspaneelia kuten Taustakartta/Käyttöoikeudet/Muutokset-napeissa)
@@ -70,70 +77,52 @@ function createPointMarker(point) {
 
 export function initWaterTempPointsControl(map) {
 
+  const toggleBtn = document.getElementById("watertemp-toggle-btn");
+  if (!toggleBtn) return;
+
+  toggleBtn.title = "Näytä/piilota vedenlämpöpisteet kartalla";
+
   const layerGroup = L.layerGroup();
   let loaded = false;
   let visible = false;
 
-  const WaterTempControl = L.Control.extend({
+  async function showPoints() {
 
-    options: { position: "bottomleft" },
+    toggleBtn.classList.add("loading");
 
-    onAdd() {
+    try {
 
-      const container = L.DomUtil.create("div", "watertemp-control leaflet-bar");
-      L.DomEvent.disableClickPropagation(container);
-      L.DomEvent.disableScrollPropagation(container);
+      const points = await fetchWaterTempPoints();
 
-      const toggleBtn = L.DomUtil.create("button", "watertemp-control-toggle", container);
-      toggleBtn.type = "button";
-      toggleBtn.title = "Näytä/piilota vedenlämpöpisteet kartalla";
-      toggleBtn.innerHTML = "💧 Vedenlämpö";
-
-      async function showPoints() {
-
-        toggleBtn.classList.add("loading");
-
-        try {
-
-          const points = await fetchWaterTempPoints();
-
-          if (!loaded) {
-            points.forEach(p => layerGroup.addLayer(createPointMarker(p)));
-            loaded = true;
-          }
-
-          layerGroup.addTo(map);
-          visible = true;
-          toggleBtn.classList.add("active");
-
-        } catch (err) {
-          console.warn("Vedenlämpöpisteiden näyttäminen epäonnistui:", err);
-        } finally {
-          toggleBtn.classList.remove("loading");
-        }
-
+      if (!loaded) {
+        points.forEach(p => layerGroup.addLayer(createPointMarker(p)));
+        loaded = true;
       }
 
-      function hidePoints() {
-        map.removeLayer(layerGroup);
-        visible = false;
-        toggleBtn.classList.remove("active");
-      }
+      layerGroup.addTo(map);
+      visible = true;
+      toggleBtn.classList.add("active");
 
-      L.DomEvent.on(toggleBtn, "click", () => {
-        if (visible) {
-          hidePoints();
-        } else {
-          showPoints();
-        }
-      });
-
-      return container;
-
+    } catch (err) {
+      console.warn("Vedenlämpöpisteiden näyttäminen epäonnistui:", err);
+    } finally {
+      toggleBtn.classList.remove("loading");
     }
 
-  });
+  }
 
-  map.addControl(new WaterTempControl());
+  function hidePoints() {
+    map.removeLayer(layerGroup);
+    visible = false;
+    toggleBtn.classList.remove("active");
+  }
+
+  toggleBtn.addEventListener("click", () => {
+    if (visible) {
+      hidePoints();
+    } else {
+      showPoints();
+    }
+  });
 
 }

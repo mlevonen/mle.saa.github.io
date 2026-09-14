@@ -851,15 +851,17 @@ html, body { margin: 0; height: 100%; }
 .info-panels {
   position: fixed;
   top: 12px;
-  /* left: 12px + ~6.5mm, jotta paneeli ei mene Leafletin zoom-
-     kontrollin (+/-) päälle vasemmassa yläkulmassa */
-  left: 38px;
+  /* left: alkujaan 12px + ~6,5mm (38px), mutta Säätiedotus-nappi
+     peitti silti pienen osan Leafletin zoom-kontrollista (+/-) –
+     siirretty vielä ~5mm (19px) lisää oikealle (38px -> 57px). */
+  left: 57px;
   z-index: 1000;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: 300px;
-  max-width: calc(100vw - 50px);
+  /* Kavennettu hieman (300px -> 260px) käyttäjäpalautteen perusteella. */
+  width: 260px;
+  max-width: calc(100vw - 70px);
   font-family: sans-serif;
 }
 
@@ -1601,45 +1603,19 @@ html, body { margin: 0; height: 100%; }
 
 /* ==========================
    "Vedenlämpö"-nappi + pallomerkit (ks. waterTempPointsControl.js).
-   Yksinkertainen päälle/pois-toggle, ei pudotuspaneelia kuten muilla
-   vasemman/oikean reunan napeilla – klikkaus näyttää/piilottaa
-   pallomerkit suoraan kartalla.
+   Nappi elää nykyään .info-panels-säiliön SISÄLLÄ, heti Säätiedotus-
+   napin alla (samaa .info-panel/.info-panel-header-ulkoasua käyttäen,
+   ks. index.html body), ei enää omana Leaflet-kontrollinaan kartan
+   kulmassa. Yksinkertainen päälle/pois-toggle – klikkaus näyttää/
+   piilottaa pallomerkit suoraan kartalla, ei avaa pudotuspaneelia.
    ========================== */
 
-.watertemp-control {
-  background: #fff;
-  border-radius: 8px !important;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.18);
-}
-
-.watertemp-control-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  height: 34px;
-  padding: 0 12px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #222;
-  background: #fff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  white-space: nowrap;
-  box-sizing: border-box;
-}
-
-.watertemp-control-toggle:hover {
-  background: #f4f5f7;
-}
-
-.watertemp-control-toggle.active {
+.watertemp-toggle-btn.active {
   background: #dbeeff;
   color: #0d47a1;
 }
 
-.watertemp-control-toggle.loading {
+.watertemp-toggle-btn.loading {
   opacity: 0.6;
   cursor: wait;
 }
@@ -1711,6 +1687,22 @@ html, body { margin: 0; height: 100%; }
           <div class="marine-bulletin-content"></div>
         </div>
       </div>
+    </div>
+
+    <!-- "Vedenlämpö"-nappi (ks. js/waterTempPointsControl.js). Sama
+         .info-panel/.info-panel-header-ulkoasu kuin Säätiedotus-
+         napilla ("muutetaan vedenlämpö samaan kokoon") – ei kuitenkaan
+         avautuvaa .info-panel-bodya, koska tämä on suora päälle/pois-
+         toggle, ei pudotuspaneeli. Sijoitettu TÄHÄN (.info-panels-
+         säiliön sisään, ei enää omana Leaflet-kontrollinaan
+         vasemmassa alakulmassa) juuri Säätiedotus-napin ALLE, jotta se
+         pysyy automaattisesti oikealla kohdalla myös silloin kun
+         Säätiedotus-paneeli avataan (flexbox-pino työntää tämän
+         napin alaspäin sen mukana). -->
+    <div class="info-panel">
+      <button type="button" class="info-panel-header watertemp-toggle-btn" id="watertemp-toggle-btn">
+        <span>💧 Vedenlämpö</span>
+      </button>
     </div>
 
   </div>
