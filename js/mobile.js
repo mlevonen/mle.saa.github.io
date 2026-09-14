@@ -468,6 +468,14 @@ async function refreshFavoritesSection() {
   favoritesList.innerHTML = "";
   ordered.forEach(station => favoritesList.appendChild(createStationLi(station)));
 
+  // Suosikkiriveille luodaan juuri uudet .station-item-wind-elementit
+  // (createStationLi), joten niissä ei vielä ole tuulilukemaa vaikka
+  // se olisi jo haettu oman merialuerivin puolelle. Täytetään heti
+  // viimeksi tunnetulla (välimuistoidulla) arvolla – loadStationWindIndicators()
+  // päivittää nämä muiden rivien mukana taas seuraavalla verkkohaulla.
+  const cachedWind = loadPreviewCache(WIND_LIST_CACHE_KEY, WIND_LIST_CACHE_TTL);
+  if (cachedWind) updateWindIndicators(cachedWind);
+
   // Suosikki-id:t, jotka EIVÄT täsmää mihinkään rannikkoasemaan, ovat
   // (ainoan muun suosikoitavan asian ollessa vedenlämpöpisteet)
   // todennäköisesti niitä – haetaan pisteet vain jos tällaisia löytyy.

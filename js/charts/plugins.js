@@ -5,12 +5,35 @@ const windArrowPlugin = {
   id: "windArrowPlugin",
   afterDatasetsDraw(chart) {
     const ctx = chart.ctx;
-    const { bottom } = chart.chartArea;
+    const { bottom, left, right } = chart.chartArea;
 
     // Kuinka paljon nuoli piirretään viivan/pisteen alapuolelle,
     // ja kuinka lähelle kaavion pohjaa se saa enintään mennä.
     const ARROW_OFFSET = 14;
     const maxY = bottom - 6;
+
+    // Nuolien väli lasketaan kaavion todellisen piirtoleveyden mukaan,
+    // ei kiinteänä tuntimääränä. Näin kapealla mobiilikaaviolla (esim.
+    // 48h ennustegraafi vain n. 300 px leveydellä) nuolet harvenevat
+    // automaattisesti niin, ettei niitä mene päällekkäin, kun taas
+    // leveämmällä desktop-kaaviolla mahtuu näyttämään useampia. Väli
+    // pyöristetään aina täysiin tunteihin, koska data on tunneittain
+    // näytteistettyä (ei järkeä näyttää tiheämmin kuin 1h/nuoli).
+    const MIN_ARROW_SPACING_PX = 34;
+    const HOUR_MS = 60 * 60 * 1000;
+    const xScale = chart.scales?.x;
+    const chartWidthPx = right - left;
+    const timeSpanMs = xScale ? xScale.max - xScale.min : 0;
+
+    const rawIntervalMs =
+      chartWidthPx > 0 && timeSpanMs > 0
+        ? (MIN_ARROW_SPACING_PX / chartWidthPx) * timeSpanMs
+        : HOUR_MS;
+
+    const arrowIntervalMs = Math.max(
+      HOUR_MS,
+      Math.ceil(rawIntervalMs / HOUR_MS) * HOUR_MS
+    );
 
     chart.data.datasets.forEach((dataset, datasetIndex) => {
       if (!dataset.windDirections) return;
@@ -26,8 +49,8 @@ const windArrowPlugin = {
 
       const currentTime = raw.x;
 
-      // Näytä nuoli vain 1h välein
-      if (lastTime && (currentTime - lastTime) < 60 * 60 * 1000) {
+      // Näytä nuoli vain arrowIntervalMs:n välein (ks. yllä)
+      if (lastTime && (currentTime - lastTime) < arrowIntervalMs) {
       return;
       }
 
