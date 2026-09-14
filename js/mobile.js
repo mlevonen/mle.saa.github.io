@@ -19,6 +19,8 @@ import { groupBySeaArea, sortStationsWithinArea } from "./seaAreas.js";
 import { mobileStationDetailHTML, renderMobileStationDetail } from "./popup/mobileStationDetail.js";
 import { getFavoriteIds, isFavorite, toggleFavorite } from "./utils/favorites.js";
 import { CHANGELOG, CHANGELOG_NOTE, CHANGELOG_CONTACT_EMAIL } from "./changelogData.js";
+import { fetchWaterTempPoints } from "./api/waterTempPoints.js";
+import { waterTempColor } from "./popup/seaLevelCard.js";
 
 const listEl = document.getElementById("station-list");
 const overlayEl = document.getElementById("detail-overlay");
@@ -111,6 +113,130 @@ function openChangelog() {
   sheetBodyEl.innerHTML = changelogHTML();
   overlayEl.classList.add("open");
   sheetEl.scrollTop = 0;
+}
+
+// ==========================
+// Muut vedenlämpötilat – samat pisteet jotka desktopilla näytetään
+// kartalla "Vedenlämpö"-napin pallomerkkeinä (ks. js/api/waterTempPoints.js:
+// SYKE:n sisävesiasemat + pk-seudun UiRaS-uimapaikat, joilla ei ole omaa
+// havaintoasemaa sivustolla). Mobiilissa ei ole karttaa, joten sama data
+// näytetään tässä listana, avataan "Katso muutokset" -rivin YLÄPUOLELLE
+// sijoitetusta omasta rivistään. Voidaan merkitä suosikiksi samalla
+// tähdellä kuin havaintoasematkin (ks. createWaterTempLi) – suosikiksi
+// merkityt näkyvät sitten YLIMMÄSSÄ Suosikit-osiossa asemasuosikkien
+// joukossa (ks. refreshFavoritesSection).
+//
+// Haku on välimuistitettu itse waterTempPoints.js:ssä (15 min TTL),
+// joten listan voi avata useaan kertaan ilman turhia verkkopyyntöjä.
+// ==========================
+
+function waterTempListHTML() {
+  return `
+    <div class="popup-card">
+      <div class="popup-title">Muut vedenlämpötilat</div>
+      <div class="changelog-note">
+        Pisteet, joilla ei ole omaa havaintoasemaa tällä sivustolla: sisävedet
+        (Suomen ympäristökeskus) ja pääkaupunkiseudun uimapaikat (Helsingin
+        kaupunki / Forum Virium Helsinki).
+      </div>
+      <div class="watertemp-list-body">
+        <p class="empty-note">Ladataan…</p>
+      </div>
+    </div>
+  `;
+}
+
+function createWaterTempLi(point) {
+
+  const li = document.createElement("li");
+
+  const row = document.createElement("div");
+  row.className = "station-item";
+
+  const fav = isFavorite(point.id);
+
+  const favBtn = document.createElement("button");
+  favBtn.type = "button";
+  favBtn.className = "station-favorite-btn" + (fav ? " is-favorite" : "");
+  favBtn.dataset.stationId = point.id;
+  favBtn.setAttribute("aria-pressed", String(fav));
+  favBtn.setAttribute("aria-label", fav ? "Poista suosikeista" : "Lisää suosikiksi");
+  favBtn.textContent = fav ? "★" : "☆";
+  favBtn.addEventListener("click", e => {
+    e.stopPropagation();
+    handleToggleFavorite(point.id);
+  });
+
+  // HUOM: tavallinen <div>, ei <button> kuten createStationLi:ssä –
+  // rivillä ei ole "avaa"-toimintoa (kaikki oleellinen tieto on jo
+  // näkyvissä rivillä itsessään), joten se ei saa näyttää klikattavalta
+  // (ei cursor:pointer/hover-tilaa, ks. .watertemp-item-row mobile.html:ssä).
+  const infoEl = document.createElement("div");
+  infoEl.className = "station-item-open watertemp-item-row";
+  infoEl.innerHTML = `
+    <span class="watertemp-item-circle" style="background:${waterTempColor(point.temp)}">${Math.round(point.temp)}°</span>
+    <span class="station-item-name">${point.name}</span>
+  `;
+
+  row.appendChild(favBtn);
+  row.appendChild(infoEl);
+  li.appendChild(row);
+
+  return li;
+
+}
+
+function appendWaterTempGroup(containerEl, title, points) {
+
+  if (!points.length) return;
+
+  const heading = document.createElement("h2");
+  heading.className = "watertemp-group-title";
+  heading.textContent = title;
+  containerEl.appendChild(heading);
+
+  const ul = document.createElement("ul");
+  ul.className = "station-list";
+  points.forEach(p => ul.appendChild(createWaterTempLi(p)));
+  containerEl.appendChild(ul);
+
+}
+
+async function openWaterTempList() {
+
+  if (currentStop) {
+    currentStop();
+    currentStop = null;
+  }
+
+  sheetBodyEl.innerHTML = waterTempListHTML();
+  overlayEl.classList.add("open");
+  sheetEl.scrollTop = 0;
+
+  const bodyEl = sheetBodyEl.querySelector(".watertemp-list-body");
+
+  try {
+
+    const points = await fetchWaterTempPoints();
+
+    if (!points.length) {
+      bodyEl.innerHTML = `<p class="empty-note">Vedenlämpöpisteitä ei löytynyt juuri nyt.</p>`;
+      return;
+    }
+
+    const byName = (a, b) => a.name.localeCompare(b.name, "fi");
+    const syke = points.filter(p => p.source === "syke").sort(byName);
+    const uiras = points.filter(p => p.source === "uiras").sort(byName);
+
+    bodyEl.innerHTML = "";
+    appendWaterTempGroup(bodyEl, "Sisävedet", syke);
+    appendWaterTempGroup(bodyEl, "Pääkaupunkiseudun uimapaikat", uiras);
+
+  } catch (err) {
+    console.warn("Vedenlämpöjen haku epäonnistui:", err);
+    bodyEl.innerHTML = `<p class="empty-note">Haku ei onnistunut juuri nyt.</p>`;
+  }
+
 }
 
 // ==========================
@@ -213,7 +339,13 @@ favoritesSection.appendChild(favoritesList);
 
 listEl.appendChild(favoritesSection);
 
-function refreshFavoritesSection() {
+// Vedenlämpöpisteiden (SYKE/UiRaS) välimuisti Suosikit-osiota varten –
+// haetaan vain KERRAN per istunto ja vain jos tarpeen (ks. alla), jotta
+// jokainen tähdellyksen togglaus ei laukaise turhaa verkkopyyntöä
+// niille käyttäjille joilla ei ole yhtään vedenlämpösuosikkia.
+let waterTempPointsPromise = null;
+
+async function refreshFavoritesSection() {
 
   const favIds = getFavoriteIds();
   const favStations = coastalStations.filter(s => favIds.includes(s.id));
@@ -227,7 +359,38 @@ function refreshFavoritesSection() {
   favoritesList.innerHTML = "";
   ordered.forEach(station => favoritesList.appendChild(createStationLi(station)));
 
-  favoritesSection.style.display = ordered.length ? "" : "none";
+  // Suosikki-id:t, jotka EIVÄT täsmää mihinkään rannikkoasemaan, ovat
+  // (ainoan muun suosikoitavan asian ollessa vedenlämpöpisteet)
+  // todennäköisesti niitä – haetaan pisteet vain jos tällaisia löytyy.
+  const matchedStationIds = new Set(favStations.map(s => s.id));
+  const leftoverIds = favIds.filter(id => !matchedStationIds.has(id));
+
+  let waterTempFavCount = 0;
+
+  if (leftoverIds.length) {
+
+    try {
+
+      if (!waterTempPointsPromise) {
+        waterTempPointsPromise = fetchWaterTempPoints();
+      }
+
+      const points = await waterTempPointsPromise;
+
+      const favPoints = points
+        .filter(p => leftoverIds.includes(p.id))
+        .sort((a, b) => a.name.localeCompare(b.name, "fi"));
+
+      favPoints.forEach(p => favoritesList.appendChild(createWaterTempLi(p)));
+      waterTempFavCount = favPoints.length;
+
+    } catch (err) {
+      console.warn("Suosikkien vedenlämpöpisteiden haku epäonnistui:", err);
+    }
+
+  }
+
+  favoritesSection.style.display = (ordered.length + waterTempFavCount) ? "" : "none";
 
 }
 
@@ -262,6 +425,21 @@ if (!groups.length) {
   });
 
 }
+
+// Listan toiseksi viimeinen rivi: linkki Muut vedenlämpötilat -listaan
+// (ks. openWaterTempList). Sijoitettu juuri "Katso muutokset" -rivin
+// YLÄPUOLELLE, samalla matalan käyttötiheyden -periaatteella kuin se –
+// ei saa kilpailla huomiosta suosikkien/asemalistan kanssa sovellusta
+// avatessa.
+const waterTempFooterBtn = document.createElement("button");
+waterTempFooterBtn.type = "button";
+waterTempFooterBtn.className = "changelog-footer-btn";
+waterTempFooterBtn.innerHTML = `
+  <span>💧 Muut vedenlämpötilat</span>
+  <span class="station-item-chevron">›</span>
+`;
+waterTempFooterBtn.addEventListener("click", openWaterTempList);
+listEl.appendChild(waterTempFooterBtn);
 
 // Listan viimeinen rivi: linkki Muutokset-sisältöön. Tarkoituksella
 // aivan lopussa (ei alussa/kiinnitettynä) – matalan käyttötiheyden

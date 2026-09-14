@@ -191,6 +191,51 @@
     font-size: 14px;
   }
 
+  /* "Muut vedenlämpötilat" -listan rivit (ks. js/mobile.js:
+     createWaterTempLi). Sama flex-rivimalli kuin .station-item-open,
+     mutta EI klikattava (ei "avaa"-toimintoa – kaikki oleellinen
+     tieto on jo rivillä), joten ei cursor:pointer/:active-tilaa. */
+  .watertemp-item-row {
+    cursor: default;
+  }
+
+  .watertemp-item-row:active {
+    background: transparent;
+  }
+
+  /* Ryhmäotsikko "Muut vedenlämpötilat" -listan sisällä (ks.
+     appendWaterTempGroup, js/mobile.js). Sama ulkoasu kuin
+     .sea-area-title, mutta EI position:sticky – tämä lista on
+     bottom sheetin (#detail-sheet) sisällä, jonka oma yläreuna
+     (Sulje-nappi) on eri kohdassa kuin pääsivun kiinteä yläotsikko,
+     jota varten .sea-area-titlen top:52px on alun perin viritetty. */
+  .watertemp-group-title {
+    margin: 0;
+    padding: 8px 0;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #555;
+    border-bottom: 1px solid #dcdfe4;
+  }
+
+  .watertemp-item-circle {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 12px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    border: 2px solid rgba(255,255,255,0.85);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+  }
+
   /* Listan viimeinen rivi: sama ulkoasu kuin asemariveillä, jotta se
      tuntuu luontevalta jatkeelta eikä irralliselta lisäykseltä. */
   .changelog-footer-btn {
