@@ -21,6 +21,9 @@ import { getFavoriteIds, isFavorite, toggleFavorite } from "./utils/favorites.js
 import { CHANGELOG, CHANGELOG_NOTE, CHANGELOG_CONTACT_EMAIL } from "./changelogData.js";
 import { fetchWaterTempPoints } from "./api/waterTempPoints.js";
 import { waterTempColor } from "./popup/seaLevelCard.js";
+import { fetchObservationSeriesByFmisid } from "./api/dataLoader.js";
+import { fetchCurrentWindMulti } from "./api/openMeteoWind.js";
+import { loadPreviewCache, savePreviewCache } from "./utils/previewCache.js";
 
 const listEl = document.getElementById("station-list");
 const overlayEl = document.getElementById("detail-overlay");
@@ -295,7 +298,10 @@ function createStationLi(station) {
   openBtn.type = "button";
   openBtn.className = "station-item-open";
   openBtn.innerHTML = `
-    <span class="station-item-name">${station.name}</span>
+    <span class="station-item-main">
+      <span class="station-item-name">${station.name}</span>
+      <span class="station-item-wind" data-wind-for="${station.id}"></span>
+    </span>
     <span class="station-item-chevron">›</span>
   `;
   openBtn.addEventListener("click", () => openStation(station));
@@ -305,6 +311,109 @@ function createStationLi(station) {
   li.appendChild(row);
 
   return li;
+
+}
+
+// ==========================
+// Tuulen nopeus + suuntanuoli listarivillä (nimen perässä) – EI popupin
+// sisällä, ei siis muutoksia mobileStationDetail.js:ään. Käyttäjä näkee
+// näin tuulen jo ilman kortin avaamista.
+//
+// Sama datalähde/prioriteetti kuin desktopin kartan tuuli-ikoneilla
+// (ks. js/main.js): ensin yritetään FMI:n oma havainto asemalta
+// (fetchObservationSeriesByFmisid), ja vain jos sieltä ei löydy
+// kelvollista lukemaa (esim. Helsinki Helsingin majakka), käytetään
+// Open-Meteon koordinaattipohjaista nykytuulta varana. Tulos
+// välimuistitetaan (5 min) samalla periaatteella kuin kartan
+// tuuli-ikonit, jotta listan avatessa nähdään heti viimeksi tunnettu
+// lukema ennen tuoreen datan saapumista.
+// ==========================
+
+function windSpeedColor(speed) {
+  const s = Math.round(speed);
+  return s < 5  ? "#028b09" :
+         s < 10 ? "#025981" :
+         s < 15 ? "#b67e06" :
+                  "#E53935";
+}
+
+function windIndicatorHTML(speed, dir) {
+  if (!Number.isFinite(speed) || !Number.isFinite(dir)) return "";
+  const color = windSpeedColor(speed);
+  return `
+    <svg viewBox="0 0 24 24" width="16" height="16" style="flex:none; transform:rotate(${dir + 180}deg); color:${color};">
+      <path d="M12 1 L18 11 L14 11 L14 21 L10 21 L10 11 L6 11 Z" fill="currentColor"/>
+    </svg>
+    <span style="color:${color};">${Math.round(speed)} m/s</span>
+  `;
+}
+
+// Asema voi näkyä KAHDESSA rivissä (Suosikit + oma merialueensa) –
+// päivitetään kaikki data-wind-for-attribuutilla löytyvät rivit kerralla,
+// sama periaate kuin updateFavoriteButtons().
+function updateWindIndicators(values) {
+  Object.entries(values).forEach(([id, w]) => {
+    if (!w || !Number.isFinite(w.speed) || !Number.isFinite(w.dir)) return;
+    document.querySelectorAll(`.station-item-wind[data-wind-for="${id}"]`)
+      .forEach(el => { el.innerHTML = windIndicatorHTML(w.speed, w.dir); });
+  });
+}
+
+const WIND_LIST_CACHE_KEY = "mobileWindListCache";
+const WIND_LIST_CACHE_TTL = 5 * 60 * 1000;
+
+async function loadStationWindIndicators() {
+
+  // 1. Näytä heti viimeksi tunnetut lukemat (jos alle 5 min vanhoja)
+  const cached = loadPreviewCache(WIND_LIST_CACHE_KEY, WIND_LIST_CACHE_TTL);
+  if (cached) updateWindIndicators(cached);
+
+  // 2. Hae tuoreet lukemat rinnakkain kaikille rannikkoasemille
+  const freshValues = {};
+  const fallbackStations = [];
+
+  await Promise.all(coastalStations.map(async station => {
+    try {
+
+      const series = await fetchObservationSeriesByFmisid(station.fmisid);
+
+      const latest = [...series].reverse().find(
+        p => p.windspeedms != null && p.winddirection != null
+      );
+
+      if (!latest) {
+        fallbackStations.push(station);
+        return;
+      }
+
+      freshValues[station.id] = {
+        speed: latest.windspeedms,
+        dir: latest.winddirection,
+        gust: latest.windgust
+      };
+
+    } catch (err) {
+      console.warn("Tuulilukeman haku epäonnistui (mobiililista):", station.name, err);
+      fallbackStations.push(station);
+    }
+  }));
+
+  if (fallbackStations.length) {
+    try {
+      const fallbackValues = await fetchCurrentWindMulti(fallbackStations);
+      fallbackStations.forEach(station => {
+        const w = fallbackValues[station.id];
+        if (w && w.speed != null && w.dir != null) {
+          freshValues[station.id] = w;
+        }
+      });
+    } catch (err) {
+      console.warn("Open-Meteo-varatuulen haku epäonnistui (mobiililista):", err);
+    }
+  }
+
+  updateWindIndicators(freshValues);
+  savePreviewCache(WIND_LIST_CACHE_KEY, freshValues);
 
 }
 
@@ -457,3 +566,4 @@ changelogFooterBtn.addEventListener("click", openChangelog);
 listEl.appendChild(changelogFooterBtn);
 
 refreshFavoritesSection();
+loadStationWindIndicators();

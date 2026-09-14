@@ -167,8 +167,37 @@
     border-bottom-color: #f3ddb0;
   }
 
+  /* .station-item-main kääree nimen JA tuulilukeman (ks. alla) yhteen,
+     jotta molemmat pysyvät ryhmässä .station-item-openin vasemmassa
+     reunassa erillään oikean reunan nuolesta (justify-content:space-
+     between kahdella lapsella: tämä kääre + .station-item-chevron). */
+  .station-item-main {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+  }
+
   .station-item-name {
     flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Tuulen nopeus + suuntanuoli asemanimen perässä listarivillä (ks.
+     js/mobile.js: loadStationWindIndicators/windIndicatorHTML) – EI
+     popupin sisällä. Tyhjä/harmaa kunnes tuore lukema on saatu. */
+  .station-item-wind {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: none;
+    font-size: 14px;
+    font-weight: 600;
+    color: #999;
   }
 
   .station-item-preview {
