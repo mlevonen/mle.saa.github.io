@@ -604,6 +604,26 @@
     white-space: nowrap;
   }
 
+  /* Veden lämpötila + Näkyvyys samassa alakortissa, sama pino+
+     väliviiva-periaate kuin Vedenkorkeus+Aallokko-kortissa. */
+  .current-watertemp-item {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .current-watertemp-item > div:not(:first-child) {
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .current-visibility-value {
+    margin-top: 6px;
+    font-size: 22px;
+    font-weight: 700;
+    color: #eaf1f8;
+  }
+
   .popup-card {
     background: #e8eef5;
     border: 1px solid #c5d5e3;

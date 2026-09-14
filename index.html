@@ -400,6 +400,28 @@ html, body { margin: 0; height: 100%; }
   white-space: nowrap;
 }
 
+/* Veden lämpötila + Näkyvyys samassa alakortissa, sama pino+väliviiva-
+   periaate kuin Vedenkorkeus+Aallokko-kortissa (ks.
+   .current-temp-sun-card/.current-sealevel-wave-card yllä). */
+.current-watertemp-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+}
+
+.current-watertemp-item > div:not(:first-child) {
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.15);
+}
+
+.current-visibility-value {
+  margin-top: 6px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #eaf1f8;
+}
+
 .popup-current-card .popup-wave-period-value {
   color: #eaf1f8;
 }

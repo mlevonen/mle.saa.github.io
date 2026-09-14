@@ -143,23 +143,33 @@ export function currentConditionsCardHTML(station) {
           </div>
         </div>
 
-        <!-- Veden lämpötila – oma alakorttinsa, koska tieto on
-             tärkeä erityisesti uimareille/vesilläliikkujille ja
-             ansaitsee oman selkeän visuaalisen "lukeman" (värillinen
-             ympyrä, sama periaate kuin tuulinuolen väriasteikko).
-             Lukema tulee LÄHIMMÄSTÄ vedenkorkeusasemasta (sama data
-             joka on jo haettu vedenkorkeutta varten, ks.
-             seaLevelCard.js), joten kortin alla näkyy myös lähteen
-             asemannimi selkeyden vuoksi. Piilossa oletuksena –
-             renderSeaLevelCard näyttää sen kun lukema on saatavilla
-             (ei koskaan sisämaan asemilla). -->
+        <!-- Veden lämpötila + Näkyvyys samassa alakortissa, samalla
+             periaatteella kuin Vedenkorkeus+Aallokko yllä (kumpikin
+             osio piiloutuu itsenäisesti; jos molemmat piiloutuvat,
+             updateMergedCardVisibility piilottaa myös koko ulomman
+             kortin).
+             Veden lämpötila: värillinen ympyrä (sama periaate kuin
+             tuulinuolen väriasteikko), lukema LÄHIMMÄSTÄ vedenkorkeus-
+             asemasta (sama data joka on jo haettu vedenkorkeutta
+             varten, ks. seaLevelCard.js) – ei koskaan sisämaan
+             asemilla.
+             Näkyvyys: havaintoaseman OMA näkyvyyslukema (ks.
+             renderVisibilityCard, popupExtras.js) – toisin kuin veden
+             lämpötila, tämä on saatavilla myös sisämaan asemilla, jos
+             asemalla on näkyvyysanturi. -->
         <div class="current-conditions-item popup-card-inner current-watertemp-item" style="display:none;">
-          <div class="current-label">Veden lämpötila</div>
-          <div class="current-watertemp-row">
-            <span class="current-watertemp-circle"></span>
-            <span class="current-watertemp-value">–</span>
+          <div class="current-watertemp-block" style="display:none;">
+            <div class="current-label">Veden lämpötila</div>
+            <div class="current-watertemp-row">
+              <span class="current-watertemp-circle"></span>
+              <span class="current-watertemp-value">–</span>
+            </div>
+            <div class="current-watertemp-source"></div>
           </div>
-          <div class="current-watertemp-source"></div>
+          <div class="current-visibility-block" style="display:none;">
+            <div class="current-label">Näkyvyys</div>
+            <div class="current-visibility-value">–</div>
+          </div>
         </div>
 
         <!-- Tuntikohtainen sääennuste, sama alakortti-tyyli kuin
@@ -200,6 +210,11 @@ export function updateMergedCardVisibility(containerEl) {
   hideEmptyMergedCard(containerEl, ".current-sealevel-wave-card", [".popup-sealevel-card", ".popup-wave-card"]);
   // Lämpötila näkyy aina (renderTempCard ei koskaan piilota sitä),
   // joten current-temp-sun-card ei tarvitse vastaavaa käsittelyä.
+
+  // Veden lämpötila (sisämaan asemilla aina piilossa) + Näkyvyys
+  // (piilossa vain jos asemalla ei ole näkyvyysanturia) – piilotetaan
+  // koko ulompi kortti vain jos MOLEMMAT osiot ovat piilossa.
+  hideEmptyMergedCard(containerEl, ".current-watertemp-item", [".current-watertemp-block", ".current-visibility-block"]);
 }
 
 // Tuoreimman havaitun tuulilukeman (nopeus + suunta + puuska) haku

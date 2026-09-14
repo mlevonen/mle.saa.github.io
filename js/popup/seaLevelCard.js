@@ -13,7 +13,10 @@
 //   .popup-sealevel-card
 //   .wind-flow-sealevel-value[data-kind="watlev"]
 //   .wind-flow-sealevel-value[data-kind="n2000"]
-//   .current-watertemp-item (valinnainen, ks. currentConditionsCard.js)
+//   .current-watertemp-block (valinnainen, ks. currentConditionsCard.js –
+//     sisempi lohko .current-watertemp-item-kortin sisällä; ulomman
+//     kortin näkyvyyden päättää updateMergedCardVisibility yhdessä
+//     .current-visibility-blockin kanssa, ei tämä tiedosto)
 // (puuttuvat elementit ohitetaan hiljaisesti – funktio ei vaadi
 // tiettyä ympäröivää rakennetta.)
 //
@@ -44,7 +47,7 @@ export async function renderSeaLevelCard(containerEl, station) {
   const seaLevelWatlevEl = containerEl.querySelector('.wind-flow-sealevel-value[data-kind="watlev"]');
   const seaLevelN2000El = containerEl.querySelector('.wind-flow-sealevel-value[data-kind="n2000"]');
 
-  const waterTempWrapper = containerEl.querySelector(".current-watertemp-item");
+  const waterTempWrapper = containerEl.querySelector(".current-watertemp-block");
   const waterTempValueEl = containerEl.querySelector(".current-watertemp-value");
   const waterTempCircleEl = containerEl.querySelector(".current-watertemp-circle");
   const waterTempSourceEl = containerEl.querySelector(".current-watertemp-source");

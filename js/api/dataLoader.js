@@ -11,7 +11,7 @@ export async function fetchObservationSeriesByFmisid(fmisid) {
     request: "GetFeature",
     storedquery_id: "fmi::observations::weather::timevaluepair",
     fmisid,
-    parameters: "ws_10min,t2m,smartsymbol,pressure,wd_10min,wg_10min"
+    parameters: "ws_10min,t2m,smartsymbol,pressure,wd_10min,wg_10min,vis"
   });
 
   const url = `https://opendata.fmi.fi/wfs/fin?${params}`;
@@ -70,6 +70,7 @@ export async function loadPopupData({
   let obsTemp = null;
   let obsWindSpeed = null;
   let obsPressure = null;
+  let obsVisibility = null;
   let seaLevel = null;
   let waveHeight = null;
 
@@ -97,6 +98,11 @@ export async function loadPopupData({
       obsPressure = series.map(p => ({
         utctime: p.utctime,
         pressurehpa: p.pressure
+      }));
+
+      obsVisibility = series.map(p => ({
+        utctime: p.utctime,
+        visibility: p.visibility
       }));
 
       obsWindSpeed = series.map(p => ({
@@ -210,6 +216,7 @@ function attachSymbols(fcTemp, symbols) {
     obsTemp,
     obsWindSpeed,
     obsPressure,
+    obsVisibility,
     seaLevel,
     waveHeight,
     sunTimes,
@@ -253,6 +260,10 @@ function parseTimeValuePairSeries(xmlText) {
     else if (id.includes("t2m")) key = "temperature";
     else if (id.includes("pressure")) key = "pressure";
     else if (id.includes("smartsymbol")) key = "smartsymbol";
+    // HUOM: tarkistettava ENNEN "vis" ei muita törmääviä id-nimiä ole
+    // tässä listassa (esim. "wg_10min" ei sisällä "vis"-merkkijonoa),
+    // joten pelkkä includes("vis") riittää.
+    else if (id.includes("vis")) key = "visibility";
 
     if (!key) return;
 

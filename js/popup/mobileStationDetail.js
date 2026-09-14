@@ -20,7 +20,7 @@
 
 import { loadPopupData } from "../api/dataLoader.js";
 import { updatePopupTitles } from "./popupTitles.js";
-import { renderPopupExtras, renderSunCard, renderWaveCard, renderTempCard } from "./popupExtras.js";
+import { renderPopupExtras, renderSunCard, renderWaveCard, renderTempCard, renderVisibilityCard } from "./popupExtras.js";
 import { renderSeaLevelCard } from "./seaLevelCard.js";
 import { renderWindFlowAnimation } from "./windFlowAnimation.js";
 import { windTimelineListHTML, renderWindTimelineList } from "./windTimelineList.js";
@@ -125,6 +125,7 @@ export async function renderMobileStationDetail(containerEl, station) {
     renderSunCard(containerEl, data);
     renderWaveCard(containerEl, data, station);
     renderTempCard(containerEl, data);
+    renderVisibilityCard(containerEl, data);
 
     // Yläkortin tuuli (havainto) + auringon nousu/lasku – sama jaettu
     // logiikka kuin desktopilla (ks. stationDetail.js).

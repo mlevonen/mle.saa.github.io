@@ -122,6 +122,55 @@ export function renderTempCard(popupEl, data) {
 
 
 /* =========================================================
+   NÄKYVYYS havaintoasemalla – oma lohkonsa Veden lämpötila
+   -kortin sisällä (ks. currentConditionsCard.js), erotettu ohuella
+   väliviivalla samaan tapaan kuin Vedenkorkeus/Aallokko-kortissa.
+   Sama FMI-havaintosarja jota jo käytetään tuulelle/lämpötilalle
+   (vis-parametri lisätty fetchObservationSeriesByFmisid-kutsuun,
+   ks. dataLoader.js) – ei siis tarvita erillistä verkkohakua.
+   ========================================================= */
+
+function formatVisibility(meters) {
+  if (!Number.isFinite(meters)) return "–";
+  if (meters >= 10000) return `+${Math.round(meters / 1000)} km`;
+  if (meters >= 1000) return `${(meters / 1000).toFixed(1)} km`;
+  return `${Math.round(meters)} m`;
+}
+
+export function renderVisibilityCard(popupEl, data) {
+
+  const block = popupEl.querySelector(".current-visibility-block");
+  if (!block) return;
+
+  const valueEl = block.querySelector(".current-visibility-value");
+
+  const obs = Array.isArray(data.obsVisibility) ? data.obsVisibility : [];
+
+  let latest = null;
+
+  for (let i = obs.length - 1; i >= 0; i--) {
+    const v = obs[i]?.visibility;
+    if (Number.isFinite(v)) {
+      latest = v;
+      break;
+    }
+  }
+
+  // Osalla asemista (mm. jotkin sisämaan/pienemmät asemat) ei ole
+  // näkyvyysanturia lainkaan – piilotetaan lohko kokonaan sen sijaan
+  // että näytettäisiin harhaanjohtava tyhjä "–"-lukema.
+  if (latest == null) {
+    block.style.display = "none";
+    return;
+  }
+
+  if (valueEl) valueEl.textContent = formatVisibility(latest);
+  block.style.display = "";
+
+}
+
+
+/* =========================================================
    AURINGONNOUSU / -LASKU – oma korttinsa
    ========================================================= */
 
