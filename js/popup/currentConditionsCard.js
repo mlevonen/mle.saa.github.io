@@ -143,6 +143,25 @@ export function currentConditionsCardHTML(station) {
           </div>
         </div>
 
+        <!-- Veden lämpötila – oma alakorttinsa, koska tieto on
+             tärkeä erityisesti uimareille/vesilläliikkujille ja
+             ansaitsee oman selkeän visuaalisen "lukeman" (värillinen
+             ympyrä, sama periaate kuin tuulinuolen väriasteikko).
+             Lukema tulee LÄHIMMÄSTÄ vedenkorkeusasemasta (sama data
+             joka on jo haettu vedenkorkeutta varten, ks.
+             seaLevelCard.js), joten kortin alla näkyy myös lähteen
+             asemannimi selkeyden vuoksi. Piilossa oletuksena –
+             renderSeaLevelCard näyttää sen kun lukema on saatavilla
+             (ei koskaan sisämaan asemilla). -->
+        <div class="current-conditions-item popup-card-inner current-watertemp-item" style="display:none;">
+          <div class="current-label">Veden lämpötila</div>
+          <div class="current-watertemp-row">
+            <span class="current-watertemp-circle"></span>
+            <span class="current-watertemp-value">–</span>
+          </div>
+          <div class="current-watertemp-source"></div>
+        </div>
+
         <!-- Tuntikohtainen sääennuste, sama alakortti-tyyli kuin
              muutkin ryhmät, mutta koko leveä (.current-conditions-
              item-wide) koska vaakavierittyvä tuntilista tarvitsee

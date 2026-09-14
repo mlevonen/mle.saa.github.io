@@ -15,6 +15,7 @@
 // ==========================
 
 import { fetchWaveBuoyObservation } from "../api/waveHeight.js";
+import { waterTempColor } from "./seaLevelCard.js";
 
 const MAX_WAVE_ESTIMATE_FACTOR = 1.8;
 
@@ -41,12 +42,20 @@ export async function renderWaveBuoyPopup(popup, station) {
       ? obs.height * MAX_WAVE_ESTIMATE_FACTOR
       : null;
 
+    // Veden lämpötilan arvon yhteyteen pieni värillinen ympyrä (sama
+    // väriasteikko/periaate kuin asemakortin Veden lämpötila -kortissa,
+    // ks. waterTempColor(), seaLevelCard.js) nopeaksi visuaaliseksi
+    // "onko vesi lämmintä" -vihjeeksi.
+    const waterTempValueHTML = Number.isFinite(obs.waterTemp)
+      ? `<span class="wave-buoy-watertemp-circle" style="background:${waterTempColor(obs.waterTemp)}"></span>${obs.waterTemp.toFixed(1)} °C`
+      : "–";
+
     const rows = [
       ["Merkitsevä aallonkorkeus", Number.isFinite(obs.height) ? `${obs.height.toFixed(1)} m` : "–"],
       ["Korkein aalto (arvio)", estimatedMax != null ? `~${estimatedMax.toFixed(1)} m` : "–"],
       ["Aallon jakso", Number.isFinite(obs.period) ? `${obs.period.toFixed(1)} s` : "–"],
       ["Tulosuunta", Number.isFinite(obs.direction) ? `${Math.round(obs.direction)}°` : "–"],
-      ["Veden lämpötila", Number.isFinite(obs.waterTemp) ? `${obs.waterTemp.toFixed(1)} °C` : "–"]
+      ["Veden lämpötila", waterTempValueHTML]
     ];
 
     bodyEl.innerHTML = rows.map(([label, value]) => `

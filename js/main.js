@@ -12,6 +12,7 @@ import { initBaseLayerControl } from "./baseLayerControl.js";
 import { initDataLicenseControl } from "./dataLicenseControl.js";
 import { initFeedbackControl } from "./feedbackControl.js";
 import { initChangelogControl } from "./changelogControl.js";
+import { initWaterTempPointsControl } from "./waterTempPointsControl.js";
 import { MML_API_KEY } from "./config.js";
 import { stationDetailHTML, renderStationDetail } from "./popup/stationDetail.js";
 import { openMeteoWindPopupHTML, renderOpenMeteoWindPopup } from "./popup/openMeteoWindPopup.js";
@@ -67,6 +68,13 @@ initFeedbackControl(map);
 // Palaute-napin yläpuolelle: nappi, joka näyttää listan viimeisimmistä
 // sivustolle tehdyistä muutoksista (ks. changelogData.js).
 initChangelogControl(map);
+
+// Vasempaan alakulmaan: nappi, joka togglaa näkyviin/pois pallomerkit
+// vedenlämpöpisteistä, joilla ei ole omaa havaintoasemaa sivustolla
+// (sisävedet ympäri Suomen + pk-seudun uimapaikat, ks.
+// js/api/waterTempPoints.js). Sivuston omien asemien Veden lämpötila
+// -kortti (ks. seaLevelCard.js) kattaa jo asemien lähialueet.
+initWaterTempPointsControl(map);
 
 // Oletusnäkymä: lähempänä zoomattu näkymä, joka näyttää Saariston-
 // meren kokonaan ja osan Suomenlahtea (n. Hangosta Helsinkiin).

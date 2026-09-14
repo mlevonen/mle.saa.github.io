@@ -570,6 +570,40 @@
     color: #ffab91;
   }
 
+  /* Veden lämpötila -alakortti, sama rakenne/luokat kuin desktopilla
+     (ks. index.html + js/popup/currentConditionsCard.js/seaLevelCard.js). */
+  .current-watertemp-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 6px;
+  }
+
+  .current-watertemp-circle {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #9e9e9e;
+    border: 2px solid rgba(255,255,255,0.6);
+    flex: none;
+  }
+
+  .current-watertemp-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #eaf1f8;
+  }
+
+  .current-watertemp-source {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #9fc1de;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .popup-card {
     background: #e8eef5;
     border: 1px solid #c5d5e3;

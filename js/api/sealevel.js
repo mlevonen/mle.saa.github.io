@@ -25,9 +25,11 @@ export function findNearestSeaLevelStation(lat, lon) {
 }
 
 
-// Palauttaa sekä perinteisen keskiveteen suhteutetun lukeman (WATLEV)
-// että uudemman N2000-korkeusjärjestelmän lukeman (WLEVN2K_PT1S_INSTANT),
-// molemmat senttimetreinä. Jompikumpi voi puuttua asemasta riippuen.
+// Palauttaa perinteisen keskiveteen suhteutetun lukeman (WATLEV),
+// uudemman N2000-korkeusjärjestelmän lukeman (WLEVN2K_PT1S_INSTANT)
+// SEKÄ veden pintalämpötilan (TW, valmiiksi celsiusasteina – ei
+// skaalausta kuten korkeuslukemilla). Jompikumpi/mikä tahansa voi
+// puuttua asemasta riippuen.
 export async function fetchSeaLevel(fmisid) {
   const params = new URLSearchParams({
     service: "WFS",
@@ -42,7 +44,7 @@ export async function fetchSeaLevel(fmisid) {
   const res = await fetch(url);
   if (!res.ok) {
     console.warn("Sea level observation not available for fmisid", fmisid);
-    return { watlev: null, n2000: null };
+    return { watlev: null, n2000: null, waterTemp: null };
   }
 
   const text = await res.text();
@@ -58,7 +60,10 @@ export async function fetchSeaLevel(fmisid) {
 
   let watlev = null;
   let n2000 = null;
+  let waterTemp = null;
 
+  // Uusin arvo voittaa (elementit ovat aikajärjestyksessä), joten ei
+  // katkaista silmukkaa ensimmäiseen osumaan.
   for (const el of elements) {
     const nameNode = el.querySelector(
       "BsWfs\\:ParameterName, ParameterName"
@@ -70,23 +75,27 @@ export async function fetchSeaLevel(fmisid) {
     if (!nameNode || !valueNode) continue;
 
     const name = nameNode.textContent.trim();
-    const mm = Number(valueNode.textContent);
-    if (!Number.isFinite(mm)) continue;
+    const value = Number(valueNode.textContent);
+    if (!Number.isFinite(value)) continue;
 
     if (name === "WATLEV") {
-      watlev = Math.round(mm / 10); // cm
+      watlev = Math.round(value / 10); // cm
     }
 
     if (name === "WLEVN2K_PT1S_INSTANT") {
-      n2000 = Math.round(mm / 10); // cm
+      n2000 = Math.round(value / 10); // cm
+    }
+
+    if (name === "TW") {
+      waterTemp = value; // °C, ei skaalausta
     }
   }
 
-  if (watlev == null && n2000 == null) {
+  if (watlev == null && n2000 == null && waterTemp == null) {
     console.warn("Sea level values not found for fmisid", fmisid);
   }
 
-  return { watlev, n2000 };
+  return { watlev, n2000, waterTemp };
 }
 
 export async function fetchSeaLevelSeries(fmisid) {
