@@ -87,11 +87,18 @@ html, body { margin: 0; height: 100%; }
    oikeaan reunaan. min-width takaa popupille riittävän leveyden
    riippumatta siitä mikä rivi sattuu olemaan leveintä. */
 .leaflet-popup.station-full-popup .leaflet-popup-content {
-  min-width: 660px;
+  /* Kavennettu n. 1,5 cm (~57px, 96dpi-näytöllä) käyttäjäpalautteen
+     perusteella – kortit venyivät turhan leveiksi, jäi tyhjää tilaa
+     oikeaan reunaan. Graafit/animaatio kaventuvat automaattisesti
+     mukana, koska niiden kääre on aina 100 % popupin leveydestä
+     (ks. .popup-chart-wrapper/.wind-flow-wrapper) ja Chart.js:n
+     responsive:true mittaa kääreen todellisen koon – ei siis tarvitse
+     muuttaa erikseen mitään kanvaasin omaa pikselileveyttä. */
+  min-width: 603px;
 }
 
 .leaflet-popup-content-wrapper {
-  max-width: 785px;
+  max-width: 728px;
   background: #f2f3f5;
 }
 
