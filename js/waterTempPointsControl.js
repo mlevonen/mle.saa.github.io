@@ -27,6 +27,7 @@
 
 import { fetchWaterTempPoints } from "./api/waterTempPoints.js";
 import { waterTempColor } from "./popup/seaLevelCard.js";
+import { findNearestSeaLevelStation, fetchSeaLevel } from "./api/sealevel.js";
 
 function formatTime(iso) {
   if (!iso) return null;
@@ -75,6 +76,86 @@ function createPointMarker(point) {
 
 }
 
+// ==========================
+// Pienet "lämpöpallot" jo olemassa olevien rannikon havaintoasemien
+// viereen (ei niiden PÄÄLLE, ettei peitä tuuli-ikonia). Käyttää samaa
+// "lähin vedenkorkeusasema" -logiikkaa ja samaa fetchSeaLevel()-kutsua
+// kuin popupin Veden lämpötila -kortti (ks. js/popup/seaLevelCard.js),
+// jotta luku on aina sama kuin mitä käyttäjä näkisi avaamalla popupin.
+// Monella rannikkoasemalla on sama lähin vedenkorkeusasema, joten
+// verkkopyynnöt tehdään vain kertaalleen per uniikki fmisid.
+// ==========================
+
+function createStationBadgeMarker(station, temp) {
+
+  const rounded = Math.round(temp);
+
+  const icon = L.divIcon({
+    className: "watertemp-marker watertemp-station-badge",
+    html: `<div class="watertemp-marker-circle watertemp-marker-circle-small" style="background:${waterTempColor(temp)}">${rounded}°</div>`,
+    iconSize: [26, 26],
+    // Siirretään pallo havaintoaseman tuuli-ikonin (80x80, ankkuroitu
+    // keskelle) oikeaan yläkulmaan nähden, jotta se näkyy selvästi
+    // "vieressä" eikä peitä tuulinuolta/-lukemaa.
+    iconAnchor: [-28, 26],
+    popupAnchor: [0, -13]
+  });
+
+  return L.marker([station.lat, station.lon], { icon, zIndexOffset: 500 })
+    .bindPopup(stationBadgePopupHTML(station, temp));
+}
+
+function stationBadgePopupHTML(station, temp) {
+  const nearestSea = findNearestSeaLevelStation(station.lat, station.lon);
+  return `
+    <div class="watertemp-popup">
+      <div class="watertemp-popup-title">${station.name}</div>
+      <div class="watertemp-popup-value">${temp.toFixed(1)} °C</div>
+      ${nearestSea ? `<div class="watertemp-popup-source">Lähin havaintoasema: ${nearestSea.name}</div>` : ""}
+    </div>
+  `;
+}
+
+async function fetchCoastalStationWaterTemps() {
+
+  const coastalStations = stations.filter(s => s.type === "coastal");
+
+  // Kerää uniikit lähimmät vedenkorkeusasemat (monella rannikkoasemalla
+  // sama lähin asema), jotta jokaista fmisidiä kysytään vain kerran.
+  const nearestByStation = new Map(); // station -> nearestSea (tai null)
+  const uniqueFmisids = new Map(); // fmisid -> nearestSea
+
+  coastalStations.forEach(station => {
+    const nearestSea = findNearestSeaLevelStation(station.lat, station.lon);
+    nearestByStation.set(station, nearestSea);
+    if (nearestSea && !uniqueFmisids.has(nearestSea.fmisid)) {
+      uniqueFmisids.set(nearestSea.fmisid, nearestSea);
+    }
+  });
+
+  const tempByFmisid = new Map();
+
+  await Promise.all(
+    Array.from(uniqueFmisids.keys()).map(async fmisid => {
+      try {
+        const { waterTemp } = await fetchSeaLevel(fmisid);
+        if (Number.isFinite(waterTemp)) tempByFmisid.set(fmisid, waterTemp);
+      } catch (err) {
+        console.warn("Rannikkoaseman vedenlämmön haku epäonnistui (fmisid " + fmisid + "):", err);
+      }
+    })
+  );
+
+  const results = [];
+  nearestByStation.forEach((nearestSea, station) => {
+    if (!nearestSea) return;
+    const temp = tempByFmisid.get(nearestSea.fmisid);
+    if (Number.isFinite(temp)) results.push({ station, temp });
+  });
+
+  return results;
+}
+
 export function initWaterTempPointsControl(map) {
 
   const toggleBtn = document.getElementById("watertemp-toggle-btn");
@@ -92,10 +173,17 @@ export function initWaterTempPointsControl(map) {
 
     try {
 
-      const points = await fetchWaterTempPoints();
-
       if (!loaded) {
+        const [points, stationTemps] = await Promise.all([
+          fetchWaterTempPoints(),
+          fetchCoastalStationWaterTemps()
+        ]);
+
         points.forEach(p => layerGroup.addLayer(createPointMarker(p)));
+        stationTemps.forEach(({ station, temp }) =>
+          layerGroup.addLayer(createStationBadgeMarker(station, temp))
+        );
+
         loaded = true;
       }
 

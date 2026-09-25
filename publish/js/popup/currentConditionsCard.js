@@ -89,6 +89,35 @@ function formatSunTime(d) { return d.toLocaleTimeString("fi-FI", { hour: "2-digi
           </div>
         </div>
 
+        <!-- Veden lämpötila + Näkyvyys samassa alakortissa, samalla
+             periaatteella kuin Vedenkorkeus+Aallokko yllä (kumpikin
+             osio piiloutuu itsenäisesti; jos molemmat piiloutuvat,
+             updateMergedCardVisibility piilottaa myös koko ulomman
+             kortin).
+             Veden lämpötila: värillinen ympyrä (sama periaate kuin
+             tuulinuolen väriasteikko), lukema LÄHIMMÄSTÄ vedenkorkeus-
+             asemasta (sama data joka on jo haettu vedenkorkeutta
+             varten, ks. seaLevelCard.js) – ei koskaan sisämaan
+             asemilla.
+             Näkyvyys: havaintoaseman OMA näkyvyyslukema (ks.
+             renderVisibilityCard, popupExtras.js) – toisin kuin veden
+             lämpötila, tämä on saatavilla myös sisämaan asemilla, jos
+             asemalla on näkyvyysanturi. -->
+        <div class="current-conditions-item popup-card-inner current-watertemp-item" style="display:none;">
+          <div class="current-watertemp-block" style="display:none;">
+            <div class="current-label">Veden lämpötila</div>
+            <div class="current-watertemp-row">
+              <span class="current-watertemp-circle"></span>
+              <span class="current-watertemp-value">–</span>
+            </div>
+            <div class="current-watertemp-source"></div>
+          </div>
+          <div class="current-visibility-block" style="display:none;">
+            <div class="current-label">Näkyvyys</div>
+            <div class="current-visibility-value">–</div>
+          </div>
+        </div>
+
         <!-- Tuntikohtainen sääennuste, sama alakortti-tyyli kuin
              muutkin ryhmät, mutta koko leveä (.current-conditions-
              item-wide) koska vaakavierittyvä tuntilista tarvitsee
@@ -104,4 +133,4 @@ function formatSunTime(d) { return d.toLocaleTimeString("fi-FI", { hour: "2-digi
 
       </div>
     </div>
-  `; }         function hideEmptyMergedCard(containerEl, wrapperSelector, partSelectors) { const wrapper = containerEl.querySelector(wrapperSelector); if (!wrapper) return; const anyVisible = partSelectors.some(sel => { const part = wrapper.querySelector(sel); return part && part.style.display !== "none"; }); wrapper.style.display = anyVisible ? "" : "none"; } export function updateMergedCardVisibility(containerEl) { hideEmptyMergedCard(containerEl, ".current-sealevel-wave-card", [".popup-sealevel-card", ".popup-wave-card"]);     }       export function renderCurrentWindSummary(containerEl, data) { const speedEl = containerEl.querySelector(".current-wind-speed"); const dirEl = containerEl.querySelector(".current-wind-dir"); const arrowEl = containerEl.querySelector(".current-wind-arrow"); if (!speedEl && !dirEl && !arrowEl) return; const obs = Array.isArray(data.obsWindSpeed) ? data.obsWindSpeed : []; let latest = null; for (let i = obs.length - 1; i >= 0; i--) { const p = obs[i]; if (p && p.windspeedms != null && p.winddirection != null) { latest = p; break; } } if (!latest) { if (speedEl) speedEl.textContent = "–"; if (dirEl) dirEl.textContent = "–"; if (arrowEl) arrowEl.style.visibility = "hidden"; return; } const speed = Math.round(latest.windspeedms); const gust = latest.windgust != null ? Math.round(latest.windgust) : null; if (speedEl) { speedEl.textContent = gust != null ? `${speed} m/s (puuska ${gust} m/s)` : `${speed} m/s`; } if (dirEl) { dirEl.textContent = `${Math.round(latest.winddirection)}°`; } if (arrowEl) { arrowEl.style.visibility = "visible";     arrowEl.style.transform = `rotate(${latest.winddirection + 180}deg)`;         arrowEl.style.color = windSpeedColor(speed); } } function windSpeedColor(roundedSpeed) { return roundedSpeed < 5 ? "#028b09" : roundedSpeed < 10 ? "#025981" : roundedSpeed < 15 ? "#b67e06" : "#E53935"; } export function renderCurrentSunTimes(containerEl, data) { const wrapper = containerEl.querySelector(".current-sun-item"); if (!wrapper) return; if (!data.sunTimes) { wrapper.style.display = "none"; return; } const sunriseEl = wrapper.querySelector(".current-sunrise-value"); const sunsetEl = wrapper.querySelector(".current-sunset-value"); if (sunriseEl) sunriseEl.textContent = formatSunTime(new Date(data.sunTimes.sunrise)); if (sunsetEl) sunsetEl.textContent = formatSunTime(new Date(data.sunTimes.sunset)); wrapper.style.display = ""; }
+  `; } function hideEmptyMergedCard(containerEl, wrapperSelector, partSelectors) { const wrapper = containerEl.querySelector(wrapperSelector); if (!wrapper) return; const anyVisible = partSelectors.some(sel => { const part = wrapper.querySelector(sel); return part && part.style.display !== "none"; }); wrapper.style.display = anyVisible ? "" : "none"; } export function updateMergedCardVisibility(containerEl) { hideEmptyMergedCard(containerEl, ".current-sealevel-wave-card", [".popup-sealevel-card", ".popup-wave-card"]); hideEmptyMergedCard(containerEl, ".current-watertemp-item", [".current-watertemp-block", ".current-visibility-block"]); } export function renderCurrentWindSummary(containerEl, data) { const speedEl = containerEl.querySelector(".current-wind-speed"); const dirEl = containerEl.querySelector(".current-wind-dir"); const arrowEl = containerEl.querySelector(".current-wind-arrow"); if (!speedEl && !dirEl && !arrowEl) return; const obs = Array.isArray(data.obsWindSpeed) ? data.obsWindSpeed : []; let latest = null; for (let i = obs.length - 1; i >= 0; i--) { const p = obs[i]; if (p && p.windspeedms != null && p.winddirection != null) { latest = p; break; } } if (!latest) { if (speedEl) speedEl.textContent = "–"; if (dirEl) dirEl.textContent = "–"; if (arrowEl) arrowEl.style.visibility = "hidden"; return; } const speed = Math.round(latest.windspeedms); const gust = latest.windgust != null ? Math.round(latest.windgust) : null; if (speedEl) { speedEl.textContent = gust != null ? `${speed} m/s (puuska ${gust} m/s)` : `${speed} m/s`; } if (dirEl) { dirEl.textContent = `${Math.round(latest.winddirection)}°`; } if (arrowEl) { arrowEl.style.visibility = "visible"; arrowEl.style.transform = `rotate(${latest.winddirection + 180}deg)`; arrowEl.style.color = windSpeedColor(speed); } } function windSpeedColor(roundedSpeed) { return roundedSpeed < 5 ? "#028b09" : roundedSpeed < 10 ? "#025981" : roundedSpeed < 15 ? "#b67e06" : "#E53935"; } export function renderCurrentSunTimes(containerEl, data) { const wrapper = containerEl.querySelector(".current-sun-item"); if (!wrapper) return; if (!data.sunTimes) { wrapper.style.display = "none"; return; } const sunriseEl = wrapper.querySelector(".current-sunrise-value"); const sunsetEl = wrapper.querySelector(".current-sunset-value"); if (sunriseEl) sunriseEl.textContent = formatSunTime(new Date(data.sunTimes.sunrise)); if (sunsetEl) sunsetEl.textContent = formatSunTime(new Date(data.sunTimes.sunset)); wrapper.style.display = ""; }

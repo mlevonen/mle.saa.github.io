@@ -19,12 +19,15 @@
 <meta property="og:title" content="Merisää – Tuuli, aallokko ja vedenkorkeus kartalla veneilijöille">
 <meta property="og:description" content="Reaaliaikaiset tuuli-, aallokko- ja vedenkorkeushavainnot sekä sääennusteet Suomen rannikolla ja saaristossa.">
 <meta property="og:url" content="https://merisaa.fi/">
-<meta property="og:image" content="https://merisaa.fi/js/assets/icons/merisaa-logo.png">
+<meta property="og:image" content="https://merisaa.fi/js/assets/icons/merisaa-og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/png">
 <meta property="og:locale" content="fi_FI">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Merisää – Tuuli, aallokko ja vedenkorkeus kartalla veneilijöille">
 <meta name="twitter:description" content="Reaaliaikaiset tuuli-, aallokko- ja vedenkorkeushavainnot sekä sääennusteet Suomen rannikolla ja saaristossa.">
-<meta name="twitter:image" content="https://merisaa.fi/js/assets/icons/merisaa-logo.png">
+<meta name="twitter:image" content="https://merisaa.fi/js/assets/icons/merisaa-og-image.png">
 
 <script type="application/ld+json">
 {
@@ -1656,6 +1659,14 @@ html, body { margin: 0; height: 100%; }
   font-weight: 700;
   border: 2px solid rgba(255,255,255,0.85);
   box-shadow: 0 1px 4px rgba(0,0,0,0.35);
+}
+
+/* Pienempi versio olemassa olevien havaintoasemien viereen (badge),
+   ks. js/waterTempPointsControl.js: createStationBadgeMarker(). */
+.watertemp-marker-circle-small {
+  width: 26px;
+  height: 26px;
+  font-size: 10px;
 }
 
 .watertemp-popup {
