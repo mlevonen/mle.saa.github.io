@@ -1728,6 +1728,40 @@ html, body { margin: 0; height: 100%; }
   box-shadow: 0 1px 4px rgba(0,0,0,0.4);
 }
 
+/* Napeissa olevat pienoiskuvakkeet = samat kuin kartalle ilmestyvät
+   merkit (Vedenlämpö: värillinen lämpöpallo, Merivaroitukset: keltainen "!"). */
+.btn-icon-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-icon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.35);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.btn-icon-watertemp {
+  background: #0097a7; /* waterTempColor(14) */
+  color: #fff;
+  font-size: 8px;
+}
+
+.btn-icon-navwarn {
+  background: #f9a825;
+  color: #222;
+  font-size: 13px;
+}
+
 .navwarn-popup {
   font-size: 13px;
   min-width: 200px;
@@ -1805,7 +1839,10 @@ html, body { margin: 0; height: 100%; }
          napin alaspäin sen mukana). -->
     <div class="info-panel">
       <button type="button" class="info-panel-header watertemp-toggle-btn" id="watertemp-toggle-btn">
-        <span>💧 Vedenlämpö</span>
+        <span class="btn-icon-label">
+          <span class="btn-icon btn-icon-watertemp">14°</span>
+          <span>Vedenlämpö</span>
+        </span>
       </button>
     </div>
 
@@ -1813,7 +1850,10 @@ html, body { margin: 0; height: 100%; }
          päälle/pois-toggle kuin Vedenlämpö-napissa. -->
     <div class="info-panel">
       <button type="button" class="info-panel-header navwarnings-toggle-btn" id="navwarnings-toggle-btn">
-        <span id="navwarnings-label">⚠️ Merivaroitukset</span>
+        <span class="btn-icon-label">
+          <span class="btn-icon btn-icon-navwarn">!</span>
+          <span id="navwarnings-label">Merivaroitukset</span>
+        </span>
       </button>
     </div>
 
