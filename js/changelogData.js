@@ -18,6 +18,15 @@ export const CHANGELOG_CONTACT_EMAIL = "palaute@merisaa.fi";
 
 export const CHANGELOG = [
   {
+    date: "25.09.2026",
+    items: [
+      "Vedenlämpö-toiminto (työpöytä): rannikon havaintoasemien viereen ilmestyy nyt pieni pallo, jossa näkyy kyseisen alueen vedenlämpötila.",
+      "Popupin aallonkorkeus- ja jaksolukemat suurennettu ja väritetty valkoiseksi paremman luettavuuden vuoksi (työpöytä ja mobiili).",
+      "Popupin vedenkorkeuslukema muutettu valkoiseksi (koko ennallaan).",
+      "Uusi 'Merivaroitukset'-nappi (työpöytä): näyttää Traficomin voimassa olevat merivaroitukset kartalla. Lisätty Traficom Käyttöoikeudet-listaan."
+    ]
+  },
+  {
     date: "14.09.2026",
     items: [
       "Havaintoasemien popup-korttiin lisätty vedenlämpötila ja näkyvyys (esim. sumua, +15 km) samaan tietokorttiin.",

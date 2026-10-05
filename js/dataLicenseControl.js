@@ -39,6 +39,12 @@ const SOURCES = [
     url: "https://avoindata.suomi.fi/data/fi/dataset/hydrologiarajapinta"
   },
   {
+    name: "Liikenne- ja viestintävirasto Traficom",
+    use: "Merivaroitukset (avoin WFS-rajapinta)",
+    license: "CC BY 4.0",
+    url: "https://avoindata.suomi.fi/data/fi/dataset/merivaroitukset"
+  },
+  {
     name: "Forum Virium Helsinki",
     use: "Pääkaupunkiseudun uimarantojen reaaliaikaiset vedenlämpötilat (UiRaS)",
     license: "CC BY 4.0",

@@ -13,6 +13,7 @@ import { initDataLicenseControl } from "./dataLicenseControl.js";
 import { initFeedbackControl } from "./feedbackControl.js";
 import { initChangelogControl } from "./changelogControl.js";
 import { initWaterTempPointsControl } from "./waterTempPointsControl.js";
+import { initNavWarningsControl } from "./navWarningsControl.js";
 import { MML_API_KEY } from "./config.js";
 import { stationDetailHTML, renderStationDetail } from "./popup/stationDetail.js";
 import { openMeteoWindPopupHTML, renderOpenMeteoWindPopup } from "./popup/openMeteoWindPopup.js";
@@ -75,6 +76,10 @@ initChangelogControl(map);
 // js/api/waterTempPoints.js). Sivuston omien asemien Veden lämpötila
 // -kortti (ks. seaLevelCard.js) kattaa jo asemien lähialueet.
 initWaterTempPointsControl(map);
+
+// Vedenlämpö-napin alle: nappi, joka togglaa Traficomin voimassa
+// olevat merivaroitukset (pisteet/viivat/alueet) kartalle.
+initNavWarningsControl(map);
 
 // Oletusnäkymä: lähempänä zoomattu näkymä, joka näyttää Saariston-
 // meren kokonaan ja osan Suomenlahtea (n. Hangosta Helsinkiin).

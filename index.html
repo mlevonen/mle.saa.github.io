@@ -1698,6 +1698,75 @@ html, body { margin: 0; height: 100%; }
   color: #888;
   font-style: italic;
 }
+
+/* ==========================
+   "Merivaroitukset"-nappi + merkit (ks. navWarningsControl.js)
+   ========================== */
+
+.navwarnings-toggle-btn.active {
+  background: #fff0e0;
+  color: #bf360c;
+}
+
+.navwarnings-toggle-btn.loading {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.navwarn-marker-circle {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #f9a825;
+  color: #222;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 800;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
+.navwarn-popup {
+  font-size: 13px;
+  min-width: 200px;
+  max-width: 280px;
+}
+
+.navwarn-popup-title {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.navwarn-popup-meta {
+  color: #bf360c;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.navwarn-popup-detail {
+  color: #555;
+  font-style: italic;
+  margin-bottom: 4px;
+}
+
+.navwarn-popup-text {
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.navwarn-popup-time {
+  color: #555;
+  margin-bottom: 4px;
+}
+
+.navwarn-popup-source {
+  font-size: 11px;
+  color: #888;
+  font-style: italic;
+}
 </style>
 
 </head>
@@ -1737,6 +1806,14 @@ html, body { margin: 0; height: 100%; }
     <div class="info-panel">
       <button type="button" class="info-panel-header watertemp-toggle-btn" id="watertemp-toggle-btn">
         <span>💧 Vedenlämpö</span>
+      </button>
+    </div>
+
+    <!-- "Merivaroitukset"-nappi (ks. js/navWarningsControl.js). Sama
+         päälle/pois-toggle kuin Vedenlämpö-napissa. -->
+    <div class="info-panel">
+      <button type="button" class="info-panel-header navwarnings-toggle-btn" id="navwarnings-toggle-btn">
+        <span id="navwarnings-label">⚠️ Merivaroitukset</span>
       </button>
     </div>
 
