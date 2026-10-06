@@ -20,6 +20,7 @@ import { mobileStationDetailHTML, renderMobileStationDetail } from "./popup/mobi
 import { getFavoriteIds, isFavorite, toggleFavorite } from "./utils/favorites.js";
 import { CHANGELOG, CHANGELOG_NOTE, CHANGELOG_CONTACT_EMAIL } from "./changelogData.js";
 import { fetchWaterTempPoints } from "./api/waterTempPoints.js";
+import { fetchNavWarnings } from "./api/navWarnings.js";
 import { waterTempColor } from "./popup/seaLevelCard.js";
 import { fetchObservationSeriesByFmisid } from "./api/dataLoader.js";
 import { fetchCurrentWindMulti } from "./api/openMeteoWind.js";
@@ -241,6 +242,124 @@ async function openWaterTempList() {
 
   } catch (err) {
     console.warn("Vedenlämpöjen haku epäonnistui:", err);
+    bodyEl.innerHTML = `<p class="empty-note">Haku ei onnistunut juuri nyt.</p>`;
+  }
+
+}
+
+// ==========================
+// Merivaroitukset – Traficomin voimassa olevat merivaroitukset (sama
+// data kuin desktopin "Merivaroitukset"-napin karttamerkit, ks.
+// js/api/navWarnings.js). Mobiilissa ei ole karttaa, joten näytetään
+// tekstilistana merialueittain ryhmiteltynä. Avataan listan lopussa
+// olevasta omasta rivistään (ei koko ajan auki), samalla tavalla
+// kuin Muut vedenlämpötilat.
+// ==========================
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function navWarningsListHTML() {
+  return `
+    <div class="popup-card">
+      <div class="popup-title">Merivaroitukset</div>
+      <div class="changelog-note">
+        Voimassa olevat merivaroitukset Suomen merialueilla (Traficom, CC BY 4.0).
+        Ei korvaa virallisia merivaroituksia.
+      </div>
+      <div class="navwarn-list-body">
+        <p class="empty-note">Ladataan…</p>
+      </div>
+    </div>
+  `;
+}
+
+function createNavWarningLi(w) {
+
+  const li = document.createElement("li");
+
+  const row = document.createElement("div");
+  row.className = "station-item navwarn-item";
+
+  const time = w.time
+    ? new Date(w.time).toLocaleString("fi-FI", {
+        day: "numeric", month: "numeric", year: "numeric",
+        hour: "2-digit", minute: "2-digit"
+      })
+    : "";
+
+  row.innerHTML = `
+    <span class="navwarn-item-icon">!</span>
+    <div class="navwarn-item-content">
+      <div class="navwarn-item-title">${escapeHtml(w.place || "Merivaroitus")}</div>
+      <div class="navwarn-item-type">${escapeHtml([w.type, w.detail].filter(Boolean).join(" · "))}</div>
+      <div class="navwarn-item-text">${escapeHtml(w.text).replace(/\n/g, "<br>")}</div>
+      ${time ? `<div class="navwarn-item-time">Julkaistu: ${time}</div>` : ""}
+    </div>
+  `;
+
+  li.appendChild(row);
+  return li;
+
+}
+
+async function openNavWarningsList() {
+
+  if (currentStop) {
+    currentStop();
+    currentStop = null;
+  }
+
+  sheetBodyEl.innerHTML = navWarningsListHTML();
+  overlayEl.classList.add("open");
+  sheetEl.scrollTop = 0;
+
+  const bodyEl = sheetBodyEl.querySelector(".navwarn-list-body");
+
+  try {
+
+    const warnings = await fetchNavWarnings();
+
+    if (!warnings.length) {
+      bodyEl.innerHTML = `<p class="empty-note">Ei voimassa olevia merivaroituksia juuri nyt.</p>`;
+      return;
+    }
+
+    const byArea = new Map();
+    warnings.forEach(w => {
+      if (!byArea.has(w.area)) byArea.set(w.area, []);
+      byArea.get(w.area).push(w);
+    });
+
+    bodyEl.innerHTML = "";
+
+    Array.from(byArea.keys())
+      .sort((a, b) => a.localeCompare(b, "fi"))
+      .forEach(area => {
+
+        const heading = document.createElement("h2");
+        heading.className = "watertemp-group-title";
+        heading.textContent = area;
+        bodyEl.appendChild(heading);
+
+        const ul = document.createElement("ul");
+        ul.className = "station-list";
+
+        // Uusin julkaisu ensin
+        byArea.get(area)
+          .sort((a, b) => new Date(b.time || 0) - new Date(a.time || 0))
+          .forEach(w => ul.appendChild(createNavWarningLi(w)));
+
+        bodyEl.appendChild(ul);
+
+      });
+
+  } catch (err) {
+    console.warn("Merivaroitusten haku epäonnistui:", err);
     bodyEl.innerHTML = `<p class="empty-note">Haku ei onnistunut juuri nyt.</p>`;
   }
 
@@ -546,6 +665,18 @@ if (!groups.length) {
   });
 
 }
+
+// Kolmanneksi viimeinen rivi: linkki Merivaroitukset-listaan (ks.
+// openNavWarningsList), juuri Muut vedenlämpötilat -rivin yläpuolella.
+const navWarningsFooterBtn = document.createElement("button");
+navWarningsFooterBtn.type = "button";
+navWarningsFooterBtn.className = "changelog-footer-btn";
+navWarningsFooterBtn.innerHTML = `
+  <span class="footer-btn-label"><span class="navwarn-btn-icon">!</span>Merivaroitukset</span>
+  <span class="station-item-chevron">›</span>
+`;
+navWarningsFooterBtn.addEventListener("click", openNavWarningsList);
+listEl.appendChild(navWarningsFooterBtn);
 
 // Listan toiseksi viimeinen rivi: linkki Muut vedenlämpötilat -listaan
 // (ks. openWaterTempList). Sijoitettu juuri "Katso muutokset" -rivin
