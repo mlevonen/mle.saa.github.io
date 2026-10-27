@@ -1,0 +1,12 @@
+# Kopioi palvelimella nimellä ".htaccess" kansioon windgrid/data/
+# Sallii datan lukemisen muilta sivustoilta (esim. Vercel-demo) ja
+# määrää välimuistin: manifest.json ei saa jäädä pitkäksi aikaa välimuistiin.
+<IfModule mod_headers.c>
+  Header set Access-Control-Allow-Origin "*"
+  <FilesMatch "^manifest\.json$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+  <FilesMatch "^wind_.*\.json$">
+    Header set Cache-Control "public, max-age=3600"
+  </FilesMatch>
+</IfModule>

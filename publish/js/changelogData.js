@@ -3,6 +3,12 @@ export const CHANGELOG_NOTE =
 export const CHANGELOG_CONTACT_EMAIL = "palaute@merisaa.fi";
 export const CHANGELOG = [
 {
+date: "06.10.2026",
+items: [
+"Mobiiliin lisätty 'Merivaroitukset'-valikko asemalistan loppuun: Traficomin voimassa olevat merivaroitukset ryhmiteltynä merialueittain."
+]
+},
+{
 date: "25.09.2026",
 items: [
 "Vedenlämpö-toiminto (työpöytä): rannikon havaintoasemien viereen ilmestyy nyt pieni pallo, jossa näkyy kyseisen alueen vedenlämpötila.",

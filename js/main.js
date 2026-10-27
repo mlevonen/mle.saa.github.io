@@ -14,6 +14,7 @@ import { initFeedbackControl } from "./feedbackControl.js";
 import { initChangelogControl } from "./changelogControl.js";
 import { initWaterTempPointsControl } from "./waterTempPointsControl.js";
 import { initNavWarningsControl } from "./navWarningsControl.js";
+import { initWindMapControl } from "./windMapControl.js";
 import { MML_API_KEY } from "./config.js";
 import { stationDetailHTML, renderStationDetail } from "./popup/stationDetail.js";
 import { openMeteoWindPopupHTML, renderOpenMeteoWindPopup } from "./popup/openMeteoWindPopup.js";
@@ -80,6 +81,11 @@ initWaterTempPointsControl(map);
 // Vedenlämpö-napin alle: nappi, joka togglaa Traficomin voimassa
 // olevat merivaroitukset (pisteet/viivat/alueet) kartalle.
 initNavWarningsControl(map);
+
+// KOKEELLINEN, piilotettu (?tuulikartta=1): elävä tuulikartta. Ilman
+// URL-parametria moduuli ei tee mitään. Pois ottaminen: poista tämä
+// kutsu ja yllä oleva windMapControl-import.
+initWindMapControl(map);
 
 // Oletusnäkymä: lähempänä zoomattu näkymä, joka näyttää Saariston-
 // meren kokonaan ja osan Suomenlahtea (n. Hangosta Helsinkiin).
