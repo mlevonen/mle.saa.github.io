@@ -1,4 +1,6 @@
 const VELOCITY_JS = "https://cdn.jsdelivr.net/npm/leaflet-velocity@2.1.4/dist/leaflet-velocity.min.js";
+const LAND_TOPO = "https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/land-10m.json";
+const TOPOJSON_JS = "https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js";
 const VELOCITY_CSS = "https://cdn.jsdelivr.net/npm/leaflet-velocity@2.1.4/dist/leaflet-velocity.min.css";
 const DATA_BASE = /(^|\.)merisaa\.fi$/.test(location.hostname)
 ? "windgrid/data/"
@@ -8,11 +10,20 @@ const STALE_CHECK_HOURS = 6;
 const PLAY_INTERVAL_MS = 1200;
 const WARMUP_MS = 250;
 const FADE_MS = 900;
-const PARTICLE_DENSITY = 1 / 700;
+const PARTICLE_DENSITY = 1 / 4000;
+const PARTICLE_DENSITY_FAR = 1 / 4500;
+const FAR_PARTICLE_COLORS = [
+"rgb(240,240,240)", "rgb(232,232,232)", "rgb(190,190,190)", "rgb(140,140,140)", "rgb(100,100,100)", "rgb(85,85,85)", "rgb(75,75,75)", "rgb(70,70,70)", "rgb(80,80,80)", "rgb(100,100,100)", "rgb(150,150,150)", "rgb(215,215,215)", "rgb(235,235,235)", "rgb(245,245,245)", "rgb(250,250,250)"
+];
 const PARTICLE_LINE_WIDTH = 1.5;
+const PARTICLE_LINE_WIDTH_NEAR = 2.2;
 const PARTICLE_TRAIL_OPACITY = 0.85;
 const PARTICLE_SPEED = 0.012;
 const MAP_DIM_FILTER = "brightness(0.68) saturate(0.8)";
+const OPEN_BOUNDS = [[56.6, 15.5], [66.0, 30.5]];
+const ZOOM_PARTICLES = 10;
+const FIELD_OPACITY = 0.62;
+const FIELD_UPSCALE = 6;
 const COLOR_SCALE = [
 "rgb(70,130,255)", "rgb(30,165,245)", "rgb(0,195,225)", "rgb(0,205,170)",
 "rgb(40,200,110)", "rgb(110,210,60)", "rgb(175,215,40)", "rgb(240,215,35)",
@@ -25,6 +36,14 @@ const STYLE = `
 
 /* Tummennetaan taustakartta, jotta vaaleat tuulihiukkaset erottuvat */
 .windmap-dim .leaflet-tile-pane { filter: ${MAP_DIM_FILTER}; }
+
+/* Tuulikartan ollessa auki piilotetaan havaintopisteiden merkit/lukemat */
+.windmap-on .leaflet-marker-pane,
+.windmap-on .leaflet-shadow-pane,
+.windmap-on .leaflet-tooltip-pane { visibility: hidden; }
+
+/* Värikenttätilassa tausta vaimennetaan, jotta kenttä ja hiukkaset erottuvat */
+.windmap-far .leaflet-tile-pane { filter: saturate(0.45) brightness(0.9); }
 
 .windmap-panel {
   position: fixed;
@@ -83,6 +102,52 @@ const STYLE = `
   font-size: 10px; color: #666; margin-top: 2px;
 }
 `;
+const COLOR_LUT = (() => {
+const stops = COLOR_SCALE.map(c => c.match(/\d+/g).map(Number));
+const lut = new Uint8ClampedArray(256 * 3);
+for (let i = 0; i < 256; i++) {
+const pos = (i / 255) * (stops.length - 1);
+const a = Math.floor(pos), b = Math.min(a + 1, stops.length - 1), f = pos - a;
+for (let c = 0; c < 3; c++) lut[i * 3 + c] = stops[a][c] + (stops[b][c] - stops[a][c]) * f;
+}
+return lut;
+})();
+function splitAtDateline(ring) {
+const pieces = [];
+let cur = [ring[0]];
+for (let i = 1; i < ring.length; i++) {
+if (Math.abs(ring[i][0] - ring[i - 1][0]) > 180) { pieces.push(cur); cur = [ring[i]]; }
+else cur.push(ring[i]);
+}
+pieces.push(cur);
+const n = ring.length;
+if (pieces.length > 1 && Math.abs(ring[0][0] - ring[n - 1][0]) <= 180) {
+const last = pieces.pop();
+pieces[0] = last.concat(pieces[0]);
+}
+return pieces;
+}
+function clipRing(ring, x0, y0, x1, y1) {
+const edges = [
+[p => p[0] >= x0, (a, b) => { const t = (x0 - a[0]) / (b[0] - a[0]); return [x0, a[1] + t * (b[1] - a[1])]; }],
+[p => p[0] <= x1, (a, b) => { const t = (x1 - a[0]) / (b[0] - a[0]); return [x1, a[1] + t * (b[1] - a[1])]; }],
+[p => p[1] >= y0, (a, b) => { const t = (y0 - a[1]) / (b[1] - a[1]); return [a[0] + t * (b[0] - a[0]), y0]; }],
+[p => p[1] <= y1, (a, b) => { const t = (y1 - a[1]) / (b[1] - a[1]); return [a[0] + t * (b[0] - a[0]), y1]; }]
+];
+let pts = ring;
+for (const [inside, inter] of edges) {
+const out = [];
+for (let i = 0; i < pts.length; i++) {
+const cur = pts[i], prev = pts[(i + pts.length - 1) % pts.length];
+const ci = inside(cur), pi = inside(prev);
+if (ci) { if (!pi) out.push(inter(prev, cur)); out.push(cur); }
+else if (pi) out.push(inter(prev, cur));
+}
+pts = out;
+if (!pts.length) break;
+}
+return pts;
+}
 function loadScript(src) {
 return new Promise((resolve, reject) => {
 const s = document.createElement("script");
@@ -159,18 +224,136 @@ let requestToken = 0;
 const cache = new Map();
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const DIRS = ["P", "KO", "I", "KA", "E", "LO", "L", "LU"];
-function updateReadout(latlng) {
-if (!currentData || !latlng) return;
+function sampleAt(latlng) {
+if (!currentData) return null;
 const h = currentData[0].header;
 const col = Math.round((latlng.lng - h.lo1) / h.dx);
 const row = Math.round((h.la1 - latlng.lat) / h.dy);
-if (col < 0 || row < 0 || col >= h.nx || row >= h.ny) {
+if (col < 0 || row < 0 || col >= h.nx || row >= h.ny) return null;
+const k = row * h.nx + col;
+return { u: currentData[0].data[k], v: currentData[1].data[k] };
+}
+let fieldLayer = null;
+let particlesOn = false;
+const mercY = lat => Math.log(Math.tan(Math.PI / 4 + lat * Math.PI / 360));
+const invMercY = y => (2 * Math.atan(Math.exp(y)) - Math.PI / 2) * 180 / Math.PI;
+function fieldDims(h) {
+const lonSpan = (h.nx - 1) * h.dx;
+const laTop = h.la1, laBot = h.la1 - (h.ny - 1) * h.dy;
+const yTop = mercY(laTop), yBot = mercY(laBot);
+const W = (h.nx - 1) * FIELD_UPSCALE;
+const H = Math.max(2, Math.round(W * (yTop - yBot) / (lonSpan * Math.PI / 180)));
+return { lonSpan, laTop, laBot, yTop, yBot, W, H };
+}
+let landMask = null;
+let landMaskTried = false;
+async function ensureLandMask(h) {
+if (landMask || landMaskTried) return;
+landMaskTried = true;
+try {
+if (!window.topojson) await loadScript(TOPOJSON_JS);
+const topo = await fetchJson(LAND_TOPO);
+const land = topojson.feature(topo, topo.objects.land);
+const d = fieldDims(h);
+const cv = document.createElement("canvas");
+cv.width = d.W; cv.height = d.H;
+const ctx = cv.getContext("2d");
+ctx.fillStyle = "#000";
+const px = lon => (lon - h.lo1) / d.lonSpan * (d.W - 1);
+const py = lat => (mercY(lat) - d.yTop) / (d.yBot - d.yTop) * (d.H - 1);
+const latMin = d.laBot - 1, latMax = d.laTop + 1, lonMin = h.lo1 - 1, lonMax = h.lo1 + d.lonSpan + 1;
+const polys = [];
+const geoms = land.type === "FeatureCollection" ? land.features.map(f => f.geometry) : [land.geometry || land];
+geoms.forEach(g => {
+if (g.type === "Polygon") polys.push(g.coordinates);
+else if (g.type === "MultiPolygon") g.coordinates.forEach(c => polys.push(c));
+});
+polys.forEach(rings => {
+let mnx = 1e9, mxx = -1e9, mny = 1e9, mxy = -1e9;
+rings[0].forEach(pt => {
+if (pt[0] < mnx) mnx = pt[0]; if (pt[0] > mxx) mxx = pt[0];
+if (pt[1] < mny) mny = pt[1]; if (pt[1] > mxy) mxy = pt[1];
+});
+if (mxx < lonMin || mnx > lonMax || mxy < latMin || mny > latMax) return;
+ctx.beginPath();
+rings.forEach(ring => {
+splitAtDateline(ring).forEach(piece => {
+const cr = clipRing(piece, lonMin, latMin, lonMax, latMax);
+if (cr.length < 3) return;
+cr.forEach((pt, i) => {
+if (i === 0) ctx.moveTo(px(pt[0]), py(pt[1])); else ctx.lineTo(px(pt[0]), py(pt[1]));
+});
+ctx.closePath();
+});
+});
+ctx.fill("evenodd");
+});
+const id = ctx.getImageData(0, 0, d.W, d.H).data;
+const m = new Uint8Array(d.W * d.H);
+for (let i = 0; i < m.length; i++) m[i] = id[i * 4 + 3];
+landMask = m;
+if (currentData) updateField(currentData);
+} catch (err) {
+console.warn("Maamaskin lataus epäonnistui, kenttä näytetään ilman rajausta:", err);
+}
+}
+function renderFieldUrl(data) {
+const h = data[0].header, U = data[0].data, V = data[1].data;
+const nx = h.nx, ny = h.ny;
+const speed = new Float32Array(nx * ny);
+for (let k = 0; k < speed.length; k++) speed[k] = Math.hypot(U[k], V[k]);
+const lonSpan = (nx - 1) * h.dx;
+const laTop = h.la1, laBot = h.la1 - (ny - 1) * h.dy;
+const yTop = mercY(laTop), yBot = mercY(laBot);
+const W = (nx - 1) * FIELD_UPSCALE;
+const H = Math.max(2, Math.round(W * (yTop - yBot) / (lonSpan * Math.PI / 180)));
+const canvas = document.createElement("canvas");
+canvas.width = W; canvas.height = H;
+const ctx = canvas.getContext("2d");
+const img = ctx.createImageData(W, H);
+const px = img.data;
+for (let py = 0; py < H; py++) {
+const lat = invMercY(yTop + (py / (H - 1)) * (yBot - yTop));
+const rf = Math.min(Math.max((h.la1 - lat) / h.dy, 0), ny - 1.0001);
+const r0 = Math.floor(rf), fr = rf - r0;
+for (let pxx = 0; pxx < W; pxx++) {
+const cf = Math.min((pxx / (W - 1)) * (nx - 1), nx - 1.0001);
+const c0 = Math.floor(cf), fc = cf - c0;
+const i00 = r0 * nx + c0;
+const s = (speed[i00] * (1 - fc) + speed[i00 + 1] * fc) * (1 - fr) +
+(speed[i00 + nx] * (1 - fc) + speed[i00 + nx + 1] * fc) * fr;
+const li = Math.min(255, Math.max(0, Math.round(s / 25 * 255))) * 3;
+const o = (py * W + pxx) * 4;
+px[o] = COLOR_LUT[li]; px[o + 1] = COLOR_LUT[li + 1]; px[o + 2] = COLOR_LUT[li + 2]; px[o + 3] = landMask ? 255 - landMask[py * W + pxx] : 255;
+}
+}
+ctx.putImageData(img, 0, 0);
+return {
+url: canvas.toDataURL("image/png"),
+bounds: [[laBot, h.lo1], [laTop, h.lo1 + lonSpan]]
+};
+}
+function updateField(data) {
+if (!ZOOM_PARTICLES) return;
+const f = renderFieldUrl(data);
+if (!fieldLayer) {
+fieldLayer = L.imageOverlay(f.url, f.bounds, { opacity: FIELD_OPACITY, interactive: false });
+fieldLayer.addTo(map);
+const el = fieldLayer.getElement();
+if (el) el.style.transition = "opacity 400ms";
+} else {
+fieldLayer.setUrl(f.url);
+}
+fieldLayer.setOpacity(particlesOn ? 0 : FIELD_OPACITY);
+}
+function updateReadout(latlng) {
+if (!currentData || !latlng) return;
+const s = sampleAt(latlng);
+if (!s) {
 readoutEl.textContent = "Ei tuulitietoa";
 return;
 }
-const k = row * h.nx + col;
-const u = currentData[0].data[k];
-const v = currentData[1].data[k];
+const u = s.u, v = s.v;
 const speed = Math.hypot(u, v);
 const from = (Math.atan2(-u, -v) * 180 / Math.PI + 360) % 360;
 const name = DIRS[Math.round(from / 45) % 8];
@@ -193,9 +376,9 @@ displayValues: false,
 data,
 maxVelocity: 25,
 velocityScale: PARTICLE_SPEED,
-lineWidth: PARTICLE_LINE_WIDTH,
-particleMultiplier: PARTICLE_DENSITY,
-colorScale: COLOR_SCALE,
+lineWidth: particlesOn ? PARTICLE_LINE_WIDTH_NEAR : PARTICLE_LINE_WIDTH,
+particleMultiplier: particlesOn ? PARTICLE_DENSITY : PARTICLE_DENSITY_FAR,
+colorScale: particlesOn ? COLOR_SCALE : FAR_PARTICLE_COLORS,
 opacity: PARTICLE_TRAIL_OPACITY
 });
 lyr.addTo(map);
@@ -237,6 +420,8 @@ async function showHour(index, smooth) {
 const token = ++requestToken;
 const data = await loadHour(index);
 if (token !== requestToken) return;
+updateField(data);
+currentData = data;
 if (!layers[front]) {
 layers[front] = makeLayer(data);
 setLayerOpacity(layers[front], 1);
@@ -292,6 +477,21 @@ if (new Date(h.time).getTime() <= now) idx = i;
 });
 return idx;
 }
+function applyMode() {
+if (!visible || !currentData) return;
+const want = map.getZoom() >= ZOOM_PARTICLES;
+if (want === particlesOn) return;
+particlesOn = want;
+const cont = map.getContainer();
+requestToken++;
+layers.forEach(lyr => { if (lyr) map.removeLayer(lyr); });
+layers = [makeLayer(currentData), null];
+front = 0;
+setLayerOpacity(layers[0], 1);
+cont.classList.toggle("windmap-dim", particlesOn);
+cont.classList.toggle("windmap-far", !particlesOn);
+if (fieldLayer) fieldLayer.setOpacity(particlesOn ? 0 : FIELD_OPACITY);
+}
 async function turnOn() {
 btn.classList.add("loading");
 try {
@@ -304,12 +504,18 @@ if (!manifest.hours || !manifest.hours.length) throw new Error("Tyhjä manifest"
 slider.max = manifest.hours.length - 1;
 panel.classList.add("visible");
 setInfo(describeManifest());
+if (OPEN_BOUNDS) map.fitBounds(OPEN_BOUNDS, { animate: false, padding: [10, 10] });
+particlesOn = map.getZoom() >= ZOOM_PARTICLES;
+visible = true;
 await showHour(nearestHourIndex(), false);
-map.getContainer().classList.add("windmap-dim");
+const cont = map.getContainer();
+cont.classList.add("windmap-on");
+if (particlesOn) cont.classList.add("windmap-dim"); else if (ZOOM_PARTICLES) cont.classList.add("windmap-far");
+if (ZOOM_PARTICLES) ensureLandMask(currentData[0].header);
 map.on("mousemove", onMouseMove);
 map.on("mouseout", onMouseOut);
+map.on("zoomend", applyMode);
 readoutEl.classList.add("visible");
-visible = true;
 btn.classList.add("active");
 } catch (err) {
 console.warn("Tuulikartan lataus epäonnistui:", err);
@@ -331,11 +537,14 @@ front = 0;
 currentData = null;
 map.off("mousemove", onMouseMove);
 map.off("mouseout", onMouseOut);
+map.off("zoomend", applyMode);
 readoutEl.classList.remove("visible");
 readoutEl.textContent = "";
 panel.classList.remove("visible");
 btn.classList.remove("active");
-map.getContainer().classList.remove("windmap-dim");
+map.getContainer().classList.remove("windmap-dim", "windmap-on", "windmap-far");
+if (fieldLayer) { map.removeLayer(fieldLayer); fieldLayer = null; }
+particlesOn = false;
 visible = false;
 }
 btn.addEventListener("click", () => { visible ? turnOff() : turnOn(); });
