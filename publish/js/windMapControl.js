@@ -91,6 +91,13 @@ const STYLE = `
 .windmap-readout.visible { display: block; }
 .windmap-readout:empty { display: none !important; }
 
+/* Pisteennusteen ikkuna (klikkaus kartalla) */
+.windmap-popup .leaflet-popup-content { margin: 8px 10px 6px; }
+.windmap-fc-title { font-weight: 700; font-size: 13px; margin-bottom: 2px; }
+.windmap-fc canvas { display: block; cursor: pointer; }
+.windmap-fc-hover { font-size: 12px; min-height: 16px; color: #222; margin-top: 2px; }
+.windmap-fc-note { font-size: 10px; color: #777; }
+
 .windmap-info { margin-top: 6px; font-size: 11px; color: #666; line-height: 1.35; }
 .windmap-warn { color: #c62828; font-weight: 700; }
 .windmap-legend {
@@ -370,6 +377,158 @@ readoutEl.style.bottom = "auto";
 }
 }
 function onMouseOut() { readoutEl.textContent = ""; readoutEl.style.display = ""; }
+const FC_W = 440, FC_H = 200, FC_L = 30, FC_R = 8, FC_T = 10, FC_B = 44;
+let fcToken = 0;
+function sampleFrom(data, latlng) {
+const h = data[0].header;
+const col = Math.round((latlng.lng - h.lo1) / h.dx);
+const row = Math.round((h.la1 - latlng.lat) / h.dy);
+if (col < 0 || row < 0 || col >= h.nx || row >= h.ny) return null;
+const k = row * h.nx + col;
+const u = data[0].data[k], v = data[1].data[k];
+return { speed: Math.hypot(u, v), from: (Math.atan2(-u, -v) * 180 / Math.PI + 360) % 360 };
+}
+async function loadAllHours(onProgress) {
+const idxs = manifest.hours.map((_, i) => i);
+const total = idxs.length;
+let done = 0;
+const worker = async () => {
+while (idxs.length) {
+await loadHour(idxs.shift());
+onProgress(++done, total);
+}
+};
+await Promise.all([1, 2, 3, 4, 5, 6].map(worker));
+}
+const fcNum = x => x.toFixed(1).replace(".", ",");
+const fcDirName = deg => DIRS[Math.round(deg / 45) % 8];
+function fcLabel(pt) {
+const d = new Date(pt.time);
+const when = d.toLocaleString("fi-FI", { weekday: "short", hour: "2-digit", minute: "2-digit" });
+return when + ": " + fcNum(pt.speed) + " m/s, " + fcDirName(pt.from) + " (" + Math.round(pt.from) + "°)";
+}
+function drawForecast(canvas, series, cur, hover) {
+const dpr = window.devicePixelRatio || 1;
+canvas.width = FC_W * dpr; canvas.height = FC_H * dpr;
+canvas.style.width = FC_W + "px"; canvas.style.height = FC_H + "px";
+const ctx = canvas.getContext("2d");
+ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+ctx.clearRect(0, 0, FC_W, FC_H);
+const plotW = FC_W - FC_L - FC_R, plotH = FC_H - FC_T - FC_B;
+const n = series.length, bw = plotW / n;
+const maxSp = Math.max(10, Math.ceil(Math.max.apply(null, series.map(p => p.speed)) / 5) * 5);
+const yOf = v => FC_T + plotH - v / maxSp * plotH;
+ctx.font = "10px sans-serif";
+ctx.textBaseline = "middle"; ctx.textAlign = "right";
+for (let v = 0; v <= maxSp; v += 5) {
+ctx.strokeStyle = v === 0 ? "#888" : "#e0e0e0"; ctx.lineWidth = 1;
+ctx.beginPath(); ctx.moveTo(FC_L, yOf(v) + 0.5); ctx.lineTo(FC_W - FC_R, yOf(v) + 0.5); ctx.stroke();
+ctx.fillStyle = "#555"; ctx.fillText(String(v), FC_L - 4, yOf(v));
+}
+ctx.textAlign = "left"; ctx.fillStyle = "#555";
+ctx.fillText("m/s", 2, 5);
+series.forEach((pt, i) => {
+const li = Math.min(255, Math.round(pt.speed / 25 * 255)) * 3;
+ctx.fillStyle = "rgb(" + COLOR_LUT[li] + "," + COLOR_LUT[li + 1] + "," + COLOR_LUT[li + 2] + ")";
+const x = FC_L + i * bw, y = yOf(pt.speed);
+ctx.fillRect(x + 0.5, y, Math.max(1, bw - 1), FC_T + plotH - y);
+});
+if (cur >= 0 && cur < n) {
+ctx.strokeStyle = "#0d47a1"; ctx.lineWidth = 2;
+ctx.strokeRect(FC_L + cur * bw + 0.5, FC_T, Math.max(1, bw - 1), plotH);
+}
+if (hover >= 0 && hover < n) {
+ctx.fillStyle = "rgba(0,0,0,0.12)";
+ctx.fillRect(FC_L + hover * bw, FC_T, bw, plotH);
+}
+ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+series.forEach((pt, i) => {
+const cx = FC_L + i * bw + bw / 2;
+const hr = new Date(pt.time).getHours();
+if (i % 3 === 1) {
+ctx.save();
+ctx.translate(cx, FC_T + plotH + 13);
+ctx.rotate((pt.from + 180) * Math.PI / 180);
+ctx.strokeStyle = "#333"; ctx.lineWidth = 1.4;
+ctx.beginPath();
+ctx.moveTo(0, 6); ctx.lineTo(0, -6);
+ctx.moveTo(-3.5, -2); ctx.lineTo(0, -6.5); ctx.lineTo(3.5, -2);
+ctx.stroke();
+ctx.restore();
+}
+if (hr % 6 === 0) {
+ctx.fillStyle = "#333"; ctx.font = "10px sans-serif";
+ctx.fillText(String(hr).padStart(2, "0"), cx, FC_H - 15);
+if (hr === 0) {
+const day = new Date(pt.time).toLocaleDateString("fi-FI", { weekday: "short", day: "numeric", month: "numeric" });
+ctx.font = "bold 10px sans-serif";
+ctx.fillText(day, cx, FC_H - 3);
+}
+ctx.strokeStyle = "#bbb"; ctx.lineWidth = 1;
+ctx.beginPath(); ctx.moveTo(cx, FC_T + plotH); ctx.lineTo(cx, FC_T + plotH + 3); ctx.stroke();
+}
+});
+}
+async function onMapClick(e) {
+if (!visible || !manifest) return;
+const latlng = e.latlng;
+const box = document.createElement("div");
+box.className = "windmap-fc";
+const title = document.createElement("div");
+title.className = "windmap-fc-title";
+title.textContent = "Tuuliennuste " + latlng.lat.toFixed(2).replace(".", ",") + "° N, " +
+latlng.lng.toFixed(2).replace(".", ",") + "° E";
+const status = document.createElement("div");
+status.className = "windmap-fc-hover";
+status.textContent = "Ladataan ennustetta…";
+box.appendChild(title);
+box.appendChild(status);
+const popup = L.popup({ maxWidth: FC_W + 30, minWidth: FC_W, className: "windmap-popup", autoPanPadding: [10, 70] })
+.setLatLng(latlng).setContent(box).openOn(map);
+const token = ++fcToken;
+try {
+await loadAllHours((d, t) => { if (token === fcToken) status.textContent = "Ladataan ennustetta… " + d + "/" + t; });
+} catch (err) {
+console.warn("Ennusteen lataus epäonnistui:", err);
+if (token === fcToken) status.textContent = "Ennustetta ei saatu ladattua.";
+return;
+}
+if (token !== fcToken || !popup.isOpen()) return;
+const series = [];
+for (let i = 0; i < manifest.hours.length; i++) {
+const smp = sampleFrom(cache.get(manifest.hours[i].file), latlng);
+if (!smp) { status.textContent = "Ei tuulitietoa tässä kohdassa."; return; }
+series.push({ time: manifest.hours[i].time, speed: smp.speed, from: smp.from });
+}
+const canvas = document.createElement("canvas");
+box.insertBefore(canvas, status);
+const note = document.createElement("div");
+note.className = "windmap-fc-note";
+note.textContent = "10 m tuuli, lähin hilapiste. Nuoli osoittaa suuntaan, jonne tuuli puhaltaa. Klikkaa palkkia siirtääksesi kartan siihen tuntiin.";
+box.appendChild(note);
+const hint = "Vie hiiri palkin päälle";
+status.textContent = hint;
+const idxAt = ev => {
+const r = canvas.getBoundingClientRect();
+return Math.floor((ev.clientX - r.left - FC_L) / ((FC_W - FC_L - FC_R) / series.length));
+};
+const redraw = hover => drawForecast(canvas, series, Number(slider.value), hover);
+redraw(-1);
+canvas.addEventListener("mousemove", ev => {
+const i = idxAt(ev);
+if (i >= 0 && i < series.length) { status.textContent = fcLabel(series[i]); redraw(i); }
+else { status.textContent = hint; redraw(-1); }
+});
+canvas.addEventListener("mouseleave", () => { status.textContent = hint; redraw(-1); });
+canvas.addEventListener("click", async ev => {
+const i = idxAt(ev);
+if (i < 0 || i >= series.length) return;
+stopPlaying();
+await showHour(i, false);
+redraw(i);
+});
+popup.update();
+}
 function makeLayer(data) {
 const lyr = L.velocityLayer({
 displayValues: false,
@@ -398,7 +557,7 @@ function describeManifest() {
 const originH = (Date.now() - new Date(manifest.origin).getTime()) / 3600e3;
 const checkedH = (Date.now() - new Date(manifest.checked || manifest.updated).getTime()) / 3600e3;
 let html = `Ennuste: Harmonie-ajo ${fmtClock(manifest.origin)} (` +
-`${new Date(manifest.origin).toLocaleDateString("fi-FI")}). Lähde: Ilmatieteen laitos (CC BY 4.0). 10 m tuuli.`;
+`${new Date(manifest.origin).toLocaleDateString("fi-FI")}). Lähde: Ilmatieteen laitos (CC BY 4.0). 10 m tuuli. Klikkaa karttaa nähdäksesi paikan ennusteen.`;
 if (originH > STALE_ORIGIN_HOURS || checkedH > STALE_CHECK_HOURS) {
 html = `<span class="windmap-warn">Tuulidata ei ole ajan tasalla (ajo ${fmtTime(manifest.origin)}).</span> ` + html;
 }
@@ -514,6 +673,7 @@ if (particlesOn) cont.classList.add("windmap-dim"); else if (ZOOM_PARTICLES) con
 if (ZOOM_PARTICLES) ensureLandMask(currentData[0].header);
 map.on("mousemove", onMouseMove);
 map.on("mouseout", onMouseOut);
+map.on("click", onMapClick);
 map.on("zoomend", applyMode);
 readoutEl.classList.add("visible");
 btn.classList.add("active");
@@ -537,6 +697,9 @@ front = 0;
 currentData = null;
 map.off("mousemove", onMouseMove);
 map.off("mouseout", onMouseOut);
+map.off("click", onMapClick);
+fcToken++;
+map.closePopup();
 map.off("zoomend", applyMode);
 readoutEl.classList.remove("visible");
 readoutEl.textContent = "";
