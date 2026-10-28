@@ -34,12 +34,14 @@ def pack_bits(values, nbits):
     return acc.to_bytes((total + pad) // 8, "big")
 
 
-def build_message(field, ni, nj, la1, lo1, di, dj, scan, number, ref, fhour, nbits=16):
-    """field[j][i] fysikaalisena arvona, j = skannausjärjestyksen rivi."""
-    flat = [field[j][i] for j in range(nj) for i in range(ni)]
+def build_message(field, ni, nj, la1, lo1, di, dj, scan, number, ref, fhour, nbits=16, bitmap=None):
+    """field[j][i] fysikaalisena arvona, j = skannausjärjestyksen rivi.
+    bitmap: None tai funktio (j, i) -> True jos arvo on olemassa."""
+    present = [(j, i) for j in range(nj) for i in range(ni) if bitmap is None or bitmap(j, i)]
+    flat = [field[j][i] for (j, i) in present]
     D = 1
     ints = [round(v * 10 ** D) for v in flat]
-    R = min(ints)
+    R = min(ints) if ints else 0
     X = [x - R for x in ints]
     sec1 = struct.pack(">IBHHBBBHBBBBBBB", 21, 1, 86, 0, 28, 0, 1,
                        ref.year, ref.month, ref.day, ref.hour, ref.minute, ref.second, 0, 1)
@@ -59,11 +61,21 @@ def build_message(field, ni, nj, la1, lo1, di, dj, scan, number, ref, fhour, nbi
             + struct.pack(">BBBBBHBBI", 2, number, 2, 0, 0, 0, 0, 1, fhour)
             + struct.pack(">BBIBBI", 103, 0, 10, 255, 0, 0))
     assert len(sec4) == 34, len(sec4)
-    sec5 = (struct.pack(">IBIH", 21, 5, ni * nj, 0)
+    sec5 = (struct.pack(">IBIH", 21, 5, len(flat), 0)
             + struct.pack(">f", float(R))
             + struct.pack(">HHBB", 0, D, nbits, 0))
     assert len(sec5) == 21, len(sec5)
-    sec6 = struct.pack(">IBB", 6, 6, 255)
+    if bitmap is None:
+        sec6 = struct.pack(">IBB", 6, 6, 255)
+    else:
+        bits = [1 if bitmap(j, i) else 0 for j in range(nj) for i in range(ni)]
+        pad = (-len(bits)) % 8
+        acc = 0
+        for b in bits:
+            acc = (acc << 1) | b
+        acc <<= pad
+        bm = acc.to_bytes((len(bits) + pad) // 8, "big")
+        sec6 = struct.pack(">IBB", 6 + len(bm), 6, 0) + bm
     data = pack_bits(X, nbits)
     sec7 = struct.pack(">IB", 5 + len(data), 7) + data
     body = sec1 + sec3 + sec4 + sec5 + sec6 + sec7
@@ -89,7 +101,7 @@ def make_fields(ni, nj, north_first):
     return u, v, u_at, v_at
 
 
-def run_case(north_first, nbits, ni=21, nj=13):
+def run_case(north_first, nbits, ni=21, nj=13, bitmap_mode=None):
     ref = datetime(2026, 10, 27, 12, 0, 0, tzinfo=timezone.utc)
     di = dj = 0.0225
     lo1 = 14.0
@@ -101,13 +113,19 @@ def run_case(north_first, nbits, ni=21, nj=13):
         la1 = south_lat
         scan = 0x40
     u, v, u_at, v_at = make_fields(ni, nj, north_first)
+    if bitmap_mode == "holes":
+        bm = lambda j, i: (j * 3 + i) % 7 != 0      # osa pisteistä puuttuu
+    elif bitmap_mode == "full":
+        bm = lambda j, i: True                       # bittikartta mukana, ei puuttuvia
+    else:
+        bm = None
 
     with tempfile.TemporaryDirectory() as td:
         path = os.path.join(td, "t.grib")
         with open(path, "wb") as f:
             for fh in (4, 5):  # 16:00 ja 17:00 UTC
-                f.write(build_message(u, ni, nj, la1, lo1, di, dj, scan, 2, ref, fh, nbits))
-                f.write(build_message(v, ni, nj, la1, lo1, di, dj, scan, 3, ref, fh, nbits))
+                f.write(build_message(u, ni, nj, la1, lo1, di, dj, scan, 2, ref, fh, nbits, bm))
+                f.write(build_message(v, ni, nj, la1, lo1, di, dj, scan, 3, ref, fh, nbits, bm))
         fields = {}
         n = update.decode_file(path, 4, fields)
         assert n == 4, n
@@ -128,6 +146,10 @@ def run_case(north_first, nbits, ni=21, nj=13):
         south_idx = (nj - 1) - r * 4   # pohjoisesta r:s harvennettu rivi
         for c in range(exp_nx):
             i = c * 4
+            scan_row = (nj - 1 - south_idx) if north_first else south_idx
+            if bm is not None and not bm(scan_row, i):
+                assert urows[r][c] == 0.0 and vrows[r][c] == 0.0, ("puuttuva", r, c, urows[r][c])
+                continue
             assert abs(urows[r][c] - u_at(south_idx, i)) < 1e-6, ("u", r, c, urows[r][c], u_at(south_idx, i))
             assert abs(vrows[r][c] - v_at(south_idx, i)) < 1e-6, ("v", r, c, vrows[r][c], v_at(south_idx, i))
 
@@ -141,10 +163,11 @@ def run_case(north_first, nbits, ni=21, nj=13):
 
 
 def main():
-    cases = [(nf, nb) for nf in (True, False) for nb in (8, 12, 16, 24)]
-    for nf, nb in cases:
-        run_case(nf, nb)
-        print("OK  pohjoinen_ensin=%-5s bits=%d" % (nf, nb))
+    cases = [(nf, nb, bmode) for bmode in (None, "full", "holes")
+             for nf in (True, False) for nb in (8, 12, 16, 24)]
+    for nf, nb, bmode in cases:
+        run_case(nf, nb, bitmap_mode=bmode)
+        print("OK  pohjoinen_ensin=%-5s bits=%-2d bittikartta=%s" % (nf, nb, bmode))
     # nopeusarvio realistisella alueella
     assert update.read_value(pack_bits([5, 1000, 4095], 12), 1, 12) == 1000
     print("Kaikki testit läpäisty.")

@@ -14,6 +14,7 @@ import { initFeedbackControl } from "./feedbackControl.js";
 import { initChangelogControl } from "./changelogControl.js";
 import { initWaterTempPointsControl } from "./waterTempPointsControl.js";
 import { initNavWarningsControl } from "./navWarningsControl.js";
+import { initWindMapControl } from "./windMapControl.js";
 import { MML_API_KEY } from "./config.js";
 import { stationDetailHTML, renderStationDetail } from "./popup/stationDetail.js";
 import { openMeteoWindPopupHTML, renderOpenMeteoWindPopup } from "./popup/openMeteoWindPopup.js";
@@ -39,6 +40,7 @@ initFeedbackControl(map);
 initChangelogControl(map);
 initWaterTempPointsControl(map);
 initNavWarningsControl(map);
+initWindMapControl(map);
 const bounds = L.latLngBounds(
 [59.5, 19.6],
 [60.7, 25.5]

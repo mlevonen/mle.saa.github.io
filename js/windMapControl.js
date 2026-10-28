@@ -30,13 +30,37 @@ const DATA_BASE = /(^|\.)merisaa\.fi$/.test(location.hostname)
 
 const STALE_ORIGIN_HOURS = 9;   // Harmonie-ajo yli näin vanha -> varoitus
 const STALE_CHECK_HOURS = 6;    // päivitysskripti ei ole ajossa -> varoitus
-const PLAY_INTERVAL_MS = 1200;
 
+// Toistossa tuntien välinen siirtymä tehdään ristiinhäivytyksellä (kaksi
+// päällekkäistä hiukkaskerrosta): piilossa oleva kerros saa seuraavan tunnin
+// datan, "lämpiää" WARMUP_MS ja häivytetään näkyviin FADE_MS aikana samalla
+// kun nykyinen häivytetään pois. Näin hiukkaset eivät nollaudu/hyppää.
+// PLAY_INTERVAL_MS pitää olla pidempi kuin WARMUP_MS + FADE_MS.
+const PLAY_INTERVAL_MS = 1200;
+const WARMUP_MS = 250;
+const FADE_MS = 900;
+
+// Hiukkasten ulkoasun säätö (kokeellinen, helppo hienosäätää):
+//  PARTICLE_DENSITY      hiukkasia / kuvapiste (pienempi = harvempi). 1/220 oli liian tiheä.
+//  PARTICLE_LINE_WIDTH   viivan paksuus pikseleinä
+//  PARTICLE_TRAIL_OPACITY  0..1, pienempi = lyhyempi/haalea häntä, suurempi = pidempi
+//  PARTICLE_SPEED        hiukkasten liikenopeus
+const PARTICLE_DENSITY = 1 / 700;
+const PARTICLE_LINE_WIDTH = 1.5;
+const PARTICLE_TRAIL_OPACITY = 0.85;
+const PARTICLE_SPEED = 0.012;
+
+// Taustakartan tummennus tuulikartan ollessa päällä (1 = ei tummennusta).
+// brightness: 0.55 oli liian tumma; saturate: värikylläisyys.
+const MAP_DIM_FILTER = "brightness(0.68) saturate(0.8)";
+
+// Väriasteikko 0 -> 25+ m/s. Kaikki sävyt ovat kylläisiä (ei lähes valkoisia),
+// jotta heikkokin tuuli erottuu kartasta. Legenda-palkki rakentuu tästä automaattisesti.
 const COLOR_SCALE = [
-  "rgb(36,104,180)", "rgb(60,157,194)", "rgb(128,205,193)", "rgb(151,218,168)",
-  "rgb(198,231,181)", "rgb(238,247,217)", "rgb(255,238,159)", "rgb(252,217,125)",
-  "rgb(255,182,100)", "rgb(252,150,75)", "rgb(250,112,52)", "rgb(245,64,32)",
-  "rgb(237,45,28)", "rgb(220,24,32)", "rgb(180,0,35)"
+  "rgb(70,130,255)", "rgb(30,165,245)", "rgb(0,195,225)", "rgb(0,205,170)",
+  "rgb(40,200,110)", "rgb(110,210,60)", "rgb(175,215,40)", "rgb(240,215,35)",
+  "rgb(255,175,30)", "rgb(255,135,30)", "rgb(250,95,40)", "rgb(240,55,50)",
+  "rgb(215,30,75)", "rgb(190,25,120)", "rgb(150,30,170)"
 ];
 
 const STYLE = `
@@ -44,7 +68,7 @@ const STYLE = `
 .windmap-toggle-btn.loading { opacity: 0.6; cursor: wait; }
 
 /* Tummennetaan taustakartta, jotta vaaleat tuulihiukkaset erottuvat */
-.windmap-dim .leaflet-tile-pane { filter: brightness(0.55) saturate(0.6); }
+.windmap-dim .leaflet-tile-pane { filter: ${MAP_DIM_FILTER}; }
 
 .windmap-panel {
   position: fixed;
@@ -72,6 +96,25 @@ const STYLE = `
 }
 .windmap-slider { flex: 1; min-width: 0; }
 .windmap-time { flex: none; min-width: 132px; text-align: right; font-weight: 700; }
+
+.windmap-readout {
+  position: fixed;
+  left: 10px;
+  bottom: 28px;
+  z-index: 2000;
+  white-space: nowrap;
+  background: rgba(255,255,255,0.92);
+  border-radius: 4px;
+  padding: 4px 9px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #222;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  display: none;
+  pointer-events: none;
+}
+.windmap-readout.visible { display: block; }
+.windmap-readout:empty { display: none !important; }
 
 .windmap-info { margin-top: 6px; font-size: 11px; color: #666; line-height: 1.35; }
 .windmap-warn { color: #c62828; font-weight: 700; }
@@ -164,13 +207,82 @@ export function initWindMapControl(map) {
     L.DomEvent.disableScrollPropagation(panel);
   }
 
+  // Hiirellä osoitetun kohdan tuulilukema (oma, koska ristiinhäivytyksessä
+  // kaksi kerrosta eikä kirjaston oma lukema pysyisi ajan tasalla)
+  const readoutEl = document.createElement("div");
+  readoutEl.className = "windmap-readout";
+  document.body.appendChild(readoutEl);
+
   let manifest = null;
-  let layer = null;
+  let layers = [null, null];   // kaksi päällekkäistä velocity-kerrosta
+  let front = 0;               // kumpi kerroksista on nyt näkyvissä
+  let currentData = null;      // näytettävän tunnin data (lukemaa varten)
   let visible = false;
   let playing = false;
-  let timer = null;
   let requestToken = 0;
   const cache = new Map();
+
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+  const DIRS = ["P", "KO", "I", "KA", "E", "LO", "L", "LU"];
+
+  function updateReadout(latlng) {
+    if (!currentData || !latlng) return;
+    const h = currentData[0].header;
+    const col = Math.round((latlng.lng - h.lo1) / h.dx);
+    const row = Math.round((h.la1 - latlng.lat) / h.dy);
+    if (col < 0 || row < 0 || col >= h.nx || row >= h.ny) {
+      readoutEl.textContent = "Ei tuulitietoa";
+      return;
+    }
+    const k = row * h.nx + col;
+    const u = currentData[0].data[k];
+    const v = currentData[1].data[k];
+    const speed = Math.hypot(u, v);
+    // suunta = mistä tuuli puhaltaa (meteorologinen)
+    const from = (Math.atan2(-u, -v) * 180 / Math.PI + 360) % 360;
+    const name = DIRS[Math.round(from / 45) % 8];
+    readoutEl.textContent =
+      "Tuuli " + speed.toFixed(1).replace(".", ",") + " m/s, " + name + " (" + Math.round(from) + "°)";
+  }
+
+  function onMouseMove(e) {
+    updateReadout(e.latlng);
+    // Lukema seuraa hiirtä (kiinteä vasen alakulma voi jäädä muiden elementtien alle)
+    const oe = e.originalEvent;
+    if (oe) {
+      readoutEl.style.left = Math.min(oe.clientX + 16, window.innerWidth - 220) + "px";
+      readoutEl.style.top = Math.max(oe.clientY - 34, 4) + "px";
+      readoutEl.style.bottom = "auto";
+    }
+  }
+  function onMouseOut() { readoutEl.textContent = ""; readoutEl.style.display = ""; }
+
+  function makeLayer(data) {
+    const lyr = L.velocityLayer({
+      displayValues: false,
+      data,
+      maxVelocity: 25,
+      velocityScale: PARTICLE_SPEED,
+      lineWidth: PARTICLE_LINE_WIDTH,
+      particleMultiplier: PARTICLE_DENSITY,
+      colorScale: COLOR_SCALE,
+      opacity: PARTICLE_TRAIL_OPACITY
+    });
+    lyr.addTo(map);
+    const c = canvasOf(lyr);
+    if (c) c.style.transition = "opacity " + FADE_MS + "ms linear";
+    return lyr;
+  }
+
+  function canvasOf(lyr) {
+    return lyr && lyr._canvasLayer && lyr._canvasLayer._canvas;
+  }
+
+  function setLayerOpacity(lyr, value) {
+    const c = canvasOf(lyr);
+    if (c) c.style.opacity = String(value);
+  }
 
   function setInfo(html) { infoEl.innerHTML = html; }
 
@@ -199,35 +311,38 @@ export function initWindMapControl(map) {
     return cache.get(h.file);
   }
 
-  async function showHour(index) {
+  // smooth = true: ristiinhäivytys (toisto). false: välitön vaihto (liukusäädin, alku).
+  async function showHour(index, smooth) {
     const token = ++requestToken;
     const data = await loadHour(index);
     if (token !== requestToken) return; // uudempi pyyntö ohitti tämän
-    if (!layer) {
-      layer = L.velocityLayer({
-        displayValues: true,
-        displayOptions: {
-          velocityType: "Tuuli",
-          position: "bottomleft",
-          emptyString: "Ei tuulitietoa",
-          angleConvention: "meteoCW",
-          showCardinal: false,
-          speedUnit: "m/s",
-          directionString: "Suunta",
-          speedString: "Nopeus"
-        },
-        data,
-        maxVelocity: 25,
-        velocityScale: 0.012,
-        lineWidth: 2,
-        particleMultiplier: 1 / 220,
-        colorScale: COLOR_SCALE,
-        opacity: 0.9
-      });
-      layer.addTo(map);
+
+    if (!layers[front]) {
+      // ensimmäinen näyttö
+      layers[front] = makeLayer(data);
+      setLayerOpacity(layers[front], 1);
+    } else if (!smooth) {
+      // välitön vaihto: päivitä näkyvä kerros, piilota toinen
+      layers[front].setData(data);
+      setLayerOpacity(layers[front], 1);
+      if (layers[1 - front]) setLayerOpacity(layers[1 - front], 0);
     } else {
-      layer.setData(data);
+      // ristiinhäivytys: valmistele piilossa oleva kerros
+      const back = 1 - front;
+      if (!layers[back]) {
+        layers[back] = makeLayer(data);
+        setLayerOpacity(layers[back], 0);
+      } else {
+        layers[back].setData(data);
+      }
+      await sleep(WARMUP_MS); // hiukkaset ehtivät piirtää hännät
+      if (token !== requestToken || !visible) return;
+      setLayerOpacity(layers[back], 1);
+      setLayerOpacity(layers[front], 0);
+      front = back;
     }
+
+    currentData = data;
     slider.value = index;
     timeEl.textContent = fmtTime(manifest.hours[index].time);
     // esilataus seuraavalle tunnille
@@ -237,17 +352,24 @@ export function initWindMapControl(map) {
   function stopPlaying() {
     playing = false;
     playBtn.textContent = "▶";
-    if (timer) { clearInterval(timer); timer = null; }
   }
 
-  function startPlaying() {
+  async function startPlaying() {
     playing = true;
     playBtn.textContent = "❚❚";
-    timer = setInterval(() => {
+    while (playing && visible) {
+      const t0 = Date.now();
       let next = Number(slider.value) + 1;
       if (next >= manifest.hours.length) next = 0;
-      showHour(next).catch(() => stopPlaying());
-    }, PLAY_INTERVAL_MS);
+      try {
+        await showHour(next, true);
+      } catch (err) {
+        console.warn("Toisto pysähtyi:", err);
+        stopPlaying();
+        return;
+      }
+      await sleep(Math.max(0, PLAY_INTERVAL_MS - (Date.now() - t0)));
+    }
   }
 
   function nearestHourIndex() {
@@ -272,9 +394,12 @@ export function initWindMapControl(map) {
       slider.max = manifest.hours.length - 1;
       panel.classList.add("visible");
       setInfo(describeManifest());
-      await showHour(nearestHourIndex());
+      await showHour(nearestHourIndex(), false);
 
       map.getContainer().classList.add("windmap-dim");
+      map.on("mousemove", onMouseMove);
+      map.on("mouseout", onMouseOut);
+      readoutEl.classList.add("visible");
       visible = true;
       btn.classList.add("active");
     } catch (err) {
@@ -291,7 +416,15 @@ export function initWindMapControl(map) {
 
   function turnOff() {
     stopPlaying();
-    if (layer) { map.removeLayer(layer); layer = null; }
+    requestToken++; // keskeytä mahdollinen käynnissä oleva siirtymä
+    layers.forEach(lyr => { if (lyr) map.removeLayer(lyr); });
+    layers = [null, null];
+    front = 0;
+    currentData = null;
+    map.off("mousemove", onMouseMove);
+    map.off("mouseout", onMouseOut);
+    readoutEl.classList.remove("visible");
+    readoutEl.textContent = "";
     panel.classList.remove("visible");
     btn.classList.remove("active");
     map.getContainer().classList.remove("windmap-dim");
@@ -307,7 +440,7 @@ export function initWindMapControl(map) {
 
   slider.addEventListener("input", () => {
     if (!manifest) return;
-    showHour(Number(slider.value)).catch(err => console.warn(err));
+    showHour(Number(slider.value), false).catch(err => console.warn(err));
   });
 
 }

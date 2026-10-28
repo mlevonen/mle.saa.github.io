@@ -146,6 +146,8 @@ def parse_message(msg):
             info["nbits"] = s[19]
         elif snum == 6:
             bitmap_ind = s[5]
+            if bitmap_ind == 0:
+                info["bitmap"] = s[6:]
         elif snum == 7:
             sec7 = s[5:]
         if slen < 5:
@@ -156,8 +158,20 @@ def parse_message(msg):
         raise ValueError("Tuettu vain lat/lon-hila (template 3.0), nyt %r" % info.get("grid_template"))
     if info.get("packing_template") != 0:
         raise ValueError("Tuettu vain yksinkertainen pakkaus (template 5.0), nyt %r" % info.get("packing_template"))
-    if bitmap_ind != 255:
-        raise ValueError("Bittikartta (puuttuvat arvot) ei tuettu")
+    if bitmap_ind not in (0, 255):
+        raise ValueError("Bittikartta-tyyppi %r ei tuettu (vain 0 ja 255)" % bitmap_ind)
+    if bitmap_ind == 0:
+        total = info["ni"] * info["nj"]
+        bm = info.get("bitmap", b"")
+        if len(bm) * 8 < total:
+            raise ValueError("Bittikartta liian lyhyt")
+        missing = _count_missing(bm, total)
+        info["missing"] = missing
+        # Jos kaikki pisteet ovat mukana, bittikartasta ei ole haittaa -> käsitellään kuin ei olisi
+        info["bitmap"] = bm if missing else None
+    else:
+        info["bitmap"] = None
+        info["missing"] = 0
     if info["scan"] & 0xA0:
         raise ValueError("Skannaustapa ei tuettu (scan=0x%02x)" % info["scan"])
     if sec7 is None:
@@ -174,6 +188,30 @@ def unit_to_timedelta(unit, value):
     if unit == 2:
         return timedelta(days=value)
     raise ValueError("Aikayksikkö %r ei tuettu" % unit)
+
+
+_POP = [bin(i).count("1") for i in range(256)]
+
+
+def _count_missing(bitmap, total):
+    """Montako pistettä (0-bittiä) puuttuu ensimmäisen total:n joukosta."""
+    full_bytes = total >> 3
+    ones = sum(_POP[b] for b in bitmap[:full_bytes])
+    rem = total & 7
+    if rem:
+        ones += _POP[bitmap[full_bytes] >> (8 - rem)]
+    return total - ones
+
+
+def _build_rank(bitmap):
+    """cum[i] = montako 1-bittiä on tavuissa 0..i-1 (data-indeksin laskemiseen)."""
+    cum = [0] * (len(bitmap) + 1)
+    run = 0
+    for i, b in enumerate(bitmap):
+        cum[i] = run
+        run += _POP[b]
+    cum[len(bitmap)] = run
+    return cum
 
 
 def read_value(data, k, nbits):
@@ -213,14 +251,35 @@ def sample_field(info, stride):
         rows_scan = list(range(0, nj, stride))
         north_lat = info["la1"]
 
+    bitmap = info.get("bitmap")
+    cum = _build_rank(bitmap) if bitmap else None
+    missing_seen = 0
+
     rows = []
     for rs in rows_scan:
         base = rs * ni
-        if nbits == 0:
-            row = [round(offs, 1)] * len(cols)
-        else:
-            row = [round(offs + read_value(data, base + c, nbits) * scale, 1) for c in cols]
+        row = []
+        for c in cols:
+            idx = base + c
+            if bitmap is not None:
+                byte = bitmap[idx >> 3]
+                bit = (byte >> (7 - (idx & 7))) & 1
+                if not bit:
+                    row.append(0.0)  # puuttuva arvo -> tyyni
+                    missing_seen += 1
+                    continue
+                # datan indeksi = montako olemassa olevaa pistettä ennen tätä
+                before = cum[idx >> 3] + _POP[byte >> (8 - (idx & 7))] if (idx & 7) else cum[idx >> 3]
+                k = before
+            else:
+                k = idx
+            if nbits == 0:
+                row.append(round(offs, 1))
+            else:
+                row.append(round(offs + read_value(data, k, nbits) * scale, 1))
         rows.append(row)
+    if missing_seen:
+        dlog("puuttuvia arvoja harvennetussa hilassa:", missing_seen)
 
     meta = {
         "nx": len(cols),
@@ -329,6 +388,7 @@ def main(argv):
     out_dir = os.path.join(here, "data")
     if "--out" in argv:
         out_dir = argv[argv.index("--out") + 1]
+    log("Käynnistyy (Python %s, kansio %s)" % (sys.version.split()[0], out_dir))
     os.makedirs(out_dir, exist_ok=True)
 
     lock = os.path.join(out_dir, ".lock")
@@ -350,6 +410,7 @@ def main(argv):
         start = now
         end = now + timedelta(hours=HOURS)
 
+        log("Haetaan FMI:n latauslinkit…")
         candidates = latest_origin_urls(start, end)
         if not candidates:
             log("VIRHE: FMI ei palauttanut latauslinkkejä.")
@@ -428,4 +489,15 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv[1:]))
+    import socket
+    import traceback
+    socket.setdefaulttimeout(90)
+    try:
+        sys.exit(main(sys.argv[1:]))
+    except SystemExit:
+        raise
+    except BaseException:
+        log("KAATUI:")
+        traceback.print_exc()
+        sys.stdout.flush()
+        sys.exit(1)
