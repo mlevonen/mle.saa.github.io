@@ -1,7 +1,7 @@
 const SOURCES = [
 {
 name: "Ilmatieteen laitos",
-use: "Havainnot, ennusteet, vedenkorkeus, aallonkorkeus ja säätiedotteet",
+use: "Havainnot, ennusteet (myös tuulikartan Harmonie-malli), vedenkorkeus, aallonkorkeus ja säätiedotteet",
 license: "CC BY 4.0",
 url: "https://www.ilmatieteenlaitos.fi/avoin-data-lisenssi"
 },
@@ -40,6 +40,18 @@ name: "Forum Virium Helsinki",
 use: "Pääkaupunkiseudun uimarantojen reaaliaikaiset vedenlämpötilat (UiRaS)",
 license: "CC BY 4.0",
 url: "https://avoindata.suomi.fi/data/dataset/veden-reaaliaikainen-lampotila-helsingin-uimarannoilla"
+},
+{
+name: "Natural Earth",
+use: "Maa-alueiden rajaus tuulikartan värikentästä",
+license: "Public domain",
+url: "https://www.naturalearthdata.com/about/terms-of-use/"
+},
+{
+name: "leaflet-velocity (CSIRO)",
+use: "Tuulikartan liikkuvat tuuliviivat (ohjelmistokirjasto)",
+license: "CSIRO BSD/MIT -lisenssi",
+url: "https://github.com/onaci/leaflet-velocity/blob/master/LICENSE.md"
 }
 ];
 export function initDataLicenseControl(map) {

@@ -127,6 +127,7 @@ layerGroup.addTo(map);
 visible = true;
 toggleBtn.classList.add("active");
 if (labelEl) labelEl.textContent = baseLabel + " (" + features.length + ")";
+toggleBtn.dataset.count = String(features.length);
 } catch (err) {
 console.warn("Merivaroitusten näyttäminen epäonnistui:", err);
 } finally {
@@ -138,6 +139,7 @@ if (layerGroup) map.removeLayer(layerGroup);
 visible = false;
 toggleBtn.classList.remove("active");
 if (labelEl) labelEl.textContent = baseLabel;
+delete toggleBtn.dataset.count;
 }
 toggleBtn.addEventListener("click", () => {
 if (visible) {

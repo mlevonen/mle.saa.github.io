@@ -11,17 +11,19 @@ const PLAY_INTERVAL_MS = 1200;
 const WARMUP_MS = 250;
 const FADE_MS = 900;
 const PARTICLE_DENSITY = 1 / 4000;
-const PARTICLE_DENSITY_FAR = 1 / 4500;
+const PARTICLE_DENSITY_FAR = 1 / 3500;
 const FAR_PARTICLE_COLORS = [
 "rgb(240,240,240)", "rgb(232,232,232)", "rgb(190,190,190)", "rgb(140,140,140)", "rgb(100,100,100)", "rgb(85,85,85)", "rgb(75,75,75)", "rgb(70,70,70)", "rgb(80,80,80)", "rgb(100,100,100)", "rgb(150,150,150)", "rgb(215,215,215)", "rgb(235,235,235)", "rgb(245,245,245)", "rgb(250,250,250)"
 ];
 const PARTICLE_LINE_WIDTH = 1.5;
-const PARTICLE_LINE_WIDTH_NEAR = 2.2;
+const PARTICLE_LINE_WIDTH_NEAR = 3;
 const PARTICLE_TRAIL_OPACITY = 0.85;
 const PARTICLE_SPEED = 0.012;
 const MAP_DIM_FILTER = "brightness(0.68) saturate(0.8)";
 const OPEN_BOUNDS = [[56.6, 15.5], [66.0, 30.5]];
 const ZOOM_PARTICLES = 10;
+const WIND_MAP_PUBLIC = true;
+const COMPACT_BUTTONS = true;
 const FIELD_OPACITY = 0.62;
 const FIELD_UPSCALE = 6;
 const COLOR_SCALE = [
@@ -31,7 +33,28 @@ const COLOR_SCALE = [
 "rgb(215,30,75)", "rgb(190,25,120)", "rgb(150,30,170)"
 ];
 const STYLE = `
-.windmap-toggle-btn.active { background: #e3f2fd; color: #0d47a1; }
+/* Pienoisnäkymä: vasemman yläkulman napit ikoneina (Säätiedotus-paneeli ennallaan) */
+.info-panels-compact { flex-direction: row; flex-wrap: wrap; align-items: flex-start; gap: 8px; }
+.info-panels-compact #marine-bulletin-panel { flex: 1 1 100%; }
+.info-panels-compact > .info-panel:not(#marine-bulletin-panel) { width: 48px; height: 48px; flex: none; }
+.info-panels-compact > .info-panel:not(#marine-bulletin-panel) > .info-panel-header {
+  height: 100%; padding: 0; justify-content: center; position: relative;
+}
+.info-panels-compact .btn-icon-label { gap: 0; }
+.info-panels-compact .btn-icon-label > span:not(.btn-icon):not(.windmap-icon) { display: none; }
+.info-panels-compact .btn-icon { width: 34px; height: 34px; border-width: 2px; }
+.info-panels-compact .btn-icon-watertemp { font-size: 12px; }
+.info-panels-compact .btn-icon-navwarn { font-size: 21px; }
+.info-panels-compact .btn-icon-help { font-size: 20px; }
+.info-panels-compact .windmap-icon { display: inline-flex; }
+.info-panels-compact .windmap-sock { width: 38px; height: 38px; }
+.info-panels-compact .navwarnings-toggle-btn[data-count]::after {
+  content: attr(data-count); position: absolute; top: 3px; right: 4px;
+  background: #e53935; color: #fff; font-size: 10px; font-weight: 700;
+  line-height: 15px; min-width: 15px; padding: 0 4px; border-radius: 999px; text-align: center;
+}
+
+.windmap-toggle-btn.active { background: #bbdefb; color: #0d47a1; box-shadow: inset 0 0 0 2px #1565c0; }
 .windmap-toggle-btn.loading { opacity: 0.6; cursor: wait; }
 
 /* Tummennetaan taustakartta, jotta vaaleat tuulihiukkaset erottuvat */
@@ -79,10 +102,9 @@ const STYLE = `
   z-index: 2000;
   white-space: nowrap;
   background: rgba(255,255,255,0.92);
-  border-radius: 4px;
-  padding: 4px 9px;
-  font-size: 14px;
-  font-weight: 700;
+  border-radius: 999px;
+  padding: 5px 13px;
+  font: 700 13px/1.3 "Helvetica Neue", Arial, Helvetica, sans-serif;
   color: #222;
   box-shadow: 0 1px 4px rgba(0,0,0,0.3);
   display: none;
@@ -98,6 +120,39 @@ const STYLE = `
 .windmap-fc-hover { font-size: 12px; min-height: 16px; color: #222; margin-top: 2px; }
 .windmap-fc-note { font-size: 10px; color: #777; }
 
+/* Ilmoitus: muut napit eivät toimi tuulikartan ollessa auki */
+.windmap-notice {
+  position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+  z-index: 1600; display: none; align-items: center; gap: 10px;
+  max-width: min(480px, calc(100vw - 32px));
+  background: #37474f; color: #fff; border-radius: 999px; padding: 8px 10px 8px 16px;
+  font: 700 13px/1.35 "Helvetica Neue", Arial, Helvetica, sans-serif;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+}
+.windmap-notice.visible { display: flex; }
+.windmap-notice button {
+  flex: none; border: none; cursor: pointer; border-radius: 999px; padding: 5px 12px;
+  background: #fff; color: #0d47a1; font: inherit; font-size: 12px;
+}
+.windmap-notice button:hover { background: #e3f2fd; }
+
+/* Vinkki zoomatussa kartassa */
+.windmap-hint {
+  position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+  z-index: 1500; display: none; align-items: center; gap: 10px;
+  max-width: min(440px, calc(100vw - 32px));
+  background: #0d47a1; color: #fff;
+  border-radius: 999px; padding: 9px 12px 9px 16px;
+  font: 700 13px/1.35 "Helvetica Neue", Arial, Helvetica, sans-serif;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+}
+.windmap-hint.visible { display: flex; }
+.windmap-hint-close {
+  flex: none; border: none; cursor: pointer; width: 24px; height: 24px; border-radius: 50%;
+  background: rgba(255,255,255,0.2); color: #fff; font-size: 16px; line-height: 1;
+}
+.windmap-hint-close:hover { background: rgba(255,255,255,0.35); }
+
 .windmap-info { margin-top: 6px; font-size: 11px; color: #666; line-height: 1.35; }
 .windmap-warn { color: #c62828; font-weight: 700; }
 .windmap-legend {
@@ -109,6 +164,11 @@ const STYLE = `
   font-size: 10px; color: #666; margin-top: 2px;
 }
 `;
+const NEAR_LIGHTEN = 0.3;
+const NEAR_COLORS = COLOR_SCALE.map(c => {
+const m = c.match(/\d+/g).map(Number).map(v => Math.round(v + (255 - v) * NEAR_LIGHTEN));
+return "rgb(" + m.join(",") + ")";
+});
 const COLOR_LUT = (() => {
 const stops = COLOR_SCALE.map(c => c.match(/\d+/g).map(Number));
 const lut = new Uint8ClampedArray(256 * 3);
@@ -181,18 +241,19 @@ function fmtClock(iso) {
 return new Date(iso).toLocaleTimeString("fi-FI", { hour: "2-digit", minute: "2-digit" });
 }
 export function initWindMapControl(map) {
-if (!new URLSearchParams(location.search).has("tuulikartta")) return;
+if (!WIND_MAP_PUBLIC && !new URLSearchParams(location.search).has("tuulikartta")) return;
 const panelsEl = document.querySelector(".info-panels");
 if (!panelsEl) return;
 const styleEl = document.createElement("style");
 styleEl.textContent = STYLE;
 document.head.appendChild(styleEl);
+if (COMPACT_BUTTONS) panelsEl.classList.add("info-panels-compact");
 const wrap = document.createElement("div");
 wrap.className = "info-panel";
 wrap.innerHTML = `
-    <button type="button" class="info-panel-header windmap-toggle-btn" id="windmap-toggle-btn">
+    <button type="button" class="info-panel-header windmap-toggle-btn" id="windmap-toggle-btn" title="Tuulikartta (testi)" aria-label="Tuulikartta (testi)">
       <span class="btn-icon-label">
-        <span class="windmap-icon">🌬️</span>
+        <span class="windmap-icon"><svg class="windmap-sock" viewBox="0 0 40 40" width="32" height="32" aria-hidden="true"><defs><clipPath id="windmap-sock-clip"><path d="M11 9 L33 13 Q35 13.5 35 16 L35 20 Q35 22.5 33 23 L11 27 Z"/></clipPath></defs><rect x="6" y="5" width="4" height="32" rx="2" fill="#c9a26b" stroke="#333" stroke-width="1.6"/><g clip-path="url(#windmap-sock-clip)"><rect x="10" y="5" width="28" height="26" fill="#fff"/><rect x="11" y="5" width="7" height="26" fill="#e57373"/><rect x="21" y="5" width="6" height="26" fill="#e57373"/></g><path d="M11 9 L33 13 Q35 13.5 35 16 L35 20 Q35 22.5 33 23 L11 27 Z" fill="none" stroke="#333" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 18 H12" stroke="#333" stroke-width="1.8" stroke-linecap="round"/><path d="M17 33 H29 M25 29.5 q4-1 4 1.8" fill="none" stroke="#333" stroke-width="1.8" stroke-linecap="round"/></svg></span>
         <span>Tuulikartta (testi)</span>
       </span>
     </button>`;
@@ -221,6 +282,52 @@ L.DomEvent.disableScrollPropagation(panel);
 const readoutEl = document.createElement("div");
 readoutEl.className = "windmap-readout";
 document.body.appendChild(readoutEl);
+const HINT_MS = 14000;
+let hintShown = false;
+let hintTimer = null;
+const hintEl = document.createElement("div");
+hintEl.className = "windmap-hint";
+hintEl.setAttribute("role", "status");
+hintEl.innerHTML = `<span>💡 Vinkki: klikkaa karttaa nähdäksesi kyseisen paikan tuuliennusteen.</span>` +
+`<button type="button" class="windmap-hint-close" aria-label="Sulje vinkki">×</button>`;
+document.body.appendChild(hintEl);
+hintEl.querySelector("button").addEventListener("click", hideHint);
+function showHint() {
+if (hintShown) return;
+hintShown = true;
+hintEl.classList.add("visible");
+hintTimer = setTimeout(hideHint, HINT_MS);
+}
+function hideHint() {
+hintEl.classList.remove("visible");
+clearTimeout(hintTimer);
+}
+let noticeTimer = null;
+const noticeEl = document.createElement("div");
+noticeEl.className = "windmap-notice";
+noticeEl.setAttribute("role", "status");
+noticeEl.innerHTML = `<span>Poistu tuulikartasta, jotta muut tiedot näkyvät kartalla.</span>` +
+`<button type="button">Poistu tuulikartasta</button>`;
+document.body.appendChild(noticeEl);
+noticeEl.querySelector("button").addEventListener("click", () => { hideNotice(); if (visible) turnOff(); });
+function showNotice() {
+hideHint();
+noticeEl.classList.add("visible");
+clearTimeout(noticeTimer);
+noticeTimer = setTimeout(hideNotice, 7000);
+}
+function hideNotice() {
+noticeEl.classList.remove("visible");
+clearTimeout(noticeTimer);
+}
+panelsEl.addEventListener("click", e => {
+if (!visible) return;
+const b = e.target.closest("#watertemp-toggle-btn, #navwarnings-toggle-btn");
+if (!b) return;
+e.stopPropagation();
+e.preventDefault();
+showNotice();
+}, true);
 let manifest = null;
 let layers = [null, null];
 let front = 0;
@@ -471,6 +578,8 @@ ctx.beginPath(); ctx.moveTo(cx, FC_T + plotH); ctx.lineTo(cx, FC_T + plotH + 3);
 }
 async function onMapClick(e) {
 if (!visible || !manifest) return;
+hideHint();
+hintShown = true;
 const latlng = e.latlng;
 const box = document.createElement("div");
 box.className = "windmap-fc";
@@ -537,7 +646,7 @@ maxVelocity: 25,
 velocityScale: PARTICLE_SPEED,
 lineWidth: particlesOn ? PARTICLE_LINE_WIDTH_NEAR : PARTICLE_LINE_WIDTH,
 particleMultiplier: particlesOn ? PARTICLE_DENSITY : PARTICLE_DENSITY_FAR,
-colorScale: particlesOn ? COLOR_SCALE : FAR_PARTICLE_COLORS,
+colorScale: particlesOn ? NEAR_COLORS : FAR_PARTICLE_COLORS,
 opacity: PARTICLE_TRAIL_OPACITY
 });
 lyr.addTo(map);
@@ -649,6 +758,7 @@ front = 0;
 setLayerOpacity(layers[0], 1);
 cont.classList.toggle("windmap-dim", particlesOn);
 cont.classList.toggle("windmap-far", !particlesOn);
+if (particlesOn) showHint(); else hideHint();
 if (fieldLayer) fieldLayer.setOpacity(particlesOn ? 0 : FIELD_OPACITY);
 }
 async function turnOn() {
@@ -676,6 +786,7 @@ map.on("mouseout", onMouseOut);
 map.on("click", onMapClick);
 map.on("zoomend", applyMode);
 readoutEl.classList.add("visible");
+if (particlesOn) showHint();
 btn.classList.add("active");
 } catch (err) {
 console.warn("Tuulikartan lataus epäonnistui:", err);
@@ -700,6 +811,8 @@ map.off("mouseout", onMouseOut);
 map.off("click", onMapClick);
 fcToken++;
 map.closePopup();
+hideHint();
+hideNotice();
 map.off("zoomend", applyMode);
 readoutEl.classList.remove("visible");
 readoutEl.textContent = "";

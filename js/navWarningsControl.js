@@ -175,6 +175,7 @@ export function initNavWarningsControl(map) {
       visible = true;
       toggleBtn.classList.add("active");
       if (labelEl) labelEl.textContent = baseLabel + " (" + features.length + ")";
+      toggleBtn.dataset.count = String(features.length); // pienoisnäkymän (ikoninappi) lukumäärämerkki
 
     } catch (err) {
       console.warn("Merivaroitusten näyttäminen epäonnistui:", err);
@@ -189,6 +190,7 @@ export function initNavWarningsControl(map) {
     visible = false;
     toggleBtn.classList.remove("active");
     if (labelEl) labelEl.textContent = baseLabel;
+    delete toggleBtn.dataset.count;
   }
 
   toggleBtn.addEventListener("click", () => {

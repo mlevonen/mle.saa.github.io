@@ -3,6 +3,16 @@ export const CHANGELOG_NOTE =
 export const CHANGELOG_CONTACT_EMAIL = "palaute@merisaa.fi";
 export const CHANGELOG = [
 {
+date: "30.10.2026",
+items: [
+"Uusi 'Tuulikartta (testi)' (vain työpöytä): elävä tuuliennuste koko Itämerelle 48 tunniksi (Ilmatieteen laitoksen Harmonie-malli). Uloszoomattuna näkyy värikenttä ja harvat tuuliviivat, lähempänä tiheämmät liikkuvat viivat. Aikajana ja toisto, hiiren vieressä tuulen nopeus ja suunta, ja paikkaa klikkaamalla saa kyseisen kohdan 48 tunnin tuuliennusteen kaaviona.",
+"Uusi 'Ohje'-nappi (vain työpöytä): ohjeikkuna, jossa kerrotaan sivuston toiminnot ja missä ne ovat.",
+"Vedenlämpö, Merivaroitukset, Tuulikartta ja Ohje ovat nyt ikonipainikkeita vasemmassa yläkulmassa, jotta ne vievät vähemmän tilaa (työpöytä). Merivaroitusten lukumäärä näkyy ikonin kulmassa.",
+"Sivustolle lisätty favicon (selaimen välilehden kuvake).",
+"Huom: Tuulikartta, Ohje ja ikonipainikkeet ovat toistaiseksi vain työpöytäversiossa. Mobiiliin ne tulevat myöhemmin."
+]
+},
+{
 date: "06.10.2026",
 items: [
 "Mobiiliin lisätty 'Merivaroitukset'-valikko asemalistan loppuun: Traficomin voimassa olevat merivaroitukset ryhmiteltynä merialueittain."
