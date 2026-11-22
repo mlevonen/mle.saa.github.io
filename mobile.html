@@ -99,6 +99,32 @@
     border-bottom: 1px solid #dcdfe4;
   }
 
+  /* Kutistettavat merialueet (ks. mobile.js): otsikko on napautettava, chevron oikealla */
+  .sea-area-collapsible {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .sea-area-collapsible:active {
+    background: #dde0e6;
+  }
+  .sea-area-chevron {
+    flex: none;
+    font-size: 16px;
+    color: #666;
+    transition: transform 0.2s ease;
+    transform: rotate(180deg); /* auki: nuoli ylöspäin */
+  }
+  .sea-area-section.is-collapsed .sea-area-chevron {
+    transform: none; /* kutistettu: nuoli alaspäin */
+  }
+  .sea-area-section.is-collapsed > .station-list {
+    display: none;
+  }
+
   .station-list {
     list-style: none;
     margin: 0;

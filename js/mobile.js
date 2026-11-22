@@ -699,9 +699,25 @@ if (!groups.length) {
     const section = document.createElement("section");
     section.className = "sea-area-section";
 
+    // Merialue on oletuksena kutistettu; otsikon napautus laajentaa/kutistaa (chevron oikealla).
+    // Pois ottaminen: poista "is-collapsed"-luokan oletus ja collapsible-koodi tästä lohkosta.
+    section.classList.add("is-collapsed");
+
     const heading = document.createElement("h2");
-    heading.className = "sea-area-title";
-    heading.textContent = area;
+    heading.className = "sea-area-title sea-area-collapsible";
+    heading.setAttribute("role", "button");
+    heading.tabIndex = 0;
+    heading.setAttribute("aria-expanded", "false");
+    heading.innerHTML = `<span class="sea-area-name"></span><span class="sea-area-chevron" aria-hidden="true">▾</span>`;
+    heading.querySelector(".sea-area-name").textContent = area;
+    const toggleArea = () => {
+      const collapsed = section.classList.toggle("is-collapsed");
+      heading.setAttribute("aria-expanded", String(!collapsed));
+    };
+    heading.addEventListener("click", toggleArea);
+    heading.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleArea(); }
+    });
     section.appendChild(heading);
 
     const ul = document.createElement("ul");
