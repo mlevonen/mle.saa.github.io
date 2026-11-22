@@ -3,6 +3,13 @@ export const CHANGELOG_NOTE =
 export const CHANGELOG_CONTACT_EMAIL = "palaute@merisaa.fi";
 export const CHANGELOG = [
 {
+date: "22.11.2026",
+items: [
+"Tuulikartta (testi) on nyt myös mobiilissa: avaa listan lopusta 'Tuulikartta (testi)' -rivin. Kokoruudun kartalla näkyy 48 tunnin tuuliennuste, ja paikkaa napauttamalla saa kyseisen kohdan tuuliennusteen kaaviona.",
+"Tuulikartan voi merkitä suosikiksi tähdellä (mobiili), jolloin se näkyy myös Suosikit-osiossa listan alussa."
+]
+},
+{
 date: "30.10.2026",
 items: [
 "Uusi 'Tuulikartta (testi)' (vain työpöytä): elävä tuuliennuste koko Itämerelle 48 tunniksi (Ilmatieteen laitoksen Harmonie-malli). Uloszoomattuna näkyy värikenttä ja harvat tuuliviivat, lähempänä tiheämmät liikkuvat viivat. Aikajana ja toisto, hiiren vieressä tuulen nopeus ja suunta, ja paikkaa klikkaamalla saa kyseisen kohdan 48 tunnin tuuliennusteen kaaviona.",
