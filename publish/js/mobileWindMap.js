@@ -60,7 +60,7 @@ overlay.className = "mwm-overlay";
 overlay.innerHTML = `
         <div class="mwm-head">
           <button type="button" class="mwm-back" aria-label="Takaisin">‹</button>
-          <span>Tuulikartta (testi)</span>
+          <span>Tuulikartta</span>
         </div>
         <div class="mwm-map"><div class="mwm-loading">Ladataan karttaa…</div></div>`;
 document.body.appendChild(overlay);

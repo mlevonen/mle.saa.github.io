@@ -263,10 +263,10 @@ if (panelsEl && COMPACT_BUTTONS) panelsEl.classList.add("info-panels-compact");
 const wrap = document.createElement("div");
 wrap.className = "info-panel";
 if (!mobile) wrap.innerHTML = `
-    <button type="button" class="info-panel-header windmap-toggle-btn" id="windmap-toggle-btn" title="Tuulikartta (testi)" aria-label="Tuulikartta (testi)">
+    <button type="button" class="info-panel-header windmap-toggle-btn" id="windmap-toggle-btn" title="Tuulikartta" aria-label="Tuulikartta">
       <span class="btn-icon-label">
         <span class="windmap-icon"><svg class="windmap-sock" viewBox="0 0 40 40" width="32" height="32" aria-hidden="true"><defs><clipPath id="windmap-sock-clip"><path d="M11 9 L33 13 Q35 13.5 35 16 L35 20 Q35 22.5 33 23 L11 27 Z"/></clipPath></defs><rect x="6" y="5" width="4" height="32" rx="2" fill="#c9a26b" stroke="#333" stroke-width="1.6"/><g clip-path="url(#windmap-sock-clip)"><rect x="10" y="5" width="28" height="26" fill="#fff"/><rect x="11" y="5" width="7" height="26" fill="#e57373"/><rect x="21" y="5" width="6" height="26" fill="#e57373"/></g><path d="M11 9 L33 13 Q35 13.5 35 16 L35 20 Q35 22.5 33 23 L11 27 Z" fill="none" stroke="#333" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 18 H12" stroke="#333" stroke-width="1.8" stroke-linecap="round"/><path d="M17 33 H29 M25 29.5 q4-1 4 1.8" fill="none" stroke="#333" stroke-width="1.8" stroke-linecap="round"/></svg></span>
-        <span>Tuulikartta (testi)</span>
+        <span>Tuulikartta</span>
       </span>
     </button>`;
 if (panelsEl) panelsEl.appendChild(wrap);

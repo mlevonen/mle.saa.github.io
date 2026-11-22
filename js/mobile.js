@@ -428,7 +428,7 @@ function createWindMapLi() {
   openBtn.className = "station-item-open";
   openBtn.innerHTML = `
     <span class="station-item-main">
-      <span class="station-item-name">🌬️ Tuulikartta (testi)</span>
+      <span class="station-item-name">🌬️ Tuulikartta</span>
     </span>
     <span class="station-item-chevron">›</span>
   `;

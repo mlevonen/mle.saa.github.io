@@ -84,7 +84,7 @@ html: `
 ];
 if (windMapOn) {
 list.push({
-title: "Tuulikartta (testi)",
+title: "Tuulikartta",
 html: `
         <p>Tuulikartta-napista kartta siirtyy näkymään, jossa näkyy Itämeri Gotlannista Perämerelle, ja päälle ilmestyy elävä tuuliennuste (Ilmatieteen laitoksen Harmonie-malli, 10 m tuuli, 48 tuntia).</p>
         <ul>

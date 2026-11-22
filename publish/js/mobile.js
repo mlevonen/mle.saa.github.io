@@ -276,7 +276,7 @@ openBtn.type = "button";
 openBtn.className = "station-item-open";
 openBtn.innerHTML = `
     <span class="station-item-main">
-      <span class="station-item-name">🌬️ Tuulikartta (testi)</span>
+      <span class="station-item-name">🌬️ Tuulikartta</span>
     </span>
     <span class="station-item-chevron">›</span>
   `;
@@ -439,9 +439,22 @@ listEl.appendChild(empty);
 groups.forEach(({ area, stations: areaStations }) => {
 const section = document.createElement("section");
 section.className = "sea-area-section";
+section.classList.add("is-collapsed");
 const heading = document.createElement("h2");
-heading.className = "sea-area-title";
-heading.textContent = area;
+heading.className = "sea-area-title sea-area-collapsible";
+heading.setAttribute("role", "button");
+heading.tabIndex = 0;
+heading.setAttribute("aria-expanded", "false");
+heading.innerHTML = `<span class="sea-area-name"></span><span class="sea-area-chevron" aria-hidden="true">▾</span>`;
+heading.querySelector(".sea-area-name").textContent = area;
+const toggleArea = () => {
+const collapsed = section.classList.toggle("is-collapsed");
+heading.setAttribute("aria-expanded", String(!collapsed));
+};
+heading.addEventListener("click", toggleArea);
+heading.addEventListener("keydown", e => {
+if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleArea(); }
+});
 section.appendChild(heading);
 const ul = document.createElement("ul");
 ul.className = "station-list";
