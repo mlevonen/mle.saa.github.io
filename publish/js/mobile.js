@@ -246,6 +246,46 @@ const isFav = toggleFavorite(stationId);
 updateFavoriteButtons(stationId, isFav);
 refreshFavoritesSection();
 }
+const WINDMAP_FAV_ID = "windmap";
+async function openWindMap() {
+try {
+const m = await import("./mobileWindMap.js");
+await m.openMobileWindMap();
+} catch (err) {
+console.warn("Tuulikartan lataus epäonnistui:", err);
+}
+}
+function createWindMapLi() {
+const li = document.createElement("li");
+const row = document.createElement("div");
+row.className = "station-item";
+const fav = isFavorite(WINDMAP_FAV_ID);
+const favBtn = document.createElement("button");
+favBtn.type = "button";
+favBtn.className = "station-favorite-btn" + (fav ? " is-favorite" : "");
+favBtn.dataset.stationId = WINDMAP_FAV_ID;
+favBtn.setAttribute("aria-pressed", String(fav));
+favBtn.setAttribute("aria-label", fav ? "Poista suosikeista" : "Lisää suosikiksi");
+favBtn.textContent = fav ? "★" : "☆";
+favBtn.addEventListener("click", e => {
+e.stopPropagation();
+handleToggleFavorite(WINDMAP_FAV_ID);
+});
+const openBtn = document.createElement("button");
+openBtn.type = "button";
+openBtn.className = "station-item-open";
+openBtn.innerHTML = `
+    <span class="station-item-main">
+      <span class="station-item-name">🌬️ Tuulikartta (testi)</span>
+    </span>
+    <span class="station-item-chevron">›</span>
+  `;
+openBtn.addEventListener("click", openWindMap);
+row.appendChild(favBtn);
+row.appendChild(openBtn);
+li.appendChild(row);
+return li;
+}
 function createStationLi(station) {
 const li = document.createElement("li");
 const row = document.createElement("div");
@@ -365,11 +405,13 @@ const favStations = coastalStations.filter(s => favIds.includes(s.id));
 const ordered = groupBySeaArea(favStations)
 .flatMap(g => sortStationsWithinArea(g.area, g.stations));
 favoritesList.innerHTML = "";
+const windMapFav = favIds.includes(WINDMAP_FAV_ID);
+if (windMapFav) favoritesList.appendChild(createWindMapLi());
 ordered.forEach(station => favoritesList.appendChild(createStationLi(station)));
 const cachedWind = loadPreviewCache(WIND_LIST_CACHE_KEY, WIND_LIST_CACHE_TTL);
 if (cachedWind) updateWindIndicators(cachedWind);
 const matchedStationIds = new Set(favStations.map(s => s.id));
-const leftoverIds = favIds.filter(id => !matchedStationIds.has(id));
+const leftoverIds = favIds.filter(id => id !== WINDMAP_FAV_ID && !matchedStationIds.has(id));
 let waterTempFavCount = 0;
 if (leftoverIds.length) {
 try {
@@ -386,7 +428,7 @@ waterTempFavCount = favPoints.length;
 console.warn("Suosikkien vedenlämpöpisteiden haku epäonnistui:", err);
 }
 }
-favoritesSection.style.display = (ordered.length + waterTempFavCount) ? "" : "none";
+favoritesSection.style.display = (ordered.length + waterTempFavCount + (windMapFav ? 1 : 0)) ? "" : "none";
 }
 if (!groups.length) {
 const empty = document.createElement("p");
@@ -409,22 +451,10 @@ section.appendChild(ul);
 listEl.appendChild(section);
 });
 }
-const windMapFooterBtn = document.createElement("button");
-windMapFooterBtn.type = "button";
-windMapFooterBtn.className = "changelog-footer-btn";
-windMapFooterBtn.innerHTML = `
-  <span>🌬️ Tuulikartta (testi)</span>
-  <span class="station-item-chevron">›</span>
-`;
-windMapFooterBtn.addEventListener("click", async () => {
-try {
-const m = await import("./mobileWindMap.js");
-await m.openMobileWindMap();
-} catch (err) {
-console.warn("Tuulikartan lataus epäonnistui:", err);
-}
-});
-listEl.appendChild(windMapFooterBtn);
+const windMapList = document.createElement("ul");
+windMapList.className = "station-list";
+windMapList.appendChild(createWindMapLi());
+listEl.appendChild(windMapList);
 const navWarningsFooterBtn = document.createElement("button");
 navWarningsFooterBtn.type = "button";
 navWarningsFooterBtn.className = "changelog-footer-btn";
