@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/windgrid/data/:path*",
+      "destination": "https://merisaa.fi/windgrid/data/:path*"
+    }
+  ]
+}

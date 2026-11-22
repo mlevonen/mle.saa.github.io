@@ -27,11 +27,15 @@ const TOPOJSON_JS = "https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/top
 
 const VELOCITY_CSS = "https://cdn.jsdelivr.net/npm/leaflet-velocity@2.1.4/dist/leaflet-velocity.min.css";
 
-// Merisaa.fi:ssä data on samalla palvelimella; muualta (esim. Vercel-demo)
-// haetaan tuotannosta (palvelin lähettää CORS-otsakkeen, ks. data/.htaccess).
-const DATA_BASE = /(^|\.)merisaa\.fi$/.test(location.hostname)
-  ? "windgrid/data/"
+// merisaa.fi:ssä data on samalla palvelimella. Vercel-testissä (*.vercel.app) vercel.json
+// välittää /windgrid/data/-pyynnöt palvelimelta merisaa.fi:hin (ei CORS-ongelmaa).
+// Muualla (esim. paikallinen kehitys) haetaan suoraan tuotannosta.
+const DATA_BASE = /(^|\.)(merisaa\.fi|vercel\.app)$/.test(location.hostname)
+  ? "/windgrid/data/"
   : "https://merisaa.fi/windgrid/data/";
+
+// Mobiilissa kevyempi piirto: hiukkasmäärä tällä kertoimella
+const MOBILE_DENSITY_FACTOR = 0.6;
 
 const STALE_ORIGIN_HOURS = 9;   // Harmonie-ajo yli näin vanha -> varoitus
 const STALE_CHECK_HOURS = 6;    // päivitysskripti ei ole ajossa -> varoitus
@@ -209,6 +213,13 @@ const STYLE = `
 }
 .windmap-hint-close:hover { background: rgba(255,255,255,0.35); }
 
+/* Mobiilin kokoruutunäkymä */
+.windmap-panel-mobile { width: calc(100vw - 16px); min-width: 0; bottom: calc(10px + env(safe-area-inset-bottom)); padding: 8px 12px 6px; }
+.windmap-panel-mobile .windmap-time { min-width: 96px; font-size: 12px; }
+.windmap-panel-mobile .windmap-info { font-size: 10px; }
+.windmap-panel-mobile .windmap-legend-labels { font-size: 9px; }
+.windmap-mobile-host .windmap-hint, .windmap-mobile-host .windmap-notice { top: 64px; }
+
 .windmap-info { margin-top: 6px; font-size: 11px; color: #666; line-height: 1.35; }
 .windmap-warn { color: #c62828; font-weight: 700; }
 .windmap-legend {
@@ -312,37 +323,46 @@ function fmtClock(iso) {
   return new Date(iso).toLocaleTimeString("fi-FI", { hour: "2-digit", minute: "2-digit" });
 }
 
-export function initWindMapControl(map) {
+// opts.mobile = true: mobiilin kokoruutunäkymä (ei nappia/paneeleita sivupalkissa; ohjaus palautetun
+// {turnOn, turnOff} kautta). opts.container = elementti, johon paneeli/vinkit lisätään (oletus body).
+export function initWindMapControl(map, opts = {}) {
+
+  const mobile = !!opts.mobile;
+  const host = opts.container || document.body;
 
   // Julkinen kaikille. Takaisin piilotettuun tilaan: WIND_MAP_PUBLIC = false (silloin vain ?tuulikartta=1).
-  if (!WIND_MAP_PUBLIC && !new URLSearchParams(location.search).has("tuulikartta")) return;
+  if (!mobile && !WIND_MAP_PUBLIC && !new URLSearchParams(location.search).has("tuulikartta")) return null;
 
-  const panelsEl = document.querySelector(".info-panels");
-  if (!panelsEl) return;
+  const panelsEl = mobile ? null : document.querySelector(".info-panels");
+  if (!mobile && !panelsEl) return null;
+
+  const TAP = mobile ? "Napauta" : "Klikkaa";
+  const tap = mobile ? "napauta" : "klikkaa";
 
   const styleEl = document.createElement("style");
   styleEl.textContent = STYLE;
   document.head.appendChild(styleEl);
 
-  // Napit ikoneiksi (vain ?tuulikartta=1). Pois: COMPACT_BUTTONS = false.
-  if (COMPACT_BUTTONS) panelsEl.classList.add("info-panels-compact");
+  // Napit ikoneiksi. Pois: COMPACT_BUTTONS = false.
+  if (panelsEl && COMPACT_BUTTONS) panelsEl.classList.add("info-panels-compact");
 
-  // Nappi samalla ulkoasulla kuin Vedenlämpö/Merivaroitukset
+  // Nappi samalla ulkoasulla kuin Vedenlämpö/Merivaroitukset (mobiilissa ei nappia: korvike jota ei liitetä sivulle)
   const wrap = document.createElement("div");
   wrap.className = "info-panel";
-  wrap.innerHTML = `
+  if (!mobile) wrap.innerHTML = `
     <button type="button" class="info-panel-header windmap-toggle-btn" id="windmap-toggle-btn" title="Tuulikartta (testi)" aria-label="Tuulikartta (testi)">
       <span class="btn-icon-label">
         <span class="windmap-icon"><svg class="windmap-sock" viewBox="0 0 40 40" width="32" height="32" aria-hidden="true"><defs><clipPath id="windmap-sock-clip"><path d="M11 9 L33 13 Q35 13.5 35 16 L35 20 Q35 22.5 33 23 L11 27 Z"/></clipPath></defs><rect x="6" y="5" width="4" height="32" rx="2" fill="#c9a26b" stroke="#333" stroke-width="1.6"/><g clip-path="url(#windmap-sock-clip)"><rect x="10" y="5" width="28" height="26" fill="#fff"/><rect x="11" y="5" width="7" height="26" fill="#e57373"/><rect x="21" y="5" width="6" height="26" fill="#e57373"/></g><path d="M11 9 L33 13 Q35 13.5 35 16 L35 20 Q35 22.5 33 23 L11 27 Z" fill="none" stroke="#333" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 18 H12" stroke="#333" stroke-width="1.8" stroke-linecap="round"/><path d="M17 33 H29 M25 29.5 q4-1 4 1.8" fill="none" stroke="#333" stroke-width="1.8" stroke-linecap="round"/></svg></span>
         <span>Tuulikartta (testi)</span>
       </span>
     </button>`;
-  panelsEl.appendChild(wrap);
-  const btn = wrap.querySelector("button");
+  if (panelsEl) panelsEl.appendChild(wrap);
+  const btn = mobile ? document.createElement("button") : wrap.querySelector("button");
 
   // Aikaliukusäädin
   const panel = document.createElement("div");
-  panel.className = "windmap-panel";
+  panel.className = "windmap-panel" + (mobile ? " windmap-panel-mobile" : "");
+  if (mobile) host.classList.add("windmap-mobile-host");
   panel.innerHTML = `
     <div class="windmap-row">
       <button type="button" class="windmap-play" aria-label="Toista">▶</button>
@@ -352,7 +372,7 @@ export function initWindMapControl(map) {
     <div class="windmap-legend"></div>
     <div class="windmap-legend-labels"><span>0</span><span>5</span><span>10</span><span>15</span><span>20</span><span>25+ m/s</span></div>
     <div class="windmap-info"></div>`;
-  document.body.appendChild(panel);
+  host.appendChild(panel);
 
   const playBtn = panel.querySelector(".windmap-play");
   const slider = panel.querySelector(".windmap-slider");
@@ -369,7 +389,7 @@ export function initWindMapControl(map) {
   // kaksi kerrosta eikä kirjaston oma lukema pysyisi ajan tasalla)
   const readoutEl = document.createElement("div");
   readoutEl.className = "windmap-readout";
-  document.body.appendChild(readoutEl);
+  host.appendChild(readoutEl);
 
   // Vinkki: ilmestyy kun käyttäjä zoomaa tarkempaan karttaan (näytetään kerran per sivulataus)
   const HINT_MS = 14000;
@@ -378,9 +398,9 @@ export function initWindMapControl(map) {
   const hintEl = document.createElement("div");
   hintEl.className = "windmap-hint";
   hintEl.setAttribute("role", "status");
-  hintEl.innerHTML = `<span>💡 Vinkki: klikkaa karttaa nähdäksesi kyseisen paikan tuuliennusteen.</span>` +
+  hintEl.innerHTML = `<span>💡 Vinkki: ${tap} karttaa nähdäksesi kyseisen paikan tuuliennusteen.</span>` +
     `<button type="button" class="windmap-hint-close" aria-label="Sulje vinkki">×</button>`;
-  document.body.appendChild(hintEl);
+  host.appendChild(hintEl);
   hintEl.querySelector("button").addEventListener("click", hideHint);
   function showHint() {
     if (hintShown) return;
@@ -400,7 +420,7 @@ export function initWindMapControl(map) {
   noticeEl.setAttribute("role", "status");
   noticeEl.innerHTML = `<span>Poistu tuulikartasta, jotta muut tiedot näkyvät kartalla.</span>` +
     `<button type="button">Poistu tuulikartasta</button>`;
-  document.body.appendChild(noticeEl);
+  host.appendChild(noticeEl);
   noticeEl.querySelector("button").addEventListener("click", () => { hideNotice(); if (visible) turnOff(); });
   function showNotice() {
     hideHint();
@@ -413,7 +433,7 @@ export function initWindMapControl(map) {
     clearTimeout(noticeTimer);
   }
   // Vedenlämpö- ja Merivaroitukset-napit: estetään toiminta (capture-vaiheessa) ja näytetään ilmoitus
-  panelsEl.addEventListener("click", e => {
+  if (panelsEl) panelsEl.addEventListener("click", e => {
     if (!visible) return;
     const b = e.target.closest("#watertemp-toggle-btn, #navwarnings-toggle-btn");
     if (!b) return;
@@ -600,7 +620,7 @@ export function initWindMapControl(map) {
   function onMouseOut() { readoutEl.textContent = ""; readoutEl.style.display = ""; }
 
   // ---- Pisteennuste: klikkaus kartalla avaa ikkunan, jossa paikan 48 h tuuliennuste ----
-  const FC_W = 440, FC_H = 200, FC_L = 30, FC_R = 8, FC_T = 10, FC_B = 44;
+  const FC_W = mobile ? Math.max(260, Math.min(440, window.innerWidth - 56)) : 440, FC_H = 200, FC_L = 30, FC_R = 8, FC_T = 10, FC_B = 44;
   let fcToken = 0;
 
   function sampleFrom(data, latlng) {
@@ -745,7 +765,7 @@ export function initWindMapControl(map) {
     box.insertBefore(canvas, status);
     const note = document.createElement("div");
     note.className = "windmap-fc-note";
-    note.textContent = "10 m tuuli, lähin hilapiste. Nuoli osoittaa suuntaan, jonne tuuli puhaltaa. Klikkaa palkkia siirtääksesi kartan siihen tuntiin.";
+    note.textContent = `10 m tuuli, lähin hilapiste. Nuoli osoittaa suuntaan, jonne tuuli puhaltaa. ${TAP} palkkia siirtääksesi kartan siihen tuntiin.`;
     box.appendChild(note);
 
     const hint = "Vie hiiri palkin päälle";
@@ -779,7 +799,7 @@ export function initWindMapControl(map) {
       maxVelocity: 25,
       velocityScale: PARTICLE_SPEED,
       lineWidth: particlesOn ? PARTICLE_LINE_WIDTH_NEAR : PARTICLE_LINE_WIDTH,
-      particleMultiplier: particlesOn ? PARTICLE_DENSITY : PARTICLE_DENSITY_FAR,
+      particleMultiplier: (particlesOn ? PARTICLE_DENSITY : PARTICLE_DENSITY_FAR) * (mobile ? MOBILE_DENSITY_FACTOR : 1),
       colorScale: particlesOn ? NEAR_COLORS : FAR_PARTICLE_COLORS,
       opacity: PARTICLE_TRAIL_OPACITY
     });
@@ -804,7 +824,7 @@ export function initWindMapControl(map) {
     const originH = (Date.now() - new Date(manifest.origin).getTime()) / 3600e3;
     const checkedH = (Date.now() - new Date(manifest.checked || manifest.updated).getTime()) / 3600e3;
     let html = `Ennuste: Harmonie-ajo ${fmtClock(manifest.origin)} (` +
-      `${new Date(manifest.origin).toLocaleDateString("fi-FI")}). Lähde: Ilmatieteen laitos (CC BY 4.0). 10 m tuuli. Klikkaa karttaa nähdäksesi paikan ennusteen.`;
+      `${new Date(manifest.origin).toLocaleDateString("fi-FI")}). Lähde: Ilmatieteen laitos (CC BY 4.0). 10 m tuuli. ${TAP} karttaa nähdäksesi paikan ennusteen.`;
     if (originH > STALE_ORIGIN_HOURS || checkedH > STALE_CHECK_HOURS) {
       html = `<span class="windmap-warn">Tuulidata ei ole ajan tasalla (ajo ${fmtTime(manifest.origin)}).</span> ` + html;
     }
@@ -982,7 +1002,7 @@ export function initWindMapControl(map) {
     visible = false;
   }
 
-  btn.addEventListener("click", () => { visible ? turnOff() : turnOn(); });
+  if (!mobile) btn.addEventListener("click", () => { visible ? turnOff() : turnOn(); });
 
   playBtn.addEventListener("click", () => {
     if (!manifest) return;
@@ -994,4 +1014,6 @@ export function initWindMapControl(map) {
     showHour(Number(slider.value), false).catch(err => console.warn(err));
   });
 
+
+  return { turnOn, turnOff, isVisible: () => visible };
 }

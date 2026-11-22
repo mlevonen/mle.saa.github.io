@@ -666,6 +666,25 @@ if (!groups.length) {
 
 }
 
+// Tuulikartta (kokoruutunäkymä, ks. mobileWindMap.js). Ladataan vasta napautettaessa.
+// Pois ottaminen: poista tämä lohko.
+const windMapFooterBtn = document.createElement("button");
+windMapFooterBtn.type = "button";
+windMapFooterBtn.className = "changelog-footer-btn";
+windMapFooterBtn.innerHTML = `
+  <span>🌬️ Tuulikartta (testi)</span>
+  <span class="station-item-chevron">›</span>
+`;
+windMapFooterBtn.addEventListener("click", async () => {
+  try {
+    const m = await import("./mobileWindMap.js");
+    await m.openMobileWindMap();
+  } catch (err) {
+    console.warn("Tuulikartan lataus epäonnistui:", err);
+  }
+});
+listEl.appendChild(windMapFooterBtn);
+
 // Kolmanneksi viimeinen rivi: linkki Merivaroitukset-listaan (ks.
 // openNavWarningsList), juuri Muut vedenlämpötilat -rivin yläpuolella.
 const navWarningsFooterBtn = document.createElement("button");

@@ -2,9 +2,10 @@ const VELOCITY_JS = "https://cdn.jsdelivr.net/npm/leaflet-velocity@2.1.4/dist/le
 const LAND_TOPO = "https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/land-10m.json";
 const TOPOJSON_JS = "https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js";
 const VELOCITY_CSS = "https://cdn.jsdelivr.net/npm/leaflet-velocity@2.1.4/dist/leaflet-velocity.min.css";
-const DATA_BASE = /(^|\.)merisaa\.fi$/.test(location.hostname)
-? "windgrid/data/"
+const DATA_BASE = /(^|\.)(merisaa\.fi|vercel\.app)$/.test(location.hostname)
+? "/windgrid/data/"
 : "https://merisaa.fi/windgrid/data/";
+const MOBILE_DENSITY_FACTOR = 0.6;
 const STALE_ORIGIN_HOURS = 9;
 const STALE_CHECK_HOURS = 6;
 const PLAY_INTERVAL_MS = 1200;
@@ -153,6 +154,13 @@ const STYLE = `
 }
 .windmap-hint-close:hover { background: rgba(255,255,255,0.35); }
 
+/* Mobiilin kokoruutunäkymä */
+.windmap-panel-mobile { width: calc(100vw - 16px); min-width: 0; bottom: calc(10px + env(safe-area-inset-bottom)); padding: 8px 12px 6px; }
+.windmap-panel-mobile .windmap-time { min-width: 96px; font-size: 12px; }
+.windmap-panel-mobile .windmap-info { font-size: 10px; }
+.windmap-panel-mobile .windmap-legend-labels { font-size: 9px; }
+.windmap-mobile-host .windmap-hint, .windmap-mobile-host .windmap-notice { top: 64px; }
+
 .windmap-info { margin-top: 6px; font-size: 11px; color: #666; line-height: 1.35; }
 .windmap-warn { color: #c62828; font-weight: 700; }
 .windmap-legend {
@@ -240,27 +248,32 @@ hour: "2-digit", minute: "2-digit"
 function fmtClock(iso) {
 return new Date(iso).toLocaleTimeString("fi-FI", { hour: "2-digit", minute: "2-digit" });
 }
-export function initWindMapControl(map) {
-if (!WIND_MAP_PUBLIC && !new URLSearchParams(location.search).has("tuulikartta")) return;
-const panelsEl = document.querySelector(".info-panels");
-if (!panelsEl) return;
+export function initWindMapControl(map, opts = {}) {
+const mobile = !!opts.mobile;
+const host = opts.container || document.body;
+if (!mobile && !WIND_MAP_PUBLIC && !new URLSearchParams(location.search).has("tuulikartta")) return null;
+const panelsEl = mobile ? null : document.querySelector(".info-panels");
+if (!mobile && !panelsEl) return null;
+const TAP = mobile ? "Napauta" : "Klikkaa";
+const tap = mobile ? "napauta" : "klikkaa";
 const styleEl = document.createElement("style");
 styleEl.textContent = STYLE;
 document.head.appendChild(styleEl);
-if (COMPACT_BUTTONS) panelsEl.classList.add("info-panels-compact");
+if (panelsEl && COMPACT_BUTTONS) panelsEl.classList.add("info-panels-compact");
 const wrap = document.createElement("div");
 wrap.className = "info-panel";
-wrap.innerHTML = `
+if (!mobile) wrap.innerHTML = `
     <button type="button" class="info-panel-header windmap-toggle-btn" id="windmap-toggle-btn" title="Tuulikartta (testi)" aria-label="Tuulikartta (testi)">
       <span class="btn-icon-label">
         <span class="windmap-icon"><svg class="windmap-sock" viewBox="0 0 40 40" width="32" height="32" aria-hidden="true"><defs><clipPath id="windmap-sock-clip"><path d="M11 9 L33 13 Q35 13.5 35 16 L35 20 Q35 22.5 33 23 L11 27 Z"/></clipPath></defs><rect x="6" y="5" width="4" height="32" rx="2" fill="#c9a26b" stroke="#333" stroke-width="1.6"/><g clip-path="url(#windmap-sock-clip)"><rect x="10" y="5" width="28" height="26" fill="#fff"/><rect x="11" y="5" width="7" height="26" fill="#e57373"/><rect x="21" y="5" width="6" height="26" fill="#e57373"/></g><path d="M11 9 L33 13 Q35 13.5 35 16 L35 20 Q35 22.5 33 23 L11 27 Z" fill="none" stroke="#333" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 18 H12" stroke="#333" stroke-width="1.8" stroke-linecap="round"/><path d="M17 33 H29 M25 29.5 q4-1 4 1.8" fill="none" stroke="#333" stroke-width="1.8" stroke-linecap="round"/></svg></span>
         <span>Tuulikartta (testi)</span>
       </span>
     </button>`;
-panelsEl.appendChild(wrap);
-const btn = wrap.querySelector("button");
+if (panelsEl) panelsEl.appendChild(wrap);
+const btn = mobile ? document.createElement("button") : wrap.querySelector("button");
 const panel = document.createElement("div");
-panel.className = "windmap-panel";
+panel.className = "windmap-panel" + (mobile ? " windmap-panel-mobile" : "");
+if (mobile) host.classList.add("windmap-mobile-host");
 panel.innerHTML = `
     <div class="windmap-row">
       <button type="button" class="windmap-play" aria-label="Toista">▶</button>
@@ -270,7 +283,7 @@ panel.innerHTML = `
     <div class="windmap-legend"></div>
     <div class="windmap-legend-labels"><span>0</span><span>5</span><span>10</span><span>15</span><span>20</span><span>25+ m/s</span></div>
     <div class="windmap-info"></div>`;
-document.body.appendChild(panel);
+host.appendChild(panel);
 const playBtn = panel.querySelector(".windmap-play");
 const slider = panel.querySelector(".windmap-slider");
 const timeEl = panel.querySelector(".windmap-time");
@@ -281,16 +294,16 @@ L.DomEvent.disableScrollPropagation(panel);
 }
 const readoutEl = document.createElement("div");
 readoutEl.className = "windmap-readout";
-document.body.appendChild(readoutEl);
+host.appendChild(readoutEl);
 const HINT_MS = 14000;
 let hintShown = false;
 let hintTimer = null;
 const hintEl = document.createElement("div");
 hintEl.className = "windmap-hint";
 hintEl.setAttribute("role", "status");
-hintEl.innerHTML = `<span>💡 Vinkki: klikkaa karttaa nähdäksesi kyseisen paikan tuuliennusteen.</span>` +
+hintEl.innerHTML = `<span>💡 Vinkki: ${tap} karttaa nähdäksesi kyseisen paikan tuuliennusteen.</span>` +
 `<button type="button" class="windmap-hint-close" aria-label="Sulje vinkki">×</button>`;
-document.body.appendChild(hintEl);
+host.appendChild(hintEl);
 hintEl.querySelector("button").addEventListener("click", hideHint);
 function showHint() {
 if (hintShown) return;
@@ -308,7 +321,7 @@ noticeEl.className = "windmap-notice";
 noticeEl.setAttribute("role", "status");
 noticeEl.innerHTML = `<span>Poistu tuulikartasta, jotta muut tiedot näkyvät kartalla.</span>` +
 `<button type="button">Poistu tuulikartasta</button>`;
-document.body.appendChild(noticeEl);
+host.appendChild(noticeEl);
 noticeEl.querySelector("button").addEventListener("click", () => { hideNotice(); if (visible) turnOff(); });
 function showNotice() {
 hideHint();
@@ -320,7 +333,7 @@ function hideNotice() {
 noticeEl.classList.remove("visible");
 clearTimeout(noticeTimer);
 }
-panelsEl.addEventListener("click", e => {
+if (panelsEl) panelsEl.addEventListener("click", e => {
 if (!visible) return;
 const b = e.target.closest("#watertemp-toggle-btn, #navwarnings-toggle-btn");
 if (!b) return;
@@ -484,7 +497,7 @@ readoutEl.style.bottom = "auto";
 }
 }
 function onMouseOut() { readoutEl.textContent = ""; readoutEl.style.display = ""; }
-const FC_W = 440, FC_H = 200, FC_L = 30, FC_R = 8, FC_T = 10, FC_B = 44;
+const FC_W = mobile ? Math.max(260, Math.min(440, window.innerWidth - 56)) : 440, FC_H = 200, FC_L = 30, FC_R = 8, FC_T = 10, FC_B = 44;
 let fcToken = 0;
 function sampleFrom(data, latlng) {
 const h = data[0].header;
@@ -613,7 +626,7 @@ const canvas = document.createElement("canvas");
 box.insertBefore(canvas, status);
 const note = document.createElement("div");
 note.className = "windmap-fc-note";
-note.textContent = "10 m tuuli, lähin hilapiste. Nuoli osoittaa suuntaan, jonne tuuli puhaltaa. Klikkaa palkkia siirtääksesi kartan siihen tuntiin.";
+note.textContent = `10 m tuuli, lähin hilapiste. Nuoli osoittaa suuntaan, jonne tuuli puhaltaa. ${TAP} palkkia siirtääksesi kartan siihen tuntiin.`;
 box.appendChild(note);
 const hint = "Vie hiiri palkin päälle";
 status.textContent = hint;
@@ -645,7 +658,7 @@ data,
 maxVelocity: 25,
 velocityScale: PARTICLE_SPEED,
 lineWidth: particlesOn ? PARTICLE_LINE_WIDTH_NEAR : PARTICLE_LINE_WIDTH,
-particleMultiplier: particlesOn ? PARTICLE_DENSITY : PARTICLE_DENSITY_FAR,
+particleMultiplier: (particlesOn ? PARTICLE_DENSITY : PARTICLE_DENSITY_FAR) * (mobile ? MOBILE_DENSITY_FACTOR : 1),
 colorScale: particlesOn ? NEAR_COLORS : FAR_PARTICLE_COLORS,
 opacity: PARTICLE_TRAIL_OPACITY
 });
@@ -666,7 +679,7 @@ function describeManifest() {
 const originH = (Date.now() - new Date(manifest.origin).getTime()) / 3600e3;
 const checkedH = (Date.now() - new Date(manifest.checked || manifest.updated).getTime()) / 3600e3;
 let html = `Ennuste: Harmonie-ajo ${fmtClock(manifest.origin)} (` +
-`${new Date(manifest.origin).toLocaleDateString("fi-FI")}). Lähde: Ilmatieteen laitos (CC BY 4.0). 10 m tuuli. Klikkaa karttaa nähdäksesi paikan ennusteen.`;
+`${new Date(manifest.origin).toLocaleDateString("fi-FI")}). Lähde: Ilmatieteen laitos (CC BY 4.0). 10 m tuuli. ${TAP} karttaa nähdäksesi paikan ennusteen.`;
 if (originH > STALE_ORIGIN_HOURS || checkedH > STALE_CHECK_HOURS) {
 html = `<span class="windmap-warn">Tuulidata ei ole ajan tasalla (ajo ${fmtTime(manifest.origin)}).</span> ` + html;
 }
@@ -823,7 +836,7 @@ if (fieldLayer) { map.removeLayer(fieldLayer); fieldLayer = null; }
 particlesOn = false;
 visible = false;
 }
-btn.addEventListener("click", () => { visible ? turnOff() : turnOn(); });
+if (!mobile) btn.addEventListener("click", () => { visible ? turnOff() : turnOn(); });
 playBtn.addEventListener("click", () => {
 if (!manifest) return;
 playing ? stopPlaying() : startPlaying();
@@ -832,4 +845,5 @@ slider.addEventListener("input", () => {
 if (!manifest) return;
 showHour(Number(slider.value), false).catch(err => console.warn(err));
 });
+return { turnOn, turnOff, isVisible: () => visible };
 }

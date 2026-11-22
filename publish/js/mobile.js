@@ -409,6 +409,22 @@ section.appendChild(ul);
 listEl.appendChild(section);
 });
 }
+const windMapFooterBtn = document.createElement("button");
+windMapFooterBtn.type = "button";
+windMapFooterBtn.className = "changelog-footer-btn";
+windMapFooterBtn.innerHTML = `
+  <span>🌬️ Tuulikartta (testi)</span>
+  <span class="station-item-chevron">›</span>
+`;
+windMapFooterBtn.addEventListener("click", async () => {
+try {
+const m = await import("./mobileWindMap.js");
+await m.openMobileWindMap();
+} catch (err) {
+console.warn("Tuulikartan lataus epäonnistui:", err);
+}
+});
+listEl.appendChild(windMapFooterBtn);
 const navWarningsFooterBtn = document.createElement("button");
 navWarningsFooterBtn.type = "button";
 navWarningsFooterBtn.className = "changelog-footer-btn";
