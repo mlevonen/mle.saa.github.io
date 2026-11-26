@@ -230,7 +230,7 @@ const STYLE = `
 }
 .windmap-isobar-btn.active { background: #0d47a1; border-color: #0d47a1; color: #fff; }
 .windmap-isobar-btn.loading { opacity: 0.6; cursor: wait; }
-.isobar-pane { pointer-events: none; filter: drop-shadow(0 0 1.5px rgba(0,0,0,0.75)); }
+.isobar-pane { pointer-events: none; filter: drop-shadow(0 0 1.5px rgba(255,255,255,0.8)); }
 .isobar-label, .isobar-hl { width: 0; height: 0; }
 .isobar-label > span, .isobar-hl > span {
   position: absolute; left: 0; top: 0; transform: translate(-50%, -50%);
@@ -633,7 +633,7 @@ export function initWindMapControl(map, opts = {}) {
       const major = iso.level % 20 === 0;
       iso.lines.forEach(pts => {
         if (pts.length < 6) return;
-        L.polyline(pts, { pane: "isobarPane", color: "#fff", weight: major ? 2.6 : 1.5, opacity: 0.95,
+        L.polyline(pts, { pane: "isobarPane", color: "#0b1830", weight: major ? 1.8 : 1.1, opacity: 0.9,
           interactive: false, smoothFactor: 1 }).addTo(group);
         // Numero viivan keskelle (pitkissä viivoissa myös toinen)
         const marks = pts.length > 80 ? [0.25, 0.75] : pts.length > 14 ? [0.5] : [];
