@@ -32,7 +32,8 @@ BBOX = (14.0, 54.0, 31.0, 66.0)   # lon_min, lat_min, lon_max, lat_max
 HOURS = 48                        # montako tuntia eteenpäin
 STRIDE = 4                        # hilan harvennus (natiivi ~0,0225° -> ~0,09°)
 CHUNK_HOURS = 12                  # ladataan jaksoissa (säästää muistia/levyä)
-PARAMS = "WindUMS,WindVMS"
+PARAMS = "WindUMS,WindVMS,Pressure"   # Pressure = merenpinnan tasolle redusoitu paine (Pa)
+P_STRIDE = 8                      # paineen harvennus (~0,18°), isobaareihin riittää karkea hila
 USER_AGENT = "Mozilla/5.0 (compatible; MerisaaWindgrid/1.0; +https://merisaa.fi)"
 LOCK_MAX_AGE_S = 15 * 60
 WFS = ("https://opendata.fmi.fi/wfs?service=WFS&version=2.0.0&request=GetFeature"
@@ -301,6 +302,14 @@ def decode_file(path, stride, fields):
     count = 0
     for msg in read_messages(path):
         info = parse_message(msg)
+        if info["category"] == 3 and info["number"] == 0:
+            # Harmonie "Pressure": pinnan tyyppi 101 = merenpinta (varmistettu pressure_probe.py:llä)
+            valid = info["ref_time"] + unit_to_timedelta(info["time_unit"], info["forecast_time"])
+            prow, pmeta = sample_field(info, P_STRIDE)
+            slot = fields.setdefault(iso(valid), {"ref": info["ref_time"]})
+            slot["p"] = (prow, pmeta)
+            count += 1
+            continue
         if info["category"] != 2 or info["number"] not in (2, 3):
             dlog("ohitetaan kenttä", info["category"], info["number"])
             continue
@@ -337,6 +346,17 @@ def velocity_json(slot, valid_iso):
         }
         out.append({"header": header, "data": [v for r in rows for v in r]})
     return out
+
+
+def pressure_json(slot):
+    rows, meta = slot["p"]
+    return {
+        "nx": meta["nx"], "ny": meta["ny"],
+        "lo1": round(meta["lo1"], 4), "la1": round(meta["la1"], 4),
+        "dx": round(meta["dx"], 5), "dy": round(meta["dy"], 5),
+        "unit": "hPa",
+        "values": [round(v / 100.0, 1) for r in rows for v in r],
+    }
 
 
 def atomic_write(path, text):
@@ -418,7 +438,7 @@ def main(argv):
 
         errors = []
         for origin, base_url in candidates:
-            if old and old.get("origin") == origin and not force:
+            if old and old.get("origin") == origin and old.get("pressure") and not force:
                 # sama ajo kuin jo käsitelty -> vain "tarkistettu"-aikaleima
                 old["checked"] = iso(datetime.now(timezone.utc))
                 atomic_write(manifest_path, json.dumps(old, ensure_ascii=False))
@@ -460,6 +480,11 @@ def main(argv):
             atomic_write(os.path.join(out_dir, fname),
                          json.dumps(payload, separators=(",", ":")))
             hours.append({"time": key, "file": fname})
+            if "p" in fields[key]:
+                pname = "pressure_%s" % fname[len("wind_"):]
+                atomic_write(os.path.join(out_dir, pname),
+                             json.dumps(pressure_json(fields[key]), separators=(",", ":")))
+                hours[-1]["pressure"] = pname
 
         meta = fields[complete[0]]["u"][1]
         manifest = {
@@ -469,14 +494,15 @@ def main(argv):
             "source": "Ilmatieteen laitos, Harmonie (CC BY 4.0)",
             "grid": {"nx": meta["nx"], "ny": meta["ny"], "lo1": meta["lo1"],
                      "la1": meta["la1"], "lo2": meta["lo2"], "la2": meta["la2"]},
+            "pressure": any("pressure" in h for h in hours),
             "hours": hours,
         }
         # manifest viimeisenä: selain näkee uuden listan vasta kun tiedostot ovat valmiit
         atomic_write(manifest_path, json.dumps(manifest, ensure_ascii=False))
 
-        keep = {h["file"] for h in hours} | {"manifest.json", ".lock"}
+        keep = {h["file"] for h in hours} | {h["pressure"] for h in hours if "pressure" in h} | {"manifest.json", ".lock"}
         for name in os.listdir(out_dir):
-            if name.startswith("wind_") and name not in keep:
+            if name.startswith(("wind_", "pressure_")) and name not in keep:
                 os.remove(os.path.join(out_dir, name))
 
         log("Valmis: %d tuntia, ajo %s" % (len(hours), manifest["origin"]))
