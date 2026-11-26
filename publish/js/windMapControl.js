@@ -25,6 +25,8 @@ const OPEN_BOUNDS = [[56.6, 15.5], [66.0, 30.5]];
 const ZOOM_PARTICLES = 10;
 const WIND_MAP_PUBLIC = true;
 const COMPACT_BUTTONS = true;
+const ISOBARS_ENABLED = true;
+const ISOBAR_INTERVAL = 4;
 const FIELD_OPACITY = 0.62;
 const FIELD_UPSCALE = 6;
 const COLOR_SCALE = [
@@ -161,6 +163,29 @@ const STYLE = `
 .windmap-panel-mobile .windmap-legend-labels { font-size: 9px; }
 .windmap-mobile-host .windmap-hint, .windmap-mobile-host .windmap-notice { top: 64px; }
 
+.windmap-opts { display: none; margin-top: 8px; }
+.windmap-opts.visible { display: block; }
+.windmap-isobar-btn {
+  border: 1.5px solid #90a4ae; background: #fff; color: #37474f; border-radius: 999px;
+  padding: 4px 12px; font: 700 12px/1.2 "Helvetica Neue", Arial, Helvetica, sans-serif; cursor: pointer;
+}
+.windmap-isobar-btn.active { background: #0d47a1; border-color: #0d47a1; color: #fff; }
+.windmap-isobar-btn.loading { opacity: 0.6; cursor: wait; }
+.isobar-pane { pointer-events: none; filter: drop-shadow(0 0 1.5px rgba(255,255,255,0.8)); }
+.isobar-label, .isobar-hl { width: 0; height: 0; }
+.isobar-label > span, .isobar-hl > span {
+  position: absolute; left: 0; top: 0; transform: translate(-50%, -50%);
+  white-space: nowrap; color: #fff; text-align: center;
+}
+.isobar-label > span {
+  background: rgba(20,30,60,0.72); border-radius: 8px; padding: 0 5px;
+  font: 700 11px/16px "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+.isobar-hl > span {
+  background: rgba(13,71,161,0.85); border-radius: 10px; padding: 1px 6px;
+  font: 800 13px/1.2 "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+.isobar-hl.low > span { background: rgba(183,28,28,0.85); }
 .windmap-info { margin-top: 6px; font-size: 11px; color: #666; line-height: 1.35; }
 .windmap-warn { color: #c62828; font-weight: 700; }
 .windmap-legend {
@@ -223,6 +248,123 @@ if (!pts.length) break;
 }
 return pts;
 }
+function computeIsobars(p, interval) {
+const { nx, ny, lo1, la1, dx, dy, values: v } = p;
+let mn = Infinity, mx = -Infinity;
+for (const x of v) { if (x < mn) mn = x; if (x > mx) mx = x; }
+const out = [];
+const at = (i, j) => v[j * nx + i];
+for (let L = Math.ceil(mn / interval) * interval; L <= mx; L += interval) {
+const segs = [];
+for (let j = 0; j < ny - 1; j++) {
+for (let i = 0; i < nx - 1; i++) {
+const a = at(i, j), b = at(i + 1, j), c = at(i + 1, j + 1), d = at(i, j + 1);
+const idx = (a >= L ? 1 : 0) | (b >= L ? 2 : 0) | (c >= L ? 4 : 0) | (d >= L ? 8 : 0);
+if (idx === 0 || idx === 15) continue;
+const T = "h," + i + "," + j, B = "h," + i + "," + (j + 1);
+const Lf = "v," + i + "," + j, R = "v," + (i + 1) + "," + j;
+switch (idx) {
+case 1: case 14: segs.push([Lf, T]); break;
+case 2: case 13: segs.push([T, R]); break;
+case 3: case 12: segs.push([Lf, R]); break;
+case 4: case 11: segs.push([R, B]); break;
+case 6: case 9: segs.push([T, B]); break;
+case 7: case 8: segs.push([Lf, B]); break;
+case 5: case 10: {
+const hi = (a + b + c + d) / 4 >= L;
+if ((idx === 5) === hi) segs.push([T, R], [B, Lf]);
+else segs.push([Lf, T], [R, B]);
+break;
+}
+}
+}
+}
+if (!segs.length) continue;
+const adj = new Map();
+segs.forEach((sg, k) => sg.forEach(key => {
+const arr = adj.get(key);
+if (arr) arr.push(k); else adj.set(key, [k]);
+}));
+const used = new Uint8Array(segs.length);
+const point = key => {
+const [t, si, sj] = key.split(",");
+const i = +si, j = +sj;
+if (t === "h") {
+const t0 = (L - at(i, j)) / (at(i + 1, j) - at(i, j));
+return [la1 - j * dy, lo1 + (i + t0) * dx];
+}
+const t0 = (L - at(i, j)) / (at(i, j + 1) - at(i, j));
+return [la1 - (j + t0) * dy, lo1 + i * dx];
+};
+const extend = (line, atEnd) => {
+for (;;) {
+const key = atEnd ? line[line.length - 1] : line[0];
+const nextSeg = (adj.get(key) || []).find(k => !used[k]);
+if (nextSeg === undefined) return;
+used[nextSeg] = 1;
+const sg = segs[nextSeg];
+const other = sg[0] === key ? sg[1] : sg[0];
+if (atEnd) line.push(other); else line.unshift(other);
+if (other === (atEnd ? line[0] : line[line.length - 1])) return;
+}
+};
+const lines = [], closed = [];
+for (let k = 0; k < segs.length; k++) {
+if (used[k]) continue;
+used[k] = 1;
+const line = [segs[k][0], segs[k][1]];
+extend(line, true);
+const isClosed = line.length > 2 && line[0] === line[line.length - 1];
+if (!isClosed) extend(line, false);
+let pts = line.map(point);
+pts = chaikin(pts, isClosed);
+lines.push(pts);
+closed.push(isClosed);
+}
+out.push({ level: L, lines, closed });
+}
+return out;
+}
+function chaikin(pts, closed, rounds = 2) {
+for (let r = 0; r < rounds; r++) {
+const res = [];
+const n = pts.length;
+const last = closed ? n - 1 : n - 1;
+if (!closed) res.push(pts[0]);
+for (let k = 0; k < last; k++) {
+const a = pts[k], b = pts[k + 1];
+res.push([0.75 * a[0] + 0.25 * b[0], 0.75 * a[1] + 0.25 * b[1]]);
+res.push([0.25 * a[0] + 0.75 * b[0], 0.25 * a[1] + 0.75 * b[1]]);
+}
+if (closed) res.push(res[0]); else res.push(pts[n - 1]);
+pts = res;
+}
+return pts;
+}
+function findExtrema(p, radius = 7, margin = 3) {
+const { nx, ny, lo1, la1, dx, dy, values: v } = p;
+const res = [];
+for (let j = margin; j < ny - margin; j++) {
+for (let i = margin; i < nx - margin; i++) {
+const c = v[j * nx + i];
+let isMax = true, isMin = true;
+for (let dj = -radius; dj <= radius && (isMax || isMin); dj++) {
+const jj = j + dj;
+if (jj < 0 || jj >= ny) continue;
+for (let di = -radius; di <= radius; di++) {
+const ii = i + di;
+if ((di === 0 && dj === 0) || ii < 0 || ii >= nx) continue;
+const o = v[jj * nx + ii];
+if (o > c || (o === c && (dj < 0 || (dj === 0 && di < 0)))) isMax = false;
+if (o < c || (o === c && (dj < 0 || (dj === 0 && di < 0)))) isMin = false;
+}
+}
+if (isMax) res.push({ type: "H", value: c, lat: la1 - j * dy, lon: lo1 + i * dx });
+else if (isMin) res.push({ type: "L", value: c, lat: la1 - j * dy, lon: lo1 + i * dx });
+}
+}
+return res;
+}
 function loadScript(src) {
 return new Promise((resolve, reject) => {
 const s = document.createElement("script");
@@ -280,6 +422,7 @@ panel.innerHTML = `
       <input type="range" class="windmap-slider" min="0" max="0" value="0" step="1">
       <span class="windmap-time">–</span>
     </div>
+    <div class="windmap-opts"><button type="button" class="windmap-isobar-btn" aria-pressed="false" title="Ilmanpaineviivat (isobaarit), 4 hPa välein">Ilmanpaine</button></div>
     <div class="windmap-legend"></div>
     <div class="windmap-legend-labels"><span>0</span><span>5</span><span>10</span><span>15</span><span>20</span><span>25+ m/s</span></div>
     <div class="windmap-info"></div>`;
@@ -349,6 +492,73 @@ let visible = false;
 let playing = false;
 let requestToken = 0;
 const cache = new Map();
+const pcache = new Map();
+const optsEl = panel.querySelector(".windmap-opts");
+const isobarBtn = panel.querySelector(".windmap-isobar-btn");
+let isobarsOn = false;
+let isobarGroup = null;
+let isobarToken = 0;
+function ensureIsobarPane() {
+if (map.getPane("isobarPane")) return;
+const pane = map.createPane("isobarPane");
+pane.classList.add("isobar-pane");
+pane.style.zIndex = 455;
+}
+function clearIsobars() {
+isobarToken++;
+if (isobarGroup) { map.removeLayer(isobarGroup); isobarGroup = null; }
+}
+async function drawIsobars(index) {
+if (!isobarsOn || !manifest || !manifest.hours[index] || !manifest.hours[index].pressure) return;
+const token = ++isobarToken;
+const h = manifest.hours[index];
+if (!pcache.has(h.pressure)) {
+pcache.set(h.pressure, await fetchJson(DATA_BASE + h.pressure + "?o=" + encodeURIComponent(manifest.origin)));
+}
+if (token !== isobarToken || !isobarsOn || !visible) return;
+const p = pcache.get(h.pressure);
+ensureIsobarPane();
+const group = L.layerGroup();
+for (const iso of computeIsobars(p, ISOBAR_INTERVAL)) {
+const major = iso.level % 20 === 0;
+iso.lines.forEach(pts => {
+if (pts.length < 6) return;
+L.polyline(pts, { pane: "isobarPane", color: "#0b1830", weight: major ? 1.8 : 1.1, opacity: 0.9,
+interactive: false, smoothFactor: 1 }).addTo(group);
+const marks = pts.length > 80 ? [0.25, 0.75] : pts.length > 14 ? [0.5] : [];
+marks.forEach(f => {
+const q = pts[Math.floor(pts.length * f)];
+L.marker(q, { pane: "isobarPane", interactive: false, keyboard: false,
+icon: L.divIcon({ className: "isobar-label", html: "<span>" + iso.level + "</span>", iconSize: null }) }).addTo(group);
+});
+});
+}
+for (const e of findExtrema(p)) {
+L.marker([e.lat, e.lon], { pane: "isobarPane", interactive: false, keyboard: false,
+icon: L.divIcon({ className: "isobar-hl" + (e.type === "L" ? " low" : ""),
+html: "<span>" + e.type + " " + Math.round(e.value) + "</span>", iconSize: null }) }).addTo(group);
+}
+if (isobarGroup) map.removeLayer(isobarGroup);
+isobarGroup = group.addTo(map);
+}
+async function setIsobars(on) {
+isobarsOn = on;
+isobarBtn.classList.toggle("active", on);
+isobarBtn.setAttribute("aria-pressed", on ? "true" : "false");
+if (!on) { clearIsobars(); return; }
+isobarBtn.classList.add("loading");
+try {
+await drawIsobars(Number(slider.value));
+} catch (err) {
+console.warn("Isobaarien lataus epäonnistui:", err);
+isobarsOn = false;
+isobarBtn.classList.remove("active");
+isobarBtn.setAttribute("aria-pressed", "false");
+} finally {
+isobarBtn.classList.remove("loading");
+}
+}
+isobarBtn.addEventListener("click", () => setIsobars(!isobarsOn));
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const DIRS = ["P", "KO", "I", "KA", "E", "LO", "L", "LU"];
 function sampleAt(latlng) {
@@ -727,6 +937,7 @@ front = back;
 currentData = data;
 slider.value = index;
 timeEl.textContent = fmtTime(manifest.hours[index].time);
+if (isobarsOn) drawIsobars(index).catch(err => console.warn(err));
 if (index + 1 < manifest.hours.length) loadHour(index + 1).catch(() => {});
 }
 function stopPlaying() {
@@ -785,6 +996,7 @@ manifest = await fetchJson(DATA_BASE + "manifest.json?t=" + Math.floor(Date.now(
 if (!manifest.hours || !manifest.hours.length) throw new Error("Tyhjä manifest");
 slider.max = manifest.hours.length - 1;
 panel.classList.add("visible");
+optsEl.classList.toggle("visible", ISOBARS_ENABLED && !!manifest.pressure);
 setInfo(describeManifest());
 if (OPEN_BOUNDS) map.fitBounds(OPEN_BOUNDS, { animate: false, padding: [10, 10] });
 particlesOn = map.getZoom() >= ZOOM_PARTICLES;
@@ -814,6 +1026,9 @@ btn.classList.remove("loading");
 }
 function turnOff() {
 stopPlaying();
+isobarsOn = false;
+isobarBtn.classList.remove("active");
+clearIsobars();
 requestToken++;
 layers.forEach(lyr => { if (lyr) map.removeLayer(lyr); });
 layers = [null, null];

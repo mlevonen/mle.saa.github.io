@@ -28,12 +28,12 @@ import urllib.request
 from datetime import datetime, timedelta, timezone
 
 # ---------------------------------------------------------------- asetukset
-BBOX = (14.0, 54.0, 31.0, 66.0)   # lon_min, lat_min, lon_max, lat_max
+BBOX = (3.0, 54.0, 35.0, 72.0)    # lon_min, lat_min, lon_max, lat_max (Skandinavia + Itämeri; Harmonie kattaa ~74,8°N asti)
 HOURS = 48                        # montako tuntia eteenpäin
-STRIDE = 4                        # hilan harvennus (natiivi ~0,0225° -> ~0,09°)
-CHUNK_HOURS = 12                  # ladataan jaksoissa (säästää muistia/levyä)
+STRIDE = 5                        # hilan harvennus (natiivi ~0,0225° -> ~0,11°)
+CHUNK_HOURS = 6                   # ladataan jaksoissa (säästää muistia/levyä)
 PARAMS = "WindUMS,WindVMS,Pressure"   # Pressure = merenpinnan tasolle redusoitu paine (Pa)
-P_STRIDE = 8                      # paineen harvennus (~0,18°), isobaareihin riittää karkea hila
+P_STRIDE = 10                     # paineen harvennus (~0,225°), isobaareihin riittää karkea hila
 USER_AGENT = "Mozilla/5.0 (compatible; MerisaaWindgrid/1.0; +https://merisaa.fi)"
 LOCK_MAX_AGE_S = 15 * 60
 WFS = ("https://opendata.fmi.fi/wfs?service=WFS&version=2.0.0&request=GetFeature"
@@ -438,7 +438,7 @@ def main(argv):
 
         errors = []
         for origin, base_url in candidates:
-            if old and old.get("origin") == origin and old.get("pressure") and not force:
+            if old and old.get("origin") == origin and old.get("pressure") and old.get("bbox") == list(BBOX) and old.get("stride") == STRIDE and not force:
                 # sama ajo kuin jo käsitelty -> vain "tarkistettu"-aikaleima
                 old["checked"] = iso(datetime.now(timezone.utc))
                 atomic_write(manifest_path, json.dumps(old, ensure_ascii=False))
@@ -494,6 +494,7 @@ def main(argv):
             "source": "Ilmatieteen laitos, Harmonie (CC BY 4.0)",
             "grid": {"nx": meta["nx"], "ny": meta["ny"], "lo1": meta["lo1"],
                      "la1": meta["la1"], "lo2": meta["lo2"], "la2": meta["la2"]},
+            "bbox": list(BBOX), "stride": STRIDE,
             "pressure": any("pressure" in h for h in hours),
             "hours": hours,
         }

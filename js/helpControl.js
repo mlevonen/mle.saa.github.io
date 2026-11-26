@@ -101,11 +101,12 @@ function sections(windMapOn) {
     list.push({
       title: "Tuulikartta",
       html: `
-        <p>Tuulikartta-napista kartta siirtyy näkymään, jossa näkyy Itämeri Gotlannista Perämerelle, ja päälle ilmestyy elävä tuuliennuste (Ilmatieteen laitoksen Harmonie-malli, 10 m tuuli, 48 tuntia).</p>
+        <p>Tuulikartta-napista kartta siirtyy näkymään, jossa näkyy Itämeri Gotlannista Perämerelle, ja päälle ilmestyy elävä tuuliennuste (Ilmatieteen laitoksen Harmonie-malli, 10 m tuuli, 48 tuntia). Ennuste kattaa koko Skandinavian, joten karttaa voi zoomata ulos ja siirtää myös Norjaan, Ruotsiin ja Tanskaan.</p>
         <ul>
           <li><b>Aikajana:</b> toistopainike ja liukusäädin alareunassa. Painamalla toistoa ennuste etenee tunti kerrallaan.</li>
           <li><b>Väriskaala:</b> tuulen nopeus 0–25 m/s (sininen: tyyni, punainen ja violetti: kova tuuli).</li>
           <li><b>Uloszoomattuna</b> näkyy värikenttä ja harvat liikkuvat viivat. <b>Lähemmäs zoomattaessa</b> kartta tummenee ja liikkuvat tuuliviivat tihenevät.</li>
+          <li><b>Ilmanpaine:</b> alapaneelin Ilmanpaine-napilla kartalle tulevat ilmanpaineviivat (isobaarit) 4 hPa:n välein, ja H ja L osoittavat korkea- ja matalapaineiden keskukset. Viivat seuraavat aikajanaa.</li>
           <li><b>Hiiren vieressä</b> näkyy osoitetun kohdan tuulen nopeus ja suunta.</li>
           <li><b>Klikkaa karttaa:</b> avautuu ikkuna, jossa on valitun paikan 48 tunnin tuuliennuste kaaviona. Klikkaamalla palkkia kartta siirtyy kyseiseen tuntiin.</li>
           <li>Tuulikartan ollessa auki havaintopisteiden merkit on piilotettu. Sulje tuulikartta painamalla nappia uudelleen.</li>

@@ -18,6 +18,13 @@ export const CHANGELOG_CONTACT_EMAIL = "palaute@merisaa.fi";
 
 export const CHANGELOG = [
   {
+    date: "26.11.2026",
+    items: [
+      "Tuulikartalle uusi Ilmanpaine-nappi: kartalle saa ilmanpaineviivat (isobaarit) 4 hPa:n välein sekä korkea- ja matalapaineiden keskukset (H ja L). Viivat seuraavat aikajanaa, ja ne toimivat myös mobiilissa.",
+      "Tuulikartan ennuste kattaa nyt koko Skandinavian (aiemmin vain Itämeren alueen)."
+    ]
+  },
+  {
     date: "22.11.2026",
     items: [
       "Tuulikartta on nyt myös mobiilissa: avaa listan lopusta 'Tuulikartta' -rivin. Kokoruudun kartalla näkyy 48 tunnin tuuliennuste, ja paikkaa napauttamalla saa kyseisen kohdan tuuliennusteen kaaviona.",
